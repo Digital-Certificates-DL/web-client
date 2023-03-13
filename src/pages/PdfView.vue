@@ -16,7 +16,6 @@ import { updateTemplate } from '@/helpers/update-template.helpers'
 
 let img
 let fileSlice: string
-// let templateData: TemplateTypes
 
 const convertBase64 = (file: File) => {
   return new Promise((resolve, reject) => {
@@ -34,11 +33,13 @@ const convertBase64 = (file: File) => {
 const handleSubmit = async (file: File) => {
   const bytes = await convertBase64(file)
   fileSlice = String(bytes)
+
 }
 
 const createTemplate = (tmp: TemplateTypes) => {
   tmp.File = fileSlice
-  if (tmp.File !== '') {
+
+  if (tmp.File != undefined) {
     const res = updateTemplate(tmp)
     img = res
   }

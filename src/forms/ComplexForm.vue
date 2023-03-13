@@ -1,29 +1,28 @@
 <template>
   <div class="complex-form">
-    <p>{{ text }}</p>
     <label for=""></label>
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.QR.High"
+      v-model="form.QR.High"
       placeholder="image size H"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.QR.Width"
+      v-model="form.QR.Width"
       placeholder="image size W"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.QR.X"
+      v-model="form.QR.X"
       placeholder="image position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.QR.Y"
+      v-model="form.QR.Y"
       placeholder="image position(y)"
     />
 
@@ -31,19 +30,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Name.Size"
+      v-model="form.Name.Size"
       placeholder="name font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Name.X"
+      v-model="form.Name.X"
       placeholder="name position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Name.Y"
+      v-model="form.Name.Y"
       placeholder="name position(y)"
     />
 
@@ -51,19 +50,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Date.Size"
+      v-model="form.Date.Size"
       placeholder="date font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Date.X"
+      v-model="form.Date.X"
       placeholder="date position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Date.Y"
+      v-model="form.Date.Y"
       placeholder="date position(y)"
     />
 
@@ -71,19 +70,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Points.Size"
+      v-model="form.Points.Size"
       placeholder="mark font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Points.X"
+      v-model="form.Points.X"
       placeholder="mark position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Points.Y"
+      v-model="form.Points.Y"
       placeholder="mark position(y)"
     />
 
@@ -91,19 +90,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.SerialNumber.Size"
+      v-model="form.SerialNumber.Size"
       placeholder="serial number font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.SerialNumber.X"
+      v-model="form.SerialNumber.X"
       placeholder="serial numbe position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.SerialNumber.Y"
+      v-model="form.SerialNumber.Y"
       placeholder="serial numbe position(y)"
     />
 
@@ -111,19 +110,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Level.Size"
+      v-model="form.Level.Size"
       placeholder="level font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Level.X"
+      v-model="form.Level.X"
       placeholder="level position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Level.Y"
+      v-model="form.Level.Y"
       placeholder="level position(y)"
     />
 
@@ -131,19 +130,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Note.Size"
+      v-model="form.Note.Size"
       placeholder="note font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Note.X"
+      v-model="form.Note.X"
       placeholder="note position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="data.Note.Y"
+      v-model="form.Note.Y"
       placeholder="note position(y)"
     />
 
@@ -159,18 +158,81 @@
 </template>
 
 <script lang="ts" setup>
-import { TemplateTypes } from '@/types'
+import { TemplateTypes, TemplateField } from '@/types'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
+import { reactive } from 'vue'
 
-const data = {} as TemplateTypes
+// const data = {} as TemplateTypes
+const form = reactive({
+  Name: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Course: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Date: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Points: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Credits: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Exam: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Level: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  SerialNumber: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  Note: {
+    X: '',
+    Y: '',
+    Size: '',
+    Font: '',
+  } as TemplateField,
+  QR: {
+    X: '',
+    Y: '',
+    High: '',
+    Width: '',
+  } as TemplateField,
+} as TemplateTypes)
+
 const emit = defineEmits<{
   (e: 'submitted', file: TemplateTypes): void
 }>()
 
-const text = 'ewrewrew'
 const createTemplate = () => {
-  emit('submitted', data)
+  emit('submitted', form)
 }
 </script>
 

@@ -104,7 +104,7 @@ const props = withDefaults(
     disabled: false,
     label: '',
     note: '',
-    maxSize: 2,
+    maxSize: 6,
     fileExtensions: () => ['jpg', 'png', 'jpeg', 'pdf'],
     mode: 'edit',
   },
