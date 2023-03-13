@@ -3,6 +3,7 @@ import { LogLevelDesc } from 'loglevel'
 import { pickBy, mapKeys } from 'lodash-es'
 
 export const config = {
+  BASE_URL: import.meta.env.BASE_URL,
   API_URL: import.meta.env.VITE_API_URL,
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,

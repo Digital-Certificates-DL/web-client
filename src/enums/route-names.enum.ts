@@ -3,4 +3,5 @@ export enum ROUTE_NAMES {
   uiKit = 'ui-kit',
   complexForm = 'complex-form',
   web3 = 'web3',
+  pdf = 'pdf',
 }

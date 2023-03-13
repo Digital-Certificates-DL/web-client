@@ -28,6 +28,11 @@ const routes: Array<RouteRecordRaw> = [
     name: ROUTE_NAMES.web3,
     component: () => import('@/pages/Web3Page.vue'),
   },
+  {
+    path: '/pdf',
+    name: ROUTE_NAMES.pdf,
+    component: () => import('@/pages/PdfView.vue'),
+  },
 ]
 
 const router = createRouter({
