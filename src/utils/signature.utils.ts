@@ -3,7 +3,6 @@ import { ECPairFactory } from 'ecpair'
 import { magicHash } from '@/utils/types/signature'
 import bitcoinMessage from 'bitcoinjs-message'
 
-
 const ECPair = ECPairFactory(ecc)
 
 export class Signature {
