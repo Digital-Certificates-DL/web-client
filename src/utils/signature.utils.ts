@@ -1,17 +1,30 @@
-import { instantiateSecp256k1 } from '@bitauth/libauth'
+import ecc from '@bitcoinerlab/secp256k1'
+import { ECPairFactory } from 'ecpair'
+import { magicHash } from '@/utils/types/signature'
+import bitcoinMessage from 'bitcoinjs-message'
+
+
+const ECPair = ECPairFactory(ecc)
 
 export class Signature {
-  static verifySignature = async (
-    sig: Uint8Array,
-    pubkey: Uint8Array,
-    msgHash: Uint8Array,
-  ) => {
-    const secp256k1 = await instantiateSecp256k1()
-    return secp256k1.verifySignatureDERLowS(sig, pubkey, msgHash)
+  public signMsg = (message: string | Buffer, privateKeyStr: string) => {
+    const keyPair = ECPair.fromWIF(privateKeyStr)
+    const privateKey = keyPair.privateKey
+    const signature = bitcoinMessage.sign(
+      message,
+      privateKey,
+      keyPair.compressed,
+    )
+    return signature.toString('base64')
   }
-
-  static signMess = async (key: Uint8Array, msgHash: Uint8Array) => {
-    const secp256k1 = await instantiateSecp256k1()
-    return secp256k1.signMessageHashDER(key, msgHash)
+  public verifySign = (
+    message: string | Buffer,
+    address: string,
+    signature: string | Buffer,
+  ) => {
+    return bitcoinMessage.verify(message, address, signature)
+  }
+  public magicMsgHash = (message: string | Buffer, messagePrefix?: string) => {
+    return magicHash(message, messagePrefix)
   }
 }
