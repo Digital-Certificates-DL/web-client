@@ -43,7 +43,7 @@ const form = reactive({
   SendPrivateKey: '',
 })
 
-const start = async () =>{
+const start = async () => {
   const users = await parsedData(form.Url)
   const signatures = sign(users.data)
   await createPDF(signatures)
