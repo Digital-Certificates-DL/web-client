@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory, useRoute, useRouter } from 'vue-router'
+gimport {createRouter, createWebHistory, RouteRecordRaw, useRoute, useRouter,} from 'vue-router'
 
-import { ROUTE_NAMES } from '@/enums'
+import {ROUTE_NAMES} from '@/enums'
 
-const routes = [
+const routes: ({ redirect: { name: ROUTE_NAMES }; path: string } | { path: string; component: () => Promise<{}>; name: ROUTE_NAMES } | { path: string; component: () => Promise<{}>; name: ROUTE_NAMES } | { path: string; component: () => Promise<any>; name: ROUTE_NAMES } | { path: string; component: () => Promise<{}>; name: ROUTE_NAMES } | { path: string; componenet: () => Promise<{}>; name: ROUTE_NAMES })[] = [
   {
     path: '/:catchAll(.*)',
     redirect: { name: ROUTE_NAMES.uiKit },
@@ -30,8 +30,8 @@ const routes = [
   {
     path: '/main',
     name: ROUTE_NAMES.main,
-    component: () => import('@/pages/Main.vue'),
-  },
+    componenet: () => import('@/pages/Main.vue')
+  }
 ]
 
 const router = createRouter({

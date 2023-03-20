@@ -6,12 +6,17 @@ import bitcoinMessage from 'bitcoinjs-message'
 const ECPair = ECPairFactory(ecc)
 
 export class Signature {
-  public signMsg = (message: string | Buffer, privateKeyStr: string) => {
-    const keyPair = ECPair.fromWIF(privateKeyStr)
-    const privateKey = keyPair.privateKey
+  private privKey: string
+
+  constructor(privKey: string) {
+    this.privKey = privKey
+  }
+
+  public signMsg = (message: string | Buffer) => {
+    const keyPair = ECPair.fromWIF(this.privKey)
     const signature = bitcoinMessage.sign(
       message,
-      privateKey,
+      keyPair.privateKey!,
       keyPair.compressed,
     )
     return signature.toString('base64')

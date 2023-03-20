@@ -4,4 +4,5 @@ export enum ROUTE_NAMES {
   complexForm = 'complex-form',
   web3 = 'web3',
   pdf = 'pdf',
+  main = 'main',
 }
