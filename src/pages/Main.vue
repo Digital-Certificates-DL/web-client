@@ -31,12 +31,10 @@
 import { reactive } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
+import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
 import { UserJSONResponseList } from '@/types/user.types'
 
-{
-  InputField
-}
 const form = reactive({
   Url: '',
   SignPrivateKey: '',
