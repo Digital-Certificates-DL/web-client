@@ -20,7 +20,7 @@ const routes = [
   {
     path: '/web3',
     name: ROUTE_NAMES.web3,
-    component: () => import('@/pages/Web3Page.vue'),
+    component: () => import('@/pages/MintSBT.vue'),
   },
   {
     path: '/pdf',

@@ -5,28 +5,27 @@ import { Ecdsa, Address, KeyPair, PrivKey } from '@ts-bitcoin/core'
 import bitcoinMessage from 'bitcoinjs-message'
 
 export class Signature {
-  private privKey: string
+  private keyPair: KeyPair
+  private address: Address
 
   constructor(privKey: string) {
-    this.privKey = privKey
+    const key = PrivKey.Mainnet.fromWif(privKey)
+    const keyPair = KeyPair.Mainnet.fromPrivKey(key)
+    const address = Address.Mainnet.fromPubKey(keyPair.pubKey)
+    this.keyPair = keyPair
+    this.address = address
   }
 
   public signMsg = (message: string | Buffer) => {
-    // const keyPair = ECPair.fromWIF(this.privKey)
-    // const signature = bitcoinMessage.sign(
-    //   message,
-    //   keyPair.privateKey!,
-    //   keyPair.compressed,
-    // )
-    // return signature.toString('base64')
+    const sign = Ecdsa.sign(bitcoinMessage.magicHash(message), this.keyPair)
+    // const compSign = sign.toCompact(3, true)
 
-    const privKey2 = PrivKey.Mainnet.fromWif(this.privKey)
-    const keyPair2 = KeyPair.Mainnet.fromPrivKey(privKey2)
-    const addr2 = Address.Mainnet.fromPubKey(keyPair2.pubKey)
-    console.log(privKey2)
-    const sign = Ecdsa.sign(bitcoinMessage.magicHash(message), keyPair2)
-    const compresdSign = sign.toCompact(2, false)
-    return compresdSign.toString('base64')
+    for (let i = 0; i < 4; i++) {
+      const compSign = sign.toCompact(i).toString('base64')
+      if (this.verifySign(message, this.address.toString(), compSign)) {
+        return compSign
+      }
+    }
   }
   public verifySign = (
     message: string | Buffer,

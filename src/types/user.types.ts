@@ -8,7 +8,7 @@ export type UserTypes = {
   Certificate: string
   DataHash: string
   TxHash: string
-  Signature: string
+  Signature: string | undefined
   DigitalCertificate: string
   ID: number
   Msg: string
@@ -17,11 +17,11 @@ export type UserTypes = {
 export type UserJSONResponse = {
   ID: string
   Type: string
-  Attribute: UserTypes
+  attributes: UserTypes
 }
 
 export type UserJSONResponseList = {
-  Data: UserJSONResponse[]
+  data: UserJSONResponse[]
   Included: object[]
   Links: object
 }

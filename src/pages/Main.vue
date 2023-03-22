@@ -56,8 +56,8 @@ const parsedData = async (sheep: string) => {
 }
 const sign = (users: UserJSONResponseList) => {
   const signature = new Signature(form.SignPrivateKey)
-  for (const user of users.Data) {
-    user.Attribute.Signature = signature.signMsg(user.Attribute.Msg)
+  for (const user of users.data) {
+    user.attributes.Signature = signature.signMsg(user.attributes.Msg)
   }
   return users
 }
