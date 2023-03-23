@@ -113,7 +113,10 @@ export const useProvider = (): UseProvider => {
       throw new errors.ProviderWrapperMethodNotFoundError()
     } else {
       await providerWrp.value.connect()
+      console.log('connect: ', providerWrp.value)
     }
+
+    console.log(providerWrp)
   }
 
   const disconnect = async () => {
@@ -122,6 +125,7 @@ export const useProvider = (): UseProvider => {
     } else {
       providerWrp.value = undefined
     }
+    console.log(providerWrp)
   }
 
   const switchChain = async (chainId: ChainId) => {
@@ -145,8 +149,11 @@ export const useProvider = (): UseProvider => {
   const signAndSendTx = async (
     txRequestBody: TxRequestBody,
   ): Promise<TransactionResponse> => {
-    if (!providerWrp.value)
+    if (!providerWrp.value) {
+      console.log(providerWrp)
+      console.log('ProviderWrapperMethodNotFoundError()')
       throw new errors.ProviderWrapperMethodNotFoundError()
+    }
 
     return providerWrp.value.signAndSendTransaction(txRequestBody)
   }

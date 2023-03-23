@@ -42,6 +42,7 @@ export interface Erc721Interface extends utils.Interface {
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "safeMint(address,string)": FunctionFragment;
   };
 
   getFunction(
@@ -54,6 +55,7 @@ export interface Erc721Interface extends utils.Interface {
       | "ownerOf"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
+      | "safeMint"
       | "setApprovalForAll"
       | "supportsInterface"
       | "symbol"
@@ -99,6 +101,14 @@ export interface Erc721Interface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
+
+  encodeFunctionData(
+    functionFragment: "safeMint",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
@@ -139,6 +149,10 @@ export interface Erc721Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeMint",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -266,6 +280,11 @@ export interface Erc721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>
+    ): Promise<ContractTransaction>;
+
     "safeTransferFrom(address,address,uint256,bytes)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -334,6 +353,11 @@ export interface Erc721 extends BaseContract {
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  safeMint(
+    to: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
   ): Promise<ContractTransaction>;
 
   "safeTransferFrom(address,address,uint256,bytes)"(
@@ -412,6 +436,11 @@ export interface Erc721 extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<void>;
+
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
     ): Promise<void>;
 
     setApprovalForAll(
@@ -520,6 +549,11 @@ export interface Erc721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
+    ): Promise<BigNumber>;
+
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
@@ -589,6 +623,11 @@ export interface Erc721 extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
     ): Promise<PopulatedTransaction>;
 
     setApprovalForAll(

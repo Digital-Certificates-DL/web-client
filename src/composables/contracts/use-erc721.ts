@@ -12,11 +12,11 @@ export const useErc721 = (address?: string) => {
   const contractInstance = computed(
     () =>
       (!!provider.value &&
-        !!provider.value.currentProvider &&
+        !!provider.value.currentSigner &&
         !!contractAddress.value &&
         Erc721__factory.connect(
           contractAddress.value,
-          provider.value.currentProvider,
+          provider.value.currentSigner,
         )) ||
       undefined,
   )
@@ -46,6 +46,30 @@ export const useErc721 = (address?: string) => {
       await sleep(1000)
       return receipt
     } catch (error) {
+      handleEthError(error as EthProviderRpcError)
+    }
+  }
+
+  const safeMint = async (address: string, uri: string) => {
+    if (!provider.value) return
+
+    try {
+      const data = contractInterface.encodeFunctionData('safeMint', [
+        address,
+        uri,
+      ])
+
+      console.log('data: ', data)
+      console.log(provider.value, ' prov') // todo  there is  undefined
+      const receipt = await provider.value.signAndSendTx({
+        to: contractAddress.value,
+        data,
+      })
+
+      await sleep(1000)
+      return receipt
+    } catch (error) {
+      console.log('err: ', error)
       handleEthError(error as EthProviderRpcError)
     }
   }
@@ -92,6 +116,7 @@ export const useErc721 = (address?: string) => {
   return {
     init,
     approve,
+    safeMint,
     getBalanceOf,
     getName,
     getOwner,
