@@ -5,27 +5,23 @@ import { ROUTE_NAMES } from '@/enums'
 const routes = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.uiKit },
+    redirect: { name: ROUTE_NAMES.main },
   },
   {
-    path: '/ui-kit',
-    name: ROUTE_NAMES.uiKit,
-    component: () => import('@/pages/UiKitPage.vue'),
-  },
-  {
-    path: '/complex-form',
-    name: ROUTE_NAMES.complexForm,
-    component: () => import('@/forms/ComplexForm.vue'),
-  },
-  {
-    path: '/web3',
+    //todo  update routers
+    path: '/',
     name: ROUTE_NAMES.web3,
-    component: () => import('@/pages/MintSBT.vue'),
+    component: () => import('@/pages/Certificates.vue'),
   },
   {
-    path: '/pdf',
-    name: ROUTE_NAMES.pdf,
+    path: '/template',
+    name: ROUTE_NAMES.template,
     component: () => import('@/pages/PdfView.vue'),
+  },
+  {
+    path: '/create',
+    name: ROUTE_NAMES.create,
+    component: () => import('@/pages/CreateCerticates.vue'),
   },
   {
     path: '/main',

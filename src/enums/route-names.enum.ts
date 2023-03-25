@@ -1,8 +1,9 @@
 export enum ROUTE_NAMES {
   app = 'app',
-  uiKit = 'ui-kit',
-  complexForm = 'complex-form',
+
+  certificates = 'certificates',
   web3 = 'web3',
-  pdf = 'pdf',
+  template = 'template',
+  create = 'create',
   main = 'main',
 }

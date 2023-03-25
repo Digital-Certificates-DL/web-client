@@ -25,3 +25,10 @@ export type UserJSONResponseList = {
   Included: object[]
   Links: object
 }
+
+export type UserSetting = {
+  SignKey: string
+  address: string
+  SendKey: string
+  Url: string
+}
