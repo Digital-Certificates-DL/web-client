@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia'
-import {
-  DesignatedProvider,
-  UserJSONResponse,
-  UserSetting,
-  UserTypes,
-} from '@/types'
+import { UserJSONResponse, UserSetting } from '@/types'
 
 export const useUsersModules = defineStore('users-store', {
   state: () => ({
@@ -12,7 +7,5 @@ export const useUsersModules = defineStore('users-store', {
     setting: {} as UserSetting,
     // provider: useProvider(),
   }),
-  actions: {
-    async addSetting() {},
-  },
+  actions: {},
 })

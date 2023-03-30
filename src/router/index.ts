@@ -28,6 +28,11 @@ const routes = [
     name: ROUTE_NAMES.main,
     component: () => import('@/pages/Main.vue'),
   },
+  {
+    path: '/certificates',
+    name: ROUTE_NAMES.certificates,
+    component: () => import('@/pages/Certificates.vue'),
+  },
 ]
 
 const router = createRouter({

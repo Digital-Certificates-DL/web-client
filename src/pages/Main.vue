@@ -81,16 +81,10 @@ import { reactive } from 'vue'
 import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
-import {
-  useProvider,
-  // useForm,
-  // useFormValidation,
-  useErc721,
-} from '@/composables'
+import { useProvider, useErc721 } from '@/composables'
 import { ErrorHandler } from '@/helpers'
-import { ChainId, TxRequestBody, UseProvider } from '@/types'
-import { PROVIDERS, SOLANA_CHAINS } from '@/enums'
-import InputField from '@/fields/InputField.vue'
+import { UseProvider } from '@/types'
+import { PROVIDERS } from '@/enums'
 const form = reactive({
   address: '',
 })
@@ -138,7 +132,6 @@ const connect = async (provider: UseProvider) => {
 }
 
 const mint = async () => {
-  console.log('start')
   await safeMint(
     '0xD656fB4ffdbB09dE24Cd1F25fC323DEbF4FB0886',
     'ipfs://bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
@@ -146,8 +139,7 @@ const mint = async () => {
 }
 
 const safeMint = async (recipient: string, uri: string) => {
-  const res = await certificateSBT.safeMint(recipient, uri)
-  console.log(res)
+  await certificateSBT.safeMint(recipient, uri)
 }
 
 init()

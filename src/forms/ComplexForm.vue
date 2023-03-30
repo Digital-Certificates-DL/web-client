@@ -130,13 +130,13 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Note.Size"
+      v-model="form.Note?.Size"
       placeholder="note font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Note.X"
+      v-model="form.Note?.X"
       placeholder="note position(x)"
     />
     <input-field

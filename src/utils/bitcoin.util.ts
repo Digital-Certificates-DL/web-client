@@ -11,7 +11,7 @@ import {
 import axios from 'axios'
 
 export class BitcoinHelper {
-  public static PrepareTestnetTx(key: string) {
+  static PrepareTestnetTx(key: string) {
     const privKey1 = PrivKey.Testnet.fromRandom()
     const keyPair1 = KeyPair.Testnet.fromPrivKey(privKey1)
     const addr1 = Address.Testnet.fromPubKey(keyPair1.pubKey)
@@ -44,7 +44,7 @@ export class BitcoinHelper {
       newKey: privKey1,
     }
   }
-  public static PrapareTXMainnet(key: string) {
+  static PrapareTXMainnet(key: string) {
     // make change address
     const privKey1 = PrivKey.fromRandom()
     const keyPair1 = KeyPair.fromPrivKey(privKey1)
@@ -79,7 +79,7 @@ export class BitcoinHelper {
     }
   }
 
-  public async SendToTestnet(tx: string) {
+  static async SendToTestnet(tx: string) {
     await axios
       .post('https://api.blockcypher.com/v1/bcy/test/txs/push', { tx: tx })
       .then(function (response) {
@@ -90,7 +90,7 @@ export class BitcoinHelper {
       })
   }
 
-  public async SendToMainnet(tx: string) {
+  static async SendToMainnet(tx: string) {
     await axios
       .post('api.blockcypher.com/v1/btc/main/main/txs/push', { tx: tx })
       .then(function (response) {
@@ -103,3 +103,7 @@ export class BitcoinHelper {
 }
 
 // (see https://blockchain.info/pushtx)
+
+export default {
+  BitcoinHelper,
+}

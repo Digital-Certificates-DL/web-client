@@ -18,6 +18,7 @@
       v-model="form.Url"
       placeholder="note position(y)"
     />
+
     <app-button
       class="complex-form__submit-btn"
       type="submit"
@@ -35,6 +36,8 @@ import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
 import { UserJSONResponseList, UserSetting } from '@/types/user.types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
+import { router } from '@/router'
+import { ROUTE_NAMES } from '@/enums'
 
 const userSetting = useUsersModules()
 
@@ -48,6 +51,7 @@ const start = async () => {
   const users = await parsedData(form.Url)
   const signatures = sign(users.data)
   await createPDF(signatures)
+  // await createPDF(signatures)
 }
 const parsedData = async (sheepUrl?: string) => {
   const users = await api.post<UserJSONResponseList>(
@@ -63,11 +67,23 @@ const parsedData = async (sheepUrl?: string) => {
 const sign = (users: UserJSONResponseList) => {
   const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
   for (const user of users.data) {
-    user.attributes.Signature = signature.signMsg(user.attributes.Msg)
+    if (user.attributes.Signature === undefined) {
+      user.attributes.Signature = signature.signMsg(user.attributes.Msg)
+    }
   }
   return users
 }
 
+const prepareUserImg = (users: UserJSONResponseList) => {
+  console.log(users)
+  for (const user of users.data) {
+    console.log(user)
+    user.attributes.Img =
+      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+  }
+
+  return users
+}
 const createPDF = async (users: UserJSONResponseList) => {
   await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate', {
@@ -78,10 +94,12 @@ const createPDF = async (users: UserJSONResponseList) => {
         url: userSetting.setting.Url || form.Url,
       },
     })
-    .then(resp => (userSetting.students = resp.data.data))
-    .catch(
-      err => console.log('error: ', err), //todo make better
-    )
+    .then(resp => {
+      const users = prepareUserImg(resp.data)
+      userSetting.students = users.data
+    })
+
+  await router.push(ROUTE_NAMES.certificates)
 }
 </script>
 

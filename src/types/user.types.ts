@@ -12,6 +12,8 @@ export type UserTypes = {
   DigitalCertificate: string
   ID: number
   Msg: string
+  CertificateImg: Uint8Array
+  Img: string
 }
 
 export type UserJSONResponse = {
