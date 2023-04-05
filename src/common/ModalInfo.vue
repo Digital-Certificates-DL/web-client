@@ -91,9 +91,32 @@ const mint = async () => {
     )
   await init()
   console.log(url)
-  const safeMintResp = await safeMint(form.address, 'ipfs://' + url)
+  const safeMintResp = await safeMint(form.address, 'https://ipfs.io/ipfs/' + url)
   console.log(safeMintResp)
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal__window{
+  width: 50%;
+  height: 70%;
+  background: white;
+  border-radius: 10px;
+  flex-direction: row;
+  padding: 10px;
+  position: fixed;
+}
+
+.modal__back{
+  /*display: none;*/
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+</style>

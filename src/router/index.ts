@@ -11,7 +11,7 @@ const routes = [
     //todo  update routers
     path: '/',
     name: ROUTE_NAMES.web3,
-    component: () => import('@/pages/Certificates.vue'),
+    component: () => import('@/pages/Main.vue'),
   },
   {
     path: '/template',
@@ -32,6 +32,11 @@ const routes = [
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
     component: () => import('@/pages/Certificates.vue'),
+  },
+  {
+    path: '/setting',
+    name: ROUTE_NAMES.setting,
+    component: () => import('@/pages/Setting.vue'),
   },
 ]
 

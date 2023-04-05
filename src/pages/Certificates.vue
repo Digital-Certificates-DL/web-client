@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div v-if="userSetting.students.length == 0">
+    <app-button @click="refresh"/>
+    <div v-if="userSetting.students.length === 0">
       <error-message message="empty array" />
     </div>
     <div
@@ -13,9 +14,6 @@
   </div>
 
   <div v-if="isModalActive">
-    <p>test</p>
-    <p>test</p>
-
     <modal-info :user="currentUser"></modal-info>
   </div>
 </template>
@@ -25,8 +23,10 @@ import { useUsersModules } from '@/store/modules/use-users.modules'
 import Certificate from '@/common/Certificate.vue'
 import {} from '@/composables/use-web3'
 import ModalInfo from '@/common/ModalInfo.vue'
-import { UserJSONResponse } from '@/types'
+import {UserJSONResponse, UserJSONResponseList} from '@/types'
 import ErrorMessage from '@/common/ErrorMessage.vue'
+import AppButton from "@/common/AppButton.vue";
+import {api} from "@/api";
 
 const userSetting = useUsersModules()
 let isModalActive: boolean
@@ -36,6 +36,29 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   isModalActive = state
   currentUser = user
   console.log(user, state)
+}
+const prepareUserImg = (users: UserJSONResponseList) => {  //todo  move to  helpers
+  console.log(users)
+  for (const user of users.data) {
+    console.log(user)
+    user.attributes.Img =
+      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+  }
+  return users
+}
+
+const refresh = async () => {  //todo dont show new users
+  const users = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/',
+    {
+      data: {
+        url: userSetting.setting.Url,
+      },
+    },
+  )
+  console.log(users, ": user")
+
+  userSetting.students = prepareUserImg(users.data).data
 }
 </script>
 

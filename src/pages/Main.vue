@@ -58,19 +58,23 @@
       <loader />
     </template>
     <div>
-      <app-button :text="'settings'" scheme="flat" color="error" size="small" />
+      <app-button :text="'settings'" scheme="flat" color="error" size="small" @click="goToSetting"/>
       <app-button
         :text="'Certificates'"
         scheme="flat"
         color="error"
         size="small"
+        @click="goToCertificate"
       />
-      <app-button :text="'Template'" scheme="flat" color="error" size="small" />
+      <app-button :text="'Template'" scheme="flat" color="error" size="small"
+                  @click="goToTemplate"
+      />
       <app-button
         :text="'Generation'"
         scheme="flat"
         color="error"
         size="small"
+        @click="goToGenerate"
       />
     </div>
   </div>
@@ -84,7 +88,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import { useProvider, useErc721 } from '@/composables'
 import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
-import { PROVIDERS } from '@/enums'
+import {PROVIDERS, ROUTE_NAMES} from '@/enums'
+import {router} from "@/router";
 const form = reactive({
   address: '',
 })
@@ -134,7 +139,7 @@ const connect = async (provider: UseProvider) => {
 const mint = async () => {
   await safeMint(
     '0xD656fB4ffdbB09dE24Cd1F25fC323DEbF4FB0886',
-    'ipfs://bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
+    'https://ipfs.uo/ipfs/bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
   )
 }
 
@@ -142,6 +147,20 @@ const safeMint = async (recipient: string, uri: string) => {
   await certificateSBT.safeMint(recipient, uri)
 }
 
+const goToCertificate =()=>{
+  router.push(ROUTE_NAMES.certificates)
+}
+const goToSetting = () => {
+   router.push(ROUTE_NAMES.setting)
+}
+
+const goToTemplate = () => {
+   router.push(ROUTE_NAMES.template)
+}
+
+const goToGenerate = () => {
+   router.push(ROUTE_NAMES.create)
+}
 init()
 </script>
 
