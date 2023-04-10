@@ -5,8 +5,10 @@ import * as ecc from 'tiny-secp256k1'
 const bip32 = BIP32Factory(ecc)
 import ECPairFactory from 'ecpair'
 import { mnemonicToSeedAsync } from 'bip39-web'
+
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
+import { Buffer } from 'buffer'
 
 // import * as typedArrayToBuffer from '@types/typedarray-to-buffer'
 
@@ -94,8 +96,14 @@ export class Bitcoin {
         // const txHex = new typedArrayToBuffer(
         //   new Uint8Array(encoder.encode(hex)),
         // )
+        console.log('test')
+        console.log('Buffer: ', Buffer)
+        console.log('*')
+        const bf = new Buffer('test', 'utf-8')
+        console.log(bf)
+        alert('some string')
         console.log(Buffer)
-        const txHex = Buffer.from(hex, 'hex')
+        const txHex = new Buffer(hex, 'hex')
         console.log('added')
 
         // const nonWitUTXO = Buffer.from(hex, 'hex')
@@ -112,7 +120,7 @@ export class Bitcoin {
       // const encoder = new TextEncoder()
       // const txHex = typedArrayToBuffer(new Uint8Array(encoder.encode(hex)))
       // console.log(txHex)
-      const txHex = Buffer.from(hex, 'hex')
+      const txHex = new Buffer(hex, 'hex')
 
       console.log('added')
       psbt.addInput({
@@ -183,7 +191,7 @@ export class Bitcoin {
       psbt.addInput({
         hash: utxo[i].tx_hash || '',
         index: i,
-        nonWitnessUtxo: Buffer.from(hex, 'hex'),
+        nonWitnessUtxo: new Buffer(hex, 'hex'),
       })
     }
     psbt.addOutput({

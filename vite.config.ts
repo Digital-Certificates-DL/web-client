@@ -2,7 +2,6 @@ import checker from 'vite-plugin-checker'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
@@ -32,10 +31,6 @@ export default defineConfig(({ command, mode }) => {
     publicDir: 'static',
     plugins: [
       vue(),
-      createSvgIconsPlugin({
-        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-        symbolId: '[name]',
-      }),
       wasm(),
       topLevelAwait(),
 
@@ -78,7 +73,7 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     optimizeDeps: {
-      exclude: ['@syntect/wasm'],
+      // exclude: ['@syntect/wasm'],
       esbuildOptions: {
         define: {
           global: 'globalThis',
