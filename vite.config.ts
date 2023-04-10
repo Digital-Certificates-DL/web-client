@@ -73,7 +73,7 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     optimizeDeps: {
-      // exclude: ['@syntect/wasm'],
+      exclude: ['@syntect/wasm'],
       esbuildOptions: {
         define: {
           global: 'globalThis',
