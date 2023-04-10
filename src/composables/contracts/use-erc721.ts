@@ -59,8 +59,6 @@ export const useErc721 = (address?: string) => {
         uri,
       ])
 
-      console.log('data: ', data)
-      console.log(provider.value, ' prov') // todo  there is  undefined
       const receipt = await provider.value.signAndSendTx({
         to: contractAddress.value,
         data,
@@ -69,7 +67,6 @@ export const useErc721 = (address?: string) => {
       await sleep(1000)
       return receipt
     } catch (error) {
-      console.log('err: ', error)
       handleEthError(error as EthProviderRpcError)
     }
   }

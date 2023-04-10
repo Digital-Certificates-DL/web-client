@@ -4,25 +4,25 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.QR.High"
+      v-model="form.QR?.High"
       placeholder="image size H"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.QR.Width"
+      v-model="form.QR?.Width"
       placeholder="image size W"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.QR.X"
+      v-model="form.QR?.X"
       placeholder="image position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.QR.Y"
+      v-model="form.QR?.Y"
       placeholder="image position(y)"
     />
 
@@ -30,19 +30,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Name.Size"
+      v-model="form.Name?.Size"
       placeholder="name font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Name.X"
+      v-model="form.Name?.X"
       placeholder="name position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Name.Y"
+      v-model="form.Name?.Y"
       placeholder="name position(y)"
     />
 
@@ -50,19 +50,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Date.Size"
+      v-model="form.Date?.Size"
       placeholder="date font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Date.X"
+      v-model="form.Date?.X"
       placeholder="date position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Date.Y"
+      v-model="form.Date?.Y"
       placeholder="date position(y)"
     />
 
@@ -70,19 +70,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Points.Size"
+      v-model="form.Points?.Size"
       placeholder="mark font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Points.X"
+      v-model="form.Points?.X"
       placeholder="mark position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Points.Y"
+      v-model="form.Points?.Y"
       placeholder="mark position(y)"
     />
 
@@ -90,19 +90,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.SerialNumber.Size"
+      v-model="form.SerialNumber?.Size"
       placeholder="serial number font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.SerialNumber.X"
+      v-model="form.SerialNumber?.X"
       placeholder="serial numbe position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.SerialNumber.Y"
+      v-model="form.SerialNumber?.Y"
       placeholder="serial numbe position(y)"
     />
 
@@ -110,19 +110,19 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Level.Size"
+      v-model="form.Level?.Size"
       placeholder="level font size"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Level.X"
+      v-model="form.Level?.X"
       placeholder="level position(x)"
     />
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Level.Y"
+      v-model="form.Level?.Y"
       placeholder="level position(y)"
     />
 
@@ -142,7 +142,7 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Note.Y"
+      v-model="form.Note?.Y"
       placeholder="note position(y)"
     />
 

@@ -1,98 +1,138 @@
 <template>
-  <div class="web3-page">
-    <template v-if="isLoaded">
-      <template v-if="isLoadFailed">
-        <error-message :message="$t('web3-page.loading-error-msg')" />
-      </template>
-      <template v-else>
-        <div class="web3-page__list">
-          <div
-            class="web3-page__card"
-            v-for="provider in providers"
-            :key="provider.selectedProvider.value"
-          >
+  <div class="main-page">
+    <div class="main-page__info">
+      <span class="main-page__info-logo"> LOGO </span>
+      <span>Service name</span>
+      <h3>
+        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus
+        egestas pharetra quam cursus
+      </h3>
+    </div>
+    <div class="main-page__body">
+      <div class="main-page__provider-side">
+        <template v-if="isLoaded">
+          <template v-if="isLoadFailed">
+            <error-message :message="$t('web3-page.loading-error-msg')" />
+          </template>
+          <template v-else>
             <div
-              class="web3-page__card-indicator"
-              :class="{
-                'web3-page__card-indicator--active': provider.isConnected.value,
-              }"
-            />
-            <h2 class="web3-page__card-title">
-              {{ provider.selectedProvider.value }}
-            </h2>
-            <span class="web3-page__card-name">
-              {{ provider.selectedAddress.value }}
-            </span>
-            <span class="web3-page__txt">
-              {{ `chainId: ${provider.chainId.value}` }}
-            </span>
-            <app-button
-              scheme="flat"
-              size="small"
-              class="web3-page__card-btn"
-              :text="provider.selectedAddress.value || 'Connect'"
-              @click="connect(provider)"
-              :disabled="provider.isConnected.value"
-            />
-            <app-button
-              class="complex-form__submit-btn"
-              type="submit"
-              text="mint"
-              @click="mint"
-            />
-
-            <app-button
-              v-if="provider.isConnected.value"
-              class="web3-page__card-btn"
-              :text="'Disconnect'"
-              scheme="flat"
-              color="error"
-              size="small"
-              @click="provider.disconnect"
-            />
-          </div>
-        </div>
-      </template>
-    </template>
-    <template v-else>
-      <loader />
-    </template>
-    <div>
-      <app-button :text="'settings'" scheme="flat" color="error" size="small" @click="goToSetting"/>
-      <app-button
-        :text="'Certificates'"
-        scheme="flat"
-        color="error"
-        size="small"
-        @click="goToCertificate"
-      />
-      <app-button :text="'Template'" scheme="flat" color="error" size="small"
-                  @click="goToTemplate"
-      />
-      <app-button
-        :text="'Generation'"
-        scheme="flat"
-        color="error"
-        size="small"
-        @click="goToGenerate"
-      />
+              v-if="!metamaskProvider.isConnected.value"
+              class="main-page__metamask"
+            >
+              <h1 class="main-page__metamask-title">
+Connect to MetaMask
+</h1>
+              <h2 class="main-page__metamask-definition">
+                Ac integer sapien nisl turpis arcu integer. Pellentesque
+                phasellus egestas pharetra quam cursus
+              </h2>
+              <app-button
+                scheme="flat"
+                size="small"
+                class="web3-page__card-btn"
+                :text="metamaskProvider.selectedAddress.value || 'Connect'"
+                @click="connect(metamaskProvider)"
+                :disabled="metamaskProvider.isConnected.value"
+              />
+              <app-button
+                v-if="metamaskProvider.isConnected.value"
+                class="web3-page__card-btn"
+                :text="'Disconnect'"
+                scheme="flat"
+                color="error"
+                size="small"
+                @click="metamaskProvider.disconnect"
+              />
+            </div>
+            <div v-else class="main-page__metamask">
+              <span class="web3-page__txt">
+                {{ `chainId: ${metamaskProvider.chainId.value}` }}
+              </span>
+              <app-button
+                scheme="flat"
+                size="small"
+                class="web3-page__card-btn"
+                :text="metamaskProvider.selectedAddress.value || 'Connect'"
+                @click="connect(metamaskProvider)"
+                :disabled="metamaskProvider.isConnected.value"
+              />
+              <!--          todo  delete this button-->
+              <app-button
+                class="complex-form__submit-btn"
+                type="submit"
+                scheme="flat"
+                text="mint"
+                size="small"
+                @click="mint"
+              />
+              <!--          ^-->
+              <app-button
+                v-if="metamaskProvider.isConnected.value"
+                class="web3-page__card-btn"
+                :text="'Disconnect'"
+                scheme="flat"
+                color="error"
+                size="small"
+                @click="metamaskProvider.disconnect"
+              />
+            </div>
+          </template>
+        </template>
+        <template v-else>
+          <loader />
+        </template>
+      </div>
+      <div class="main-page__endpoints-side">
+        <app-button
+          :text="'Settings'"
+          class="setting btn"
+          scheme="flat"
+          size="small"
+          @click="goToSetting"
+        />
+        <app-button
+          :text="'Certificates'"
+          class="certificates btn"
+          scheme="flat"
+          size="small"
+          @click="goToCertificate"
+        />
+        <app-button
+          class="template btn"
+          :text="'Template'"
+          scheme="flat"
+          size="small"
+          @click="goToTemplate"
+        />
+        <app-button
+          :text="'Generation'"
+          class="generation btn"
+          scheme="flat"
+          size="small"
+          @click="goToGenerate"
+        />
+        <app-button
+          :text="'bitcoin'"
+          class="generation btn"
+          scheme="flat"
+          size="small"
+          @click="sendTx"
+        />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { AppButton, Loader, ErrorMessage } from '@/common'
-import { reactive } from 'vue'
 import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
 import { useProvider, useErc721 } from '@/composables'
 import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
-import {PROVIDERS, ROUTE_NAMES} from '@/enums'
-import {router} from "@/router";
-const form = reactive({
-  address: '',
-})
+import { PROVIDERS, ROUTE_NAMES } from '@/enums'
+import { router } from '@/router'
+import btc from '@/utils/bitcoin.util'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
@@ -106,7 +146,6 @@ const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') /
 const metamaskProvider = computed(() =>
   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
 )
-
 const init = async () => {
   try {
     await web3Store.detectProviders()
@@ -139,7 +178,7 @@ const connect = async (provider: UseProvider) => {
 const mint = async () => {
   await safeMint(
     '0xD656fB4ffdbB09dE24Cd1F25fC323DEbF4FB0886',
-    'https://ipfs.uo/ipfs/bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
+    'https://ipfs.io/ipfs/bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
   )
 }
 
@@ -147,33 +186,111 @@ const safeMint = async (recipient: string, uri: string) => {
   await certificateSBT.safeMint(recipient, uri)
 }
 
-const goToCertificate =()=>{
+const goToCertificate = () => {
   router.push(ROUTE_NAMES.certificates)
 }
 const goToSetting = () => {
-   router.push(ROUTE_NAMES.setting)
+  router.push(ROUTE_NAMES.setting)
 }
 
 const goToTemplate = () => {
-   router.push(ROUTE_NAMES.template)
+  router.push(ROUTE_NAMES.template)
 }
 
 const goToGenerate = () => {
-   router.push(ROUTE_NAMES.create)
+  router.push(ROUTE_NAMES.create)
 }
+
+const sendTx = async () => {
+  console.log('start')
+  const i = 4
+  const tx = await btc.Bitcoin.PrepareTXTestnet(
+    'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
+    i,
+  )
+
+  console.log('pr')
+  console.log(tx)
+  const res = await btc.Bitcoin.SendToTestnet(tx?.hex || '')
+  console.log(res)
+}
+
 init()
 </script>
 
 <style lang="scss" scoped>
-.web3-page {
-  padding-bottom: toRem(100);
+.main-page {
+  //padding-bottom: toRem(100);
 }
 
-.web3-page__list {
+.main-page__svc-info {
+  margin-top: toRem(27);
+  display: block;
+  place-items: center;
+}
+
+.main-page__info-logo {
+  margin-top: toRem(80);
+}
+
+.main-page__body {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(143, 189, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.6;
+}
+
+.main-page__metamask {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: toRem(24);
-  margin-bottom: toRem(24);
+  place-content: center;
+  border: toRem(1) solid var(--border-primary-main);
+  //grid-template-columns: 1fr 1fr 1fr;
+  //grid-gap: toRem(24);
+  //margin-bottom: toRem(24);
+  border-radius: toRem(8);
+  padding: toRem(12);
+  width: toRem(642);
+  height: toRem(432);
+}
+
+.main-page__endpoints-side {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+  grid-auto-rows: toRem(100);
+}
+
+.main-page__metamask-title {
+  margin: auto;
+}
+
+.main-page__metamask-definition {
+  margin: auto;
+}
+
+.btn {
+  min-width: toRem(250);
+}
+
+.template {
+  background: #97ecff;
+}
+
+.certificates {
+  background: #d5a9ff;
+}
+
+.setting {
+  background: #8fffdd;
+}
+
+.generation {
+  background: #8fbdff;
 }
 
 .web3-page__card {

@@ -10,9 +10,11 @@ import { createApp, getCurrentInstance, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { initApi } from '@/api'
 import { i18n } from '@/localization'
+// import { Buffer } from 'buffer'
 import { config } from '@config'
 import { router } from '@/router'
 import { store } from '@/store'
+// window.Buffer = Buffer
 
 const app = createApp({
   setup() {

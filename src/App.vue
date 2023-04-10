@@ -1,6 +1,5 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
-    <app-navbar class="app__navbar" />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
         <component class="app__main" :is="Component" />

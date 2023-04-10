@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue'
 import AppButton from '@/common/AppButton.vue'
-import { TemplateTypes, UserJSONResponse } from '@/types'
+import { UserJSONResponse } from '@/types'
 
 const mintText = 'Make sbt issuance'
 const download = '>'

@@ -31,36 +31,50 @@ export interface Erc721Interface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
+    "deleteAdmin(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
+    "safeMint(address,string)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setNewAdmin(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
+    "tokenByIndex(uint256)": FunctionFragment;
+    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
+    "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "safeMint(address,string)": FunctionFragment;
+    "transferToken(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
+      | "burn"
+      | "deleteAdmin"
       | "getApproved"
       | "isApprovedForAll"
       | "name"
       | "ownerOf"
+      | "safeMint"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
-      | "safeMint"
       | "setApprovalForAll"
+      | "setNewAdmin"
       | "supportsInterface"
       | "symbol"
+      | "tokenByIndex"
+      | "tokenOfOwnerByIndex"
       | "tokenURI"
+      | "totalSupply"
       | "transferFrom"
+      | "transferToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -69,6 +83,14 @@ export interface Erc721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deleteAdmin",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -83,6 +105,10 @@ export interface Erc721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeMint",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
@@ -101,17 +127,13 @@ export interface Erc721Interface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-
-  encodeFunctionData(
-    functionFragment: "safeMint",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNewAdmin",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -119,8 +141,20 @@ export interface Erc721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "tokenByIndex",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenOfOwnerByIndex",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokenURI",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
@@ -130,9 +164,22 @@ export interface Erc721Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "transferToken",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "deleteAdmin",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -143,6 +190,7 @@ export interface Erc721Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256)",
     data: BytesLike
@@ -152,11 +200,11 @@ export interface Erc721Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "safeMint",
+    functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
+    functionFragment: "setNewAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -164,9 +212,25 @@ export interface Erc721Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenOfOwnerByIndex",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferToken",
     data: BytesLike
   ): Result;
 
@@ -255,6 +319,16 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    deleteAdmin(
+      admin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -273,6 +347,12 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -280,22 +360,22 @@ export interface Erc721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    safeMint(
-      to: PromiseOrValue<string>,
-      uri: PromiseOrValue<string>
-    ): Promise<ContractTransaction>;
-
     "safeTransferFrom(address,address,uint256,bytes)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setNewAdmin(
+      admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -306,12 +386,32 @@ export interface Erc721 extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
+    tokenByIndex(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    tokenOfOwnerByIndex(
+      owner: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     tokenURI(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     transferFrom(
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferToken(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -329,6 +429,16 @@ export interface Erc721 extends BaseContract {
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  burn(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deleteAdmin(
+    admin: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
@@ -348,6 +458,12 @@ export interface Erc721 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  safeMint(
+    to: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "safeTransferFrom(address,address,uint256)"(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
@@ -355,22 +471,22 @@ export interface Erc721 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  safeMint(
-    to: PromiseOrValue<string>,
-    uri: PromiseOrValue<string>,
-  ): Promise<ContractTransaction>;
-
   "safeTransferFrom(address,address,uint256,bytes)"(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
-    _data: PromiseOrValue<BytesLike>,
+    data: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setApprovalForAll(
     operator: PromiseOrValue<string>,
     approved: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setNewAdmin(
+    admin: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -381,12 +497,32 @@ export interface Erc721 extends BaseContract {
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
+  tokenByIndex(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  tokenOfOwnerByIndex(
+    owner: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   tokenURI(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
+  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
   transferFrom(
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferToken(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
@@ -404,6 +540,16 @@ export interface Erc721 extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    deleteAdmin(
+      admin: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -423,6 +569,12 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -434,18 +586,18 @@ export interface Erc721 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    safeMint(
-      to: PromiseOrValue<string>,
-      uri: PromiseOrValue<string>,
     ): Promise<void>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNewAdmin(
+      admin: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -456,12 +608,32 @@ export interface Erc721 extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
+    tokenByIndex(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenOfOwnerByIndex(
+      owner: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokenURI(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
     transferFrom(
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferToken(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -516,6 +688,16 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deleteAdmin(
+      admin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -534,6 +716,12 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -545,18 +733,18 @@ export interface Erc721 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    safeMint(
-      to: PromiseOrValue<string>,
-      uri: PromiseOrValue<string>,
     ): Promise<BigNumber>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setNewAdmin(
+      admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -567,12 +755,32 @@ export interface Erc721 extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
+    tokenByIndex(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenOfOwnerByIndex(
+      owner: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokenURI(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
     transferFrom(
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferToken(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -590,6 +798,16 @@ export interface Erc721 extends BaseContract {
     balanceOf(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deleteAdmin(
+      admin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -610,6 +828,12 @@ export interface Erc721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    safeMint(
+      to: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -621,18 +845,18 @@ export interface Erc721 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    safeMint(
-      to: PromiseOrValue<string>,
-      uri: PromiseOrValue<string>,
     ): Promise<PopulatedTransaction>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setNewAdmin(
+      admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -643,12 +867,32 @@ export interface Erc721 extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    tokenByIndex(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenOfOwnerByIndex(
+      owner: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     tokenURI(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     transferFrom(
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferToken(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,

@@ -13,6 +13,9 @@ const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = (relative: string) => path.resolve(appDirectory, relative)
 const root = path.resolve(__dirname, resolveApp('src'))
 
+import wasm from 'vite-plugin-wasm'
+import topLevelAwait from 'vite-plugin-top-level-await'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -33,6 +36,9 @@ export default defineConfig(({ command, mode }) => {
         iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
         symbolId: '[name]',
       }),
+      wasm(),
+      topLevelAwait(),
+
       checker({
         overlay: {
           initialIsOpen: false,
@@ -68,10 +74,11 @@ export default defineConfig(({ command, mode }) => {
         '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
-        'events': 'events-polyfill',
+        events: 'events-polyfill',
       },
     },
     optimizeDeps: {
+      exclude: ['@syntect/wasm'],
       esbuildOptions: {
         define: {
           global: 'globalThis',
@@ -87,3 +94,10 @@ export default defineConfig(({ command, mode }) => {
     },
   }
 })
+
+// export default defineConfig({
+//   plugins: [
+//     wasm(),
+//     topLevelAwait()
+//   ]
+// });

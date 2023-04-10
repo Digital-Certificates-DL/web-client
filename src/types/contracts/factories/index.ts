@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Erc721__factory } from "./Erc721__factory";
-

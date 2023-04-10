@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { UseProvider, UserJSONResponse, UserJSONResponseList } from '@/types'
+import { UseProvider, UserJSONResponse } from '@/types'
 import { InputField } from '@/fields'
 import { computed, reactive, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
@@ -72,7 +72,6 @@ const init = async () => {
 }
 const safeMint = async (recipient: string, uri: string) => {
   const res = await certificateSBT.safeMint(recipient, uri)
-  console.log(res)
 }
 
 const mint = async () => {
@@ -90,26 +89,26 @@ const mint = async () => {
       err => console.log('error: ', err), //todo make better
     )
   await init()
-  console.log(url)
-  const safeMintResp = await safeMint(form.address, 'https://ipfs.io/ipfs/' + url)
-  console.log(safeMintResp)
+  const safeMintResp = await safeMint(
+    form.address,
+    'https://ipfs.io/ipfs/' + url,
+  )
 }
 </script>
 
 <style scoped>
-.modal__window{
+.modal__window {
   width: 50%;
   height: 70%;
   background: white;
-  border-radius: 10px;
+  border-radius: 1rem;
   flex-direction: row;
-  padding: 10px;
+  padding: 1rem;
   position: fixed;
 }
 
-.modal__back{
-  /*display: none;*/
-  backdrop-filter: blur(10px);
+.modal__back {
+  backdrop-filter: blur(1rem);
   position: fixed;
   top: 0;
   width: 100%;
@@ -117,6 +116,5 @@ const mint = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 </style>
