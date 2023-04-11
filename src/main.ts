@@ -1,5 +1,4 @@
 import '@/styles/app.scss'
-
 import App from '@/App.vue'
 import log from 'loglevel'
 
@@ -9,11 +8,13 @@ import { createApp, getCurrentInstance, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { initApi } from '@/api'
 import { i18n } from '@/localization'
-import { Buffer } from 'buffer'
 import { config } from '@config'
 import { router } from '@/router'
 import { store } from '@/store'
-globalThis.Buffer = Buffer
+import { Buffer } from 'buffer'
+// eslint-disable-next-line
+// @ts-ignore
+window.Buffer = Buffer
 
 const app = createApp({
   setup() {
