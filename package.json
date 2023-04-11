@@ -26,6 +26,7 @@
     "@distributedlab/json-api-client": "^2.2.1",
     "@noble/secp256k1": "^1.7.1",
     "@solana/web3.js": "1.52.0",
+    "@syntect/wasm": "^0.0.4",
     "@transmute/secp256k1-key-pair": "^0.7.0-unstable.80",
     "@ts-bitcoin/core": "^2.2.0",
     "@types/bitcoinjs-lib": "^5.0.0",

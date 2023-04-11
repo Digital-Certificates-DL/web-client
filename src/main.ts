@@ -12,6 +12,8 @@ import { i18n } from '@/localization'
 import { config } from '@config'
 import { router } from '@/router'
 import { store } from '@/store'
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
 
 const app = createApp({
   setup() {
@@ -35,7 +37,7 @@ app.config.globalProperties.$config = config
 app.config.globalProperties.$icons = ICON_NAMES
 
 app.config.errorHandler = function (err, vm, info) {
-  log.error(`Error: ${err}; Info: ${info}`)
+  // log.error(Error: ${err}; Info: ${info})
 }
 
 app.mount('#app')

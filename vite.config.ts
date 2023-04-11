@@ -5,15 +5,14 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
-import fs from 'fs'
-import path from 'path'
+import * as fs from 'fs'
+import * as path from 'path'
 
 const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = (relative: string) => path.resolve(appDirectory, relative)
 const root = path.resolve(__dirname, resolveApp('src'))
 
 import wasm from 'vite-plugin-wasm'
-import topLevelAwait from 'vite-plugin-top-level-await'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -32,8 +31,6 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       vue(),
       wasm(),
-      topLevelAwait(),
-
       checker({
         overlay: {
           initialIsOpen: false,
@@ -73,7 +70,7 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     optimizeDeps: {
-      exclude: ['@syntect/wasm'],
+      exclude: ['buffer','@syntect/wasm'],
       esbuildOptions: {
         define: {
           global: 'globalThis',

@@ -29,6 +29,8 @@ export type UserJSONResponseList = {
 }
 
 export type UserSetting = {
+  Name: string
+  Org: string
   SignKey: string
   address: string
   SendKey: string

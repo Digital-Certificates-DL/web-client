@@ -8,7 +8,7 @@ import { mnemonicToSeedAsync } from 'bip39-web'
 
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
-import { Buffer } from 'buffer'
+ // import { Buffer  from 'buffer'
 
 // import * as typedArrayToBuffer from '@types/typedarray-to-buffer'
 
