@@ -86,10 +86,3 @@ export default defineConfig(({ command, mode }) => {
     },
   }
 })
-
-// export default defineConfig({
-//   plugins: [
-//     wasm(),
-//     topLevelAwait()
-//   ]
-// });

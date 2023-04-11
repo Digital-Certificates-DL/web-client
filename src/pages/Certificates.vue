@@ -51,7 +51,6 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
 }
 const prepareUserImg = (users: UserJSONResponseList) => {
   //todo  move to  helpers
-  console.log(users)
   for (const user of users.data) {
     user.attributes.Img =
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()

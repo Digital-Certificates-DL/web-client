@@ -1,6 +1,6 @@
 <template>
   <app-header  />
-  <div class="setting_title">
+  <div class="setting__title">
     <h1>Setting</h1>
     <p>
       Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus
@@ -65,4 +65,10 @@ const save = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss" >
+.setting__title{
+  color: #ff545b;
+}
+
+.setting_body{}
+</style>

@@ -2,14 +2,14 @@
   <div class="main-page">
     <div class="main-page__info">
       <span class="main-page__info-logo"> LOGO </span>
-      <span>Service name</span>
+      <span class="main-page__info-name">Service name</span>
       <h3>
-        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus
-        egestas pharetra quam cursus
+        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus
       </h3>
     </div>
     <div class="main-page__body">
       <div class="main-page__provider-side">
+
         <template v-if="isLoaded">
           <template v-if="isLoadFailed">
             <error-message :message="$t('web3-page.loading-error-msg')" />
@@ -19,13 +19,10 @@
               v-if="!metamaskProvider.isConnected.value"
               class="main-page__metamask"
             >
-              <h1 class="main-page__metamask-title">
-Connect to MetaMask
-</h1>
-              <h2 class="main-page__metamask-definition">
-                Ac integer sapien nisl turpis arcu integer. Pellentesque
-                phasellus egestas pharetra quam cursus
-              </h2>
+              <p class="main-page__metamask-title">Connect to MetaMask</p>
+              <p class="main-page__metamask-definition">
+                Ac integer sapien nisl turpis arcu integer. Pellentesque  phasellus egestas pharetra quam cursus
+              </p>
               <app-button
                 scheme="flat"
                 size="small"
@@ -123,7 +120,7 @@ Connect to MetaMask
   </div>
 </template>
 <script lang="ts" setup>
-import { AppButton, Loader, ErrorMessage } from '@/common'
+import {AppButton, Loader, ErrorMessage} from '@/common'
 import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -152,12 +149,15 @@ const init = async () => {
 
     for (const designatedProvider of web3Store.providers) {
       const provider = useProvider()
-
+      console.log(web3Store.providers)
       await provider.init(designatedProvider)
 
       if (provider.selectedProvider.value === PROVIDERS.metamask) {
+        console.log("mt")
         await web3Store.provider.init(designatedProvider)
       }
+      console.log("pr: ", provider)
+
       providers.push(provider)
     }
   } catch (error) {
@@ -219,10 +219,25 @@ init()
 </script>
 
 <style lang="scss" scoped>
-.main-page {
-  //padding-bottom: toRem(100);
+.main_page{
+  display: flex;
+  justify-items: center;
 }
 
+.main-page__info {
+  display: grid;
+  margin-top: toRem(80);
+  grid-row: span;
+  justify-content:center;
+  padding-bottom: toRem(100);
+}
+
+
+.main-page__info-name{
+  margin: auto;
+  font-size: toRem(25);
+
+}
 .main-page__svc-info {
   margin-top: toRem(27);
   display: block;
@@ -230,8 +245,11 @@ init()
 }
 
 .main-page__info-logo {
-  margin-top: toRem(80);
+  margin: auto;
+  font-size: toRem(25);
+
 }
+
 
 .main-page__body {
   display: flex;
@@ -266,11 +284,13 @@ init()
 }
 
 .main-page__metamask-title {
+  font-size: toRem(35);
   margin: auto;
 }
 
 .main-page__metamask-definition {
-  margin: auto;
+  text-align: center;
+  font-size:toRem(20);
 }
 
 .btn {

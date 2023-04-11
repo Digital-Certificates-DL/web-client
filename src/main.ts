@@ -12,8 +12,8 @@ import { i18n } from '@/localization'
 import { config } from '@config'
 import { router } from '@/router'
 import { store } from '@/store'
-import { Buffer } from 'buffer'
-window.Buffer = Buffer
+// import { Buffer } from 'buffer'
+// window.Buffer = Buffer
 
 const app = createApp({
   setup() {
