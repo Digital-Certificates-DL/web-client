@@ -8,7 +8,6 @@ import { mnemonicToSeedAsync } from 'bip39-web'
 
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
- // import { Buffer  from 'buffer'
 
 // import * as typedArrayToBuffer from '@types/typedarray-to-buffer'
 
@@ -28,6 +27,7 @@ export class Bitcoin {
     index++
     // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
     const exchangeKey = bip.derive(index)
+    console.log("index: ", bip.index)
     console.log('ex: ', exchangeKey)
     const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
     console.log('key: ', keyPairex)
@@ -79,10 +79,9 @@ export class Bitcoin {
 
       const { txs, utxoAmount, value } = await this.betterUtxoTestnet(
         utxos,
-        2,
-        1,
+        3,
+        556 + 557 + 558,
       )
-      // 556 + 557 + 558,
       console.log('after better')
       fee = value
       utxo = txs
@@ -246,7 +245,8 @@ export class Bitcoin {
     return size * fee
   }
   static async calculateFeeTestnet(outs: number, ins: number) {
-    const size = ins * 180 + outs * 34 + 10 - ins
+    const size = ins * 148 + outs * 34 + 10 - ins
+    // const size = ins * 180 + outs * 34 + 10 - ins
     let fee = 10
     //
     fee = await axios
@@ -341,6 +341,10 @@ export class Bitcoin {
     let value = await this.calculateFeeTestnet(outs, 1)
     console.log('calculate')
     value += txsValue
+    console.log({
+      value: value,
+      utxo: txs
+    })
     for (const tx of txs) {
       if (tx.value > value) {
         largeTxs.push(tx)
@@ -370,11 +374,8 @@ export class Bitcoin {
         }
       }
     }
-    console.log('return', {
-      txs: smaller,
-      utxoAmount: smaller[0].value,
-      value: value,
-    })
+    console.log("largeTxs: ",largeTxs)
+    console.log(value)
     return {
       txs: largeTxs[0],
       utxoAmount: largeTxs[0].value,

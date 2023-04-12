@@ -153,10 +153,8 @@ const init = async () => {
       await provider.init(designatedProvider)
 
       if (provider.selectedProvider.value === PROVIDERS.metamask) {
-        console.log("mt")
         await web3Store.provider.init(designatedProvider)
       }
-      console.log("pr: ", provider)
 
       providers.push(provider)
     }
@@ -203,7 +201,7 @@ const goToGenerate = () => {
 
 const sendTx = async () => {
   console.log('start')
-  const i = 4
+  const i = 5
   const tx = await btc.Bitcoin.PrepareTXTestnet(
     'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
     i,
