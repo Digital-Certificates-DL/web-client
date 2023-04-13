@@ -12,7 +12,7 @@ import axios from 'axios'
 // import * as typedArrayToBuffer from '@types/typedarray-to-buffer'
 
 export class Bitcoin {
-  static PrepareTXTestnet = async (
+  static PrepareLegacyTXTestnet = async (
     mnph: string,
     index: number,
     txID?: string,
@@ -161,7 +161,7 @@ export class Bitcoin {
     }
   }
 
-  static async PrepareTXMainnet(key: string, txID?: string, address?: string) {
+  static async PrepareLegacyTXMainnet(key: string, txID?: string, address?: string) {
     const keyPair = ECPair.fromWIF(key)
     const psbt = new bitcoin.Psbt()
     let amount = 0

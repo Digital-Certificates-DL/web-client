@@ -44,7 +44,7 @@ import InputField from '@/fields/InputField.vue'
 import { reactive } from 'vue'
 import { UserSetting } from '@/types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
-import { router } from '@/router'
+import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppButton from '@/common/AppButton.vue'
 import AppHeader from "@/common/AppHeader.vue";
@@ -59,9 +59,10 @@ const form = reactive({
   Url: '',
 } as UserSetting)
 
-const save = () => {
+const router = useRouter()
+const save = async  () => {
   userState.setting = form
-  router.push(ROUTE_NAMES.main)
+  await router.push({name:ROUTE_NAMES.certificates})
 }
 </script>
 

@@ -7,12 +7,12 @@ const routes = [
     path: '/:catchAll(.*)',
     redirect: { name: ROUTE_NAMES.main },
   },
-  {
-    //todo  update routers
-    path: '/',
-    name: ROUTE_NAMES.web3,
-    component: () => import('@/pages/Main.vue'),
-  },
+  // {
+  //   //todo  update routers
+  //   path: '/',
+  //   name: ROUTE_NAMES.web3,
+  //   component: () => import('@/pages/Main.vue'),
+  // },
   {
     path: '/template',
     name: ROUTE_NAMES.template,

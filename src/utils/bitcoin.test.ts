@@ -6,7 +6,7 @@ describe('Performs bitcoin signature class unit test', () => {
     // let currentKey = '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ'
     const usedKey = []
     for (let i = 0; i < 3; i++) {
-      const tx = await btc.Bitcoin.PrepareTXTestnet(
+      const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
         'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
         i,
       )

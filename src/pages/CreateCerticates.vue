@@ -36,7 +36,7 @@
       </p>
       <div class="create_upload_files">
         <input-field
-          label="Name"
+          label="Link"
           type="text"
           v-model="certificatesInfo.Link"
           placeholder="note position(y)"
@@ -49,12 +49,12 @@
           text="Start"
           @click="start"
         />
-        <app-button
-          class="complex-form__cancel-btn"
-          type="submit"
-          text="Cancel"
-          @click="start"
-        />
+<!--        <app-button-->
+<!--          class="complex-form__cancel-btn"-->
+<!--          type="submit"-->
+<!--          text="Cancel"-->
+<!--          @click="start"-->
+<!--        />-->
       </div>
     </div>
 
@@ -131,11 +131,14 @@ const start = async () => {
   // todo add loader
   loaderState.state = true
   loaderState.body = 'Parsing users'
-  const users = await parsedData(form.Url)
+  console.log("Parsing users")
+  const users = await parsedData(certificatesInfo.Link)
   loaderState.body = 'Signing users'
+  console.log("Signing users")
   const signatures = sign(users.data)
   loaderState.body = 'Creating PDF for users'
   await createPDF(signatures)
+  console.log("Creating PDF for users")
   loaderState.body = ''
   loaderState.state = false
 }
@@ -148,12 +151,15 @@ const parsedData = async (sheepUrl?: string) => {
       },
     },
   )
+  console.log("users: ",  users)
   return users
 }
 const sign = (users: UserJSONResponseList) => {
+  console.log("start sign: ", users)
   const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
   for (const user of users.data) {
-    if (user.attributes.Signature === undefined) {
+    console.log("user: ", user)
+    if (user.attributes.Signature === undefined || user.attributes.Signature == '') {
       user.attributes.Signature = signature.signMsg(user.attributes.Msg)
     }
   }

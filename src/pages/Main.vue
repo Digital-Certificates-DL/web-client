@@ -202,7 +202,7 @@ const goToGenerate = () => {
 const sendTx = async () => {
   console.log('start')
   const i = 5
-  const tx = await btc.Bitcoin.PrepareTXTestnet(
+  const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
     'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
     i,
   )
