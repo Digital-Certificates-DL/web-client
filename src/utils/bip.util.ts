@@ -1,17 +1,16 @@
-import {mnemonicToSeedAsync} from "bip39-web";
-import {testnet} from "ecpair/src/networks";
-import * as bitcoin from "bitcoinjs-lib";
+import { mnemonicToSeedAsync } from 'bip39-web'
+import { testnet } from 'ecpair/src/networks'
+import * as bitcoin from 'bitcoinjs-lib'
 
 import * as ecc from 'tiny-secp256k1'
 
 const bip32 = BIP32Factory(ecc)
 import ECPairFactory from 'ecpair'
-import BIP32Factory from "bip32";
+import BIP32Factory from 'bip32'
 const ECPair = ECPairFactory(ecc)
 
-
-export class Bip{
-  static genAddress=  async (mnph: string, index: number)=>{
+export class Bip {
+  static genAddress = async (mnph: string, index: number) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
       return bytes
     })
@@ -20,7 +19,7 @@ export class Bip{
     index++
     // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
     const exchangeKey = bip.derive(index)
-    console.log("index: ", bip.index)
+    console.log('index: ', bip.index)
     console.log('ex: ', exchangeKey)
     const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
     console.log('key: ', keyPairex)
@@ -38,5 +37,4 @@ export class Bip{
       network: testnet,
     })
   }
-
 }

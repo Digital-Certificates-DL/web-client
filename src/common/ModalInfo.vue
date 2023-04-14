@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { UseProvider, UserJSONResponse } from '@/types'
 import { InputField } from '@/fields'
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { useErc721, useProvider } from '@/composables'
 import { PROVIDERS } from '@/enums'
@@ -45,9 +45,9 @@ const providers: UseProvider[] = []
 
 const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
 
-const metamaskProvider = computed(() =>
-  providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
-)
+// const metamaskProvider = computed(() =>
+//   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
+// )
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 
@@ -71,12 +71,12 @@ const init = async () => {
   isLoaded.value = true
 }
 const safeMint = async (recipient: string, uri: string) => {
-  const res = await certificateSBT.safeMint(recipient, uri)
+  await certificateSBT.safeMint(recipient, uri)
 }
 
 const mint = async () => {
   let url = ''
-  const resp = await api
+  await api
     .post<IpfsJSONResponse>('/integrations/ccp/ipfs/', {
       data: {
         Description: 'test',
@@ -85,14 +85,11 @@ const mint = async () => {
       },
     })
     .then(resp => (url = resp.data.attributes.url))
-    .catch(
-      err => console.log('error: ', err), //todo make better
-    )
+    .catch
+    // err => console.log('error: ', err), //todo make better
+    ()
   await init()
-  const safeMintResp = await safeMint(
-    form.address,
-    'https://ipfs.io/ipfs/' + url,
-  )
+  await safeMint(form.address, 'https://ipfs.io/ipfs/' + url)
 }
 </script>
 

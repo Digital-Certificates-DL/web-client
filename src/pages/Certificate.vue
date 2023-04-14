@@ -7,12 +7,8 @@
   </div>
 </template>
 
-<script lang="ts" setup >
-import AppHeader from "@/common/AppHeader.vue";
-
-
+<script lang="ts" setup>
+import AppHeader from '@/common/AppHeader.vue'
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

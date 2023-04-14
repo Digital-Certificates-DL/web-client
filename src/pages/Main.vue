@@ -4,12 +4,12 @@
       <span class="main-page__info-logo"> LOGO </span>
       <span class="main-page__info-name">Service name</span>
       <h3>
-        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus
+        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus
+        egestas pharetra quam cursus
       </h3>
     </div>
     <div class="main-page__body">
       <div class="main-page__provider-side">
-
         <template v-if="isLoaded">
           <template v-if="isLoadFailed">
             <error-message :message="$t('web3-page.loading-error-msg')" />
@@ -21,7 +21,8 @@
             >
               <p class="main-page__metamask-title">Connect to MetaMask</p>
               <p class="main-page__metamask-definition">
-                Ac integer sapien nisl turpis arcu integer. Pellentesque  phasellus egestas pharetra quam cursus
+                Ac integer sapien nisl turpis arcu integer. Pellentesque
+                phasellus egestas pharetra quam cursus
               </p>
               <app-button
                 scheme="flat"
@@ -119,8 +120,9 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
-import {AppButton, Loader, ErrorMessage} from '@/common'
+import { AppButton, Loader, ErrorMessage } from '@/common'
 import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -149,7 +151,6 @@ const init = async () => {
 
     for (const designatedProvider of web3Store.providers) {
       const provider = useProvider()
-      console.log(web3Store.providers)
       await provider.init(designatedProvider)
 
       if (provider.selectedProvider.value === PROVIDERS.metamask) {
@@ -176,7 +177,7 @@ const connect = async (provider: UseProvider) => {
 const mint = async () => {
   await safeMint(
     '0xD656fB4ffdbB09dE24Cd1F25fC323DEbF4FB0886',
-    'https://ipfs.io/ipfs/bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
+    'bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
   )
 }
 
@@ -200,13 +201,11 @@ const goToGenerate = () => {
 }
 
 const sendTx = async () => {
-  console.log('start')
   const i = 5
   const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
     'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
     i,
   )
-
   console.log('pr')
   console.log(tx)
   const res = await btc.Bitcoin.SendToTestnet(tx?.hex || '')
@@ -216,8 +215,8 @@ const sendTx = async () => {
 init()
 </script>
 
-<style lang="scss" scoped>
-.main_page{
+<style lang="scss">
+.main_page {
   display: flex;
   justify-items: center;
 }
@@ -226,16 +225,15 @@ init()
   display: grid;
   margin-top: toRem(80);
   grid-row: span;
-  justify-content:center;
+  justify-content: center;
   padding-bottom: toRem(100);
 }
 
-
-.main-page__info-name{
+.main-page__info-name {
   margin: auto;
   font-size: toRem(25);
-
 }
+
 .main-page__svc-info {
   margin-top: toRem(27);
   display: block;
@@ -245,9 +243,7 @@ init()
 .main-page__info-logo {
   margin: auto;
   font-size: toRem(25);
-
 }
-
 
 .main-page__body {
   display: flex;
@@ -265,9 +261,6 @@ init()
   display: grid;
   place-content: center;
   border: toRem(1) solid var(--border-primary-main);
-  //grid-template-columns: 1fr 1fr 1fr;
-  //grid-gap: toRem(24);
-  //margin-bottom: toRem(24);
   border-radius: toRem(8);
   padding: toRem(12);
   width: toRem(642);
@@ -277,7 +270,7 @@ init()
 .main-page__endpoints-side {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 50px;
+  gap: toRem(50);
   grid-auto-rows: toRem(100);
 }
 
@@ -288,7 +281,7 @@ init()
 
 .main-page__metamask-definition {
   text-align: center;
-  font-size:toRem(20);
+  font-size: toRem(20);
 }
 
 .btn {

@@ -14,6 +14,12 @@ const routes = [
   //   component: () => import('@/pages/Main.vue'),
   // },
   {
+    path: '/main',
+    name: ROUTE_NAMES.main,
+    component: () => import('@/pages/Main.vue'),
+  },
+
+  {
     path: '/template',
     name: ROUTE_NAMES.template,
     component: () => import('@/pages/PdfView.vue'),
@@ -23,11 +29,7 @@ const routes = [
     name: ROUTE_NAMES.create,
     component: () => import('@/pages/CreateCerticates.vue'),
   },
-  {
-    path: '/main',
-    name: ROUTE_NAMES.main,
-    component: () => import('@/pages/Main.vue'),
-  },
+
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,

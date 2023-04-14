@@ -9,8 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar } from '@/common'
-
 import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'

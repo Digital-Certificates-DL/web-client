@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { UserJSONResponse, UserSetting } from '@/types'
-import { useProvider } from "@/composables";
+import { useProvider } from '@/composables'
 
 export const useUsersModules = defineStore('users-store', {
   state: () => ({

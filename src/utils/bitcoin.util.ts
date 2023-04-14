@@ -19,7 +19,7 @@ export class Bitcoin {
   ) => {
     // const bip = bip32.fromBase58(seed,  testnet)
     //const child = bip.derive(index)
-    const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
+    const seed = await mnemonicToSeedAsync(mnph).then((bytes: any) => {
       return bytes
     })
 
@@ -27,16 +27,11 @@ export class Bitcoin {
     index++
     // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
     const exchangeKey = bip.derive(index)
-    console.log("index: ", bip.index)
-    console.log('ex: ', exchangeKey)
     const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
-    console.log('key: ', keyPairex)
     const ex = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
       network: testnet,
     })
-
-    console.log(ex.address)
 
     const keyPair = ECPair.fromWIF(bip.toWIF(), testnet)
 
@@ -161,7 +156,11 @@ export class Bitcoin {
     }
   }
 
-  static async PrepareLegacyTXMainnet(key: string, txID?: string, address?: string) {
+  static async PrepareLegacyTXMainnet(
+    key: string,
+    txID?: string,
+    address?: string,
+  ) {
     const keyPair = ECPair.fromWIF(key)
     const psbt = new bitcoin.Psbt()
     let amount = 0
@@ -298,7 +297,6 @@ export class Bitcoin {
   }
 
   private static async getTxTestnet(hash: string) {
-    console.log('tx ', hash)
     const tx = await axios
       .get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
@@ -311,7 +309,6 @@ export class Bitcoin {
       .catch(err => {
         return err
       })
-    console.log('return tx: ', tx)
     return tx
   }
   private static async getTxMainnet(hash: string) {
@@ -335,16 +332,10 @@ export class Bitcoin {
     outs: number,
     txsValue: number,
   ) {
-    console.log('better')
     const largeTxs = []
     const smaller = []
     let value = await this.calculateFeeTestnet(outs, 1)
-    console.log('calculate')
     value += txsValue
-    console.log({
-      value: value,
-      utxo: txs
-    })
     for (const tx of txs) {
       if (tx.value > value) {
         largeTxs.push(tx)
@@ -354,7 +345,6 @@ export class Bitcoin {
     }
     smaller.sort(this.reverseSort)
     largeTxs.sort(this.sort)
-    console.log('sort')
     if (smaller.length > 1) {
       let bufferValue = 0
       const utxos = []
@@ -365,7 +355,6 @@ export class Bitcoin {
           bufferValue += smaller[i].value
           utxos.push(smaller)
         } else {
-          console.log('ret')
           return {
             txs: utxos,
             utxoAmount: bufferValue,
@@ -374,8 +363,6 @@ export class Bitcoin {
         }
       }
     }
-    console.log("largeTxs: ",largeTxs)
-    console.log(value)
     return {
       txs: largeTxs[0],
       utxoAmount: largeTxs[0].value,

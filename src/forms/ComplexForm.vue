@@ -76,7 +76,7 @@
     <input-field
       label="form.field1"
       type="text"
-      v-model="form.Points?.X"
+      v-model="form.Points?.Y"
       placeholder="mark position(x)"
     />
     <input-field
