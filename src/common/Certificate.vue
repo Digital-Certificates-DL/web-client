@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <img :src="props.user.attributes.Img" alt="" />
+  <div class="certificate">
+    <img class="certificate_img" :src="props.user.attributes.Img" alt="" />
     <p>
       {{ props.user.attributes.Participant }}
     </p>
@@ -11,6 +11,7 @@
       {{ mintText }}
     </app-button>
     <app-button>{{ download }}</app-button>
+    <input @update="selectUser" type="checkbox" v-model="isSelected" />
   </div>
 </template>
 
@@ -24,6 +25,7 @@ const download = '>'
 defineComponent({
   components: { AppButton },
 })
+let isSelected: boolean
 
 const props = withDefaults(
   defineProps<{
@@ -33,13 +35,27 @@ const props = withDefaults(
     user: undefined,
   },
 )
-const emit = defineEmits<{
-  (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
-}>()
-
-const openModal = () => {
-  emit('openModal', true, props.user)
-}
+// const emit = defineEmits<{
+//   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
+//   (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
+// }>()
+//
+// const openModal = () => {
+//   emit('openModal', true, props.user)
+// }
+//
+// const selectUser = () => {
+//   emit('selectForTimestamp', isSelected, props.user)
+// }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.certificate {
+  display: flex;
+  justify-content: space-between;
+}
+
+.certificate_img {
+  width: toRem(100);
+}
+</style>

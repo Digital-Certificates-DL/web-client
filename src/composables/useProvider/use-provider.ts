@@ -1,11 +1,6 @@
 import { PROVIDERS } from '@/enums'
 import { computed, ComputedRef, Ref, ref } from 'vue'
-import {
-  useMetamask,
-  useCoinbase,
-  usePhantom,
-  useSolflare,
-} from '@/composables'
+import { useMetamask, useCoinbase } from '@/composables'
 import {
   DesignatedProvider,
   ChainId,
@@ -74,12 +69,6 @@ export const useProvider = (): UseProvider => {
         break
       case PROVIDERS.coinbase:
         providerWrp.value = useCoinbase(provider.instance)
-        break
-      case PROVIDERS.phantom:
-        providerWrp.value = usePhantom(provider.instance)
-        break
-      case PROVIDERS.solflare:
-        providerWrp.value = useSolflare(provider.instance)
         break
       default:
         throw new Error('Invalid Provider')

@@ -1,12 +1,14 @@
 <template>
   <div class="certificates">
     <app-header />
+
     <h1>Previously certificates</h1>
     <div class="certificates_search">
       <input-field model-value="form.search" @update:model-value="search" />
     </div>
     <div>
-      <app-button @click="refresh" />
+      <app-button @click="refresh" text="Find" />
+      <app-button @click="bitcoinTimestamp" text="Bitcoin" />
       <div v-if="userSetting.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
@@ -15,7 +17,11 @@
         :value="key"
         :key="item.attributes"
       >
-        <certificate :user="item" @openModal="openModal" />
+        <certificate
+          :user="item"
+          @openModal="openModal"
+          @timestampList="timestampList"
+        />
       </div>
     </div>
 
@@ -36,10 +42,13 @@ import { api } from '@/api'
 import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive } from 'vue'
+// import { Bitcoin } from '@/utils'
 
 const userSetting = useUsersModules()
 let isModalActive: boolean
 let currentUser: UserJSONResponse
+
+let listForTimestamp: UserJSONResponse[]
 
 const form = reactive({
   Search: '',
@@ -56,6 +65,15 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   }
   return users
 }
+
+// const timestampList = (state: boolean,  user:UserJSONResponse) =>{
+//   if (state){
+//     listForTimestamp.push(user)
+//     return
+//   }
+//
+//   // listForTimestamp.filter(item => item !== user )
+// }
 
 const refresh = async () => {
   //todo dont show new users
@@ -77,6 +95,17 @@ const search = () => {
   userSetting.students.filter(item =>
     item.attributes.Participant.includes(form.Search),
   )
+}
+
+const bitcoinTimestamp = async (users: UserJSONResponse[]) => {
+  //todo  implement bitcoin timestamp
+  const index = 0
+  for (const user of users) {
+    // const res =await Bitcoin.PrepareLegacyTXTestnet(userSetting.setting.SendKey, index)
+    // const  hex = res?.hex.toString()
+    // index = res?.index || index++
+    // console.log(hex)
+  }
 }
 </script>
 

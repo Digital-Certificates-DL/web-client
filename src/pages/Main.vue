@@ -81,39 +81,39 @@
         </template>
       </div>
       <div class="main-page__endpoints-side">
-        <app-button
-          :text="'Settings'"
-          class="setting btn"
-          scheme="flat"
-          size="small"
+        <nav-button
+          :title="'Settings'"
+          description="Your settings"
+          class="btn"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           @click="goToSetting"
         />
-        <app-button
-          :text="'Certificates'"
-          class="certificates btn"
-          scheme="flat"
-          size="small"
+        <nav-button
+          :title="'Certificates'"
+          description="Your certificates"
+          class="btn"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           @click="goToCertificate"
         />
-        <app-button
-          class="template btn"
-          :text="'Template'"
-          scheme="flat"
-          size="small"
+        <nav-button
+          class="btn"
+          :tilte="'Template'"
+          description="your templates"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           @click="goToTemplate"
         />
-        <app-button
-          :text="'Generation'"
-          class="generation btn"
-          scheme="flat"
-          size="small"
+        <nav-button
+          :title="'Generation'"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
+          description="generate certificates"
+          class="btn"
           @click="goToGenerate"
         />
-        <app-button
-          :text="'bitcoin'"
-          class="generation btn"
-          scheme="flat"
-          size="small"
+        <nav-button
+          :title="'bitcoin'"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
+          description="bitcoin"
+          class="btn"
           @click="sendTx"
         />
       </div>
@@ -132,13 +132,13 @@ import { UseProvider } from '@/types'
 import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 import btc from '@/utils/bitcoin.util'
+import NavButton from '@/common/NavButton.vue'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+const providers: UseProvider[] = []
 
 const web3Store = useWeb3ProvidersStore()
-
-const providers: UseProvider[] = []
 
 const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
 
@@ -270,8 +270,8 @@ init()
 .main-page__endpoints-side {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: toRem(50);
-  grid-auto-rows: toRem(100);
+  gap: toRem(80);
+  grid-auto-rows: toRem(150);
 }
 
 .main-page__metamask-title {
@@ -285,7 +285,9 @@ init()
 }
 
 .btn {
-  min-width: toRem(250);
+  min-width: toRem(200);
+  min-height: toRem(200);
+  padding: toRem(40);
 }
 
 .template {

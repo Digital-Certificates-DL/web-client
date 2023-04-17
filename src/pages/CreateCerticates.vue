@@ -1,12 +1,14 @@
 <template>
+  <app-header />
   <dic class="certificate">
-    <app-header />
     <div class="create_title">
       <h1>Create new certificate</h1>
     </div>
     <div class="create_body">
       <div class="create_first-step">
+
         <p class="step-1">1</p>
+
         <div class="create_collection-name">
           <h1>Write a name for your certificate</h1>
           <input-field
@@ -51,12 +53,6 @@
             text="Start"
             @click="start"
           />
-          <!--        <app-button-->
-          <!--          class="complex-form__cancel-btn"-->
-          <!--          type="submit"-->
-          <!--          text="Cancel"-->
-          <!--          @click="start"-->
-          <!--        />-->
         </div>
       </div>
 
@@ -75,26 +71,6 @@
         </div>
       </div>
     </div>
-    <!--  <div id="app">-->
-    <!--    <input-field-->
-    <!--      label="SendKey"-->
-    <!--      type="text"-->
-    <!--      v-model="form.SendKey"-->
-    <!--      placeholder="note position(y)"-->
-    <!--    />-->
-    <!--    <input-field-->
-    <!--      label="SignKey"-->
-    <!--      type="text"-->
-    <!--      v-model="form.SignKey"-->
-    <!--      placeholder="note position(y)"-->
-    <!--    />-->
-    <!--    <input-field-->
-    <!--      label="Url"-->
-    <!--      type="text"-->
-    <!--      v-model="form.Url"-->
-    <!--      placeholder="note position(y)"-->
-    <!--    />-->
-    <!--  </div>-->
   </dic>
 </template>
 

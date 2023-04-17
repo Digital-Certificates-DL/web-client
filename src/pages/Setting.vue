@@ -1,6 +1,7 @@
 <template>
   <div class="setting">
     <app-header />
+
     <div class="setting__title">
       <h1>{{ pageName }}</h1>
       <p>
@@ -40,7 +41,7 @@
         v-model="form.SignKey"
         placeholder="SignKey"
       />
-      <app-button @click="save" />
+      <app-button text="Save" @click="save" />
     </div>
   </div>
 </template>
@@ -83,5 +84,8 @@ $title: #ff545b;
   max-height: toRem(100);
   margin-bottom: toRem(0);
   color: $title;
+}
+.input-field {
+  margin-bottom: toRem(50);
 }
 </style>
