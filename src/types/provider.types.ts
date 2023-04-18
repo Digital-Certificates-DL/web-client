@@ -13,7 +13,7 @@ import { EthereumProvider } from '@/types/ethereum.types'
 /**
  * Non defined provider from browser
  */
-export type ProviderInstance = EthereumProvider  | unknown
+export type ProviderInstance = EthereumProvider | unknown
 
 /**
  * provider, which we've designated, it has a name and instance

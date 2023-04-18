@@ -2,12 +2,14 @@
   <div class="modal__back">
     <div class="modal__window">
       <div class="modal__img">
-        <img  :src="props.user.attributes.Img" alt="" />
+        <img :src="props.user.attributes.Img" alt="" />
       </div>
       <h1 class="modal__title">SBT issuance</h1>
       <div class="modal__name">
-        <label for="participant">Full name</label>
-        <p id="participant">{{ props.user.attributes.Participant }}</p>
+        <label for="participant"> Full name </label>
+        <p id="participant">
+          {{ props.user.attributes.Participant }}
+        </p>
       </div>
       <p>{{ props.user.attributes.Date }}</p>
       <p>{{ props.user.attributes.CourseTitle }}</p>
@@ -36,6 +38,8 @@ import { ErrorHandler } from '@/helpers'
 import { api } from '@/api'
 import { IpfsJSONResponse } from '@/types/ipfs.types'
 import AppButton from '@/common/AppButton.vue'
+import { config } from '@config'
+
 const form = reactive({
   address: '',
 })
@@ -52,7 +56,8 @@ const web3Store = useWeb3ProvidersStore()
 
 const providers: UseProvider[] = []
 
-const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
+const certificateSBT = useErc721(config.CONTRACT) //todo make better
+// const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
 
 // const metamaskProvider = computed(() =>
 //   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
@@ -98,20 +103,20 @@ const mint = async () => {
     // err => console.log('error: ', err), //todo make better
     ()
   await init()
-  await safeMint(form.address,  url)
+  await safeMint(form.address, url)
 }
 
 const emit = defineEmits<{
   (e: 'cancel', state: boolean): boolean
 }>()
 
-const cancel = ()=>{
-  console.log("cancel")
-  emit("cancel",  false)
+const cancel = () => {
+  console.log('cancel')
+  emit('cancel', false)
 }
 </script>
 
-<style  scoped lang="scss" >
+<style scoped lang="scss">
 .modal__window {
   width: 30%;
   height: 70%;
@@ -121,7 +126,6 @@ const cancel = ()=>{
   padding: toRem(24);
   position: fixed;
   display: grid;
-
 }
 
 .modal__back {
@@ -142,19 +146,18 @@ const cancel = ()=>{
   justify-content: center;
 }
 
-img{
+img {
   width: 100%;
 }
 
-.modal__title{
+.modal__title {
   padding-top: toRem(30);
   padding-bottom: toRem(30);
   margin: auto;
 }
 
-.modal__btns{
+.modal__btns {
   display: flex;
   justify-content: space-between;
 }
-
 </style>

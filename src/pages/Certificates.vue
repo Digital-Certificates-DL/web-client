@@ -7,7 +7,7 @@
       <input-field model-value="form.search" @update:model-value="search" />
     </div>
     <div v-if="isModalActive">
-      <modal-info @cancel="closeModal" :user="currentUser"  ></modal-info>
+      <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
     </div>
     <div>
       <app-button @click="refresh" text="Find" />
@@ -27,8 +27,6 @@
         />
       </div>
     </div>
-
-
   </div>
 </template>
 
@@ -42,20 +40,20 @@ import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
 import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
 // import { Bitcoin } from '@/utils'
 import btc from '@/utils/bitcoin.util'
 const userSetting = useUsersModules()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 
-let listForTimestamp: UserJSONResponse[] = []
+const listForTimestamp: UserJSONResponse[] = []
 
 const form = reactive({
   Search: '',
 })
 const openModal = (state: boolean, user: UserJSONResponse) => {
-  console.log(state, "state")
+  console.log(state, 'state')
   console.log(isModalActive)
   isModalActive.value = state
   currentUser = user
@@ -70,20 +68,20 @@ const prepareUserImg = (users: UserJSONResponseList) => {
 }
 
 const closeModal = () => {
-  console.log(isModalActive, "close")
+  console.log(isModalActive, 'close')
   isModalActive.value = false
 }
 
-const selectForTimestamp = (state: boolean,  user:UserJSONResponse) =>{
-  console.log("select",  state)
+const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
+  console.log('select', state)
   console.log(user)
-  if (state){
+  if (state) {
     listForTimestamp.push(user)
     console.log(listForTimestamp)
     return
   }
 
-  listForTimestamp.filter(item => item !== user )
+  listForTimestamp.filter(item => item !== user)
 }
 
 const refresh = async () => {
@@ -113,19 +111,20 @@ const bitcoinTimestamp = async () => {
   let index = 0
   const users = listForTimestamp
   for (const user of users) {
-    const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(userSetting.setting.SendKey, index)
-    const  hex = tx?.hex || ""
+    const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
+      userSetting.setting.SendKey,
+      index,
+    )
+    const hex = tx?.hex || ''
     index = tx?.index || index++
     console.log(hex)
-    if (hex === ""){
+    if (hex === '') {
       return
     }
-    const sendResp =  await btc.Bitcoin.SendToTestnet(hex)
+    const sendResp = await btc.Bitcoin.SendToTestnet(hex)
     console.log(sendResp)
   }
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

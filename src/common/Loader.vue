@@ -1,8 +1,8 @@
 <template>
   <div class="loader">
     <template v-if="scheme === 'spinner'">
-      <spinner   />
-      <p >{{title}}</p>
+      <spinner />
+      <p>{{ title }}</p>
     </template>
     <template v-else-if="scheme === 'skeleton'">
       <skeleton v-bind="$attrs" />
@@ -16,12 +16,12 @@ import { Spinner, Skeleton } from '@/common/loaders'
 
 withDefaults(
   defineProps<{
-    scheme?: 'spinner' | 'skeleton',
+    scheme?: 'spinner' | 'skeleton'
     title?: ''
   }>(),
   {
     scheme: 'spinner',
-    title:'',
+    title: '',
   },
 )
 </script>
@@ -29,7 +29,7 @@ withDefaults(
 <style lang="scss" scoped>
 .loader {
   overflow: hidden;
-  display:grid;
+  display: grid;
   grid-row: inherit;
   place-items: center;
 }

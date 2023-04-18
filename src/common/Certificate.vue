@@ -25,7 +25,7 @@ const download = 'Download'
 defineComponent({
   components: { AppButton },
 })
-let isSelected = false
+const isSelected = false
 
 const props = withDefaults(
   defineProps<{
@@ -46,7 +46,7 @@ const openModal = () => {
 }
 
 const selectUser = () => {
-  console.log("is selected", !isSelected)
+  console.log('is selected', !isSelected)
   emit('selectForTimestamp', !isSelected, props.user)
 }
 </script>
@@ -55,7 +55,6 @@ const selectUser = () => {
 .certificate {
   display: flex;
   justify-content: space-between;
-
 }
 
 .certificate_img {

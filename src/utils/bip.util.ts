@@ -34,7 +34,7 @@ export class Bip {
       pubkey: keyPair.publicKey,
       network: testnet,
     })
-    return {address, index}
+    return { address, index }
   }
 }
 

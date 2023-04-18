@@ -139,11 +139,9 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const providers: UseProvider[] = []
 
-
 const web3Store = useWeb3ProvidersStore()
 
 const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
-
 
 const metamaskProvider = computed(() =>
   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
@@ -191,11 +189,11 @@ const safeMint = async (recipient: string, uri: string) => {
 const goToCertificate = async () => {
   await router.push(ROUTE_NAMES.certificates)
 }
-const goToSetting = async() => {
+const goToSetting = async () => {
   await router.push(ROUTE_NAMES.setting)
 }
 
-const goToTemplate =async () => {
+const goToTemplate = async () => {
   await router.push(ROUTE_NAMES.template)
 }
 
@@ -205,7 +203,10 @@ const goToGenerate = async () => {
 
 const sendTx = async () => {
   const i = 0
-  const address = await  Bip.genAddress('tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp', i)
+  const address = await Bip.genAddress(
+    'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
+    i,
+  )
   console.log(address)
 
   const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
@@ -217,7 +218,6 @@ const sendTx = async () => {
   const res = await btc.Bitcoin.SendToTestnet(tx?.hex || '')
   console.log(res)
 }
-
 
 init()
 </script>
@@ -297,21 +297,21 @@ init()
   padding: toRem(40);
 }
 
-.template {
-  background: #97ecff;
-}
-
-.certificates {
-  background: #d5a9ff;
-}
-
-.setting {
-  background: #8fffdd;
-}
-
-.generation {
-  background: #8fbdff;
-}
+//.template {
+//  background: #97ecff;
+//}
+//
+//.certificates {
+//  background: #d5a9ff;
+//}
+//
+//.setting {
+//  background: #8fffdd;
+//}
+//
+//.generation {
+//  background: #8fbdff;
+//}
 
 .web3-page__card {
   position: relative;

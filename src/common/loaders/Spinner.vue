@@ -1,18 +1,14 @@
 <template>
-
   <div class="spinner" />
 </template>
 
 <script lang="ts" setup>
-
-
-
 withDefaults(
   defineProps<{
     title?: ''
   }>(),
   {
-    title:'',
+    title: '',
   },
 )
 </script>
@@ -37,11 +33,10 @@ withDefaults(
   animation: spinner 1.2s linear infinite;
 }
 
-.title{
+.title {
   margin-top: 0;
   padding: 0;
 }
-
 
 @keyframes spinner {
   0% {

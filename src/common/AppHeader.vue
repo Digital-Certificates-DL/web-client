@@ -15,8 +15,8 @@
         </div>
         <div class="header_settings">
           <button @click="goToSetting">
-&#9881;
-</button>
+             &#9881;
+          </button>
         </div>
       </div>
     </div>
@@ -29,8 +29,6 @@ import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { UseProvider, useProvider } from '@/composables'
 import { ErrorHandler } from '@/helpers'
-import { providers } from 'ethers'
-import { ref } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 
 const logo = 'LOGO'
@@ -68,7 +66,7 @@ const connect = async () => {
   display: flex;
   align-content: center;
   min-height: toRem(100);
-  padding-buttom: toRem(20);
+  padding-bottom: toRem(20);
 }
 
 .header__body {

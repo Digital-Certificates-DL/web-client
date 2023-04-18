@@ -2,58 +2,47 @@
   <div class="modal__back">
     <div class="modal__window">
       <input-field v-model="form.code" />
-      <app-button text="Give access"  >
+      <app-button text="Give access">
         <a :href="token"></a>
       </app-button>
-      <app-button  text="Send code" @click="sendCode"/>
-      <app-button  text="Cancel" @click="cancel"/>
+      <app-button text="Send code" @click="sendCode" />
+      <app-button text="Cancel" @click="cancel" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { UseProvider, UserJSONResponse } from '@/types'
 import { InputField } from '@/fields'
 import { reactive, ref } from 'vue'
-import { useWeb3ProvidersStore } from '@/store'
-import { useErc721, useProvider } from '@/composables'
-import { PROVIDERS } from '@/enums'
-import { ErrorHandler } from '@/helpers'
-import { api } from '@/api'
-import { IpfsJSONResponse } from '@/types/ipfs.types'
 import AppButton from '@/common/AppButton.vue'
 const form = reactive({
   code: '',
 })
 const props = withDefaults(
   defineProps<{
-    token: string
+    tokenLink: string
   }>(),
   {
-    token:''
+    tokenLink: '',
   },
 )
-
 
 const emit = defineEmits<{
   (e: 'closeModal', state: boolean): boolean
   (e: 'withCode', code: string): boolean
 }>()
 
-const cancel = ()=>{
-  console.log("closeModal")
-  emit("closeModal",  false)
+const cancel = () => {
+  console.log('closeModal')
+  emit('closeModal', false)
 }
-const sendCode = ()=>{
-  console.log("withCode: ", form.code)
-  emit("withCode",  form.code)
+const sendCode = () => {
+  console.log('withCode: ', form.code)
+  emit('withCode', form.code)
 }
-
-
 </script>
 
-<style  scoped lang="scss" >
-
+<style scoped lang="scss">
 .modal__window {
   width: 30%;
   height: 70%;
@@ -78,15 +67,14 @@ const sendCode = ()=>{
   justify-content: center;
 }
 
-.modal__title{
+.modal__title {
   padding-top: toRem(30);
   padding-bottom: toRem(30);
   margin: auto;
 }
 
-.modal__btns{
+.modal__btns {
   display: flex;
   justify-content: space-between;
 }
-
 </style>

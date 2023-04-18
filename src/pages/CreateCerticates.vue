@@ -1,9 +1,9 @@
 <template>
   <div v-if="isLoader">
-    <loader :title="loaderState.body" scheme="spinner"  class="create_loader"/>
+    <loader :title="loaderState.body" scheme="spinner" class="create_loader" />
   </div>
   <div v-else-if="isUnauthorized">
-    <auth-modal @close-modal="closeModal" @with-code="updateCode"/>
+    <auth-modal :token-link="authLink" @close-modal="closeModal" @with-code="updateCode" />
   </div>
   <dic v-else class="certificate">
     <app-header />
@@ -13,7 +13,6 @@
     </div>
     <div class="create_body">
       <div class="create_first-step">
-
         <p class="step-1">1</p>
 
         <div class="create_collection-name">
@@ -29,8 +28,8 @@
 
       <div class="create_second_step">
         <p class="step-2">
-          2
-        </p>
+2
+</p>
         <div class="create_upload_files">
           <input-field
             id="image-file"
@@ -43,8 +42,8 @@
       </div>
       <div class="create_third_step">
         <p class="step-3">
-          3
-        </p>
+3
+</p>
         <div class="create_upload_files">
           <input-field
             label="Link"
@@ -89,19 +88,19 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import { UserJSONResponseList, UserSetting } from '@/types/user.types'
+import {UnauthorizedResponse, UserJSONResponseList, UserSetting} from '@/types/user.types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/common/AppHeader.vue'
-import Loader from "@/common/Loader.vue";
-import {defer, lowerFirst} from "lodash-es";
-import AuthModal from "@/common/AuthModal.vue";
+import Loader from '@/common/Loader.vue'
+import { defer, lowerFirst } from 'lodash-es'
+import AuthModal from '@/common/AuthModal.vue'
 const userSetting = useUsersModules()
 
 const isLoader = ref(false)
@@ -125,6 +124,9 @@ const loaderState = {
   finished: false,
   body: '',
 }
+
+let authLink = ""
+
 const start = async () => {
   loaderState.state = true
   defer(closeLoader)
@@ -142,7 +144,7 @@ const start = async () => {
   loaderState.state = false
 }
 const parsedData = async (sheepUrl?: string) => {
-  const users = await api.post<UserJSONResponseList>(
+  const resp = await api.post<UserJSONResponseList>(
     '/integrations/ccp/users/empty',
     {
       data: {
@@ -151,12 +153,14 @@ const parsedData = async (sheepUrl?: string) => {
     },
   )
 
-  if (users.status === 403){
-      isUnauthorized.value = false
+  if (resp.status === 403) {
+    console.log(resp)
+    //todo parse this type(UnauthorizedResponse)
+    isUnauthorized.value = false
   }
 
-  console.log('users: ', users)
-  return users
+  console.log('users: ', resp)
+  return resp
 }
 const sign = (users: UserJSONResponseList) => {
   console.log('start sign: ', users)
@@ -201,7 +205,7 @@ const createPDF = async (users: UserJSONResponseList) => {
 }
 
 const closeLoader = () => {
-  console.log("close loader")
+  console.log('close loader')
   isLoader.value = false
 }
 const cancel = async () => {
@@ -212,12 +216,11 @@ const watchAll = () => {
   router.push(ROUTE_NAMES.certificates)
 }
 
-const closeModal = ()=>{
+const closeModal = () => {
   isUnauthorized.value = false
 }
 
-const updateCode = async (code: string) =>{
-
+const updateCode = async (code: string) => {
   await api
     .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
       data: {
@@ -230,7 +233,6 @@ const updateCode = async (code: string) =>{
       isUnauthorized.value = false
     })
 }
-
 </script>
 
 <style lang="scss">
@@ -256,7 +258,7 @@ const updateCode = async (code: string) =>{
   background: #0066ff;
 }
 
-.create_loader{
+.create_loader {
   backdrop-filter: blur(1rem);
   background: #00000080;
   position: fixed;

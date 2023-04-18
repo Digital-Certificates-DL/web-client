@@ -32,7 +32,14 @@ export type UserSetting = {
   Name: string
   Org: string
   SignKey: string
-  address: string
+  Address: string
+  KeyPathID: number
   SendKey: string
   Url: string
+}
+
+export type UnauthorizedResponse = {
+  data: {
+    Link: string
+  }
 }
