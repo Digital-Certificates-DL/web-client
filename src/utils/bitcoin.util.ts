@@ -8,8 +8,9 @@ import { mnemonicToSeedAsync } from 'bip39-web'
 
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
+import {networks} from "bitcoinjs-lib";
+import {Network} from "bitcoinjs-lib/src/networks";
 
-// import * as typedArrayToBuffer from '@types/typedarray-to-buffer'
 
 export class Bitcoin {
   static PrepareLegacyTXTestnet = async (
@@ -17,12 +18,13 @@ export class Bitcoin {
     index: number,
     txID?: string,
   ) => {
+    console.log("start")
     // const bip = bip32.fromBase58(seed,  testnet)
     //const child = bip.derive(index)
-    const seed = await mnemonicToSeedAsync(mnph).then((bytes: any) => {
+    const seed = await mnemonicToSeedAsync(mnph).then((bytes) => {
       return bytes
     })
-
+    console.log(seed)
     const bip = bip32.fromSeed(seed, testnet)
     index++
     // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
@@ -206,7 +208,7 @@ export class Bitcoin {
   }
 
   static async SendToTestnet(tx: string) {
-    await axios
+   const res =  await axios
       .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
       .then(function (response) {
         return response
@@ -214,6 +216,7 @@ export class Bitcoin {
       .catch(function (err) {
         return err
       })
+    return res
   }
   // f3940bcec5bb4f1b9edfca8f6cabce65
   static async SendToMainnet(tx: string) {
@@ -368,6 +371,17 @@ export class Bitcoin {
       utxoAmount: largeTxs[0].value,
       value: value,
     }
+  }
+
+  static getAddressFromWIF(wif: string, network: Network){
+    const keyPairex = ECPair.fromWIF(wif, network)
+    const key = bitcoin.payments.p2pkh({
+      pubkey: keyPairex.publicKey,
+      network: testnet,
+    })
+
+    console.log(key.address)
+    return key.address
   }
 
   private static sort = (a: number, b: number) => {

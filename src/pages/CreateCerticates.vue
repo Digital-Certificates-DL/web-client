@@ -1,6 +1,13 @@
 <template>
-  <app-header />
-  <dic class="certificate">
+  <div v-if="isLoader">
+    <loader :title="loaderState.body" scheme="spinner"  class="create_loader"/>
+  </div>
+  <div v-else-if="isUnauthorized">
+    <auth-modal @close-modal="closeModal" @with-code="updateCode"/>
+  </div>
+  <dic v-else class="certificate">
+    <app-header />
+
     <div class="create_title">
       <h1>Create new certificate</h1>
     </div>
@@ -22,8 +29,8 @@
 
       <div class="create_second_step">
         <p class="step-2">
-2
-</p>
+          2
+        </p>
         <div class="create_upload_files">
           <input-field
             id="image-file"
@@ -36,8 +43,8 @@
       </div>
       <div class="create_third_step">
         <p class="step-3">
-3
-</p>
+          3
+        </p>
         <div class="create_upload_files">
           <input-field
             label="Link"
@@ -67,6 +74,13 @@
               text="Watch All"
               @click="watchAll"
             />
+
+            <app-button
+              class="complex-form__cancel-btn"
+              type="submit"
+              text="Cancel"
+              @click="cancel"
+            />
           </div>
         </div>
       </div>
@@ -75,7 +89,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import {reactive, ref} from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
@@ -85,8 +99,13 @@ import { useUsersModules } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/common/AppHeader.vue'
-
+import Loader from "@/common/Loader.vue";
+import {defer, lowerFirst} from "lodash-es";
+import AuthModal from "@/common/AuthModal.vue";
 const userSetting = useUsersModules()
+
+const isLoader = ref(false)
+const isUnauthorized = ref(false)
 
 const form = reactive({
   Url: '',
@@ -107,8 +126,9 @@ const loaderState = {
   body: '',
 }
 const start = async () => {
-  // todo add loader
   loaderState.state = true
+  defer(closeLoader)
+  isLoader.value = loaderState.state
   loaderState.body = 'Parsing users'
   console.log('Parsing users')
   const users = await parsedData(certificatesInfo.Link)
@@ -123,13 +143,18 @@ const start = async () => {
 }
 const parsedData = async (sheepUrl?: string) => {
   const users = await api.post<UserJSONResponseList>(
-    '/integrations/ccp/empty',
+    '/integrations/ccp/users/empty',
     {
       data: {
         url: sheepUrl || userSetting.setting.Url,
       },
     },
   )
+
+  if (users.status === 403){
+      isUnauthorized.value = false
+  }
+
   console.log('users: ', users)
   return users
 }
@@ -160,7 +185,7 @@ const prepareUserImg = (users: UserJSONResponseList) => {
 }
 const createPDF = async (users: UserJSONResponseList) => {
   await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate', {
+    .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
       data: {
         data: users.data,
         address:
@@ -171,9 +196,14 @@ const createPDF = async (users: UserJSONResponseList) => {
     .then(resp => {
       const users = prepareUserImg(resp.data)
       userSetting.students = users.data
+      router.push(ROUTE_NAMES.certificates)
     })
 }
 
+const closeLoader = () => {
+  console.log("close loader")
+  isLoader.value = false
+}
 const cancel = async () => {
   await router.push(ROUTE_NAMES.main)
 }
@@ -181,6 +211,26 @@ const cancel = async () => {
 const watchAll = () => {
   router.push(ROUTE_NAMES.certificates)
 }
+
+const closeModal = ()=>{
+  isUnauthorized.value = false
+}
+
+const updateCode = async (code: string) =>{
+
+  await api
+    .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+      data: {
+        code: code,
+        name: userSetting.setting.Name,
+      },
+    })
+    .then(resp => {
+      console.log(resp)
+      isUnauthorized.value = false
+    })
+}
+
 </script>
 
 <style lang="scss">
@@ -204,5 +254,18 @@ const watchAll = () => {
 
 .step-1--ready {
   background: #0066ff;
+}
+
+.create_loader{
+  backdrop-filter: blur(1rem);
+  background: #00000080;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -9,12 +9,11 @@ import { ethers } from 'ethers'
 
 import { PROVIDERS } from '@/enums'
 import { EthereumProvider } from '@/types/ethereum.types'
-import { PhantomProvider } from '@/types/solana.types'
 
 /**
  * Non defined provider from browser
  */
-export type ProviderInstance = EthereumProvider | PhantomProvider | unknown
+export type ProviderInstance = EthereumProvider  | unknown
 
 /**
  * provider, which we've designated, it has a name and instance

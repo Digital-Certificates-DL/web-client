@@ -133,14 +133,17 @@ import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 import btc from '@/utils/bitcoin.util'
 import NavButton from '@/common/NavButton.vue'
+import { Bip } from '@/utils/bip.util'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const providers: UseProvider[] = []
 
+
 const web3Store = useWeb3ProvidersStore()
 
 const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
+
 
 const metamaskProvider = computed(() =>
   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
@@ -185,23 +188,26 @@ const safeMint = async (recipient: string, uri: string) => {
   await certificateSBT.safeMint(recipient, uri)
 }
 
-const goToCertificate = () => {
-  router.push(ROUTE_NAMES.certificates)
+const goToCertificate = async () => {
+  await router.push(ROUTE_NAMES.certificates)
 }
-const goToSetting = () => {
-  router.push(ROUTE_NAMES.setting)
-}
-
-const goToTemplate = () => {
-  router.push(ROUTE_NAMES.template)
+const goToSetting = async() => {
+  await router.push(ROUTE_NAMES.setting)
 }
 
-const goToGenerate = () => {
-  router.push(ROUTE_NAMES.create)
+const goToTemplate =async () => {
+  await router.push(ROUTE_NAMES.template)
+}
+
+const goToGenerate = async () => {
+  await router.push(ROUTE_NAMES.create)
 }
 
 const sendTx = async () => {
-  const i = 5
+  const i = 0
+  const address = await  Bip.genAddress('tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp', i)
+  console.log(address)
+
   const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
     'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
     i,
@@ -211,6 +217,7 @@ const sendTx = async () => {
   const res = await btc.Bitcoin.SendToTestnet(tx?.hex || '')
   console.log(res)
 }
+
 
 init()
 </script>

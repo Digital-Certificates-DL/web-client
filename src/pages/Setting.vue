@@ -55,6 +55,9 @@ import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppButton from '@/common/AppButton.vue'
 import AppHeader from '@/common/AppHeader.vue'
+import btc from '@/utils/bitcoin.util'
+import {testnet} from "ecpair/src/networks";
+
 
 const userState = useUsersModules()
 const title =
@@ -74,6 +77,8 @@ const form = reactive({
 const router = useRouter()
 const save = async () => {
   userState.setting = form
+  const address =  btc.Bitcoin.getAddressFromWIF(form.SignKey, testnet)
+  userState.setting.address = address || ""
   await router.replace({ name: ROUTE_NAMES.main })
 }
 </script>

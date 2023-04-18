@@ -1,13 +1,20 @@
 <template>
+
   <div class="spinner" />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 
-export default defineComponent({
-  name: 'spinner',
-})
+
+
+withDefaults(
+  defineProps<{
+    title?: ''
+  }>(),
+  {
+    title:'',
+  },
+)
 </script>
 
 <style lang="scss" scoped>
@@ -29,6 +36,12 @@ export default defineComponent({
     var(--border-primary-main) transparent;
   animation: spinner 1.2s linear infinite;
 }
+
+.title{
+  margin-top: 0;
+  padding: 0;
+}
+
 
 @keyframes spinner {
   0% {

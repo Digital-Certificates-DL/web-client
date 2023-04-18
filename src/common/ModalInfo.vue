@@ -1,8 +1,14 @@
 <template>
   <div class="modal__back">
     <div class="modal__window">
-      <img :src="props.user.attributes.Img" alt="" />
-      <p>{{ props.user.attributes.Participant }}</p>
+      <div class="modal__img">
+        <img  :src="props.user.attributes.Img" alt="" />
+      </div>
+      <h1 class="modal__title">SBT issuance</h1>
+      <div class="modal__name">
+        <label for="participant">Full name</label>
+        <p id="participant">{{ props.user.attributes.Participant }}</p>
+      </div>
       <p>{{ props.user.attributes.Date }}</p>
       <p>{{ props.user.attributes.CourseTitle }}</p>
       <input-field
@@ -11,7 +17,10 @@
         v-model="form.address"
         placeholder="address"
       />
-      <app-button @click="mint" />
+      <div class="modal__btns">
+        <app-button text="mint" @click="mint" />
+        <app-button text="cancel" @click="cancel" />
+      </div>
     </div>
   </div>
 </template>
@@ -89,29 +98,63 @@ const mint = async () => {
     // err => console.log('error: ', err), //todo make better
     ()
   await init()
-  await safeMint(form.address, 'https://ipfs.io/ipfs/' + url)
+  await safeMint(form.address,  url)
+}
+
+const emit = defineEmits<{
+  (e: 'cancel', state: boolean): boolean
+}>()
+
+const cancel = ()=>{
+  console.log("cancel")
+  emit("cancel",  false)
 }
 </script>
 
-<style scoped>
+<style  scoped lang="scss" >
 .modal__window {
-  width: 50%;
+  width: 30%;
   height: 70%;
   background: white;
   border-radius: 1rem;
   flex-direction: row;
-  padding: 1rem;
+  padding: toRem(24);
   position: fixed;
+  display: grid;
+
 }
 
 .modal__back {
   backdrop-filter: blur(1rem);
+  background: #00000080;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.modal__img {
+  display: flex;
+  justify-content: center;
+}
+
+img{
+  width: 100%;
+}
+
+.modal__title{
+  padding-top: toRem(30);
+  padding-bottom: toRem(30);
+  margin: auto;
+}
+
+.modal__btns{
+  display: flex;
+  justify-content: space-between;
+}
+
 </style>

@@ -11,7 +11,7 @@
       {{ mintText }}
     </app-button>
     <app-button>{{ download }}</app-button>
-    <input @update="selectUser" type="checkbox" v-model="isSelected" />
+    <input @input="selectUser" type="checkbox" v-model="isSelected" />
   </div>
 </template>
 
@@ -21,11 +21,11 @@ import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
 
 const mintText = 'Make sbt issuance'
-const download = '>'
+const download = 'Download'
 defineComponent({
   components: { AppButton },
 })
-let isSelected: boolean
+let isSelected = false
 
 const props = withDefaults(
   defineProps<{
@@ -35,24 +35,27 @@ const props = withDefaults(
     user: undefined,
   },
 )
-// const emit = defineEmits<{
-//   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
-//   (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
-// }>()
-//
-// const openModal = () => {
-//   emit('openModal', true, props.user)
-// }
-//
-// const selectUser = () => {
-//   emit('selectForTimestamp', isSelected, props.user)
-// }
+
+const emit = defineEmits<{
+  (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
+  (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
+}>()
+
+const openModal = () => {
+  emit('openModal', true, props.user)
+}
+
+const selectUser = () => {
+  console.log("is selected", !isSelected)
+  emit('selectForTimestamp', !isSelected, props.user)
+}
 </script>
 
 <style lang="scss" scoped>
 .certificate {
   display: flex;
   justify-content: space-between;
+
 }
 
 .certificate_img {
