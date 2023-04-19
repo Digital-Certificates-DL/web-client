@@ -32,15 +32,6 @@
                 @click="connect(metamaskProvider)"
                 :disabled="metamaskProvider.isConnected.value"
               />
-<!--              <app-button-->
-<!--                v-if="metamaskProvider.isConnected.value"-->
-<!--                class="web3-page__card-btn "-->
-<!--                :text="'Disconnect'"-->
-<!--                scheme="flat"-->
-<!--                color="error"-->
-<!--                size="small"-->
-<!--                @click="metamaskProvider.disconnect"-->
-<!--              />-->
             </div>
             <div v-else class="main-page__metamask">
               <span class="web3-page__txt">
@@ -201,7 +192,7 @@ const sendTx = async () => {
 init()
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .main_page {
   display: flex;
   justify-items: center;
@@ -212,11 +203,12 @@ init()
   margin-top: toRem(80);
   grid-row: span;
   justify-content: center;
-  padding-bottom: toRem(100);
+  padding-bottom: toRem(60);
 }
 
 .main-page__info-name {
   margin: auto;
+  padding: toRem(20);
   font-size: toRem(25);
 }
 
@@ -228,6 +220,7 @@ init()
 
 .main-page__info-logo {
   margin: auto;
+  padding: toRem(20);
   font-size: toRem(25);
 }
 
@@ -280,21 +273,21 @@ init()
   padding: toRem(40);
 }
 
-//.template {
-//  background: #97ecff;
-//}
-//
-//.certificates {
-//  background: #d5a9ff;
-//}
-//
-//.setting {
-//  background: #8fffdd;
-//}
-//
-//.generation {
-//  background: #8fbdff;
-//}
+.template {
+  background: #97ecff;
+}
+
+.certificates {
+  background: #d5a9ff;
+}
+
+.setting {
+  background: #8fffdd;
+}
+
+.generation {
+  background: #8fbdff;
+}
 
 .web3-page__card {
   position: relative;

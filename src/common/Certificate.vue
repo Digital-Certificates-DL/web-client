@@ -1,7 +1,7 @@
 <template>
   <div class="certificate">
     <img class="certificate_img" :src="props.user.attributes.Img" alt="" />
-    <p>
+    <p class="certificate__name">
       {{ props.user.attributes.Participant }}
     </p>
     <p>
@@ -60,4 +60,8 @@ const selectUser = () => {
 .certificate_img {
   width: toRem(100);
 }
+.certificate__name{
+  width: toRem(150);
+}
+
 </style>

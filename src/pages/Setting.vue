@@ -1,15 +1,17 @@
 <template>
   <div class="setting">
     <app-header />
-    <div class="setting__title">
-      <h1>{{ pageName }}</h1>
-      <p>
-        {{ title }}
-      </p>
-    </div>
+
     <div class="setting_body">
-      <p>{{ generalSettingsTitle }}</p>
+      <div class="setting__info">
+        <h1 class="setting__title" >{{ pageName }}</h1>
+        <p>
+          {{ title }}
+        </p>
+      </div>
+      <h1 class="settings__fields-title">  {{ generalSettingsTitle }}</h1>
       <input-field
+        class="settings__form"
         label="Name of organization"
         type="text"
         v-model="form.Org"
@@ -17,31 +19,40 @@
       />
       <input-field
         label="Account name"
+        class="settings__form"
         type="text"
         v-model="form.Name"
         placeholder="Account name"
       />
-      <h1>{{ signKeyTitle }}</h1>
+      <h1 class="settings__fields-title">{{ signKeyTitle }}</h1>
       <input-field
         label="Bitcoin key"
+        class="settings__form"
         type="text"
         v-model="form.SendKey"
         placeholder="Send key"
       />
       <input-field
         label="Url"
+        class="settings__form"
+
         type="text"
         v-model="form.Url"
         placeholder="Url"
       />
       <input-field
         label="SignKey"
+        class="settings__form"
+
         type="text"
         v-model="form.SignKey"
         placeholder="SignKey"
       />
-      <app-button text="Save" @click="save" />
-      <app-button text="Cancel" @click="cancel" />
+      <div class="settings__btns">
+        <app-button class="settings_btn" text="Save" @click="save" />
+        <app-button class="settings_btn" text="Cancel" @click="cancel" />
+      </div>
+
     </div>
   </div>
 </template>
@@ -103,12 +114,39 @@ const cancel = async()=>{
 <style scoped lang="scss">
 $title: #ff545b;
 
-.setting__title {
+.setting_body{
+  display: grid;
+  justify-items: center;
+}
+
+.setting__info {
+  display: grid;
+  justify-items: center;
   max-height: toRem(100);
-  margin-bottom: toRem(0);
+  margin-bottom: toRem(50);
   color: $title;
 }
-.input-field {
+.settings__form {
   margin-bottom: toRem(50);
+  width: toRem(458);
+}
+
+.settings__btns{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: toRem(80);
+}
+
+.settings__fields-title{
+  margin-bottom: toRem(30);
+}
+
+.setting__title{
+  margin-bottom: toRem(20);
+}
+
+.settings_btn{
+  background: #0066FF;
+  width: toRem(150);
 }
 </style>

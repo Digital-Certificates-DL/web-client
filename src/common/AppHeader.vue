@@ -1,22 +1,26 @@
 <template>
   <div class="header">
     <div class="header__body">
-      <div class="header_logo">
+      <div class="header__logo">
         <h2 @click="goToMain">
           {{ logo }}
         </h2>
       </div>
-      <div class="header_configuration">
-        <div class="header_metamask">
+      <div class="header__configuration">
+        <div class="header__metamask">
           <app-button
+
             @click="connect"
+            class="header__btn"
             :text="web3Store.provider.selectedAddress || 'Connect'"
           />
         </div>
-        <div class="header_settings">
-          <button @click="goToSetting">
+        <div class="header__settings">
+          <app-button
+            class="header__btn"
+            @click="goToSetting">
              &#9881;
-          </button>
+          </app-button>
         </div>
       </div>
     </div>
@@ -76,17 +80,21 @@ const connect = async () => {
   justify-content: space-between;
 }
 
-.header_configuration {
+.header__configuration {
   display: flex;
   justify-content: space-between;
 }
 
-.header_settings {
+.header__settings {
   background: #e5e5e5;
   border-radius: toRem(5);
 }
 
-.header_metamask {
+.header__btn{
+  background: #FAFAFA;
+  color: #9e9e9e;
+}
+.header__metamask {
   background: #e5e5e5;
   //height: toRem(30);
   //margin: auto;
