@@ -38,8 +38,18 @@ export type UserSetting = {
   Url: string
 }
 
+
+export type UnauthorizedTypesAttributes = {
+  link: string
+}
+
+export type UnauthorizedTypes= {
+  ID: string
+  Type: string
+  attributes: UnauthorizedTypesAttributes
+}
 export type UnauthorizedResponse = {
-  data: {
-    Link: string
-  }
+  data: UnauthorizedTypes
+  Included: object[]
+  Links: object
 }

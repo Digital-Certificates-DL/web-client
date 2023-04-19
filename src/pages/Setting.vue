@@ -41,6 +41,7 @@
         placeholder="SignKey"
       />
       <app-button text="Save" @click="save" />
+      <app-button text="Cancel" @click="cancel" />
     </div>
   </div>
 </template>
@@ -48,7 +49,7 @@
 <script lang="ts" setup>
 import InputField from '@/fields/InputField.vue'
 import { reactive } from 'vue'
-import { UserSetting } from '@/types'
+import {UserJSONResponseList, UserSetting} from '@/types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -56,6 +57,7 @@ import AppButton from '@/common/AppButton.vue'
 import AppHeader from '@/common/AppHeader.vue'
 import btc from '@/utils/bitcoin.util'
 import { testnet } from 'ecpair/src/networks'
+import {api} from "@/api";
 
 const userState = useUsersModules()
 const title =
@@ -75,9 +77,27 @@ const form = reactive({
 const router = useRouter()
 const save = async () => {
   userState.setting = form
-  const address = btc.Bitcoin.getAddressFromWIF(form.SignKey, testnet)
-  userState.setting.address = address || ''
-  await router.replace({ name: ROUTE_NAMES.main })
+  const address = btc.Bitcoin.getAddressFromWIF(form.SignKey)
+  console.log(address)
+  userState.setting.Address = address || ''
+
+
+
+  await api
+    .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+      data: {
+        code: "",
+        name: userState.setting.Name,
+      },
+    })
+    .then(resp => {
+      console.log(resp)
+      router.push(ROUTE_NAMES.main)
+    })
+}
+
+const cancel = async()=>{
+  await router.push(ROUTE_NAMES.main)
 }
 </script>
 <style scoped lang="scss">

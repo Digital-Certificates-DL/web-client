@@ -2,11 +2,11 @@
   <div class="modal__back">
     <div class="modal__window">
       <input-field v-model="form.code" />
-      <app-button text="Give access">
-        <a :href="token"></a>
-      </app-button>
-      <app-button text="Send code" @click="sendCode" />
-      <app-button text="Cancel" @click="cancel" />
+      <app-button  class="modal__btn"  text="Give access" @click="getCode" />
+      <div class="modal__btns">
+        <app-button class="modal__btn" text="Send code" @click="sendCode" />
+        <app-button class="modal__btn"  text="Cancel" @click="cancel" />
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +39,10 @@ const cancel = () => {
 const sendCode = () => {
   console.log('withCode: ', form.code)
   emit('withCode', form.code)
+}
+
+const getCode = () => {
+  window.open(props.tokenLink, '_blank');
 }
 </script>
 
@@ -76,5 +80,10 @@ const sendCode = () => {
 .modal__btns {
   display: flex;
   justify-content: space-between;
+}
+
+.modal__btn{
+  width: toRem(100);
+  height: toRem(70);
 }
 </style>

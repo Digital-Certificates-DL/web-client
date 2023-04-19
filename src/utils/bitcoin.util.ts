@@ -11,6 +11,8 @@ import axios from 'axios'
 import { networks } from 'bitcoinjs-lib'
 import { Network } from 'bitcoinjs-lib/src/networks'
 
+//todo  find utxos in first 100 keys
+
 export class Bitcoin {
   static PrepareLegacyTXTestnet = async (
     mnph: string,
@@ -368,7 +370,7 @@ export class Bitcoin {
     }
   }
 
-  static getAddressFromWIF(wif: string, network: Network) {
+  static getAddressFromWIF(wif: string, network?: Network) {
     const keyPairex = ECPair.fromWIF(wif, network)
     const key = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,

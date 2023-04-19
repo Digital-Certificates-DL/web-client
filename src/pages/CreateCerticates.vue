@@ -28,8 +28,8 @@
 
       <div class="create_second_step">
         <p class="step-2">
-2
-</p>
+          2
+        </p>
         <div class="create_upload_files">
           <input-field
             id="image-file"
@@ -42,8 +42,8 @@
       </div>
       <div class="create_third_step">
         <p class="step-3">
-3
-</p>
+          3
+        </p>
         <div class="create_upload_files">
           <input-field
             label="Link"
@@ -93,7 +93,7 @@ import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import {UnauthorizedResponse, UserJSONResponseList, UserSetting} from '@/types/user.types'
+import {UnauthorizedResponse, UserJSONResponseList, UserJSONResponse, UserSetting} from '@/types/user.types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -105,6 +105,8 @@ const userSetting = useUsersModules()
 
 const isLoader = ref(false)
 const isUnauthorized = ref(false)
+const authLink = ref("")
+
 
 const form = reactive({
   Url: '',
@@ -125,8 +127,6 @@ const loaderState = {
   body: '',
 }
 
-let authLink = ""
-
 const start = async () => {
   loaderState.state = true
   defer(closeLoader)
@@ -134,9 +134,13 @@ const start = async () => {
   loaderState.body = 'Parsing users'
   console.log('Parsing users')
   const users = await parsedData(certificatesInfo.Link)
+  if (users===undefined){
+    return
+  }
   loaderState.body = 'Signing users'
   console.log('Signing users')
-  const signatures = sign(users.data)
+  const signatures = sign(users)
+  console.log(" signatures ",signatures)
   loaderState.body = 'Creating PDF for users'
   await createPDF(signatures)
   console.log('Creating PDF for users')
@@ -144,28 +148,43 @@ const start = async () => {
   loaderState.state = false
 }
 const parsedData = async (sheepUrl?: string) => {
-  const resp = await api.post<UserJSONResponseList>(
+  const resp = await api.post< UserJSONResponseList | UnauthorizedResponse >(
     '/integrations/ccp/users/empty',
     {
       data: {
+        name: userSetting.setting.Name,
         url: sheepUrl || userSetting.setting.Url,
       },
     },
-  )
-
-  if (resp.status === 403) {
-    console.log(resp)
-    //todo parse this type(UnauthorizedResponse)
-    isUnauthorized.value = false
-  }
-
+  ).then(
+    resp => {
+      console.log("resp: ", resp)
+      if (resp.status === 403){
+        console.log(403," in resp")
+        return
+      }
+      return resp
+    }
+  ).catch(err => {
+    console.log(err)
+    console.log("link", err.response.data.data.attributes.link)
+    if (err.response.data.data.attributes.link){
+      console.log(403," in error")
+      isUnauthorized.value = true
+      authLink.value = err.response.data.data.attributes.link
+    }
+  })
   console.log('users: ', resp)
-  return resp
+  if (!resp){
+    console.log("undefined")
+    return
+  }
+  return resp as UserJSONResponseList | {} as UserJSONResponseList
 }
 const sign = (users: UserJSONResponseList) => {
-  console.log('start sign: ', users)
+  console.log('start sign: ', users.data.data)
   const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
-  for (const user of users.data) {
+  for (const user of users.data.data) {
     console.log('user: ', user)
     if (
       user.attributes.Signature === undefined ||
@@ -178,8 +197,9 @@ const sign = (users: UserJSONResponseList) => {
 }
 
 const prepareUserImg = (users: UserJSONResponseList) => {
-  console.log(users)
-  for (const user of users.data) {
+  console.log(users.data)
+  const list: UserJSONResponse[]= users.data
+  for (const user of  list) {
     console.log(user)
     user.attributes.Img =
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
@@ -191,10 +211,12 @@ const createPDF = async (users: UserJSONResponseList) => {
   await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
       data: {
-        data: users.data,
+        data: users.data.data, //todo make better
         address:
-          userSetting.setting.address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
         url: userSetting.setting.Url || form.Url,
+        name: userSetting.setting.Name
+
       },
     })
     .then(resp => {
@@ -221,6 +243,7 @@ const closeModal = () => {
 }
 
 const updateCode = async (code: string) => {
+  isUnauthorized.value = false
   await api
     .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
       data: {

@@ -1,7 +1,4 @@
 import { Ecdsa, Address, KeyPair, PrivKey } from '@ts-bitcoin/core'
-
-// import { ECPairFactory } from 'ecpair'
-// import { magicHash } from '@/utils/types/signature'
 import bitcoinMessage from 'bitcoinjs-message'
 
 export class Signature {
@@ -18,8 +15,6 @@ export class Signature {
 
   public signMsg = (message: string | Buffer) => {
     const sign = Ecdsa.sign(bitcoinMessage.magicHash(message), this.keyPair)
-    // const compSign = sign.toCompact(3, true)
-
     for (let i = 0; i < 4; i++) {
       const compSign = sign.toCompact(i).toString('base64')
       if (this.verifySign(message, this.address.toString(), compSign)) {

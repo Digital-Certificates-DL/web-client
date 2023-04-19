@@ -41,7 +41,6 @@ import { api } from '@/api'
 import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
-// import { Bitcoin } from '@/utils'
 import btc from '@/utils/bitcoin.util'
 const userSetting = useUsersModules()
 const isModalActive = ref(false)
@@ -86,7 +85,7 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 
 const refresh = async () => {
   //todo dont show new users
-  const users = await api.post<UserJSONResponseList>('/integrations/ccp/', {
+  const users = await api.post<UserJSONResponseList>('/integrations/ccp/users/', {
     data: {
       url: userSetting.setting.Url,
     },

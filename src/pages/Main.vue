@@ -27,20 +27,20 @@
               <app-button
                 scheme="flat"
                 size="small"
-                class="web3-page__card-btn"
-                :text="metamaskProvider.selectedAddress.value || 'Connect'"
+                class="web3-page__card-btn web3-page__card-btn-connect"
+                :text="'Connect'"
                 @click="connect(metamaskProvider)"
                 :disabled="metamaskProvider.isConnected.value"
               />
-              <app-button
-                v-if="metamaskProvider.isConnected.value"
-                class="web3-page__card-btn"
-                :text="'Disconnect'"
-                scheme="flat"
-                color="error"
-                size="small"
-                @click="metamaskProvider.disconnect"
-              />
+<!--              <app-button-->
+<!--                v-if="metamaskProvider.isConnected.value"-->
+<!--                class="web3-page__card-btn "-->
+<!--                :text="'Disconnect'"-->
+<!--                scheme="flat"-->
+<!--                color="error"-->
+<!--                size="small"-->
+<!--                @click="metamaskProvider.disconnect"-->
+<!--              />-->
             </div>
             <div v-else class="main-page__metamask">
               <span class="web3-page__txt">
@@ -50,26 +50,17 @@
                 scheme="flat"
                 size="small"
                 class="web3-page__card-btn"
+                color="primary"
                 :text="metamaskProvider.selectedAddress.value || 'Connect'"
                 @click="connect(metamaskProvider)"
                 :disabled="metamaskProvider.isConnected.value"
               />
-              <!--          todo  delete this button-->
-              <app-button
-                class="complex-form__submit-btn"
-                type="submit"
-                scheme="flat"
-                text="mint"
-                size="small"
-                @click="mint"
-              />
-              <!--          ^-->
               <app-button
                 v-if="metamaskProvider.isConnected.value"
                 class="web3-page__card-btn"
                 :text="'Disconnect'"
                 scheme="flat"
-                color="error"
+                color="primary"
                 size="small"
                 @click="metamaskProvider.disconnect"
               />
@@ -141,8 +132,6 @@ const providers: UseProvider[] = []
 
 const web3Store = useWeb3ProvidersStore()
 
-const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
-
 const metamaskProvider = computed(() =>
   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
 )
@@ -175,16 +164,6 @@ const connect = async (provider: UseProvider) => {
   }
 }
 
-const mint = async () => {
-  await safeMint(
-    '0xD656fB4ffdbB09dE24Cd1F25fC323DEbF4FB0886',
-    'bafybeihdmrxl4bq3hn2jhcpz2ecyre53dhfolhstowm6jw6bzzfqzs5fbm',
-  )
-}
-
-const safeMint = async (recipient: string, uri: string) => {
-  await certificateSBT.safeMint(recipient, uri)
-}
 
 const goToCertificate = async () => {
   await router.push(ROUTE_NAMES.certificates)
@@ -262,6 +241,10 @@ init()
     rgba(255, 255, 255, 0) 100%
   );
   opacity: 0.6;
+}
+
+.web3-page__card-btn-connect{
+  text-align: center;
 }
 
 .main-page__metamask {
