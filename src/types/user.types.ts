@@ -34,6 +34,7 @@ export type UserSetting = {
   SignKey: string
   Address: string
   KeyPathID: number
+  LastExAddress: string
   SendKey: string
   Url: string
 }

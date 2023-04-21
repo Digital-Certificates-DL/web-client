@@ -1,11 +1,11 @@
 <template>
   <div class="modal__back">
     <div class="modal__window">
-      <input-field v-model="form.code" />
-      <app-button  class="modal__btn"  text="Give access" @click="getCode" />
+      <input-field placeholder="code" v-model="form.code" />
+      <app-button  class="modal__btn modal__btn-link"  text="Give access" @click="getCode" />
       <div class="modal__btns">
-        <app-button class="modal__btn" text="Send code" @click="sendCode" />
-        <app-button class="modal__btn"  text="Cancel" @click="cancel" />
+        <app-button class="modal__btn modal__btn-nav" text="Send code" @click="sendCode" />
+        <app-button class="modal__btn modal__btn-nav"  text="Cancel" @click="cancel" />
       </div>
     </div>
   </div>
@@ -49,7 +49,7 @@ const getCode = () => {
 <style scoped lang="scss">
 .modal__window {
   width: 30%;
-  height: 70%;
+  height: 35%;
   background: white;
   border-radius: 1rem;
   flex-direction: row;
@@ -83,7 +83,15 @@ const getCode = () => {
 }
 
 .modal__btn{
-  width: toRem(100);
-  height: toRem(70);
+
+  height: toRem(40);
+}
+
+.modal__btn-link{
+  width: 100%;
+}
+
+.modal__btn-nav{
+  width: 40%;
 }
 </style>

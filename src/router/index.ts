@@ -5,7 +5,7 @@ import { ROUTE_NAMES } from '@/enums'
 const routes = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.main },
+    redirect: { name: ROUTE_NAMES.main }
   },
   // {
   //   //todo  update routers
@@ -27,7 +27,7 @@ const routes = [
   {
     path: '/create',
     name: ROUTE_NAMES.create,
-    component: () => import('@/pages/CreateCerticates.vue'),
+    component: () => import('@/pages/Generation.vue'),
   },
 
   {

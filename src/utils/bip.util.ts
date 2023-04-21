@@ -16,20 +16,7 @@ export class Bip {
       return bytes
     })
     const bip = bip32.fromSeed(seed, testnet)
-    index++
-    // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
-    const exchangeKey = bip.derive(index)
-
-    const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
-    const ex = bitcoin.payments.p2pkh({
-      pubkey: keyPairex.publicKey,
-      network: testnet,
-    })
-
-    console.log(ex.address)
-
     const keyPair = ECPair.fromWIF(bip.toWIF(), testnet)
-
     const { address } = bitcoin.payments.p2pkh({
       pubkey: keyPair.publicKey,
       network: testnet,

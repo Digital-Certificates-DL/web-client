@@ -3,7 +3,7 @@
     <div class="main-page__info">
       <span class="main-page__info-logo"> LOGO </span>
       <span class="main-page__info-name">Service name</span>
-      <h3>
+      <h3 class="main-page__info-description">
         Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus
         egestas pharetra quam cursus
       </h3>
@@ -79,8 +79,8 @@
         />
         <nav-button
           class="btn"
-          :tilte="'Template'"
-          description="your templates"
+          title="Template"
+          description="Your templates"
           body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           @click="goToTemplate"
         />
@@ -90,13 +90,6 @@
           description="generate certificates"
           class="btn"
           @click="goToGenerate"
-        />
-        <nav-button
-          :title="'bitcoin'"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
-          description="bitcoin"
-          class="btn"
-          @click="sendTx"
         />
       </div>
     </div>
@@ -169,24 +162,6 @@ const goToTemplate = async () => {
 
 const goToGenerate = async () => {
   await router.push(ROUTE_NAMES.create)
-}
-
-const sendTx = async () => {
-  const i = 0
-  const address = await Bip.genAddress(
-    'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
-    i,
-  )
-  console.log(address)
-
-  const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-    'tenant else strategy such toward slogan spawn faculty helmet awkward figure stamp',
-    i,
-  )
-  console.log('pr')
-  console.log(tx)
-  const res = await btc.Bitcoin.SendToTestnet(tx?.hex || '')
-  console.log(res)
 }
 
 init()
@@ -314,5 +289,15 @@ init()
 
 .web3-page__card-btn {
   width: 100%;
+}
+
+.main-page__info-description{
+  font-size: toRem(16);
+  color:#545454;
+}
+
+.nav-button{
+  display: block;
+  width: toRem(458);
 }
 </style>

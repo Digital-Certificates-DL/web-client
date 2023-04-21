@@ -11,6 +11,6 @@ export const useUsersModules = defineStore('users-store', {
   actions: {},
 })
 
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useUsersModules, import.meta.hot))
-}
+// if (import.meta.hot) {
+//   import.meta.hot.accept(acceptHMRUpdate(useUsersModules, import.meta.hot))
+// }

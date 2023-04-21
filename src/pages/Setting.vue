@@ -1,7 +1,6 @@
 <template>
   <div class="setting">
     <app-header />
-
     <div class="setting_body">
       <div class="setting__info">
         <h1 class="setting__title" >{{ pageName }}</h1>
@@ -26,14 +25,14 @@
       />
       <h1 class="settings__fields-title">{{ signKeyTitle }}</h1>
       <input-field
-        label="Bitcoin key"
+        label="Bitcoin Timestamping Mnemonic Phrase"
         class="settings__form"
         type="text"
         v-model="form.SendKey"
         placeholder="Send key"
       />
       <input-field
-        label="Url"
+        label="Google Sheet URL"
         class="settings__form"
 
         type="text"
@@ -41,7 +40,7 @@
         placeholder="Url"
       />
       <input-field
-        label="SignKey"
+        label="Bitcoin Corporate Signing Key (WIF)"
         class="settings__form"
 
         type="text"
@@ -52,14 +51,13 @@
         <app-button class="settings_btn" text="Save" @click="save" />
         <app-button class="settings_btn" text="Cancel" @click="cancel" />
       </div>
-
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import InputField from '@/fields/InputField.vue'
-import { reactive } from 'vue'
+import {reactive, ref} from 'vue'
 import {UserJSONResponseList, UserSetting} from '@/types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import { useRouter } from '@/router'
@@ -67,8 +65,9 @@ import { ROUTE_NAMES } from '@/enums'
 import AppButton from '@/common/AppButton.vue'
 import AppHeader from '@/common/AppHeader.vue'
 import btc from '@/utils/bitcoin.util'
-import { testnet } from 'ecpair/src/networks'
+
 import {api} from "@/api";
+
 
 const userState = useUsersModules()
 const title =
@@ -86,13 +85,13 @@ const form = reactive({
 } as UserSetting)
 
 const router = useRouter()
+
 const save = async () => {
   userState.setting = form
   const address = btc.Bitcoin.getAddressFromWIF(form.SignKey)
-  console.log(address)
+
+  console.log("address", address)
   userState.setting.Address = address || ''
-
-
 
   await api
     .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
@@ -101,14 +100,16 @@ const save = async () => {
         name: userState.setting.Name,
       },
     })
-    .then(resp => {
+    .then(async resp => {
       console.log(resp)
-      router.push(ROUTE_NAMES.main)
+      await router.push(ROUTE_NAMES.main)
     })
+
 }
 
-const cancel = async()=>{
-  await router.push(ROUTE_NAMES.main)
+
+const cancel = ()=>{
+   router.push(ROUTE_NAMES.certificates)
 }
 </script>
 <style scoped lang="scss">

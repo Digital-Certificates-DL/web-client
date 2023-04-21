@@ -1,6 +1,6 @@
 <template>
   <app-header />
-  <div class="certificate">
+  <div class="generation">
     <div class="certificate_name">
       <input-field v-model="address" />
       <app-button @click="mint" />

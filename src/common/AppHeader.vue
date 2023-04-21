@@ -9,7 +9,6 @@
       <div class="header__configuration">
         <div class="header__metamask">
           <app-button
-
             @click="connect"
             class="header__btn"
             :text="web3Store.provider.selectedAddress || 'Connect'"

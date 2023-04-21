@@ -86,6 +86,7 @@ const init = async () => {
 }
 const safeMint = async (recipient: string, uri: string) => {
   console.log("safe")
+  console.log("uri: ",uri)
   await certificateSBT.safeMint(recipient, uri)
 }
 
@@ -94,9 +95,9 @@ const mint = async () => {
   await api
     .post<IpfsJSONResponse>('/integrations/ccp/certificate/ipfs', {
       data: {
-        Description: 'test',
+        Description: props.user.attributes.Date + " "+ props.user.attributes.Participant + " " + props.user.attributes.CourseTitle + " " + props.user.attributes.Points +" " + props.user.attributes.Note,
         Img: props.user.attributes.CertificateImg,
-        Name: props.user.attributes.Participant,
+        Name: 'Certificate - '+props.user.attributes.Participant,
       },
     })
     .then(resp => {

@@ -3,15 +3,18 @@
     <app-header />
 
     <h1>Previously certificates</h1>
-    <div class="certificates_search">
-      <input-field model-value="form.search" @update:model-value="search" />
+    <div class="certificates__search">
+      <input-field  class="certificates__search-input" placeholder="&#128269 find" v-model="form.search" @update:model-value="search" />
+      <div class="certificates__btns">
+        <app-button class="certificates__btn" @click="find" text="Find" />
+        <app-button class="certificates__btn" @click="refresh" text="Refresh" />
+        <app-button class="certificates__btn" @click="bitcoinTimestamp" text="Bitcoin" />
+      </div>
     </div>
     <div v-if="isModalActive">
       <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
     </div>
-    <div>
-      <app-button @click="refresh" text="Find" />
-      <app-button @click="bitcoinTimestamp" text="Bitcoin" />
+    <div class="certificates__list">
       <div v-if="userSetting.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
@@ -28,6 +31,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -49,7 +53,7 @@ let currentUser: UserJSONResponse
 const listForTimestamp: UserJSONResponse[] = []
 
 const form = reactive({
-  Search: '',
+  search: '',
 })
 const openModal = (state: boolean, user: UserJSONResponse) => {
   console.log(state, 'state')
@@ -88,6 +92,7 @@ const refresh = async () => {
   const users = await api.post<UserJSONResponseList>('/integrations/ccp/users/', {
     data: {
       url: userSetting.setting.Url,
+      name: userSetting.setting.Name
     },
   })
   userSetting.students = prepareUserImg(users.data).data
@@ -97,33 +102,82 @@ let userBuffer
 const search = () => {
   userBuffer = userSetting.students
 
-  if (form.Search === '' && userBuffer !== undefined) {
+  if (form.search === '' && userBuffer !== undefined) {
     userSetting.students = userBuffer
   }
   userSetting.students.filter(item =>
-    item.attributes.Participant.includes(form.Search),
+    item.attributes.Participant.includes(form.search),
   )
 }
 
 const bitcoinTimestamp = async () => {
   //todo  implement bitcoin timestamp
-  let index = 0
+  if ( userSetting.setting.KeyPathID === 0 || userSetting.setting.KeyPathID === undefined){
+    userSetting.setting.KeyPathID = 0
+  }
   const users = listForTimestamp
   for (const user of users) {
+    console.log(user)
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
       userSetting.setting.SendKey,
-      index,
+      userSetting.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
-    index = tx?.index || index++
+    userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
     console.log(hex)
     if (hex === '') {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    console.log(sendResp)
+    user.attributes.TxHash  = sendResp.data.tx.hash
+    console.log("**response: ",sendResp)
+    userSetting.setting.LastExAddress = tx?.exAddress || ''
   }
+  await updateUsers(users)
 }
+
+const updateUsers = async (users: UserJSONResponse[]) =>{
+  await api
+    .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
+      data: {
+        data: users,
+        address: userSetting.setting.Address,
+        name: userSetting.setting.Name,
+        url: userSetting.setting.Url
+      },
+    })
+    .then(resp => {
+      console.log("update table resp: ",  resp)
+      const users = prepareUserImg(resp.data)
+      userSetting.students = users.data
+      // router.push(ROUTE_NAMES.certificates)
+    })
+}
+
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.certificates__search{
+  width: toRem(458);
+  border-radius: toRem(20);
+
+}
+
+.certificates__search-input{
+  margin-bottom: toRem(20);
+}
+
+.certificates__btns{
+  display: flex;
+  justify-content: space-between;
+}
+
+.certificates__btn{
+  background: #0066FF;
+  width: toRem(100);
+}
+
+//.certificates__list{
+//  height:50%
+//}
+</style>

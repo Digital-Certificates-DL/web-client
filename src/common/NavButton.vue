@@ -1,6 +1,6 @@
 <template>
   <div class="nav-button">
-    <app-button :text="props.title" class="navbar__btn" />
+    <app-button :text="props.title" class="nav-button__btn" />
     <p class="nav-button__description">
       {{ props.description }}
     </p>
@@ -35,8 +35,9 @@ import AppButton from '@/common/AppButton.vue'
   min-width: toRem(400);
 }
 .nav-button__btn {
-  width: toRem(90);
+  width: toRem(100);
   height: toRem(40);
+  margin-bottom: toRem(10);
 }
 
 .nav-button__description {

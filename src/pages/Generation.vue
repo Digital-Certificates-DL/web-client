@@ -1,23 +1,24 @@
 <template>
   <div v-if="isLoader">
-    <loader :title="loaderState.body" scheme="spinner" class="create_loader" />
+    <loader  scheme="spinner" class="create_loader" />
   </div>
   <div v-else-if="isUnauthorized">
     <auth-modal :token-link="authLink" @close-modal="closeModal" @with-code="updateCode" />
   </div>
-  <dic v-else class="certificate">
+  <dic v-else class="generation">
     <app-header />
 
     <div class="create_title">
       <h1>Create new certificate</h1>
     </div>
-    <div class="create_body">
-      <div class="create_first-step">
-        <p class="step-1">1</p>
+    <div class="generation__body">
+      <div class="create__step">
+        <p class="create__step-number">1</p>
 
         <div class="create_collection-name">
           <h1>Write a name for your certificate</h1>
           <input-field
+            class="generation__text-input"
             label="Name"
             type="text"
             v-model="certificatesInfo.Name"
@@ -26,12 +27,14 @@
         </div>
       </div>
 
-      <div class="create_second_step">
-        <p class="step-2">
+      <div class="create__step">
+        <p class="create__step-number">
           2
         </p>
         <div class="create_upload_files">
+          <h1>Choose or upload template for a new certificate</h1>
           <input-field
+            class="generation__file-input"
             id="image-file"
             type="file"
             label="template"
@@ -40,48 +43,34 @@
           <!--todo  make better ^-->
         </div>
       </div>
-      <div class="create_third_step">
-        <p class="step-3">
+      <div class="create__step">
+        <p class="create__step-number">
           3
         </p>
         <div class="create_upload_files">
+          <h1>Choose or upload template for a new certificate</h1>
           <input-field
+            class="generation__text-input"
             label="Link"
             type="text"
             v-model="certificatesInfo.Link"
             placeholder="note position(y)"
           />
         </div>
-        <div class="create_btns">
-          <app-button
-            class="complex-form__submit-btn"
-            type="submit"
-            text="Start"
-            @click="start"
-          />
-        </div>
       </div>
-
-      <div v-if="loaderState.state" class="create__loader">
-        <div class="create__loader-body">
-          <h1>Progress</h1>
-          <p>{{ loaderState.body }}</p>
-          <div v-if="loaderState.finished">
-            <app-button
-              class="complex-form__cancel-btn"
-              type="submit"
-              text="Watch All"
-              @click="watchAll"
-            />
-
-            <app-button
-              class="complex-form__cancel-btn"
-              type="submit"
-              text="Cancel"
-              @click="cancel"
-            />
-          </div>
-        </div>
+      <div class="create__btns">
+        <app-button
+          class="complex-form__submit-btn"
+          type="submit"
+          text="Start"
+          @click="start"
+        />
+        <app-button
+          class="complex-form__submit-btn"
+          type="submit"
+          text="cancel"
+          @click="cancel"
+        />
       </div>
     </div>
   </dic>
@@ -106,7 +95,7 @@ const userSetting = useUsersModules()
 const isLoader = ref(false)
 const isUnauthorized = ref(false)
 const authLink = ref("")
-
+const loaderState = ref("")
 
 const form = reactive({
   Url: '',
@@ -121,31 +110,33 @@ const certificatesInfo = reactive({
   Table: null,
 })
 
-const loaderState = {
-  state: false,
-  finished: false,
-  body: '',
-}
+// const loaderState = {
+//   state: false,
+//   finished: false,
+//   body: '',
+// }
+
 
 const start = async () => {
-  loaderState.state = true
-  defer(closeLoader)
-  isLoader.value = loaderState.state
-  loaderState.body = 'Parsing users'
+  defer(() => {
+    console.log('close loader')
+    isLoader.value = false
+  })
+  isLoader.value = true
+  loaderState.value = 'Parsing users'
   console.log('Parsing users')
   const users = await parsedData(certificatesInfo.Link)
   if (users===undefined){
     return
   }
-  loaderState.body = 'Signing users'
+  loaderState.value = 'Signing users'
   console.log('Signing users')
   const signatures = sign(users)
   console.log(" signatures ",signatures)
-  loaderState.body = 'Creating PDF for users'
+  loaderState.value = 'Creating PDF for users'
   await createPDF(signatures)
-  console.log('Creating PDF for users')
-  loaderState.body = ''
-  loaderState.state = false
+  loaderState.value = ''
+  isLoader.value = false
 }
 const parsedData = async (sheepUrl?: string) => {
   const resp = await api.post< UserJSONResponseList | UnauthorizedResponse >(
@@ -208,6 +199,7 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   return users
 }
 const createPDF = async (users: UserJSONResponseList) => {
+  console.log("create pdf:  ",  users)
   await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
       data: {
@@ -226,10 +218,7 @@ const createPDF = async (users: UserJSONResponseList) => {
     })
 }
 
-const closeLoader = () => {
-  console.log('close loader')
-  isLoader.value = false
-}
+
 const cancel = async () => {
   await router.push(ROUTE_NAMES.main)
 }
@@ -244,6 +233,7 @@ const closeModal = () => {
 
 const updateCode = async (code: string) => {
   isUnauthorized.value = false
+  console.log("code: ", code)
   await api
     .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
       data: {
@@ -258,26 +248,21 @@ const updateCode = async (code: string) => {
 }
 </script>
 
-<style lang="scss">
-.complex-form__cancel-btn {
+<style  lang="scss" >
+
+
+.create__step-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #eeeeee;
-  border-radius: toRem(10);
+  border-radius: toRem(30);
   font-size: toRem(14);
+  width: toRem(30);
+  height: toRem(30);
 }
 
-.complex-form__submit-btn {
-  background: #0066ff;
-  border-radius: toRem(10);
-  font-size: toRem(14);
-}
-
-.step-1 {
-  background: #eeeeee;
-  border-radius: toRem(10);
-  font-size: toRem(14);
-}
-
-.step-1--ready {
+.create__step-number--ready {
   background: #0066ff;
 }
 
@@ -293,4 +278,36 @@ const updateCode = async (code: string) => {
   align-items: center;
   justify-content: center;
 }
+
+.generation__text-input{
+  display: block;
+  width: toRem(458);
+  margin-bottom: toRem(20);
+  margin-top: toRem(20);
+}
+
+.generation__file-input{
+  margin-bottom: toRem(20);
+  margin-top: toRem(20);
+  width: toRem(314);
+  height: toRem(222);
+}
+
+.create__step{
+  display: flex;
+margin-top: toRem(20);
+}
+
+.create__btns{
+  display: flex;
+  justify-content: space-between;
+  width: toRem(350);
+  margin-left: toRem(80);
+}
+
+.create__btn{
+  width: toRem(100);
+  background: #0066ff;
+}
+
 </style>

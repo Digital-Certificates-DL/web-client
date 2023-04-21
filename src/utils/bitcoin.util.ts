@@ -10,6 +10,7 @@ const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
 import { networks } from 'bitcoinjs-lib'
 import { Network } from 'bitcoinjs-lib/src/networks'
+import {PustTxResponce} from "@/types/bitcoin.types";
 
 //todo  find utxos in first 100 keys
 
@@ -27,6 +28,16 @@ export class Bitcoin {
     })
     console.log(seed)
     const bip = bip32.fromSeed(seed, testnet)
+    const key = bip.derive(index)
+    const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
+
+    const { address } = bitcoin.payments.p2pkh({
+      pubkey: keyPair.publicKey,
+      network: testnet,
+    })
+
+    console.log("address: ", address)
+
     index++
     // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
     const exchangeKey = bip.derive(index)
@@ -36,13 +47,8 @@ export class Bitcoin {
       network: testnet,
     })
 
-    const keyPair = ECPair.fromWIF(bip.toWIF(), testnet)
 
-    const { address } = bitcoin.payments.p2pkh({
-      pubkey: keyPair.publicKey,
-      network: testnet,
-    })
-    console.log(address)
+    console.log("ex address: ", ex)
     const psbt = new bitcoin.Psbt({ network: testnet })
     let fee = 0
     let butxoAmount = 0
@@ -60,7 +66,7 @@ export class Bitcoin {
             txs = response.data.txrefs
           }
 
-          console.log(response.data)
+          console.log("response: ",response.data)
           if (response.data.unconfirmed_txrefs) {
             console.log(response.data.unconfirmed_txrefs)
             txs = txs.concat(response.data.unconfirmed_txrefs)
@@ -74,12 +80,14 @@ export class Bitcoin {
         console.log('utxos: ', utxos)
         return
       }
-
       const { txs, utxoAmount, value } = await this.betterUtxoTestnet(
         utxos,
         3,
         556 + 557 + 558,
       )
+      console.log("UTXO AMOUNT: ", utxoAmount)
+      console.log("Value: ",  value)
+      console.log("Value: ",  value)
       console.log('after better')
       fee = value
       utxo = txs
@@ -149,8 +157,10 @@ export class Bitcoin {
     psbt.signInput(0, keyPair)
     psbt.finalizeAllInputs()
     const hex = psbt.extractTransaction().toHex()
+    const exAddress = ex.address
     return {
       hex,
+      exAddress,
       index,
     }
   }
@@ -213,7 +223,8 @@ export class Bitcoin {
       .catch(function (err) {
         return err
       })
-    return res
+
+    return res as PustTxResponce
   }
   // f3940bcec5bb4f1b9edfca8f6cabce65
   static async SendToMainnet(tx: string) {
@@ -335,6 +346,7 @@ export class Bitcoin {
     const largeTxs = []
     const smaller = []
     let value = await this.calculateFeeTestnet(outs, 1)
+    console.log("value: ",value)
     value += txsValue
     for (const tx of txs) {
       if (tx.value > value) {
@@ -343,6 +355,8 @@ export class Bitcoin {
         smaller.push(tx)
       }
     }
+    console.log("large: ", largeTxs)
+    console.log("small: ", smaller)
     smaller.sort(this.reverseSort)
     largeTxs.sort(this.sort)
     if (smaller.length > 1) {
@@ -374,7 +388,7 @@ export class Bitcoin {
     const keyPairex = ECPair.fromWIF(wif, network)
     const key = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
-      network: testnet,
+      network: network,
     })
 
     console.log(key.address)
