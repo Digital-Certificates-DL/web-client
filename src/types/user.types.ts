@@ -33,7 +33,6 @@ export type UserSetting = {
   Org: string
   SignKey: string
   Address: string
-  KeyPathID: number
   LastExAddress: string
   SendKey: string
   Url: string

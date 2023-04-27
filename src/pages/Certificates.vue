@@ -118,20 +118,12 @@ const search = () => {
 }
 
 const bitcoinTimestamp = async () => {
-  if (
-    userSetting.setting.KeyPathID === 0 ||
-    userSetting.setting.KeyPathID === undefined
-  ) {
-    userSetting.setting.KeyPathID = 0
-  }
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
       userSetting.setting.SendKey,
-      userSetting.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
-    userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
     if (hex === '') {
       return
     }
