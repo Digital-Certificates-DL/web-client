@@ -4,9 +4,13 @@
       <div class="modal__img">
         <img :src="props.user.attributes.Img" alt="" />
       </div>
-      <h1 class="modal__title">SBT issuance</h1>
+      <h1 class="modal__title">
+        {{ modalTitle }}
+      </h1>
       <div class="modal__name">
-        <label for="participant"> Full name </label>
+        <label for="participant">
+          {{ fullName }}
+        </label>
         <p id="participant">
           {{ props.user.attributes.Participant }}
         </p>
@@ -52,16 +56,14 @@ const props = withDefaults(
   },
 )
 
+const fullName = 'Full name'
+const modalTitle = 'SBT issuance'
 const web3Store = useWeb3ProvidersStore()
 
 const providers: UseProvider[] = []
 
-const certificateSBT = useErc721(config.CONTRACT) //todo make better
-// const certificateSBT = useErc721('0x0c4487b8a9dcB460C864293146D2056e2E53c680') //todo make better
+const certificateSBT = useErc721(config.CONTRACT)
 
-// const metamaskProvider = computed(() =>
-//   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
-// )
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 
@@ -85,26 +87,32 @@ const init = async () => {
   isLoaded.value = true
 }
 const safeMint = async (recipient: string, uri: string) => {
-  console.log("safe")
-  console.log("uri: ",uri)
   await certificateSBT.safeMint(recipient, uri)
 }
 
 const mint = async () => {
-  let url = ''
-  await api
+  const ipfsLink = await api
     .post<IpfsJSONResponse>('/integrations/ccp/certificate/ipfs', {
       data: {
-        Description: props.user.attributes.Date + " "+ props.user.attributes.Participant + " " + props.user.attributes.CourseTitle + " " + props.user.attributes.Points +" " + props.user.attributes.Note,
+        Description:
+          props.user.attributes.Date +
+          ' ' +
+          props.user.attributes.Participant +
+          ' ' +
+          props.user.attributes.CourseTitle +
+          ' ' +
+          props.user.attributes.Points +
+          ' ' +
+          props.user.attributes.Note,
         Img: props.user.attributes.CertificateImg,
-        Name: 'Certificate - '+props.user.attributes.Participant,
+        Name: 'Certificate - ' + props.user.attributes.Participant,
       },
     })
     .then(resp => {
-      console.log("resp: ", resp)
-      url = resp.data.attributes.url
-      }
-    )
+      return resp
+    })
+
+  const url = ipfsLink.data.attributes.url
 
   await init()
   await safeMint(form.address, url)
@@ -115,7 +123,6 @@ const emit = defineEmits<{
 }>()
 
 const cancel = () => {
-  console.log('cancel')
   emit('cancel', false)
 }
 </script>

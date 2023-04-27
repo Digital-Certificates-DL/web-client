@@ -15,10 +15,8 @@
           />
         </div>
         <div class="header__settings">
-          <app-button
-            class="header__btn"
-            @click="goToSetting">
-             &#9881;
+          <app-button class="header__btn" @click="goToSetting">
+            {{ settingIco }}
           </app-button>
         </div>
       </div>
@@ -35,6 +33,8 @@ import { ErrorHandler } from '@/helpers'
 import AppButton from '@/common/AppButton.vue'
 
 const logo = 'LOGO'
+const settingIco = '&#9881;'
+
 const providers: UseProvider[] = []
 const web3Store = useWeb3ProvidersStore()
 const goToSetting = async () => {
@@ -89,14 +89,12 @@ const connect = async () => {
   border-radius: toRem(5);
 }
 
-.header__btn{
-  background: #FAFAFA;
+.header__btn {
+  background: #fafafa;
   color: #9e9e9e;
 }
 .header__metamask {
   background: #e5e5e5;
-  //height: toRem(30);
-  //margin: auto;
   border-radius: toRem(5);
 }
 </style>

@@ -3,20 +3,20 @@
     <div class="error-modal__back">
       <div class="error-modal__window">
         <div class="error-modal__data">
-          <error-message class="error-modal__data-err" :message="props.message" />
-          <app-button  text="close" @click="closeModal"/>
+          <error-message
+            class="error-modal__data-err"
+            :message="props.message"
+          />
+          <app-button text="close" @click="closeModal" />
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts" setup>
-
-import ErrorMessage from "@/common/ErrorMessage.vue";
-import AppButton from "@/common/AppButton.vue";
-
+import ErrorMessage from '@/common/ErrorMessage.vue'
+import AppButton from '@/common/AppButton.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -27,8 +27,6 @@ const props = withDefaults(
   },
 )
 
-
-
 const emit = defineEmits<{
   (e: 'close'): boolean
 }>()
@@ -36,12 +34,9 @@ const emit = defineEmits<{
 const closeModal = () => {
   emit('close')
 }
-
 </script>
 
 <style lang="scss" scoped>
-
-
 .error-modal__window {
   width: 30%;
   height: 30%;
@@ -50,8 +45,6 @@ const closeModal = () => {
   justify-items: center;
   align-items: center;
   display: grid;
-
-
 }
 
 .error-modal__back {
@@ -67,14 +60,13 @@ const closeModal = () => {
   justify-content: center;
 }
 
-.error-modal__data{
+.error-modal__data {
   justify-items: center;
   align-items: center;
   display: grid;
-
 }
 
-.error-modal__data-err{
+.error-modal__data-err {
   height: toRem(60);
 }
 </style>

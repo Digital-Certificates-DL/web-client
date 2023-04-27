@@ -1,9 +1,13 @@
 <template>
   <div v-if="isLoader">
-    <loader  scheme="spinner" class="create_loader" />
+    <loader scheme="spinner" class="create_loader" />
   </div>
   <div v-else-if="isUnauthorized">
-    <auth-modal :token-link="authLink" @close-modal="closeModal" @with-code="updateCode" />
+    <auth-modal
+      :token-link="authLink"
+      @close-modal="closeModal"
+      @with-code="updateCode"
+    />
   </div>
   <dic v-else class="generation">
     <app-header />
@@ -13,10 +17,12 @@
     </div>
     <div class="generation__body">
       <div class="create__step">
-        <p class="create__step-number">1</p>
+        <p class="create__step-number">
+          {{ step1 }}
+        </p>
 
         <div class="create_collection-name">
-          <h1>Write a name for your certificate</h1>
+          <h1>{{ step1Desc }}</h1>
           <input-field
             class="generation__text-input"
             label="Name"
@@ -29,10 +35,10 @@
 
       <div class="create__step">
         <p class="create__step-number">
-          2
+          {{ step2 }}
         </p>
         <div class="create_upload_files">
-          <h1>Choose or upload template for a new certificate</h1>
+          <h1>{{ step2Desc }}</h1>
           <input-field
             class="generation__file-input"
             id="image-file"
@@ -45,10 +51,10 @@
       </div>
       <div class="create__step">
         <p class="create__step-number">
-          3
+          {{ step3 }}
         </p>
         <div class="create_upload_files">
-          <h1>Choose or upload template for a new certificate</h1>
+          <h1>{{ step3Desc }}</h1>
           <input-field
             class="generation__text-input"
             label="Link"
@@ -82,7 +88,12 @@ import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import {UnauthorizedResponse, UserJSONResponseList, UserJSONResponse, UserSetting} from '@/types/user.types'
+import {
+  UnauthorizedResponse,
+  UserJSONResponseList,
+  UserJSONResponse,
+  UserSetting,
+} from '@/types/user.types'
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -94,8 +105,16 @@ const userSetting = useUsersModules()
 
 const isLoader = ref(false)
 const isUnauthorized = ref(false)
-const authLink = ref("")
-const loaderState = ref("")
+const authLink = ref('')
+const loaderState = ref('')
+
+const step1 = '1'
+const step2 = '2'
+const step3 = '3'
+
+const step1Desc = 'Write a name for your certificate'
+const step2Desc = 'Choose or upload template for a new certificate'
+const step3Desc = 'Write a link to  google sheet'
 
 const form = reactive({
   Url: '',
@@ -110,73 +129,52 @@ const certificatesInfo = reactive({
   Table: null,
 })
 
-// const loaderState = {
-//   state: false,
-//   finished: false,
-//   body: '',
-// }
-
-
 const start = async () => {
   defer(() => {
-    console.log('close loader')
     isLoader.value = false
   })
   isLoader.value = true
   loaderState.value = 'Parsing users'
-  console.log('Parsing users')
   const users = await parsedData(certificatesInfo.Link)
-  if (users===undefined){
+  if (users === undefined) {
     return
   }
   loaderState.value = 'Signing users'
-  console.log('Signing users')
   const signatures = sign(users)
-  console.log(" signatures ",signatures)
   loaderState.value = 'Creating PDF for users'
   await createPDF(signatures)
   loaderState.value = ''
   isLoader.value = false
 }
 const parsedData = async (sheepUrl?: string) => {
-  const resp = await api.post< UserJSONResponseList | UnauthorizedResponse >(
-    '/integrations/ccp/users/empty',
-    {
-      data: {
-        name: userSetting.setting.Name,
-        url: sheepUrl || userSetting.setting.Url,
+  const resp = await api
+    .post<UserJSONResponseList | UnauthorizedResponse>(
+      '/integrations/ccp/users/empty',
+      {
+        data: {
+          name: userSetting.setting.Name,
+          url: sheepUrl || userSetting.setting.Url,
+        },
       },
-    },
-  ).then(
-    resp => {
-      console.log("resp: ", resp)
-      if (resp.status === 403){
-        console.log(403," in resp")
+    )
+    .then(resp => {
+      if (resp.status === 403) {
         return
       }
       return resp
-    }
-  ).catch(err => {
-    console.log(err)
-    console.log("link", err.response.data.data.attributes.link)
-    if (err.response.data.data.attributes.link){
-      console.log(403," in error")
-      isUnauthorized.value = true
-      authLink.value = err.response.data.data.attributes.link
-    }
-  })
-  console.log('users: ', resp)
-  if (!resp){
-    console.log("undefined")
-    return
-  }
-  return resp as UserJSONResponseList | {} as UserJSONResponseList
+    })
+    .catch(err => {
+      if (err.response.data.data.attributes.link) {
+        isUnauthorized.value = true
+        authLink.value = err.response.data.data.attributes.link
+      }
+    })
+
+  return resp as UserJSONResponseList | undefined
 }
 const sign = (users: UserJSONResponseList) => {
-  console.log('start sign: ', users.data.data)
   const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
   for (const user of users.data.data) {
-    console.log('user: ', user)
     if (
       user.attributes.Signature === undefined ||
       user.attributes.Signature == ''
@@ -188,10 +186,8 @@ const sign = (users: UserJSONResponseList) => {
 }
 
 const prepareUserImg = (users: UserJSONResponseList) => {
-  console.log(users.data)
-  const list: UserJSONResponse[]= users.data
-  for (const user of  list) {
-    console.log(user)
+  const list: UserJSONResponse[] = users.data
+  for (const user of list) {
     user.attributes.Img =
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
   }
@@ -199,7 +195,6 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   return users
 }
 const createPDF = async (users: UserJSONResponseList) => {
-  console.log("create pdf:  ",  users)
   await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
       data: {
@@ -207,8 +202,7 @@ const createPDF = async (users: UserJSONResponseList) => {
         address:
           userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
         url: userSetting.setting.Url || form.Url,
-        name: userSetting.setting.Name
-
+        name: userSetting.setting.Name,
       },
     })
     .then(resp => {
@@ -218,13 +212,8 @@ const createPDF = async (users: UserJSONResponseList) => {
     })
 }
 
-
 const cancel = async () => {
   await router.push(ROUTE_NAMES.main)
-}
-
-const watchAll = () => {
-  router.push(ROUTE_NAMES.certificates)
 }
 
 const closeModal = () => {
@@ -233,24 +222,18 @@ const closeModal = () => {
 
 const updateCode = async (code: string) => {
   isUnauthorized.value = false
-  console.log("code: ", code)
-  await api
-    .post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-      data: {
-        code: code,
-        name: userSetting.setting.Name,
-      },
-    })
-    .then(resp => {
-      console.log(resp)
-      isUnauthorized.value = false
-    })
+  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+    data: {
+      code: code,
+      name: userSetting.setting.Name,
+    },
+  })
+
+  isUnauthorized.value = false
 }
 </script>
 
-<style  lang="scss" >
-
-
+<style lang="scss">
 .create__step-number {
   display: flex;
   justify-content: center;
@@ -279,35 +262,34 @@ const updateCode = async (code: string) => {
   justify-content: center;
 }
 
-.generation__text-input{
+.generation__text-input {
   display: block;
   width: toRem(458);
   margin-bottom: toRem(20);
   margin-top: toRem(20);
 }
 
-.generation__file-input{
+.generation__file-input {
   margin-bottom: toRem(20);
   margin-top: toRem(20);
   width: toRem(314);
   height: toRem(222);
 }
 
-.create__step{
+.create__step {
   display: flex;
-margin-top: toRem(20);
+  margin-top: toRem(20);
 }
 
-.create__btns{
+.create__btns {
   display: flex;
   justify-content: space-between;
   width: toRem(350);
   margin-left: toRem(80);
 }
 
-.create__btn{
+.create__btn {
   width: toRem(100);
   background: #0066ff;
 }
-
 </style>

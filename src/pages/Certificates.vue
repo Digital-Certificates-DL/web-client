@@ -2,13 +2,22 @@
   <div class="certificates">
     <app-header />
 
-    <h1>Previously certificates</h1>
+    <h1>{{ certificatesTitle }}</h1>
     <div class="certificates__search">
-      <input-field  class="certificates__search-input" placeholder="&#128269 find" v-model="form.search" @update:model-value="search" />
+      <input-field
+        class="certificates__search-input"
+        placeholder="find"
+        v-model="form.search"
+        @update:model-value="search"
+      />
       <div class="certificates__btns">
         <app-button class="certificates__btn" @click="find" text="Find" />
         <app-button class="certificates__btn" @click="refresh" text="Refresh" />
-        <app-button class="certificates__btn" @click="bitcoinTimestamp" text="Bitcoin" />
+        <app-button
+          class="certificates__btn"
+          @click="bitcoinTimestamp"
+          text="Bitcoin"
+        />
       </div>
     </div>
     <div v-if="isModalActive">
@@ -31,13 +40,12 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts" setup>
 import { useUsersModules } from '@/store/modules/use-users.modules'
 import Certificate from '@/common/Certificate.vue'
-import ModalInfo from '@/common/ModalInfo.vue'
+import ModalInfo from '@/common/modals/ModalInfo.vue'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
@@ -52,12 +60,12 @@ let currentUser: UserJSONResponse
 
 const listForTimestamp: UserJSONResponse[] = []
 
+const certificatesTitle = 'Previously certificates'
+
 const form = reactive({
   search: '',
 })
 const openModal = (state: boolean, user: UserJSONResponse) => {
-  console.log(state, 'state')
-  console.log(isModalActive)
   isModalActive.value = state
   currentUser = user
 }
@@ -71,16 +79,13 @@ const prepareUserImg = (users: UserJSONResponseList) => {
 }
 
 const closeModal = () => {
-  console.log(isModalActive, 'close')
   isModalActive.value = false
 }
 
 const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-  console.log('select', state)
-  console.log(user)
   if (state) {
     listForTimestamp.push(user)
-    console.log(listForTimestamp)
+
     return
   }
 
@@ -88,13 +93,15 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 }
 
 const refresh = async () => {
-  //todo dont show new users
-  const users = await api.post<UserJSONResponseList>('/integrations/ccp/users/', {
-    data: {
-      url: userSetting.setting.Url,
-      name: userSetting.setting.Name
+  const users = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/users/',
+    {
+      data: {
+        url: userSetting.setting.Url,
+        name: userSetting.setting.Name,
+      },
     },
-  })
+  )
   userSetting.students = prepareUserImg(users.data).data
 }
 
@@ -111,69 +118,64 @@ const search = () => {
 }
 
 const bitcoinTimestamp = async () => {
-  //todo  implement bitcoin timestamp
-  if ( userSetting.setting.KeyPathID === 0 || userSetting.setting.KeyPathID === undefined){
+  if (
+    userSetting.setting.KeyPathID === 0 ||
+    userSetting.setting.KeyPathID === undefined
+  ) {
     userSetting.setting.KeyPathID = 0
   }
   const users = listForTimestamp
   for (const user of users) {
-    console.log(user)
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
       userSetting.setting.SendKey,
       userSetting.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
     userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
-    console.log(hex)
     if (hex === '') {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    user.attributes.TxHash  = sendResp.data.tx.hash
-    console.log("**response: ",sendResp)
+    user.attributes.TxHash = sendResp.data.tx.hash
     userSetting.setting.LastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)
 }
 
-const updateUsers = async (users: UserJSONResponse[]) =>{
-  await api
+const updateUsers = async (users: UserJSONResponse[]) => {
+  const usersResp = await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
       data: {
         data: users,
         address: userSetting.setting.Address,
         name: userSetting.setting.Name,
-        url: userSetting.setting.Url
+        url: userSetting.setting.Url,
       },
     })
     .then(resp => {
-      console.log("update table resp: ",  resp)
-      const users = prepareUserImg(resp.data)
-      userSetting.students = users.data
-      // router.push(ROUTE_NAMES.certificates)
+      return resp
     })
+  userSetting.students = usersResp.data.data
 }
-
 </script>
 
 <style lang="scss" scoped>
-.certificates__search{
+.certificates__search {
   width: toRem(458);
   border-radius: toRem(20);
-
 }
 
-.certificates__search-input{
+.certificates__search-input {
   margin-bottom: toRem(20);
 }
 
-.certificates__btns{
+.certificates__btns {
   display: flex;
   justify-content: space-between;
 }
 
-.certificates__btn{
-  background: #0066FF;
+.certificates__btn {
+  background: #0066ff;
   width: toRem(100);
 }
 

@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { UserJSONResponse, UserSetting } from '@/types'
 import { useProvider } from '@/composables'
 

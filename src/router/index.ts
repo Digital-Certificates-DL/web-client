@@ -5,24 +5,12 @@ import { ROUTE_NAMES } from '@/enums'
 const routes = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.main }
+    redirect: { name: ROUTE_NAMES.main },
   },
-  // {
-  //   //todo  update routers
-  //   path: '/',
-  //   name: ROUTE_NAMES.web3,
-  //   component: () => import('@/pages/Main.vue'),
-  // },
   {
     path: '/main',
     name: ROUTE_NAMES.main,
     component: () => import('@/pages/Main.vue'),
-  },
-
-  {
-    path: '/template',
-    name: ROUTE_NAMES.template,
-    component: () => import('@/pages/PdfView.vue'),
   },
   {
     path: '/create',

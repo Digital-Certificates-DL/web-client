@@ -1,11 +1,10 @@
 <template>
   <div class="main-page">
     <div class="main-page__info">
-      <span class="main-page__info-logo"> LOGO </span>
-      <span class="main-page__info-name">Service name</span>
+      <span class="main-page__info-logo"> {{ mainPageInfoLogo }} </span>
+      <span class="main-page__info-name">{{ mainPageInfoName }}</span>
       <h3 class="main-page__info-description">
-        Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus
-        egestas pharetra quam cursus
+        {{ mainPageInfoDesc }}
       </h3>
     </div>
     <div class="main-page__body">
@@ -19,10 +18,11 @@
               v-if="!metamaskProvider.isConnected.value"
               class="main-page__metamask"
             >
-              <p class="main-page__metamask-title">Connect to MetaMask</p>
+              <p class="main-page__metamask-title">
+                {{ metamaskConnect }}
+              </p>
               <p class="main-page__metamask-definition">
-                Ac integer sapien nisl turpis arcu integer. Pellentesque
-                phasellus egestas pharetra quam cursus
+                {{ metamaskDesc }}
               </p>
               <app-button
                 scheme="flat"
@@ -67,7 +67,7 @@
           :title="'Settings'"
           description="Your settings"
           class="btn"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
           @click="goToSetting"
         />
         <nav-button
@@ -76,13 +76,6 @@
           class="btn"
           body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           @click="goToCertificate"
-        />
-        <nav-button
-          class="btn"
-          title="Template"
-          description="Your templates"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
-          @click="goToTemplate"
         />
         <nav-button
           :title="'Generation'"
@@ -101,18 +94,26 @@ import { AppButton, Loader, ErrorMessage } from '@/common'
 import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
-import { useProvider, useErc721 } from '@/composables'
+import { useProvider } from '@/composables'
 import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
 import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
-import btc from '@/utils/bitcoin.util'
 import NavButton from '@/common/NavButton.vue'
-import { Bip } from '@/utils/bip.util'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const providers: UseProvider[] = []
+const mainPageInfoLogo = 'LOGO'
+const metamaskConnect = 'Connect to MetaMask'
+const mainPageInfoName = 'Service name'
+const mainPageInfoDesc =
+  'Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus\n' +
+  '        egestas pharetra quam cursus'
+
+const metamaskDesc =
+  'Ac integer sapien nisl turpis arcu integer. Pellentesque\n' +
+  '                phasellus egestas pharetra quam cursus'
 
 const web3Store = useWeb3ProvidersStore()
 
@@ -148,16 +149,11 @@ const connect = async (provider: UseProvider) => {
   }
 }
 
-
 const goToCertificate = async () => {
   await router.push(ROUTE_NAMES.certificates)
 }
 const goToSetting = async () => {
   await router.push(ROUTE_NAMES.setting)
-}
-
-const goToTemplate = async () => {
-  await router.push(ROUTE_NAMES.template)
 }
 
 const goToGenerate = async () => {
@@ -211,7 +207,7 @@ init()
   opacity: 0.6;
 }
 
-.web3-page__card-btn-connect{
+.web3-page__card-btn-connect {
   text-align: center;
 }
 
@@ -291,12 +287,12 @@ init()
   width: 100%;
 }
 
-.main-page__info-description{
+.main-page__info-description {
   font-size: toRem(16);
-  color:#545454;
+  color: #545454;
 }
 
-.nav-button{
+.nav-button {
   display: block;
   width: toRem(458);
 }

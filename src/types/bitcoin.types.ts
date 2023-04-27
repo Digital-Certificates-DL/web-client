@@ -5,7 +5,6 @@ export type PustTxResponce = {
 }
 
 export interface Tx {
-
   block_height: number
   hash: string
   addresses: string[]
@@ -42,4 +41,18 @@ export interface Output {
   script: string
   addresses: string[]
   script_type: string
+}
+
+export interface UTXO {
+  tx_hash: string
+  block_height: number
+  tx_input_n: number
+  tx_output_n: number
+  value: number
+  ref_balance: number
+  spent: boolean
+  spent_by: string
+  confirmations: number
+  confirmed: string
+  double_spend: boolean
 }

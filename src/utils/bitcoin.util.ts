@@ -8,9 +8,8 @@ import { mnemonicToSeedAsync } from 'bip39-web'
 
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
-import { networks } from 'bitcoinjs-lib'
 import { Network } from 'bitcoinjs-lib/src/networks'
-import {PustTxResponce} from "@/types/bitcoin.types";
+import { PustTxResponce, UTXO } from '@/types/bitcoin.types'
 
 //todo  find utxos in first 100 keys
 
@@ -20,13 +19,10 @@ export class Bitcoin {
     index: number,
     txID?: string,
   ) => {
-    console.log('start')
-    // const bip = bip32.fromBase58(seed,  testnet)
-    //const child = bip.derive(index)
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
       return bytes
     })
-    console.log(seed)
+
     const bip = bip32.fromSeed(seed, testnet)
     const key = bip.derive(index)
     const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
@@ -36,10 +32,7 @@ export class Bitcoin {
       network: testnet,
     })
 
-    console.log("address: ", address)
-
     index++
-    // n4cpKQKAt2YJdf8DBxFzPATJWX42t5h7C4
     const exchangeKey = bip.derive(index)
     const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
     const ex = bitcoin.payments.p2pkh({
@@ -47,12 +40,10 @@ export class Bitcoin {
       network: testnet,
     })
 
-
-    console.log("ex address: ", ex)
     const psbt = new bitcoin.Psbt({ network: testnet })
     let fee = 0
     let butxoAmount = 0
-    let utxo
+    let utxo: UTXO[] = []
     if (!txID) {
       const utxos = await axios
         .get(
@@ -66,18 +57,14 @@ export class Bitcoin {
             txs = response.data.txrefs
           }
 
-          console.log("response: ",response.data)
           if (response.data.unconfirmed_txrefs) {
-            console.log(response.data.unconfirmed_txrefs)
             txs = txs.concat(response.data.unconfirmed_txrefs)
           }
-          console.log('txs: ', txs)
+
           return txs
         })
-        .catch(err => console.log(err))
 
       if (!utxos) {
-        console.log('utxos: ', utxos)
         return
       }
       const { txs, utxoAmount, value } = await this.betterUtxoTestnet(
@@ -85,10 +72,6 @@ export class Bitcoin {
         3,
         556 + 557 + 558,
       )
-      console.log("UTXO AMOUNT: ", utxoAmount)
-      console.log("Value: ",  value)
-      console.log("Value: ",  value)
-      console.log('after better')
       fee = value
       utxo = txs
       butxoAmount = utxoAmount || 0
@@ -96,42 +79,14 @@ export class Bitcoin {
     if (utxo.length) {
       for (let i = 0; i < utxo.length; i++) {
         const hex = await this.getTxTestnet(utxo[i].tx_hash)
-        console.log('adding new  input: ')
-        console.log('test')
-        console.log('Buffer: ', Buffer)
-        console.log('*')
-        const bf = new Buffer('test', 'utf-8')
-        console.log(bf)
-        alert('some string')
-        console.log(Buffer)
         const txHex = new Buffer(hex, 'hex')
-        console.log('added')
-
-        // const nonWitUTXO = Buffer.from(hex, 'hex')
-
         psbt.addInput({
           hash: utxo[i].tx_hash,
           index: utxo[i].tx_output_n,
           nonWitnessUtxo: txHex,
         })
       }
-    } else {
-      const hex = await this.getTxTestnet(utxo.tx_hash)
-      console.log('adding new  input: ')
-      // const encoder = new TextEncoder()
-      // const txHex = typedArrayToBuffer(new Uint8Array(encoder.encode(hex)))
-      // console.log(txHex)
-      const txHex = new Buffer(hex, 'hex')
-
-      console.log('added')
-      psbt.addInput({
-        hash: utxo.tx_hash,
-        index: utxo.tx_output_n,
-        nonWitnessUtxo: txHex, //todo fix it
-      })
     }
-
-    console.log(utxo)
 
     let balance = butxoAmount
     psbt.addOutput({
@@ -152,8 +107,6 @@ export class Bitcoin {
       address: ex.address || '',
       value: balance,
     })
-
-    console.log('sign')
     psbt.signInput(0, keyPair)
     psbt.finalizeAllInputs()
     const hex = psbt.extractTransaction().toHex()
@@ -174,7 +127,7 @@ export class Bitcoin {
     const psbt = new bitcoin.Psbt()
     let amount = 0
     let butxoAmount = 0
-    let utxo
+    let utxo: UTXO[] = []
     if (!txID) {
       const utxos = await axios
         .get(
@@ -226,7 +179,6 @@ export class Bitcoin {
 
     return res as PustTxResponce
   }
-  // f3940bcec5bb4f1b9edfca8f6cabce65
   static async SendToMainnet(tx: string) {
     await axios
       .post(
@@ -258,7 +210,6 @@ export class Bitcoin {
     const size = ins * 148 + outs * 34 + 10 - ins
     // const size = ins * 180 + outs * 34 + 10 - ins
     let fee = 10
-    //
     fee = await axios
       .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
       .then(response => {
@@ -271,27 +222,27 @@ export class Bitcoin {
     return size * Number(fee)
   }
 
-  private static async betterUtxoMainnet(txs: any, outs: number) {
-    const largeTxs = []
-    const smaller = []
+  private static async betterUtxoMainnet(txs: UTXO[], outs: number) {
+    const largeTxs: UTXO[] = []
+    const smaller: UTXO[] = []
     let value = await this.calculateFeeMainnet(outs, 1)
     for (const tx of txs) {
       if (tx.value > value) {
-        largeTxs.push(tx.value)
+        largeTxs.push(tx)
       } else {
-        smaller.push(tx.value)
+        smaller.push(tx)
       }
     }
     smaller.sort(this.reverseSort)
     largeTxs.sort(this.sort)
     if (smaller.length > 1) {
       let bufferValue = 0
-      const utxos = []
+      const utxos: UTXO[] = []
       for (let i = 0; i < smaller.length; i++) {
         value = await this.calculateFeeMainnet(outs, i)
         if (bufferValue < value) {
           bufferValue += smaller[i].value
-          utxos.push(smaller)
+          utxos.push(smaller[i])
         }
         return {
           txs: utxos,
@@ -300,8 +251,11 @@ export class Bitcoin {
         }
       }
     }
+    const utxoRes: UTXO[] = []
+    utxoRes.push(largeTxs[0])
+    //todo make better
     return {
-      txs: largeTxs[0],
+      txs: utxoRes,
       utxoAmoutn: largeTxs[0].value,
       value: value,
     }
@@ -339,14 +293,13 @@ export class Bitcoin {
   }
 
   private static async betterUtxoTestnet(
-    txs: any,
+    txs: UTXO[],
     outs: number,
     txsValue: number,
   ) {
-    const largeTxs = []
-    const smaller = []
+    const largeTxs: UTXO[] = []
+    const smaller: UTXO[] = []
     let value = await this.calculateFeeTestnet(outs, 1)
-    console.log("value: ",value)
     value += txsValue
     for (const tx of txs) {
       if (tx.value > value) {
@@ -355,8 +308,6 @@ export class Bitcoin {
         smaller.push(tx)
       }
     }
-    console.log("large: ", largeTxs)
-    console.log("small: ", smaller)
     smaller.sort(this.reverseSort)
     largeTxs.sort(this.sort)
     if (smaller.length > 1) {
@@ -367,7 +318,7 @@ export class Bitcoin {
         value += txsValue
         if (bufferValue < value) {
           bufferValue += smaller[i].value
-          utxos.push(smaller)
+          utxos.push(smaller[i])
         } else {
           return {
             txs: utxos,
@@ -377,8 +328,10 @@ export class Bitcoin {
         }
       }
     }
+    const utxoRes: UTXO[] = []
+    utxoRes.push(largeTxs[0])
     return {
-      txs: largeTxs[0],
+      txs: utxoRes,
       utxoAmount: largeTxs[0].value,
       value: value,
     }
@@ -391,16 +344,15 @@ export class Bitcoin {
       network: network,
     })
 
-    console.log(key.address)
     return key.address
   }
 
-  private static sort = (a: number, b: number) => {
-    return a - b
+  private static sort = (a: UTXO, b: UTXO) => {
+    return a.value - b.value
   }
 
-  private static reverseSort = (a: number, b: number) => {
-    return a - b
+  private static reverseSort = (a: UTXO, b: UTXO) => {
+    return b.value - a.value
   }
 }
 

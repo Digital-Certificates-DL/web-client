@@ -30,7 +30,7 @@ import AppButton from '@/common/AppButton.vue'
 </script>
 
 <style lang="scss" scoped>
-.nav-button{
+.nav-button {
   display: block;
   min-width: toRem(400);
 }

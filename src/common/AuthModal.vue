@@ -2,10 +2,22 @@
   <div class="modal__back">
     <div class="modal__window">
       <input-field placeholder="code" v-model="form.code" />
-      <app-button  class="modal__btn modal__btn-link"  text="Give access" @click="getCode" />
+      <app-button
+        class="modal__btn modal__btn-link"
+        text="Give access"
+        @click="getCode"
+      />
       <div class="modal__btns">
-        <app-button class="modal__btn modal__btn-nav" text="Send code" @click="sendCode" />
-        <app-button class="modal__btn modal__btn-nav"  text="Cancel" @click="cancel" />
+        <app-button
+          class="modal__btn modal__btn-nav"
+          text="Send code"
+          @click="sendCode"
+        />
+        <app-button
+          class="modal__btn modal__btn-nav"
+          text="Cancel"
+          @click="cancel"
+        />
       </div>
     </div>
   </div>
@@ -13,7 +25,7 @@
 
 <script lang="ts" setup>
 import { InputField } from '@/fields'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 const form = reactive({
   code: '',
@@ -33,16 +45,14 @@ const emit = defineEmits<{
 }>()
 
 const cancel = () => {
-  console.log('closeModal')
   emit('closeModal', false)
 }
 const sendCode = () => {
-  console.log('withCode: ', form.code)
   emit('withCode', form.code)
 }
 
 const getCode = () => {
-  window.open(props.tokenLink, '_blank');
+  window.open(props.tokenLink, '_blank')
 }
 </script>
 
@@ -82,16 +92,15 @@ const getCode = () => {
   justify-content: space-between;
 }
 
-.modal__btn{
-
+.modal__btn {
   height: toRem(40);
 }
 
-.modal__btn-link{
+.modal__btn-link {
   width: 100%;
 }
 
-.modal__btn-nav{
+.modal__btn-nav {
   width: 40%;
 }
 </style>
