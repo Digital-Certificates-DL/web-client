@@ -1,4 +1,7 @@
 <template>
+  <div class="template-form__img">
+    <file-field @submitted="getImg" />
+  </div>
   <div class="complex-form">
     <input-field
       label="High"
@@ -150,7 +153,8 @@
 import { TemplateTypes, TemplateField } from '@/types'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import FileField from '@/fields/FileField.vue'
 
 const form = reactive({
   Name: {
@@ -216,11 +220,20 @@ const form = reactive({
 } as TemplateTypes)
 
 const emit = defineEmits<{
-  (e: 'submitted', file: TemplateTypes): void
+  (
+    e: 'submitted',
+    template: TemplateTypes,
+    img: Uint8Array,
+    isCompleted: boolean,
+  ): boolean
 }>()
+const img = ref(new Uint8Array())
 
+const getImg = (file: Uint8Array) => {
+  img.value = file
+}
 const createTemplate = () => {
-  emit('submitted', form)
+  emit('submitted', form, img.value, false)
 }
 </script>
 

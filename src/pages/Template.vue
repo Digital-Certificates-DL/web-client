@@ -18,8 +18,9 @@ import {
 } from '@/types'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+import { ref } from 'vue'
 
-let preparedImg: Uint8Array
+const img = ref('')
 let fileSlice: string
 
 const convertBase64 = (file: File) => {
@@ -61,9 +62,9 @@ const createTemplate = async (
       },
     },
   )
-  preparedImg = res.data.attributes.prepared_img
+  img.value = prepareImg(res.data.attributes.prepared_img)
   if (isCompleted) {
-    router.push(ROUTE_NAMES.home)
+    await router.push(ROUTE_NAMES.home)
   }
 }
 </script>
