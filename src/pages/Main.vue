@@ -87,6 +87,14 @@
           class="btn"
           @click="goToGenerate"
         />
+        <nav-button
+          :title="'test'"
+          description="generate certificates"
+          body="Ac integer sapien nisl turpis arcu integer. +
+           Pellentesque phasellus egestas pharetra quam cursus"
+          class="btn"
+          @click="test"
+        />
       </div>
     </div>
   </div>
@@ -103,6 +111,7 @@ import { UseProvider } from '@/types'
 import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 import NavButton from '@/common/NavButton.vue'
+import { Bitcoin } from '@/utils'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
@@ -161,6 +170,10 @@ const goToSetting = async () => {
 
 const goToGenerate = async () => {
   await router.push(ROUTE_NAMES.create)
+}
+
+const test = async () => {
+  await router.push(ROUTE_NAMES.test)
 }
 
 init()

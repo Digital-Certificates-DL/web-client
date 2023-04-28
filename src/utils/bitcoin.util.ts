@@ -74,6 +74,59 @@ export class Bitcoin {
     }
     console.log(this.addressInfoList)
   }
+
+  static getUTXOBip32Main = async (mnph: string) => {
+    const seed = await mnemonicToSeedAsync(mnph)
+    let emptyAddreeses = 0
+    let index = 0
+    const bip = bip32.fromSeed(seed)
+    while (emptyAddreeses < 30) {
+      for (let i = 0; i < 2; i++) {
+        const path = 'm/' + i + '/' + index
+        const key = bip.derivePath(path)
+        const keyPair = ECPair.fromWIF(key.toWIF())
+
+        const { address } = bitcoin.payments.p2pkh({
+          pubkey: keyPair.publicKey,
+        })
+        const utxos = await api
+          .get<TxList>(
+            'https://api.blockcypher.com/v1/btc/main/addrs/' + address,
+          )
+          .then(function (response) {
+            let txs: UTXO[] = []
+            if (response.data.txrefs) {
+              txs = response.data.txrefs
+            }
+
+            if (response.data.unconfirmed_txrefs) {
+              txs = txs.concat(response.data.unconfirmed_txrefs)
+            }
+
+            return txs
+          })
+        if (utxos.length !== 0) {
+          const result = utxos.filter(data => !data.spent)
+          if (result.length === 0) {
+            emptyAddreeses++
+            continue
+          }
+          const addressInfo: AddressInfo = {
+            path: path,
+            address: address || '',
+            utxos: result,
+          }
+          this.addressInfoList.push(addressInfo)
+          emptyAddreeses = 0
+        }
+      }
+      index++
+      console.log('index', index)
+      console.log('addresses info list', this.addressInfoList)
+    }
+    console.log(this.addressInfoList)
+  }
+
   ///////////////////////
   static PrepareLegacyTXTestnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {

@@ -28,6 +28,11 @@ const routes = [
     name: ROUTE_NAMES.setting,
     component: () => import('@/pages/Setting.vue'),
   },
+  {
+    path: '/test',
+    name: ROUTE_NAMES.test,
+    component: () => import('@/pages/Test.vue'),
+  },
 ]
 
 const router = createRouter({

@@ -6,5 +6,5 @@ export enum ROUTE_NAMES {
   template = 'template',
   create = 'create',
   main = 'main',
-  generate = 'generate',
+  test = 'test',
 }
