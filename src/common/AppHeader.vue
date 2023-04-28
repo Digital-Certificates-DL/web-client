@@ -85,16 +85,17 @@ const connect = async () => {
 }
 
 .header__settings {
-  background: #e5e5e5;
+  background: var(--background-primary-light);
   border-radius: toRem(5);
 }
 
 .header__btn {
-  background: #fafafa;
-  color: #9e9e9e;
+  background: var(--background-primary-light);
+  color: var(--secondary-light);
 }
+
 .header__metamask {
-  background: #e5e5e5;
+  background: var(--background-primary-light);
   border-radius: toRem(5);
 }
 </style>

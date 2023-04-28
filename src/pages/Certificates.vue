@@ -34,8 +34,8 @@
       >
         <certificate
           :user="item"
-          @openModal="openModal"
-          @selectForTimestamp="selectForTimestamp"
+          @open-modal="openModal"
+          @select-for-timestamp="selectForTimestamp"
         />
       </div>
     </div>
@@ -70,11 +70,11 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   currentUser = user
 }
 const prepareUserImg = (users: UserJSONResponseList) => {
-  //todo  move to  helpers
   for (const user of users.data) {
     user.attributes.Img =
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
   }
+
   return users
 }
 
@@ -88,7 +88,6 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 
     return
   }
-
   listForTimestamp.filter(item => item !== user)
 }
 
@@ -178,8 +177,4 @@ const updateUsers = async (users: UserJSONResponse[]) => {
   background: #0066ff;
   width: toRem(100);
 }
-
-//.certificates__list{
-//  height:50%
-//}
 </style>

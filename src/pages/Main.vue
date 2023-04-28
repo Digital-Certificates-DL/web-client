@@ -67,20 +67,23 @@
           :title="'Settings'"
           description="Your settings"
           class="btn"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
+          body="Ac integer sapien nisl turpis arcu integer. +
+           Pellentesque phasellus egestas pharetra quam cursus"
           @click="goToSetting"
         />
         <nav-button
           :title="'Certificates'"
           description="Your certificates"
           class="btn"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
+          body="Ac integer sapien nisl turpis arcu integer. +
+           Pellentesque phasellus egestas pharetra quam cursus"
           @click="goToCertificate"
         />
         <nav-button
           :title="'Generation'"
-          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
           description="generate certificates"
+          body="Ac integer sapien nisl turpis arcu integer. +
+           Pellentesque phasellus egestas pharetra quam cursus"
           class="btn"
           @click="goToGenerate"
         />
@@ -244,22 +247,6 @@ init()
   padding: toRem(40);
 }
 
-.template {
-  background: #97ecff;
-}
-
-.certificates {
-  background: #d5a9ff;
-}
-
-.setting {
-  background: #8fffdd;
-}
-
-.generation {
-  background: #8fbdff;
-}
-
 .web3-page__card {
   position: relative;
   display: grid;
@@ -289,7 +276,7 @@ init()
 
 .main-page__info-description {
   font-size: toRem(16);
-  color: #545454;
+  color: var(--success-dark);
 }
 
 .nav-button {
