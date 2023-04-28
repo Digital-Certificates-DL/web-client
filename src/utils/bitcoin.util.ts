@@ -21,55 +21,56 @@ import { api } from '@/api'
 
 export class Bitcoin {
   static addressInfoList: AddressInfo[] = []
-  static getUTXOTestnet = async (mnph: string) => {
+  static getUTXOBip32Testnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
       return bytes
     })
     let emptyAddreeses = 0
     let index = 0
-
+    const bip = bip32.fromSeed(seed, testnet)
+    const key = bip.derive(index)
     while (emptyAddreeses < 30) {
-      const bip = bip32.fromSeed(seed, testnet)
-      const key = bip.derive(index)
-      const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
+      for (let i = 0; i < 2; i++) {
+        key.derivePath('m/' + i + '/' + index)
+        const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
 
-      const { address } = bitcoin.payments.p2pkh({
-        pubkey: keyPair.publicKey,
-        network: testnet,
-      })
-
-      const utxos = await api
-        .get<TxList>(
-          'https://api.blockcypher.com/v1/btc/test3/addrs/' + address,
-        )
-        .then(function (response) {
-          let txs: UTXO[] = []
-          if (response.data.txrefs) {
-            txs = response.data.txrefs
-          }
-
-          if (response.data.unconfirmed_txrefs) {
-            txs = txs.concat(response.data.unconfirmed_txrefs)
-          }
-
-          return txs
+        const { address } = bitcoin.payments.p2pkh({
+          pubkey: keyPair.publicKey,
+          network: testnet,
         })
-      if (utxos.length !== 0) {
-        const result = utxos.filter(data => !data.spent)
-        if (result.length === 0) {
-          emptyAddreeses++
-          index++
-          continue
+
+        const utxos = await api
+          .get<TxList>(
+            'https://api.blockcypher.com/v1/btc/test3/addrs/' + address,
+          )
+          .then(function (response) {
+            let txs: UTXO[] = []
+            if (response.data.txrefs) {
+              txs = response.data.txrefs
+            }
+
+            if (response.data.unconfirmed_txrefs) {
+              txs = txs.concat(response.data.unconfirmed_txrefs)
+            }
+
+            return txs
+          })
+        if (utxos.length !== 0) {
+          const result = utxos.filter(data => !data.spent)
+          if (result.length === 0) {
+            emptyAddreeses++
+            continue
+          }
+          const addressInfo: AddressInfo = {
+            id: index,
+            address: address || '',
+            utxos: result,
+          }
+          this.addressInfoList.push(addressInfo)
+          emptyAddreeses = 0
         }
-        const addressInfo: AddressInfo = {
-          id: index,
-          address: address || '',
-          utxos: result,
-        }
-        this.addressInfoList.push(addressInfo)
-        index++
-        emptyAddreeses = 0
       }
+      index++
     }
   }
   ///////////////////////
