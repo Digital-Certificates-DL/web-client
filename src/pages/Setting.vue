@@ -101,11 +101,11 @@ const save = async () => {
       name: userState.setting.Name,
     },
   })
-  await router.push(ROUTE_NAMES.main)
+  await router.push(ROUTE_NAMES.menu)
 }
 
 const cancel = () => {
-  router.push(ROUTE_NAMES.certificates)
+  router.push(ROUTE_NAMES.menu)
 }
 </script>
 <style scoped lang="scss">

@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__body">
       <div class="header__logo">
-        <h2 @click="goToMain">
+        <h2 @click="goToMenu">
           {{ logo }}
         </h2>
       </div>
@@ -41,8 +41,8 @@ const goToSetting = async () => {
   await router.push(ROUTE_NAMES.setting)
 }
 
-const goToMain = async () => {
-  await router.push(ROUTE_NAMES.main)
+const goToMenu = async () => {
+  await router.push(ROUTE_NAMES.menu)
 }
 const connect = async () => {
   try {

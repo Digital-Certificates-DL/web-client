@@ -84,6 +84,14 @@
           class="btn"
           @click="goToGenerate"
         />
+
+        <nav-button
+          :title="'Template'"
+          body="Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus "
+          description="generate certificates"
+          class="btn"
+          @click="goToTemplate"
+        />
       </div>
     </div>
   </div>
@@ -99,7 +107,7 @@ import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
 import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
-import NavButton from '@/common/NavButton.vue'
+import NavButton from '@/common/MenuNav.vue'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
@@ -158,6 +166,9 @@ const goToSetting = async () => {
 
 const goToGenerate = async () => {
   await router.push(ROUTE_NAMES.create)
+}
+const goToTemplate = async () => {
+  await router.push(ROUTE_NAMES.template)
 }
 
 init()

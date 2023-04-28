@@ -5,11 +5,11 @@ import { ROUTE_NAMES } from '@/enums'
 const routes = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.main },
+    redirect: { name: ROUTE_NAMES.menu },
   },
   {
     path: '/main',
-    name: ROUTE_NAMES.main,
+    name: ROUTE_NAMES.menu,
     component: () => import('@/pages/Main.vue'),
   },
   {
@@ -17,7 +17,11 @@ const routes = [
     name: ROUTE_NAMES.create,
     component: () => import('@/pages/Generation.vue'),
   },
-
+  {
+    path: '/template',
+    name: ROUTE_NAMES.template,
+    component: () => import('@/pages/Template.vue'),
+  },
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,

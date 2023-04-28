@@ -5,6 +5,6 @@ export enum ROUTE_NAMES {
   web3 = 'web3',
   template = 'template',
   create = 'create',
-  main = 'main',
-  generate = 'generate',
+  menu = 'menu',
+  home = 'home',
 }

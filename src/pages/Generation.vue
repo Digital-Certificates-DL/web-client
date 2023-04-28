@@ -213,7 +213,7 @@ const createPDF = async (users: UserJSONResponseList) => {
 }
 
 const cancel = async () => {
-  await router.push(ROUTE_NAMES.main)
+  await router.push(ROUTE_NAMES.menu)
 }
 
 const closeModal = () => {

@@ -10,7 +10,6 @@ export type TemplateTypes = {
   Level?: TemplateField
   Note?: TemplateField
   Points?: TemplateField
-  //todo update
 }
 
 export type TemplateField = {
@@ -20,4 +19,11 @@ export type TemplateField = {
   Font?: string
   High?: string
   Width?: string
+}
+
+export type CreateTemplateResponse = {
+  attributes: {
+    name: string
+    prepared_img: Uint8Array
+  }
 }
