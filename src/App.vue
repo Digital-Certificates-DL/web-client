@@ -34,7 +34,7 @@ init()
   display: grid;
   grid-template-rows: toRem(85) 1fr max-content;
   flex: 1;
-  //overflow-y: auto;
+  overflow-y: auto;
 
   @include respond-to(small) {
     grid-template-rows: max-content 1fr max-content;

@@ -13,7 +13,7 @@
     <app-header />
 
     <div class="create_title">
-      <h1>Create new certificate</h1>
+      <h1>{{ generationTitle }}</h1>
     </div>
     <div class="generation__body">
       <div class="create__step">
@@ -99,7 +99,7 @@ import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/common/AppHeader.vue'
 import Loader from '@/common/Loader.vue'
-import { defer, lowerFirst } from 'lodash-es'
+import { defer } from 'lodash-es'
 import AuthModal from '@/common/AuthModal.vue'
 const userSetting = useUsersModules()
 
@@ -115,6 +115,8 @@ const step3 = '3'
 const step1Desc = 'Write a name for your certificate'
 const step2Desc = 'Choose or upload template for a new certificate'
 const step3Desc = 'Write a link to  google sheet'
+
+const generationTitle = 'Create new certificate'
 
 const form = reactive({
   Url: '',
@@ -195,21 +197,21 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   return users
 }
 const createPDF = async (users: UserJSONResponseList) => {
-  await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
+  const resp = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/certificate/',
+    {
       data: {
-        data: users.data.data, //todo make better
+        data: users.data, //todo make better
         address:
           userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
         url: userSetting.setting.Url || form.Url,
         name: userSetting.setting.Name,
       },
-    })
-    .then(resp => {
-      const users = prepareUserImg(resp.data)
-      userSetting.students = users.data
-      router.push(ROUTE_NAMES.certificates)
-    })
+    },
+  )
+  users = prepareUserImg(resp.data)
+  userSetting.students = users.data
+  await router.push(ROUTE_NAMES.certificates)
 }
 
 const cancel = async () => {

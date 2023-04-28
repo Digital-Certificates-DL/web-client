@@ -34,13 +34,10 @@ import AppButton from '@/common/AppButton.vue'
   display: block;
   min-width: toRem(400);
 }
+
 .nav-button__btn {
   width: toRem(100);
   height: toRem(40);
   margin-bottom: toRem(10);
-}
-
-.nav-button__description {
-  color: #000a12;
 }
 </style>

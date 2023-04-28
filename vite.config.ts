@@ -2,7 +2,7 @@ import checker from 'vite-plugin-checker'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
-import {NodeGlobalsPolyfillPlugin} from '@esbuild-plugins/node-globals-polyfill'
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 import * as fs from 'fs'
@@ -28,7 +28,7 @@ export default defineConfig(({ command, mode }) => {
       port: Number(env.VITE_PORT),
     },
     commonjsOptions: {
-      esmExternals: true
+      esmExternals: true,
     },
     publicDir: 'static',
     plugins: [

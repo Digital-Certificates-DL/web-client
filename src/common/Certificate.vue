@@ -45,12 +45,12 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
+  (e: 'OpenModal', state: boolean, user: UserJSONResponse): boolean
   (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
 }>()
 
 const openModal = () => {
-  emit('openModal', true, props.user)
+  emit('OpenModal', true, props.user)
 }
 
 const selectUser = () => {
@@ -73,6 +73,7 @@ const downloadPdf = () => {
 .certificate_img {
   width: toRem(100);
 }
+
 .certificate__name {
   width: toRem(150);
 }
