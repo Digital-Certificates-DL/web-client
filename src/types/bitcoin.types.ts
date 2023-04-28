@@ -73,7 +73,7 @@ export interface UTXO {
 }
 
 export interface AddressInfo {
-  id: number
+  path: string
   address: string
   utxos: UTXO[]
 }
