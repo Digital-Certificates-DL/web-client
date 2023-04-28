@@ -60,6 +60,5 @@ for further information about branching and tagging conventions.
 #### Under the hood changes
 - Initiated and setup project
 
-[Unreleased]: https://gitlab.com/distributed_lab/frontend/vue-template/compare/1.0.0-rc.1...main
-[1.0.0-rc.1]: https://gitlab.com/distributed_lab/frontend/vue-template/compare/1.0.0-rc.0...1.0.0-rc.1
-[1.0.0-rc.0]: https://gitlab.com/distributed_lab/frontend/vue-template/tags/1.0.0-rc.0
+[Unreleased]: https://gitlab.com/tokend/course-certificates/web-client
+
