@@ -81,8 +81,6 @@ const userSetting = useUsersModules()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 
-const listForCreate: UserJSONResponse[] = []
-
 const templateListTitle = 'My templates'
 const certificatesTitle = 'Previously certificates'
 
@@ -150,14 +148,14 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   currentUser = user
 }
 
-const selectForCreate = (state: boolean, user: UserJSONResponse) => {
-  if (state) {
-    listForCreate.push(user)
-    return
-  }
-
-  listForCreate.filter(item => item !== user)
-}
+// const prepareUserImg = (users: UserJSONResponseList) => {
+//   //todo  move to  helpers
+//   for (const user of users.data) {
+//     user.attributes.Img =
+//       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+//   }
+//   return users
+// }
 </script>
 
 <style scoped lang="scss">

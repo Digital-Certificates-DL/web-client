@@ -7,4 +7,5 @@ export enum ROUTE_NAMES {
   create = 'create',
   menu = 'menu',
   home = 'home',
+  timestamp = 'timestamp',
 }

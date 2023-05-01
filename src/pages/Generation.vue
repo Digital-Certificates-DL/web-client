@@ -116,12 +116,6 @@ const step1Desc = 'Write a name for your certificate'
 const step2Desc = 'Choose or upload template for a new certificate'
 const step3Desc = 'Write a link to  google sheet'
 
-const form = reactive({
-  Url: '',
-  SignKey: '',
-  SendKey: '',
-} as UserSetting)
-
 const certificatesInfo = reactive({
   Name: '',
   Template: null,
@@ -139,17 +133,13 @@ const start = async () => {
   if (users === undefined) {
     return
   }
-  loaderState.value = 'Signing users'
-  const signatures = sign(users)
-  loaderState.value = 'Creating PDF for users'
-  await createPDF(signatures)
-  loaderState.value = ''
-  isLoader.value = false
+  userSetting.students = users.data
+  router.push(ROUTE_NAMES.certificates)
 }
 const parsedData = async (sheepUrl?: string) => {
   const resp = await api
     .post<UserJSONResponseList | UnauthorizedResponse>(
-      '/integrations/ccp/users/empty',
+      '/integrations/ccp/users/',
       {
         data: {
           name: userSetting.setting.Name,
@@ -172,46 +162,6 @@ const parsedData = async (sheepUrl?: string) => {
 
   return resp as UserJSONResponseList | undefined
 }
-const sign = (users: UserJSONResponseList) => {
-  const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
-  for (const user of users.data.data) {
-    if (
-      user.attributes.Signature === undefined ||
-      user.attributes.Signature == ''
-    ) {
-      user.attributes.Signature = signature.signMsg(user.attributes.Msg)
-    }
-  }
-  return users
-}
-
-const prepareUserImg = (users: UserJSONResponseList) => {
-  const list: UserJSONResponse[] = users.data
-  for (const user of list) {
-    user.attributes.Img =
-      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
-  }
-
-  return users
-}
-const createPDF = async (users: UserJSONResponseList) => {
-  await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
-      data: {
-        data: users.data.data, //todo make better
-        address:
-          userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-        url: userSetting.setting.Url || form.Url,
-        name: userSetting.setting.Name,
-      },
-    })
-    .then(resp => {
-      const users = prepareUserImg(resp.data)
-      userSetting.students = users.data
-      router.push(ROUTE_NAMES.certificates)
-    })
-}
-
 const cancel = async () => {
   await router.push(ROUTE_NAMES.menu)
 }

@@ -12,7 +12,7 @@
       />
       <div class="certificates__btns">
         <app-button class="certificates__btn" @click="find" text="Find" />
-        <app-button class="certificates__btn" @click="refresh" text="Refresh" />
+
         <app-button
           class="certificates__btn"
           @click="bitcoinTimestamp"
@@ -78,29 +78,6 @@ const closeModal = () => {
   isModalActive.value = false
 }
 
-const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-  if (state) {
-    listForTimestamp.push(user)
-
-    return
-  }
-
-  listForTimestamp.filter(item => item !== user)
-}
-
-const refresh = async () => {
-  const users = await api.post<UserJSONResponseList>(
-    '/integrations/ccp/users/',
-    {
-      data: {
-        url: userSetting.setting.Url,
-        name: userSetting.setting.Name,
-      },
-    },
-  )
-  userSetting.students = prepareUserImg(users.data).data
-}
-
 let userBuffer
 const search = () => {
   userBuffer = userSetting.students
@@ -113,31 +90,6 @@ const search = () => {
   )
 }
 
-const generate = async () => {
-  const users = userSetting.students
-  // loaderState.value = 'Signing users'
-  const signatures = sign(users)
-  // loaderState.value = 'Creating PDF for users'
-  userSetting.students = await createPDF(signatures)
-  // loaderState.value = ''
-  // isLoader.value = false
-
-  router.push(ROUTE_NAMES.timestamp)
-}
-
-const sign = (users: UserJSONResponse[]) => {
-  const signature = new Signature(userSetting.setting.SignKey)
-  for (const user of users) {
-    if (
-      user.attributes.Signature === undefined ||
-      user.attributes.Signature == ''
-    ) {
-      user.attributes.Signature = signature.signMsg(user.attributes.Msg)
-    }
-  }
-  return users
-}
-
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
@@ -145,25 +97,7 @@ const prepareUserImg = (users: UserJSONResponseList) => {
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
   }
 
-  return users
-}
-const createPDF = async (users: UserJSONResponse[]) => {
-  const resp = await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
-      data: {
-        data: users, //todo make better
-        address:
-          userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-        url: userSetting.setting.Url,
-        name: userSetting.setting.Name,
-      },
-    })
-    .then(resp => {
-      const users = prepareUserImg(resp.data)
-      userSetting.students = users.data
-      return resp
-    })
-  return resp.data.data
+  return users.data
 }
 
 const bitcoinTimestamp = async () => {
@@ -204,10 +138,11 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     .then(resp => {
       return resp
     })
-  userSetting.students = usersResp.data.data
+
+  userSetting.students = prepareUserImg(usersResp.data)
 }
 
-const selectForCreate = (state: boolean, user: UserJSONResponse) => {
+const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
   if (state) {
     listForCreate.push(user)
     return
