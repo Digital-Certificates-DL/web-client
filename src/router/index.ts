@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/main',
     name: ROUTE_NAMES.menu,
-    component: () => import('@/pages/Main.vue'),
+    component: () => import('@/pages/Menu.vue'),
   },
   {
     path: '/create',
@@ -26,6 +26,11 @@ const routes = [
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
     component: () => import('@/pages/Certificates.vue'),
+  },
+  {
+    path: '/home',
+    name: ROUTE_NAMES.home,
+    component: () => import('@/pages/Home.vue'),
   },
   {
     path: '/setting',

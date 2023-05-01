@@ -46,7 +46,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
+  (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
 
 const openModal = () => {
@@ -54,7 +54,7 @@ const openModal = () => {
 }
 
 const selectUser = () => {
-  emit('selectForTimestamp', !isSelected, props.user)
+  emit('select', !isSelected, props.user)
 }
 
 const downloadPdf = () => {

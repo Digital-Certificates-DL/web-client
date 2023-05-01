@@ -1,3 +1,5 @@
+import { UserTypes } from '@/types/user.types'
+
 export type TemplateTypes = {
   File?: string
   Name?: TemplateField

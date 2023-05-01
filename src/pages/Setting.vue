@@ -101,7 +101,7 @@ const save = async () => {
       name: userState.setting.Name,
     },
   })
-  await router.push(ROUTE_NAMES.menu)
+  await router.push(ROUTE_NAMES.home)
 }
 
 const cancel = () => {

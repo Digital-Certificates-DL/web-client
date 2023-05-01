@@ -1,18 +1,52 @@
 <template>
-  <div v-else-if="isUnauthorized">
-    <auth-modal
-      :token-link="authLink"
-      @close-modal="closeModal"
-      @with-code="updateCode"
-    />
-  </div>
   <div class="home">
     <app-header />
     <div class="home__body">
       <h1>{{ homeCreate }}</h1>
       <div class="home__body-create">
-        <home-body-nav @active="goToCreate" />
-        <home-body-nav @active="goToTemplate" />
+        <home-body-nav
+          @active="goToCreate"
+          :title="'Create'"
+          :name="'Create'"
+          :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
+        />
+        <home-body-nav
+          @active="goToTemplate"
+          :title="'Upload new template'"
+          :name="'Upload'"
+          :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
+        />
+      </div>
+    </div>
+    <div class="home__content">
+      <div class="home__content-template">
+        <p>{{ templateListTitle }}</p>
+        <!--        <div v-if="certificates.data.length === 0">-->
+        <!--          <error-message :message="'You have not template'" />-->
+        <!--        </div>-->
+        <div
+          v-for="(item, key) in templates.value"
+          :value="key"
+          :key="item.attributes"
+        >
+          <home-item :img="item.attributes.img" :title="item.attributes.name" />
+        </div>
+        <div class="home__content-certificates">
+          <p>{{ certificatesTitle }}</p>
+          <!--          <div v-if="certificates.data.length === 0">-->
+          <!--            <error-message message="'You have not certificates'" />-->
+          <!--          </div>-->
+          <div
+            v-for="(item, key) in certificates.data"
+            :value="key"
+            :key="item.attributes"
+          >
+            <home-item
+              :img="item.attributes.img"
+              :title="item.attributes.name"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -29,21 +63,31 @@ import { ROUTE_NAMES } from '@/enums'
 import {
   CreateTemplateResponse,
   UnauthorizedResponse,
+  UserJSONResponse,
   UserJSONResponseList,
 } from '@/types'
 import { ref } from 'vue'
 import { api } from '@/api'
 import { useUsersModules } from '@/store'
-import AuthModal from "@/common/AuthModal.vue";
+import HomeItem from '@/common/HomeItem.vue'
+import ErrorMessage from '@/common/ErrorMessage.vue'
 
 const templates = ref({})
+const certificates = ref({})
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const userSetting = useUsersModules()
+const isModalActive = ref(false)
+let currentUser: UserJSONResponse
+
+const listForCreate: UserJSONResponse[] = []
+
+const templateListTitle = 'My templates'
+const certificatesTitle = 'Previously certificates'
 
 const getUsers = async () => {
-  const resp = await api
+  await api
     .post<UserJSONResponseList | UnauthorizedResponse>(
       '/integrations/ccp/users/',
       {
@@ -53,7 +97,8 @@ const getUsers = async () => {
         },
       },
     )
-    .then( resp => {
+    .then(resp => {
+      certificates.value = resp
       return resp
     })
     .catch(err => {
@@ -62,10 +107,16 @@ const getUsers = async () => {
         authLink.value = err.response.data.data.attributes.link
       }
     })
+}
 
-  resp
-
-
+const getTemplates = async () => {
+  await api
+    .get<CreateTemplateResponse>('/integrations/ccp/certificate/template')
+    .then(resp => {
+      templates.value = resp
+      return resp
+    })
+  //todo check error
 }
 
 const goToTemplate = () => {
@@ -92,6 +143,21 @@ const updateCode = async (code: string) => {
       name: userSetting.setting.Name,
     },
   })
+}
+
+const openModal = (state: boolean, user: UserJSONResponse) => {
+  isModalActive.value = state
+  currentUser = user
+}
+
+const selectForCreate = (state: boolean, user: UserJSONResponse) => {
+  if (state) {
+    listForCreate.push(user)
+    return
+  }
+
+  listForCreate.filter(item => item !== user)
+}
 </script>
 
 <style scoped lang="scss">
@@ -99,6 +165,4 @@ const updateCode = async (code: string) => {
   display: flex;
   justify-content: space-between;
 }
-
-.home__body
 </style>

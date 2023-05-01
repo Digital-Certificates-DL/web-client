@@ -8,14 +8,10 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { UploadTemplate, TemplateForm } from '@/forms'
 import { api } from '@/api'
-import {
-  CreateTemplateResponse,
-  TemplateTypes,
-  UserJSONResponseList,
-} from '@/types'
+import { CreateTemplateResponse, TemplateTypes } from '@/types'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { ref } from 'vue'
