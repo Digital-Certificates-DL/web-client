@@ -1,64 +1,54 @@
 <template>
-  <div class="certificates">
+  <div class="timestamp">
     <app-header />
 
     <h1>{{ certificatesTitle }}</h1>
     <div class="certificates__search">
       <input-field
-        class="certificates__search-input"
+        class="timestamp__search-input"
         placeholder="find"
         v-model="form.search"
         @update:model-value="search"
       />
-      <div class="certificates__btns">
-        <app-button class="certificates__btn" @click="find" text="Find" />
+      <div class="timestamp__btns">
+        <app-button class="timestamp__btn" @click="find" text="Find" />
 
         <app-button
-          class="certificates__btn"
+          class="timestamp__btn"
           @click="bitcoinTimestamp"
           text="Bitcoin"
         />
       </div>
     </div>
-    <div v-if="isModalActive">
-      <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
-    </div>
-    <div class="certificates__list">
+
+    <div class="timestamp__list">
       <div v-if="userSetting.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
-      <div
-        v-for="(item, key) in userSetting.students"
-        :value="key"
-        :key="item.attributes"
-      >
-        <certificate
-          :user="item"
-          @openModal="openModal"
-          @selectForTimestamp="selectForTimestamp"
-        />
+      <div v-for="(item, key) in userSetting.students" :value="key" :key="item">
+        <timestemp-item :name="item.attributes.Participant" />
       </div>
+    </div>
+    <div class="timestamp__img-wrp">
+      <img :src="currentUser.attributes.Img" alt="Certificate preview" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useUsersModules } from '@/store/modules/use-users.modules'
-import Certificate from '@/common/Certificate.vue'
-import ModalInfo from '@/common/modals/ModalInfo.vue'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
 import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import btc from '@/utils/bitcoin.util'
-import { Signature } from '@/utils/signature.utils'
-import { router } from '@/router'
-import { ROUTE_NAMES } from '@/enums'
+
+import TimestempItem from '@/common/TimestempItem.vue'
 const userSetting = useUsersModules()
-const isModalActive = ref(false)
+
 let currentUser: UserJSONResponse
 
 const listForTimestamp: UserJSONResponse[] = []
@@ -69,14 +59,6 @@ const listForCreate: UserJSONResponse[] = []
 const form = reactive({
   search: '',
 })
-const openModal = (state: boolean, user: UserJSONResponse) => {
-  isModalActive.value = state
-  currentUser = user
-}
-
-const closeModal = () => {
-  isModalActive.value = false
-}
 
 let userBuffer
 const search = () => {
@@ -152,27 +134,4 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.certificates__search {
-  width: toRem(458);
-  border-radius: toRem(20);
-}
-
-.certificates__search-input {
-  margin-bottom: toRem(20);
-}
-
-.certificates__btns {
-  display: flex;
-  justify-content: space-between;
-}
-
-.certificates__btn {
-  background: #0066ff;
-  width: toRem(100);
-}
-
-//.certificates__list{
-//  height:50%
-//}
-</style>
+<style lang="scss" scoped></style>

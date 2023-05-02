@@ -66,5 +66,8 @@
     "balance-lbl": "Balance",
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
+  },
+  "timestamp": {
+    "created-list-title": "Created certificates"
   }
 }

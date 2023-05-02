@@ -1,5 +1,5 @@
 <template>
-  <form class="login-form" @submit.prevent="submit">
+  <form class="timestamp-form" @submit.prevent="submit">
     <input-field
       v-model="form.login"
       :label="$t('login-form.login-lbl')"

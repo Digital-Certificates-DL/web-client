@@ -7,8 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import { TemplateTypes } from '@/types'
-
 const emit = defineEmits<{
   (e: 'submitted', img: Uint8Array): boolean
 }>()
