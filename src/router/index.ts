@@ -24,7 +24,7 @@ const routes = [
     component: () => import('@/pages/Certificates.vue'),
   },
   {
-    path: '/setting',
+    path: '/settings',
     name: ROUTE_NAMES.setting,
     component: () => import('@/pages/Setting.vue'),
   },

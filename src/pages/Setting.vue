@@ -1,6 +1,6 @@
 <template>
   <div class="setting">
-    <app-header />
+    <app-navbar class="app__navbar" />
     <div class="setting_body">
       <div class="setting__info">
         <h1 class="setting__title">
@@ -71,6 +71,7 @@ import AppHeader from '@/common/AppHeader.vue'
 import btc from '@/utils/bitcoin.util'
 
 import { api } from '@/api'
+import { AppNavbar } from '@/common'
 
 const userState = useUsersModules()
 const title =

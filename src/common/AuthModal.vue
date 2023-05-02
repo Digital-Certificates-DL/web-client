@@ -1,5 +1,5 @@
 <template>
-  <div class="modal__back">
+  <modal :is-shown="isShown">
     <div class="modal__window">
       <input-field placeholder="code" v-model="form.code" />
       <app-button
@@ -20,21 +20,25 @@
         />
       </div>
     </div>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts" setup>
 import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import AppButton from '@/common/AppButton.vue'
+import { Modal } from '@/common/index'
+
 const form = reactive({
   code: '',
 })
 const props = withDefaults(
   defineProps<{
+    isShown: boolean
     tokenLink: string
   }>(),
   {
+    isShown: false,
     tokenLink: '',
   },
 )
@@ -66,19 +70,6 @@ const getCode = () => {
   padding: toRem(24);
   position: fixed;
   display: grid;
-}
-
-.modal__back {
-  backdrop-filter: blur(1rem);
-  background: #00000080;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .modal__title {

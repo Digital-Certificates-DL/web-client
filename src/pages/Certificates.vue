@@ -1,6 +1,6 @@
 <template>
   <div class="certificates">
-    <app-header />
+    <app-navbar class="app__navbar" />
 
     <h1>{{ certificatesTitle }}</h1>
     <div class="certificates__search">
@@ -54,6 +54,7 @@ import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
+import { AppNavbar } from '@/common'
 const userSetting = useUsersModules()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
@@ -174,7 +175,7 @@ const updateUsers = async (users: UserJSONResponse[]) => {
 }
 
 .certificates__btn {
-  background: #0066ff;
+  background: var(--primary-dark);
   width: toRem(100);
 }
 </style>

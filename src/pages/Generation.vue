@@ -10,8 +10,7 @@
     />
   </div>
   <dic v-else class="generation">
-    <app-header />
-
+    <app-navbar class="app__navbar" />
     <div class="create_title">
       <h1>{{ generationTitle }}</h1>
     </div>
@@ -86,7 +85,7 @@
 import { reactive, ref } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
-import { AppButton } from '@/common'
+import { AppButton, AppNavbar } from '@/common'
 import { Signature } from '@/utils/signature.utils'
 import {
   UnauthorizedResponse,

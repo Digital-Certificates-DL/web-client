@@ -94,19 +94,18 @@
 
 <script lang="ts" setup>
 import { AppButton, Loader, ErrorMessage } from '@/common'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
-import { useProvider } from '@/composables'
 import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
-import { PROVIDERS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 import NavButton from '@/common/NavButton.vue'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-const providers: UseProvider[] = []
+
 const mainPageInfoLogo = 'LOGO'
 const metamaskConnect = 'Connect to MetaMask'
 const mainPageInfoName = 'Service name'
@@ -120,29 +119,11 @@ const metamaskDesc =
 
 const web3Store = useWeb3ProvidersStore()
 
-const metamaskProvider = computed(() =>
-  providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
-)
-const init = async () => {
-  try {
-    await web3Store.detectProviders()
+const metamaskProvider = web3Store.provider.selectedProvider
 
-    for (const designatedProvider of web3Store.providers) {
-      const provider = useProvider()
-      await provider.init(designatedProvider)
-
-      if (provider.selectedProvider.value === PROVIDERS.metamask) {
-        await web3Store.provider.init(designatedProvider)
-      }
-
-      providers.push(provider)
-    }
-  } catch (error) {
-    ErrorHandler.processWithoutFeedback(error)
-    isLoadFailed.value = true
-  }
-  isLoaded.value = true
-}
+// const metamaskProvider = computed(() =>
+//   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
+// )
 
 const connect = async (provider: UseProvider) => {
   try {
@@ -162,8 +143,6 @@ const goToSetting = async () => {
 const goToGenerate = async () => {
   await router.push(ROUTE_NAMES.create)
 }
-
-init()
 </script>
 
 <style lang="scss" scoped>
