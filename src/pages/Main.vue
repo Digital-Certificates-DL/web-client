@@ -1,7 +1,7 @@
 <template>
   <div class="main-page">
     <div class="main-page__info">
-      <span class="main-page__info-logo"> {{ mainPageInfoLogo }} </span>
+      <app-logo class="main-page__logo" />
       <span class="main-page__info-name">{{ mainPageInfoName }}</span>
       <h3 class="main-page__info-description">
         {{ mainPageInfoDesc }}
@@ -94,14 +94,15 @@
 
 <script lang="ts" setup>
 import { AppButton, Loader, ErrorMessage } from '@/common'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 
 import { ErrorHandler } from '@/helpers'
 import { UseProvider } from '@/types'
-import { ROUTE_NAMES } from '@/enums'
+import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 import NavButton from '@/common/NavButton.vue'
+import AppLogo from '@/common/AppLogo.vue'
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
@@ -119,11 +120,11 @@ const metamaskDesc =
 
 const web3Store = useWeb3ProvidersStore()
 
-const metamaskProvider = web3Store.provider.selectedProvider
+// const metamaskProvider = web3Store.provider.selectedProvider
 
-// const metamaskProvider = computed(() =>
-//   providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
-// )
+const metamaskProvider = computed(() =>
+  providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
+)
 
 const connect = async (provider: UseProvider) => {
   try {
@@ -171,7 +172,7 @@ const goToGenerate = async () => {
   place-items: center;
 }
 
-.main-page__info-logo {
+.main-page__logo {
   margin: auto;
   padding: toRem(20);
   font-size: toRem(25);

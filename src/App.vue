@@ -15,7 +15,6 @@ import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { PROVIDERS } from '@/enums'
 
-import { AppNavbar } from '@/common/index'
 import { useWeb3ProvidersStore } from '@/store'
 
 const web3Store = useWeb3ProvidersStore()
@@ -43,8 +42,6 @@ const init = async () => {
   }
   isAppInitialized.value = true
 }
-
-init()
 
 init()
 </script>

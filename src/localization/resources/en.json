@@ -66,5 +66,10 @@
     "balance-lbl": "Balance",
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
+  },
+  "menu": {
+    "generate-title": "Generate",
+    "generate-body": ""
   }
+
 }

@@ -5,12 +5,9 @@
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
         <app-button @click="connect" class="app-navbar__btn">
-          <img
-            class="app-navbar__img"
-            src="/static/branding/MetaMask_Fox.svg.png"
-            alt=""
-          />
-          <p>{{ web3Store.provider.selectedAddress || 'Connect' }}</p>
+          <img class="app-navbar__img" src="/branding/metamask.png" alt="" />
+          <p>{{ web3Store.provider.selectedAddress! || 'Connect' }}</p>
+          <!--          todo fix it-->
         </app-button>
       </div>
       <div class="app-navbar__settings">
@@ -35,23 +32,26 @@ import { router } from '@/router'
 const web3Store = useWeb3ProvidersStore()
 const providers: UseProvider[] = []
 
+console.log(!web3Store.provider.selectedAddress)
 const connect = async () => {
-  try {
-    await web3Store.detectProviders()
-
-    for (const designatedProvider of web3Store.providers) {
-      const provider = useProvider()
-      await provider.init(designatedProvider)
-
-      if (provider.selectedProvider.value === PROVIDERS.metamask) {
-        await web3Store.provider.init(designatedProvider)
-      }
-
-      providers.push(provider)
-    }
-  } catch (error) {
-    ErrorHandler.processWithoutFeedback(error)
-  }
+  // try {
+  //   await web3Store.detectProviders()
+  //   for (const designatedProvider of web3Store.providers) {
+  //     const provider = useProvider()
+  //     await provider.init(designatedProvider)
+  //
+  //     if (provider.selectedProvider.value === PROVIDERS.metamask) {
+  //       await web3Store.provider.init(designatedProvider)
+  //     }
+  //
+  //     providers.push(provider)
+  //   }
+  //   console.log(providers[0])
+  // } catch (error) {
+  //   ErrorHandler.processWithoutFeedback(error)
+  // }
+  await web3Store.provider.connect()
+  console.log()
 }
 </script>
 
