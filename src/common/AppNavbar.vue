@@ -5,7 +5,11 @@
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
         <app-button @click="connect" class="app-navbar__btn">
-          <img class="app-navbar__img" src="/branding/metamask.png" alt="" />
+          <img
+            class="app-navbar__img"
+            src="/branding/metamask.png"
+            alt="metamask ico"
+          />
           <p>{{ web3Store.provider.selectedAddress! || 'Connect' }}</p>
         </app-button>
       </div>

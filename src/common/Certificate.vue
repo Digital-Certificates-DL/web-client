@@ -1,6 +1,10 @@
 <template>
-  <div class="generation">
-    <img class="certificate_img" :src="props.user.attributes.Img" alt="" />
+  <div class="certificate">
+    <img
+      class="certificate_img"
+      :src="props.user.attributes.Img"
+      alt="certificate"
+    />
     <p class="certificate__name">
       {{ props.user.attributes.Participant }}
     </p>
@@ -20,30 +24,25 @@
       >
         <img src="static/branding/download.png" alt="download img" />
       </app-button>
-      <input
+      <input-field
         v-model="isSelected"
         type="checkbox"
-        @input="emit('selectForTimestamp', !isSelected, props.user)"
+        @input="emit('SelectForTimestamp', !isSelected, props.user)"
       />
     </div>
   </div>
-  <hr />
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue'
-import AppButton from '@/common/AppButton.vue'
+import { AppButton } from '@/common'
 import { UserJSONResponse } from '@/types'
+import { InputField } from '@/fields'
 
 const isSelected = false
 
-defineComponent({
-  components: { AppButton },
-})
-
 const emit = defineEmits<{
   (e: 'OpenModal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
+  (e: 'SelectForTimestamp', state: boolean, user: UserJSONResponse): boolean
 }>()
 
 const props = withDefaults(
@@ -55,11 +54,13 @@ const props = withDefaults(
 </script>
 
 <style lang="scss" scoped>
-.generation {
+.certificate {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: toRem(20);
+  padding-bottom: toRem(10);
+  border-bottom: var(--text-primary-dark), toRem(2), solid;
 }
 
 .certificate_img {

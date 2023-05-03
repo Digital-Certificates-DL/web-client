@@ -1,7 +1,7 @@
 <template>
   <modal>
     <div class="certificate-modal__img-wrp">
-      <img :src="props.user.attributes.Img" alt="" />
+      <img :src="props.user.attributes.Img" alt="Certificate" />
     </div>
     <h1 class="certificate-modal__title">
       {{ $t('certificate-modal.title') }}
@@ -98,8 +98,7 @@ const emit = defineEmits<{
 }
 
 .certificate-modal__title {
-  padding-top: toRem(30);
-  padding-bottom: toRem(30);
+  padding: toRem(30) 0;
   margin: auto;
 }
 
