@@ -1,6 +1,10 @@
 <template>
   <div class="nav-button">
-    <app-button :text="props.title" class="nav-button__btn" />
+    <app-button
+      class="nav-button__btn"
+      :color="props.color"
+      :text="props.title"
+    />
     <p class="nav-button__description">
       {{ props.description }}
     </p>
@@ -11,15 +15,24 @@
 </template>
 
 <script lang="ts" setup>
+type COLORS =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'default'
+
 const props = withDefaults(
   defineProps<{
-    color: string
+    color: COLORS
     title: string
     description: string
     body: string
   }>(),
   {
-    color: '',
+    color: 'primary',
     title: '',
     description: '',
     body: '',

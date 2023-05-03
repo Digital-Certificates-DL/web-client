@@ -63,23 +63,20 @@
 import InputField from '@/fields/InputField.vue'
 import { reactive } from 'vue'
 import { UserJSONResponseList, UserSetting } from '@/types'
-import { useUsersModules } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store/modules/use-users.modules'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import AppButton from '@/common/AppButton.vue'
-import AppHeader from '@/common/AppHeader.vue'
 import btc from '@/utils/bitcoin.util'
 
 import { api } from '@/api'
 import { AppNavbar } from '@/common'
 
-const userState = useUsersModules()
-const title =
-  'Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas\n' +
-  '      pharetra quam cursus'
+const userState = useUserStore()
+const title = ''
 const generalSettingsTitle = 'General settings'
 const signKeyTitle = 'Key settings for signatures'
-const pageName = 'Setting'
+const pageName = ''
 const form = reactive({
   Name: '',
   Org: '',
@@ -110,8 +107,6 @@ const cancel = () => {
 }
 </script>
 <style scoped lang="scss">
-$title: #ff545b;
-
 .setting_body {
   display: grid;
   justify-items: center;
@@ -122,7 +117,6 @@ $title: #ff545b;
   justify-items: center;
   max-height: toRem(100);
   margin-bottom: toRem(50);
-  color: $title;
 }
 
 .settings__form {

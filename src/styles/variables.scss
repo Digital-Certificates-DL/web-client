@@ -18,8 +18,8 @@
 
   /* status colors */
   --success-light: #{$success-light};
-  --success-main: #{$success-main};
-  --success-dark: #{$success-dark};
+  --success-main: #{$primary-main};
+  --success-dark: #{$background-secondary-dark};
 
   --error-light: #{$error-light};
   --error-main: #{$error-main};
@@ -43,7 +43,7 @@
 
   --secondary-light: #{$secondary-light};
   --secondary-main: #{$secondary-main};
-  --secondary-dark: #{$secondary-dark};
+  --secondary-dark: #{$primary-main};
 
   --tertiary-light: #{$tertiary-light};
   --tertiary-main: #{$tertiary-main};

@@ -65,7 +65,6 @@ export const useProvider = (): UseProvider => {
   const init = async (provider: DesignatedProvider) => {
     switch (provider.name as PROVIDERS) {
       case PROVIDERS.metamask:
-        console.log('providerWrp.value')
         providerWrp.value = useMetamask(provider.instance)
         break
       case PROVIDERS.coinbase:

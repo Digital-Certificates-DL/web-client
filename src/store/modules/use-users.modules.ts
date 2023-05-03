@@ -8,7 +8,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-export const useStore = defineStore('users-store', {
+export const useUserStore = defineStore('users-store', {
   state: () => {
     return {
       students: [] as UserJSONResponse[],

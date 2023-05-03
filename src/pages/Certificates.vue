@@ -2,7 +2,7 @@
   <div class="certificates">
     <app-navbar class="app__navbar" />
 
-    <h1>{{ certificatesTitle }}</h1>
+    <h1>{{ $t('certificates.certificates-title') }}</h1>
     <div class="certificates__search">
       <input-field
         class="certificates__search-input"
@@ -11,7 +11,6 @@
         @update:model-value="search"
       />
       <div class="certificates__btns">
-        <app-button class="certificates__btn" @click="find" text="Find" />
         <app-button class="certificates__btn" @click="refresh" text="Refresh" />
         <app-button
           class="certificates__btn"
@@ -24,11 +23,17 @@
       <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
     </div>
     <div class="certificates__list">
-      <div v-if="userSetting.students.length === 0">
+      <div class="certificates__list-titles">
+        <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
+        <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
+        <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
+      </div>
+      <div v-if="userState.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
+
       <div
-        v-for="(item, key) in userSetting.students"
+        v-for="(item, key) in userState.students"
         :value="key"
         :key="item.attributes"
       >
@@ -43,25 +48,20 @@
 </template>
 
 <script lang="ts" setup>
-import { useUsersModules } from '@/store/modules/use-users.modules'
-import Certificate from '@/common/Certificate.vue'
+import { useUserStore } from '@/store/modules/use-users.modules'
 import ModalInfo from '@/common/modals/ModalInfo.vue'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
-import ErrorMessage from '@/common/ErrorMessage.vue'
-import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
-import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
-import { AppNavbar } from '@/common'
-const userSetting = useUsersModules()
+import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
+
+const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
-
+let userBuffer
 const listForTimestamp: UserJSONResponse[] = []
-
-const certificatesTitle = 'Previously certificates'
 
 const form = reactive({
   search: '',
@@ -97,47 +97,46 @@ const refresh = async () => {
     '/integrations/ccp/users/',
     {
       data: {
-        url: userSetting.setting.Url,
-        name: userSetting.setting.Name,
+        url: userState.setting.Url,
+        name: userState.setting.Name,
       },
     },
   )
-  userSetting.students = prepareUserImg(users.data).data
+  userState.students = prepareUserImg(users.data).data
 }
 
-let userBuffer
 const search = () => {
-  userBuffer = userSetting.students
+  userBuffer = userState.students
 
   if (form.search === '' && userBuffer !== undefined) {
-    userSetting.students = userBuffer
+    userState.students = userBuffer
   }
-  userSetting.students.filter(item =>
+  userState.students.filter(item =>
     item.attributes.Participant.includes(form.search),
   )
 }
 
 const bitcoinTimestamp = async () => {
   if (
-    userSetting.setting.KeyPathID === 0 ||
-    userSetting.setting.KeyPathID === undefined
+    userState.setting.KeyPathID === 0 ||
+    userState.setting.KeyPathID === undefined
   ) {
-    userSetting.setting.KeyPathID = 0
+    userState.setting.KeyPathID = 0
   }
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userSetting.setting.SendKey,
-      userSetting.setting.KeyPathID,
+      userState.setting.SendKey,
+      userState.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
-    userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
+    userState.setting.KeyPathID = tx?.index || userState.setting.KeyPathID++
     if (hex === '') {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
     user.attributes.TxHash = sendResp.data.tx.hash
-    userSetting.setting.LastExAddress = tx?.exAddress || ''
+    userState.setting.LastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)
 }
@@ -147,16 +146,24 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
       data: {
         data: users,
-        address: userSetting.setting.Address,
-        name: userSetting.setting.Name,
-        url: userSetting.setting.Url,
+        address: userState.setting.Address,
+        name: userState.setting.Name,
+        url: userState.setting.Url,
       },
     })
     .then(resp => {
       return resp
     })
-  userSetting.students = usersResp.data.data
+  userState.students = usersResp.data.data
 }
+
+const autoRefresh = () => {
+  if (userState.students.length === 0) {
+    refresh()
+  }
+}
+
+autoRefresh()
 </script>
 
 <style lang="scss" scoped>
@@ -177,5 +184,12 @@ const updateUsers = async (users: UserJSONResponse[]) => {
 .certificates__btn {
   background: var(--primary-dark);
   width: toRem(100);
+}
+
+.certificates__list-titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: toRem(20);
 }
 </style>

@@ -14,7 +14,7 @@ const routes = [
   },
   {
     path: '/create',
-    name: ROUTE_NAMES.create,
+    name: ROUTE_NAMES.generate,
     component: () => import('@/pages/Generation.vue'),
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLoader">
-    <loader scheme="spinner" class="create_loader" />
+    <loader scheme="spinner" class="generation_loader" />
   </div>
   <div v-else-if="isUnauthorized">
     <auth-modal
@@ -9,19 +9,21 @@
       @with-code="updateCode"
     />
   </div>
-  <dic v-else class="generation">
+  <div v-else class="generation">
     <app-navbar class="app__navbar" />
     <div class="create_title">
-      <h1>{{ generationTitle }}</h1>
+      <h1>{{ $t('generation.title') }}</h1>
     </div>
     <div class="generation__body">
-      <div class="create__step">
-        <p class="create__step-number">
-          {{ step1 }}
+      <div class="generation__step">
+        <p class="generation__step-number">
+          {{ $t('generation.step1') }}
         </p>
 
-        <div class="create_collection-name">
-          <h1>{{ step1Desc }}</h1>
+        <div class="create_collection-name generation__step-field">
+          <h3 class="generation__subtitle-num">
+            {{ $t('generation.step1-description') }}
+          </h3>
           <input-field
             class="generation__text-input"
             label="Name"
@@ -32,12 +34,14 @@
         </div>
       </div>
 
-      <div class="create__step">
-        <p class="create__step-number">
-          {{ step2 }}
+      <div class="generation__step">
+        <p class="generation__step-number">
+          {{ $t('generation.step2') }}
         </p>
-        <div class="create_upload_files">
-          <h1>{{ step2Desc }}</h1>
+        <div class="create_upload_files generation__step-field">
+          <h3 class="generation__subtitle-num">
+            {{ $t('generation.step2-description') }}
+          </h3>
           <input-field
             class="generation__file-input"
             id="image-file"
@@ -48,12 +52,14 @@
           <!--todo  make better ^-->
         </div>
       </div>
-      <div class="create__step">
-        <p class="create__step-number">
-          {{ step3 }}
+      <div class="generation__step">
+        <p class="generation__step-number">
+          {{ $t('generation.step3') }}
         </p>
-        <div class="create_upload_files">
-          <h1>{{ step3Desc }}</h1>
+        <div class="create_upload_files generation__step-field">
+          <h3 class="generation__subtitle-num">
+            {{ $t('generation.step3-description') }}
+          </h3>
           <input-field
             class="generation__text-input"
             label="Link"
@@ -63,22 +69,24 @@
           />
         </div>
       </div>
-      <div class="create__btns">
+      <div class="generation__btns">
         <app-button
-          class="complex-form__submit-btn"
+          class="generation__btn"
           type="submit"
           text="Start"
+          :color="'success'"
           @click="start"
         />
         <app-button
-          class="complex-form__submit-btn"
+          class="generation__btn"
           type="submit"
-          text="cancel"
+          text="Cancel"
+          :color="'success'"
           @click="cancel"
         />
       </div>
     </div>
-  </dic>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -93,29 +101,18 @@ import {
   UserJSONResponse,
   UserSetting,
 } from '@/types/user.types'
-import { useUsersModules } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import AppHeader from '@/common/AppHeader.vue'
 import Loader from '@/common/Loader.vue'
 import { defer } from 'lodash-es'
 import AuthModal from '@/common/AuthModal.vue'
-const userSetting = useUsersModules()
+const userState = useUserStore()
 
 const isLoader = ref(false)
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const loaderState = ref('')
-
-const step1 = '1'
-const step2 = '2'
-const step3 = '3'
-
-const step1Desc = 'Write a name for your certificate'
-const step2Desc = 'Choose or upload template for a new certificate'
-const step3Desc = 'Write a link to  google sheet'
-
-const generationTitle = 'Create new certificate'
 
 const form = reactive({
   Url: '',
@@ -153,8 +150,8 @@ const parsedData = async (sheepUrl?: string) => {
       '/integrations/ccp/users/empty',
       {
         data: {
-          name: userSetting.setting.Name,
-          url: sheepUrl || userSetting.setting.Url,
+          name: userState.setting.Name,
+          url: sheepUrl || userState.setting.Url,
         },
       },
     )
@@ -174,7 +171,7 @@ const parsedData = async (sheepUrl?: string) => {
   return resp as UserJSONResponseList | undefined
 }
 const sign = (users: UserJSONResponseList) => {
-  const signature = new Signature(form.SignKey || userSetting.setting.SignKey)
+  const signature = new Signature(form.SignKey || userState.setting.SignKey)
   for (const user of users.data.data) {
     if (
       user.attributes.Signature === undefined ||
@@ -202,14 +199,14 @@ const createPDF = async (users: UserJSONResponseList) => {
       data: {
         data: users.data, //todo make better
         address:
-          userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-        url: userSetting.setting.Url || form.Url,
-        name: userSetting.setting.Name,
+          userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+        url: userState.setting.Url || form.Url,
+        name: userState.setting.Name,
       },
     },
   )
   users = prepareUserImg(resp.data)
-  userSetting.students = users.data
+  userState.students = users.data
   await router.push(ROUTE_NAMES.certificates)
 }
 
@@ -226,7 +223,7 @@ const updateCode = async (code: string) => {
   await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
     data: {
       code: code,
-      name: userSetting.setting.Name,
+      name: userState.setting.Name,
     },
   })
 
@@ -235,32 +232,19 @@ const updateCode = async (code: string) => {
 </script>
 
 <style lang="scss">
-.create__step-number {
+.generation__step-number {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #eeeeee;
+  background: var(--background-primary-dark);
   border-radius: toRem(30);
   font-size: toRem(14);
   width: toRem(30);
   height: toRem(30);
 }
 
-.create__step-number--ready {
-  background: #0066ff;
-}
-
-.create_loader {
-  backdrop-filter: blur(1rem);
-  background: #00000080;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.generation__step-number--ready {
+  background: var(--secondary-dark);
 }
 
 .generation__text-input {
@@ -277,20 +261,23 @@ const updateCode = async (code: string) => {
   height: toRem(222);
 }
 
-.create__step {
+.generation__step-field--ready {
+  border-left: var(--secondary-dark) toRem(2) solid;
+}
+
+.generation__step {
   display: flex;
   margin-top: toRem(20);
 }
 
-.create__btns {
+.generation__btns {
   display: flex;
   justify-content: space-between;
   width: toRem(350);
   margin-left: toRem(80);
 }
 
-.create__btn {
-  width: toRem(100);
-  background: #0066ff;
+.generation__subtitle-num {
+  margin-left: toRem(20);
 }
 </style>

@@ -9,13 +9,13 @@
     </p>
     <div class="certificate__btns">
       <app-button class="certificate__btn" @click="openModal">
-        {{ mintText }}
+        {{ $t('certificate.mint-text') }}
       </app-button>
       <app-button
         class="certificate__btn certificate__btn-download"
         @click="downloadPdf"
       >
-        {{ downloadIco }}
+        <img src="static/branding/download.png" alt="download img" />
       </app-button>
       <input @input="selectUser" type="checkbox" v-model="isSelected" />
     </div>
@@ -28,8 +28,6 @@ import { defineComponent } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
 
-const downloadIco = '&#8595;'
-const mintText = 'Make sbt issuance'
 defineComponent({
   components: { AppButton },
 })
