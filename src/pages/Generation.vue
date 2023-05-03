@@ -1,8 +1,5 @@
 <template>
-  <div v-if="isLoader">
-    <loader scheme="spinner" class="generation_loader" />
-  </div>
-  <div v-else-if="isUnauthorized">
+  <div v-if="isUnauthorized">
     <auth-modal
       :token-link="authLink"
       @close-modal="closeModal"
@@ -10,8 +7,8 @@
     />
   </div>
   <div v-else class="generation">
-    <app-navbar class="app__navbar" />
-    <div class="create_title">
+    <app-navbar />
+    <div class="generation__title">
       <h1>{{ $t('generation.title') }}</h1>
     </div>
     <div class="generation__body">
@@ -20,7 +17,7 @@
           {{ $t('generation.step1') }}
         </p>
 
-        <div class="create_collection-name generation__step-field">
+        <div class="generation__collection-name generation__step-field">
           <h3 class="generation__subtitle-num">
             {{ $t('generation.step1-description') }}
           </h3>
@@ -29,7 +26,7 @@
             label="Name"
             type="text"
             v-model="certificatesInfo.Name"
-            placeholder="note position(y)"
+            :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
@@ -38,7 +35,7 @@
         <p class="generation__step-number">
           {{ $t('generation.step2') }}
         </p>
-        <div class="create_upload_files generation__step-field">
+        <div class="generation__upload-files generation__step-field">
           <h3 class="generation__subtitle-num">
             {{ $t('generation.step2-description') }}
           </h3>
@@ -56,7 +53,7 @@
         <p class="generation__step-number">
           {{ $t('generation.step3') }}
         </p>
-        <div class="create_upload_files generation__step-field">
+        <div class="generation__upload-files generation__step-field">
           <h3 class="generation__subtitle-num">
             {{ $t('generation.step3-description') }}
           </h3>
@@ -65,7 +62,6 @@
             label="Link"
             type="text"
             v-model="certificatesInfo.Link"
-            placeholder="note position(y)"
           />
         </div>
       </div>
@@ -82,7 +78,7 @@
           type="submit"
           text="Cancel"
           :color="'success'"
-          @click="cancel"
+          @click="router.push(ROUTE_NAMES.main)"
         />
       </div>
     </div>
@@ -99,26 +95,18 @@ import {
   UnauthorizedResponse,
   UserJSONResponseList,
   UserJSONResponse,
-  UserSetting,
 } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import Loader from '@/common/Loader.vue'
-import { defer } from 'lodash-es'
-import AuthModal from '@/common/AuthModal.vue'
+
+import AuthModal from '@/common/modals/AuthModal.vue'
+import { useFormValidation } from '@/composables'
+import { required } from '@/validators'
 const userState = useUserStore()
 
-const isLoader = ref(false)
 const isUnauthorized = ref(false)
 const authLink = ref('')
-const loaderState = ref('')
-
-const form = reactive({
-  Url: '',
-  SignKey: '',
-  SendKey: '',
-} as UserSetting)
 
 const certificatesInfo = reactive({
   Name: '',
@@ -127,31 +115,32 @@ const certificatesInfo = reactive({
   Table: null,
 })
 
+const { getFieldErrorMessage, isFormValid } = useFormValidation(
+  certificatesInfo,
+  {
+    Name: { required },
+  },
+)
+
 const start = async () => {
-  defer(() => {
-    isLoader.value = false
-  })
-  isLoader.value = true
-  loaderState.value = 'Parsing users'
+  if (!isFormValid) return
   const users = await parsedData(certificatesInfo.Link)
   if (users === undefined) {
     return
   }
-  loaderState.value = 'Signing users'
   const signatures = sign(users)
-  loaderState.value = 'Creating PDF for users'
   await createPDF(signatures)
-  loaderState.value = ''
-  isLoader.value = false
 }
 const parsedData = async (sheepUrl?: string) => {
   const resp = await api
     .post<UserJSONResponseList | UnauthorizedResponse>(
       '/integrations/ccp/users/empty',
       {
-        data: {
-          name: userState.setting.Name,
-          url: sheepUrl || userState.setting.Url,
+        body: {
+          data: {
+            name: userState.setting.Name,
+            url: sheepUrl || userState.setting.Url,
+          },
         },
       },
     )
@@ -171,8 +160,8 @@ const parsedData = async (sheepUrl?: string) => {
   return resp as UserJSONResponseList | undefined
 }
 const sign = (users: UserJSONResponseList) => {
-  const signature = new Signature(form.SignKey || userState.setting.SignKey)
-  for (const user of users.data.data) {
+  const signature = new Signature(userState.setting.SignKey)
+  for (const user of users.data) {
     if (
       user.attributes.Signature === undefined ||
       user.attributes.Signature == ''
@@ -196,22 +185,20 @@ const createPDF = async (users: UserJSONResponseList) => {
   const resp = await api.post<UserJSONResponseList>(
     '/integrations/ccp/certificate/',
     {
-      data: {
-        data: users.data, //todo make better
-        address:
-          userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-        url: userState.setting.Url || form.Url,
-        name: userState.setting.Name,
+      body: {
+        data: {
+          data: users.data,
+          address:
+            userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          url: userState.setting.Url,
+          name: userState.setting.Name,
+        },
       },
     },
   )
   users = prepareUserImg(resp.data)
   userState.students = users.data
   await router.push(ROUTE_NAMES.certificates)
-}
-
-const cancel = async () => {
-  await router.push(ROUTE_NAMES.main)
 }
 
 const closeModal = () => {
@@ -221,9 +208,11 @@ const closeModal = () => {
 const updateCode = async (code: string) => {
   isUnauthorized.value = false
   await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    data: {
-      code: code,
-      name: userState.setting.Name,
+    body: {
+      data: {
+        code: code,
+        name: userState.setting.Name,
+      },
     },
   })
 

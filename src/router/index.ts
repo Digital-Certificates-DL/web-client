@@ -13,7 +13,7 @@ const routes = [
     component: () => import('@/pages/Main.vue'),
   },
   {
-    path: '/create',
+    path: '/generate',
     name: ROUTE_NAMES.generate,
     component: () => import('@/pages/Generation.vue'),
   },
@@ -25,7 +25,7 @@ const routes = [
   },
   {
     path: '/settings',
-    name: ROUTE_NAMES.setting,
+    name: ROUTE_NAMES.settings,
     component: () => import('@/pages/Setting.vue'),
   },
 ]

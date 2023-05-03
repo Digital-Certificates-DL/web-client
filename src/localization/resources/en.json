@@ -1,7 +1,11 @@
 {
   "validations": {
     "field-error_required": "Please fill out this field",
-    "field-error_email": "Field must be a valid email"
+    "field-error_email": "Field must be a valid email",
+    "field-error-address": "Invalid address",
+    "auth-code": "Code is required",
+    "name": "Empty name",
+    "settings": "We need fill all fields"
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -87,6 +91,11 @@
     "page-name": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings"
+  },
+  "certificate-modal": {
+    "user-name" : "Full name",
+    "title" : "SBT issuance"
+
   }
 
 }

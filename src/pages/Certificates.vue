@@ -1,6 +1,6 @@
 <template>
   <div class="certificates">
-    <app-navbar class="app__navbar" />
+    <app-navbar />
 
     <h1>{{ $t('certificates.certificates-title') }}</h1>
     <div class="certificates__search">
@@ -11,7 +11,6 @@
         @update:model-value="search"
       />
       <div class="certificates__btns">
-        <app-button class="certificates__btn" @click="refresh" text="Refresh" />
         <app-button
           class="certificates__btn"
           @click="bitcoinTimestamp"
@@ -49,7 +48,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import ModalInfo from '@/common/modals/ModalInfo.vue'
+import ModalInfo from '@/common/modals/CertificateModal.vue'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
@@ -96,9 +95,11 @@ const refresh = async () => {
   const users = await api.post<UserJSONResponseList>(
     '/integrations/ccp/users/',
     {
-      data: {
-        url: userState.setting.Url,
-        name: userState.setting.Name,
+      body: {
+        data: {
+          url: userState.setting.Url,
+          name: userState.setting.Name,
+        },
       },
     },
   )
@@ -126,7 +127,7 @@ const bitcoinTimestamp = async () => {
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.SendKey,
+      userState.setting.SendMnemonicPhrase,
       userState.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
@@ -142,19 +143,21 @@ const bitcoinTimestamp = async () => {
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const usersResp = await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
-      data: {
-        data: users,
-        address: userState.setting.Address,
-        name: userState.setting.Name,
-        url: userState.setting.Url,
+  const { data } = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/certificate/bitcoin',
+    {
+      body: {
+        data: {
+          data: users,
+          address: userState.setting.Address,
+          name: userState.setting.Name,
+          url: userState.setting.Url,
+        },
       },
-    })
-    .then(resp => {
-      return resp
-    })
-  userState.students = usersResp.data.data
+    },
+  )
+
+  userState.students = data.data
 }
 
 const autoRefresh = () => {

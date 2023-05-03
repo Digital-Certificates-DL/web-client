@@ -35,7 +35,7 @@ export type UserSetting = {
   Address: string
   KeyPathID: number
   LastExAddress: string
-  SendKey: string
+  SendMnemonicPhrase: string
   Url: string
 }
 

@@ -56,7 +56,7 @@
           color="warning"
           body="Ac integer sapien nisl turpis arcu integer.
            Pellentesque phasellus egestas pharetra quam cursus"
-          @click="goToSetting"
+          @click="router.push(ROUTE_NAMES.settings)"
         />
         <nav-button
           :title="'Certificates'"
@@ -65,7 +65,7 @@
           color="info"
           body="Ac integer sapien nisl turpis arcu integer.
            Pellentesque phasellus egestas pharetra quam cursus"
-          @click="goToCertificate"
+          @click="router.push(ROUTE_NAMES.certificates)"
         />
         <nav-button
           :title="'Generation'"
@@ -74,7 +74,7 @@
            Pellentesque phasellus egestas pharetra quam cursus"
           class="main__btn"
           color="success"
-          @click="goToGenerate"
+          @click="router.push(ROUTE_NAMES.generate)"
         />
       </div>
     </div>
@@ -100,17 +100,6 @@ const connect = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
-}
-
-const goToCertificate = async () => {
-  await router.push(ROUTE_NAMES.certificates)
-}
-const goToSetting = async () => {
-  await router.push(ROUTE_NAMES.setting)
-}
-
-const goToGenerate = async () => {
-  await router.push(ROUTE_NAMES.generate)
 }
 </script>
 

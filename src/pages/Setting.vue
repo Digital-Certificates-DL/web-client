@@ -1,59 +1,60 @@
 <template>
   <div class="setting">
-    <app-navbar class="app__navbar" />
+    <app-navbar />
     <div class="setting_body">
       <div class="setting__info">
         <h1 class="setting__title">
-          {{ pageName }}
+          {{ $t('settings.page-name') }}
         </h1>
         <p>
-          {{ title }}
+          {{ $t('settings.title') }}
         </p>
       </div>
       <h1 class="settings__fields-title">
-        {{ generalSettingsTitle }}
+        {{ $t('settings.general-title') }}
       </h1>
       <input-field
         class="settings__form"
         label="Name of organization"
         type="text"
         v-model="form.Org"
-        placeholder="DL"
       />
       <input-field
         label="Account name"
         class="settings__form"
         type="text"
         v-model="form.Name"
-        placeholder="Account name"
       />
       <h1 class="settings__fields-title">
-        {{ signKeyTitle }}
+        {{ $t('settings.general-title') }}
       </h1>
       <input-field
         label="Bitcoin Timestamping Mnemonic Phrase"
         class="settings__form"
         type="text"
-        v-model="form.SendKey"
-        placeholder="Send key"
+        v-model="form.SendMnemonicPhrase"
       />
       <input-field
         label="Google Sheet URL"
         class="settings__form"
         type="text"
         v-model="form.Url"
-        placeholder="Url"
       />
       <input-field
         label="Bitcoin Corporate Signing Key (WIF)"
         class="settings__form"
         type="text"
         v-model="form.SignKey"
-        placeholder="SignKey"
+        :error-message="getFieldErrorMessage('settings')"
       />
       <div class="settings__btns">
-        <app-button class="settings_btn" text="Save" @click="save" />
-        <app-button class="settings_btn" text="Cancel" @click="cancel" />
+        <app-button text="Save" :color="'primary'" @click="save" />
+        <app-button
+          text="Cancel"
+          :route="{
+            name: $routes.main,
+          }"
+        />
       </div>
     </div>
   </div>
@@ -71,39 +72,44 @@ import btc from '@/utils/bitcoin.util'
 
 import { api } from '@/api'
 import { AppNavbar } from '@/common'
+import { useFormValidation } from '@/composables'
+import { required } from '@/validators'
 
+const router = useRouter()
 const userState = useUserStore()
-const title = ''
-const generalSettingsTitle = 'General settings'
-const signKeyTitle = 'Key settings for signatures'
-const pageName = ''
+
 const form = reactive({
   Name: '',
   Org: '',
   SignKey: '',
-  SendKey: '',
+  SendMnemonicPhrase: '',
   Url: '',
 } as UserSetting)
 
-const router = useRouter()
+const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
+  Name: { required },
+  Org: { required },
+  SignKey: { required },
+  SendKey: { required },
+  Url: { required },
+})
 
 const save = async () => {
+  if (!isFormValid) return
   userState.setting = form
   const address = btc.Bitcoin.getAddressFromWIF(form.SignKey)
 
   userState.setting.Address = address || ''
 
   await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    data: {
-      code: '',
-      name: userState.setting.Name,
+    body: {
+      data: {
+        code: '',
+        name: userState.setting.Name,
+      },
     },
   })
   await router.push(ROUTE_NAMES.main)
-}
-
-const cancel = () => {
-  router.push(ROUTE_NAMES.certificates)
 }
 </script>
 <style scoped lang="scss">
@@ -136,10 +142,5 @@ const cancel = () => {
 
 .setting__title {
   margin-bottom: toRem(20);
-}
-
-.settings_btn {
-  background: #0066ff;
-  width: toRem(150);
 }
 </style>

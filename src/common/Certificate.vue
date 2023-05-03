@@ -8,16 +8,23 @@
       {{ props.user.attributes.Date }}
     </p>
     <div class="certificate__btns">
-      <app-button class="certificate__btn" @click="openModal">
+      <app-button
+        class="certificate__btn"
+        @click="emit('OpenModal', true, props.user)"
+      >
         {{ $t('certificate.mint-text') }}
       </app-button>
       <app-button
         class="certificate__btn certificate__btn-download"
-        @click="downloadPdf"
+        @click="window.open(props.user.attributes.Certificate, '_blank')"
       >
         <img src="static/branding/download.png" alt="download img" />
       </app-button>
-      <input @input="selectUser" type="checkbox" v-model="isSelected" />
+      <input
+        v-model="isSelected"
+        type="checkbox"
+        @input="emit('selectForTimestamp', !isSelected, props.user)"
+      />
     </div>
   </div>
   <hr />
@@ -28,36 +35,23 @@ import { defineComponent } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
 
+const isSelected = false
+
 defineComponent({
   components: { AppButton },
 })
-const isSelected = false
-
-const props = withDefaults(
-  defineProps<{
-    user: UserJSONResponse
-  }>(),
-  {
-    user: undefined,
-  },
-)
 
 const emit = defineEmits<{
   (e: 'OpenModal', state: boolean, user: UserJSONResponse): boolean
   (e: 'selectForTimestamp', state: boolean, user: UserJSONResponse): boolean
 }>()
 
-const openModal = () => {
-  emit('OpenModal', true, props.user)
-}
-
-const selectUser = () => {
-  emit('selectForTimestamp', !isSelected, props.user)
-}
-
-const downloadPdf = () => {
-  window.open(props.user.attributes.Certificate, '_blank')
-}
+const props = withDefaults(
+  defineProps<{
+    user: UserJSONResponse
+  }>(),
+  {},
+)
 </script>
 
 <style lang="scss" scoped>
