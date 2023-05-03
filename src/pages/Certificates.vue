@@ -1,8 +1,8 @@
 <template>
   <div class="certificates">
-    <app-header />
+    <app-navbar />
 
-    <h1>{{ certificatesTitle }}</h1>
+    <h1>{{ $t('certificates.certificates-title') }}</h1>
     <div class="certificates__search">
       <input-field
         class="certificates__search-input"
@@ -11,8 +11,6 @@
         @update:model-value="search"
       />
       <div class="certificates__btns">
-        <app-button class="certificates__btn" @click="find" text="Find" />
-        <app-button class="certificates__btn" @click="refresh" text="Refresh" />
         <app-button
           class="certificates__btn"
           @click="bitcoinTimestamp"
@@ -24,18 +22,24 @@
       <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
     </div>
     <div class="certificates__list">
-      <div v-if="userSetting.students.length === 0">
+      <div class="certificates__list-titles">
+        <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
+        <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
+        <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
+      </div>
+      <div v-if="userState.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
+
       <div
-        v-for="(item, key) in userSetting.students"
+        v-for="(item, key) in userState.students"
         :value="key"
         :key="item.attributes"
       >
         <certificate
           :user="item"
-          @openModal="openModal"
-          @selectForTimestamp="selectForTimestamp"
+          @open-modal="openModal"
+          @select-for-timestamp="selectForTimestamp"
         />
       </div>
     </div>
@@ -43,27 +47,24 @@
 </template>
 
 <script lang="ts" setup>
-import { useUsersModules } from '@/store/modules/use-users.modules'
-import Certificate from '@/common/Certificate.vue'
-import ModalInfo from '@/common/modals/ModalInfo.vue'
+import { useUserStore } from '@/store/modules/use-users.modules'
+import ModalInfo from '@/common/modals/CertificateModal.vue'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
-import ErrorMessage from '@/common/ErrorMessage.vue'
-import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
-import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
-import { Signature } from '@/utils/signature.utils'
+import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-const userSetting = useUsersModules()
+import { Signature } from '@/utils/signature.utils'
+
+const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
-
+let userBuffer
 const listForTimestamp: UserJSONResponse[] = []
 
-const certificatesTitle = 'Previously certificates'
 const listForCreate: UserJSONResponse[] = []
 
 const form = reactive({
@@ -84,7 +85,6 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 
     return
   }
-
   listForTimestamp.filter(item => item !== user)
 }
 
@@ -92,41 +92,42 @@ const refresh = async () => {
   const users = await api.post<UserJSONResponseList>(
     '/integrations/ccp/users/',
     {
-      data: {
-        url: userSetting.setting.Url,
-        name: userSetting.setting.Name,
+      body: {
+        data: {
+          url: userState.setting.Url,
+          name: userState.setting.Name,
+        },
       },
     },
   )
-  userSetting.students = prepareUserImg(users.data).data
+  userState.students = prepareUserImg(users.data).data
 }
 
-let userBuffer
 const search = () => {
-  userBuffer = userSetting.students
+  userBuffer = userState.students
 
   if (form.search === '' && userBuffer !== undefined) {
-    userSetting.students = userBuffer
+    userState.students = userBuffer
   }
-  userSetting.students.filter(item =>
+  userState.students.filter(item =>
     item.attributes.Participant.includes(form.search),
   )
 }
 
 const generate = async () => {
-  const users = userSetting.students
+  const users = userState.students
   // loaderState.value = 'Signing users'
   const signatures = sign(users)
   // loaderState.value = 'Creating PDF for users'
-  userSetting.students = await createPDF(signatures)
+  userState.students = await createPDF(signatures)
   // loaderState.value = ''
   // isLoader.value = false
 
-  router.push(ROUTE_NAMES.timestamp)
+  await router.push(ROUTE_NAMES.timestamp)
 }
 
 const sign = (users: UserJSONResponse[]) => {
-  const signature = new Signature(userSetting.setting.SignKey)
+  const signature = new Signature(userState.setting.SignKey)
   for (const user of users) {
     if (
       user.attributes.Signature === undefined ||
@@ -150,17 +151,19 @@ const prepareUserImg = (users: UserJSONResponseList) => {
 const createPDF = async (users: UserJSONResponse[]) => {
   const resp = await api
     .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
-      data: {
-        data: users, //todo make better
-        address:
-          userSetting.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-        url: userSetting.setting.Url,
-        name: userSetting.setting.Name,
+      body: {
+        data: {
+          data: users, //todo make better
+          address:
+            userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          url: userState.setting.Url,
+          name: userState.setting.Name,
+        },
       },
     })
     .then(resp => {
       const users = prepareUserImg(resp.data)
-      userSetting.students = users.data
+      userState.students = users.data
       return resp
     })
   return resp.data.data
@@ -168,44 +171,54 @@ const createPDF = async (users: UserJSONResponse[]) => {
 
 const bitcoinTimestamp = async () => {
   if (
-    userSetting.setting.KeyPathID === 0 ||
-    userSetting.setting.KeyPathID === undefined
+    userState.setting.KeyPathID === 0 ||
+    userState.setting.KeyPathID === undefined
   ) {
-    userSetting.setting.KeyPathID = 0
+    userState.setting.KeyPathID = 0
   }
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userSetting.setting.SendKey,
-      userSetting.setting.KeyPathID,
+      userState.setting.SendMnemonicPhrase,
+      userState.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
-    userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
+    userState.setting.KeyPathID = tx?.index || userState.setting.KeyPathID++
     if (hex === '') {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
     user.attributes.TxHash = sendResp.data.tx.hash
-    userSetting.setting.LastExAddress = tx?.exAddress || ''
+    userState.setting.LastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const usersResp = await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
-      data: {
-        data: users,
-        address: userSetting.setting.Address,
-        name: userSetting.setting.Name,
-        url: userSetting.setting.Url,
+  const { data } = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/certificate/bitcoin',
+    {
+      body: {
+        data: {
+          data: users,
+          address: userState.setting.Address,
+          name: userState.setting.Name,
+          url: userState.setting.Url,
+        },
       },
-    })
-    .then(resp => {
-      return resp
-    })
-  userSetting.students = usersResp.data.data
+    },
+  )
+
+  userState.students = data.data
 }
+
+const autoRefresh = () => {
+  if (userState.students.length === 0) {
+    refresh()
+  }
+}
+
+autoRefresh()
 
 const selectForCreate = (state: boolean, user: UserJSONResponse) => {
   if (state) {
@@ -233,11 +246,14 @@ const selectForCreate = (state: boolean, user: UserJSONResponse) => {
 }
 
 .certificates__btn {
-  background: #0066ff;
+  background: var(--primary-dark);
   width: toRem(100);
 }
 
-//.certificates__list{
-//  height:50%
-//}
+.certificates__list-titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: toRem(20);
+}
 </style>

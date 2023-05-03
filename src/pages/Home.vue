@@ -5,13 +5,13 @@
       <h1>{{ homeCreate }}</h1>
       <div class="home__body-create">
         <home-body-nav
-          @active="goToCreate"
+          @active="router.push(ROUTE_NAMES.generate)"
           :title="'Create'"
           :name="'Create'"
           :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
         />
         <home-body-nav
-          @active="goToTemplate"
+          @active="router.push(ROUTE_NAMES.template)"
           :title="'Upload new template'"
           :name="'Upload'"
           :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
@@ -68,16 +68,15 @@ import {
 } from '@/types'
 import { ref } from 'vue'
 import { api } from '@/api'
-import { useUsersModules } from '@/store'
+import { useUserStore } from '@/store'
 import HomeItem from '@/common/HomeItem.vue'
-import ErrorMessage from '@/common/ErrorMessage.vue'
 
 const templates = ref({})
 const certificates = ref({})
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
-const userSetting = useUsersModules()
+const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 
@@ -89,9 +88,11 @@ const getUsers = async () => {
     .post<UserJSONResponseList | UnauthorizedResponse>(
       '/integrations/ccp/users/',
       {
-        data: {
-          name: userSetting.setting.Name,
-          url: userSetting.setting.Url,
+        body: {
+          data: {
+            name: userState.setting.Name,
+            url: userState.setting.Url,
+          },
         },
       },
     )
@@ -117,18 +118,6 @@ const getTemplates = async () => {
   //todo check error
 }
 
-const goToTemplate = () => {
-  router.push(ROUTE_NAMES.template)
-}
-
-const goToCreate = () => {
-  router.push(ROUTE_NAMES.create)
-}
-
-const cancel = async () => {
-  await router.push(ROUTE_NAMES.menu)
-}
-
 const closeModal = () => {
   isUnauthorized.value = false
 }
@@ -136,9 +125,11 @@ const closeModal = () => {
 const updateCode = async (code: string) => {
   isUnauthorized.value = false
   await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    data: {
-      code: code,
-      name: userSetting.setting.Name,
+    body: {
+      data: {
+        code: code,
+        name: userState.setting.Name,
+      },
     },
   })
 }

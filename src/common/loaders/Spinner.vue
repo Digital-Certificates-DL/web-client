@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 withDefaults(
   defineProps<{
-    title?: ''
+    title?: string
   }>(),
   {
     title: '',
@@ -31,11 +31,6 @@ withDefaults(
   border-color: var(--border-primary-main) transparent
     var(--border-primary-main) transparent;
   animation: spinner 1.2s linear infinite;
-}
-
-.title {
-  margin-top: 0;
-  padding: 0;
 }
 
 @keyframes spinner {

@@ -37,7 +37,6 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
         const fallbackProvider = this.providers.find(
           provider => provider.name === PROVIDERS.metamaskFallback,
         )
-
         if (fallbackProvider) await this.provider.init(fallbackProvider)
       }
     },

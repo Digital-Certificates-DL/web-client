@@ -9,6 +9,7 @@ export { default as AppLogo } from '@/common/AppLogo.vue'
 export { default as AppNavbar } from '@/common/AppNavbar.vue'
 export { default as Notification } from '@/common/Notification.vue'
 export { default as Modal } from '@/common/Modal.vue'
+export { default as Certificate } from '@/common/Certificate.vue'
 
 export * from './modals'
 export * from './loaders'

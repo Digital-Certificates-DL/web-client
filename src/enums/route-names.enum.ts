@@ -1,11 +1,9 @@
 export enum ROUTE_NAMES {
   app = 'app',
-  setting = 'setting',
+  settings = 'settings',
   certificates = 'certificates',
-  web3 = 'web3',
   template = 'template',
-  create = 'create',
-  menu = 'menu',
-  home = 'home',
+  generate = 'generate',
+  main = 'main',
   timestamp = 'timestamp',
 }

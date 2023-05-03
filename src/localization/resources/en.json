@@ -1,7 +1,13 @@
 {
   "validations": {
     "field-error_required": "Please fill out this field",
-    "field-error_email": "Field must be a valid email"
+    "field-error_email": "Field must be a valid email",
+    "field-error_address": "Invalid address",
+    "field-error_auth-code": "Code is required",
+    "field-error_name": "Empty name",
+    "field-error_settings": "We need fill all fields",
+    "field-error_privateKey": "Invalid private key"
+
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -42,17 +48,6 @@
     "login-success-msg": "Access granted",
     "submit-btn": "Submit"
   },
-  "ui-kit-page": {
-    "button": "Button",
-    "some-placeholder": "placeholder",
-    "some-label": "label",
-    "some-error-message": "error-message",
-    "modal-btn": "Open modal",
-    "accordion-btn": "Toggle Accordion",
-    "collapse-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "loading-error-msg": "Oops, something went wrong",
-    "no-data-msg": "Empty data, please add new"
-  },
   "web3-page": {
     "loading-error-msg": "Oops... Something went wrong"
   },
@@ -67,7 +62,42 @@
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
   },
-  "timestamp": {
-    "created-list-title": "Created certificates"
+  "main": {
+    "generate-title": "Generate",
+    "generate-body": "",
+    "metamask-connect": "Connect to MetaMask",
+    "page-info-name": "Service name",
+    "page-info-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'",
+    "metamask-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'"
+  },
+  "certificates": {
+    "certificates-title": "Previously certificates",
+    "certificates-subtitle-name": "Name",
+    "certificates-subtitle-course": "Course",
+    "certificates-subtitle-date": "Date"
+  },
+  "generation": {
+    "title":"Create new certificate",
+    "step1-description": "Write a name for your certificate",
+    "step2-description": "Choose or upload template for a new certificate",
+    "step3-description": "Write a link to  google sheet",
+    "step1": "1",
+    "step2": "2",
+    "step3": "3"
+  },
+  "certificate": {
+    "mint-text": "Make sbt issuance"
+  },
+  "settings": {
+    "title": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-name": "Setting",
+    "sign-key-title": "Key settings for signatures",
+    "general-title": "General settings"
+  },
+  "certificate-modal": {
+    "user-name" : "Full name",
+    "title" : "SBT issuance"
+
   }
+
 }

@@ -1,13 +1,17 @@
 <template>
-  <div class="modal__back">
+  <modal :is-shown="isShown">
     <div class="modal__window">
-      <input-field placeholder="code" v-model="form.code" />
+      <input-field
+        label="Code"
+        v-model="form.code"
+        :error-message="getFieldErrorMessage('auth-code')"
+      />
       <app-button
         class="modal__btn modal__btn-link"
         text="Give access"
-        @click="getCode"
+        @click="window.open(props.tokenLink, '_blank')"
       />
-      <div class="modal__btns">
+      <div class="certificate-modal__btns">
         <app-button
           class="modal__btn modal__btn-nav"
           text="Send code"
@@ -16,25 +20,36 @@
         <app-button
           class="modal__btn modal__btn-nav"
           text="Cancel"
-          @click="cancel"
+          @click="emit('closeModal', false)"
         />
       </div>
     </div>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts" setup>
 import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import AppButton from '@/common/AppButton.vue'
+import { Modal } from '@/common'
+import { useFormValidation } from '@/composables'
+import { required } from '@/validators'
+
 const form = reactive({
   code: '',
 })
+
+const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
+  address: { required },
+})
+
 const props = withDefaults(
   defineProps<{
+    isShown: boolean
     tokenLink: string
   }>(),
   {
+    isShown: false,
     tokenLink: '',
   },
 )
@@ -44,15 +59,9 @@ const emit = defineEmits<{
   (e: 'withCode', code: string): boolean
 }>()
 
-const cancel = () => {
-  emit('closeModal', false)
-}
 const sendCode = () => {
+  if (!isFormValid()) return
   emit('withCode', form.code)
-}
-
-const getCode = () => {
-  window.open(props.tokenLink, '_blank')
 }
 </script>
 
@@ -68,26 +77,13 @@ const getCode = () => {
   display: grid;
 }
 
-.modal__back {
-  backdrop-filter: blur(1rem);
-  background: #00000080;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal__title {
+.certificate-modal__title {
   padding-top: toRem(30);
   padding-bottom: toRem(30);
   margin: auto;
 }
 
-.modal__btns {
+.certificate-modal__btns {
   display: flex;
   justify-content: space-between;
 }

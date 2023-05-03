@@ -13,11 +13,29 @@ import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
+import { PROVIDERS } from '@/enums'
+
+import { useWeb3ProvidersStore } from '@/store'
+
+const web3Store = useWeb3ProvidersStore()
 
 const isAppInitialized = ref(false)
 const init = async () => {
   try {
     useNotifications()
+    document.title = config.APP_NAME
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+  isAppInitialized.value = true
+
+  try {
+    useNotifications()
+    await web3Store.detectProviders()
+    const provider = web3Store.providers.find(
+      el => el.name === PROVIDERS.metamask,
+    )
+    await web3Store.provider.init(provider!)
     document.title = config.APP_NAME
   } catch (error) {
     ErrorHandler.process(error)
@@ -34,7 +52,7 @@ init()
   display: grid;
   grid-template-rows: toRem(85) 1fr max-content;
   flex: 1;
-  //overflow-y: auto;
+  overflow-y: auto;
 
   @include respond-to(small) {
     grid-template-rows: max-content 1fr max-content;

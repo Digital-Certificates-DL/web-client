@@ -1,8 +1,11 @@
 import { config } from '@config'
-import axios, { AxiosInstance } from 'axios'
+import { JsonApiClient } from '@distributedlab/jac'
 
-export let api: AxiosInstance
+export let api: JsonApiClient
 
 export function initApi(): void {
-  api = axios.create({ baseURL: config.API_URL })
+  api = new JsonApiClient({
+    baseUrl: config.API_URL,
+    credentials: 'same-origin',
+  })
 }

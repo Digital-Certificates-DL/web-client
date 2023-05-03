@@ -2,15 +2,22 @@ import { defineStore } from 'pinia'
 import { UserJSONResponse, UserSetting } from '@/types'
 import { useProvider } from '@/composables'
 
-export const useUsersModules = defineStore('users-store', {
-  state: () => ({
-    students: [] as UserJSONResponse[],
-    setting: {} as UserSetting,
-    provider: useProvider(),
-  }),
-  actions: {},
-})
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-// if (import.meta.hot) {
-//   import.meta.hot.accept(acceptHMRUpdate(useUsersModules, import.meta.hot))
-// }
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+export const useUserStore = defineStore('users-store', {
+  state: () => {
+    return {
+      students: [] as UserJSONResponse[],
+      setting: {} as UserSetting,
+      provider: useProvider(),
+    }
+  },
+  persist: {
+    storage: sessionStorage,
+    paths: ['userState'],
+  },
+})

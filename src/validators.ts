@@ -18,6 +18,11 @@ const messagePath = ({ $validator }: MessageProps) =>
 
 const withI18nMessage = createI18nMessage({ t, messagePath })
 
+const validateAddress = (address: string): boolean => {
+  const re = new RegExp('^0x[a-fA-F0-9]{40}$')
+  return re.test(address)
+}
+
 export const required = <ValidationRule>withI18nMessage(_required)
 
 export const email = <ValidationRule>withI18nMessage(_email)
@@ -31,3 +36,5 @@ export const maxLength = (length: number): ValidationRule =>
 export const sameAs = (field: Ref): ValidationRule => {
   return <ValidationRule>withI18nMessage(_sameAs(field, get(field, '_key')))
 }
+
+export const address = <ValidationRule>withI18nMessage(validateAddress)

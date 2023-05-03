@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="pdf-viewer__body">
-      <upload-template @submitted="handleSubmit" />
       <template-form @submitted="createTemplate" />
       <img :src="img" alt="error" />
     </div>
@@ -9,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { UploadTemplate, TemplateForm } from '@/forms'
+import { TemplateForm } from '@/forms'
 import { api } from '@/api'
 import { CreateTemplateResponse, TemplateTypes } from '@/types'
 import { router } from '@/router'

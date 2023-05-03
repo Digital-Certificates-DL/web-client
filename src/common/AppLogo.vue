@@ -2,10 +2,10 @@
   <div class="app-logo">
     <img
       class="app-logo__img"
-      src="/branding/logo.svg"
+      src="/branding/LOGO.png"
       :alt="$config.APP_NAME"
     />
-    <router-link class="app-logo__link" :to="{ name: $routes.uiKit }" />
+    <router-link class="app-logo__link" :to="{ name: $routes.main }" />
   </div>
 </template>
 

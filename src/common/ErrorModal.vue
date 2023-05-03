@@ -1,28 +1,25 @@
 <template>
-  <div class="error-modal">
-    <div class="error-modal__back">
-      <div class="error-modal__window">
-        <div class="error-modal__data">
-          <error-message
-            class="error-modal__data-err"
-            :message="props.message"
-          />
-          <app-button text="close" @click="closeModal" />
-        </div>
+  <modal is-shown:>
+    <div class="error-modal__window">
+      <div class="error-modal__data">
+        <error-message class="error-modal__data-err" :message="props.message" />
+        <app-button text="close" @click="closeModal" />
       </div>
     </div>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts" setup>
 import ErrorMessage from '@/common/ErrorMessage.vue'
-import AppButton from '@/common/AppButton.vue'
+import { AppButton, Modal } from '@/common/index'
 
 const props = withDefaults(
   defineProps<{
+    isShown: boolean
     message: string
   }>(),
   {
+    isShown: false,
     message: '',
   },
 )

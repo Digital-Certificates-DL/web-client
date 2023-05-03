@@ -8,16 +8,23 @@
       {{ props.user.attributes.Date }}
     </p>
     <div class="certificate__btns">
-      <app-button class="certificate__btn" @click="openModal">
-        {{ mintText }}
+      <app-button
+        class="certificate__btn"
+        @click="emit('openModal', true, props.user)"
+      >
+        {{ $t('certificate.mint-text') }}
       </app-button>
       <app-button
         class="certificate__btn certificate__btn-download"
-        @click="downloadPdf"
+        @click="window.open(props.user.attributes.Certificate, '_blank')"
       >
-        {{ downloadIco }}
+        <img src="static/branding/download.png" alt="download img" />
       </app-button>
-      <input @input="selectUser" type="checkbox" v-model="isSelected" />
+      <input
+        v-model="isSelected"
+        type="checkbox"
+        @input="emit('select', !isSelected, props.user)"
+      />
     </div>
   </div>
   <hr />
@@ -28,38 +35,19 @@ import { defineComponent } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
 
-const downloadIco = '&#8595;'
-const mintText = 'Make sbt issuance'
-defineComponent({
-  components: { AppButton },
-})
 const isSelected = false
 
 const props = withDefaults(
   defineProps<{
     user: UserJSONResponse
   }>(),
-  {
-    user: undefined,
-  },
+  {},
 )
 
 const emit = defineEmits<{
   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
   (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
-
-const openModal = () => {
-  emit('openModal', true, props.user)
-}
-
-const selectUser = () => {
-  emit('select', !isSelected, props.user)
-}
-
-const downloadPdf = () => {
-  window.open(props.user.attributes.Certificate, '_blank')
-}
 </script>
 
 <style lang="scss" scoped>
@@ -73,6 +61,7 @@ const downloadPdf = () => {
 .certificate_img {
   width: toRem(100);
 }
+
 .certificate__name {
   width: toRem(150);
 }

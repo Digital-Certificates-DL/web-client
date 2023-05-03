@@ -53,6 +53,21 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
+"@distributedlab/fetcher@0.2.0-rc.9":
+  version "0.2.0-rc.9"
+  resolved "https://registry.yarnpkg.com/@distributedlab/fetcher/-/fetcher-0.2.0-rc.9.tgz#18947db75ef8d3358a2cad8e31a84783ac3d1d8e"
+  integrity sha512-zCn0XHVofTQN9naipcHb6g2BJvULvnGjKNASzapZLKIni0p4KK6QNa/LSq1upHIvJCRiLdJKbWD74h7gh+DRsg==
+  dependencies:
+    uuid "^9.0.0"
+
+"@distributedlab/jac@^0.2.0-rc.9":
+  version "0.2.0-rc.9"
+  resolved "https://registry.yarnpkg.com/@distributedlab/jac/-/jac-0.2.0-rc.9.tgz#561470358839b6e0a8d9c2e618befb0147c15bdc"
+  integrity sha512-A2eDpAoJZNKCmHSLhA1qcIutZJzjuek/0XEJIb1NOH7I6Pc8F2UmaXVV+tQ2jc4Y6wupcDWnVqca/CbkQBWWNw==
+  dependencies:
+    "@distributedlab/fetcher" "0.2.0-rc.9"
+    lodash "^4.17.21"
+
 "@distributedlab/json-api-client@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@distributedlab/json-api-client/-/json-api-client-2.2.1.tgz#19f94a041296f6f839b54f89ff669ef77a9a2d7e"
@@ -5086,6 +5101,11 @@ picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
+
+pinia-plugin-persistedstate@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate/-/pinia-plugin-persistedstate-3.1.0.tgz#eada2b61ecd478fce88e490a685210415cd7a1b4"
+  integrity sha512-8UN+vYMEPBdgNLwceY08mi5olI0wkYaEb8b6hD6xW7SnBRuPydWHlEhZvUWgNb/ibuf4PvufpvtS+dmhYjJQOw==
 
 pinia@^2.0.28:
   version "2.0.34"

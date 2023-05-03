@@ -124,14 +124,14 @@ const updateUsers = async (users: UserJSONResponse[]) => {
   userSetting.students = prepareUserImg(usersResp.data)
 }
 
-const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-  if (state) {
-    listForCreate.push(user)
-    return
-  }
-
-  listForCreate.filter(item => item !== user)
-}
+// const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
+//   if (state) {
+//     listForCreate.push(user)
+//     return
+//   }
+//
+//   listForCreate.filter(item => item !== user)
+// }
 </script>
 
 <style lang="scss" scoped></style>

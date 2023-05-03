@@ -5,16 +5,16 @@ import { ROUTE_NAMES } from '@/enums'
 const routes = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.menu },
+    redirect: { name: ROUTE_NAMES.main },
   },
   {
     path: '/main',
-    name: ROUTE_NAMES.menu,
-    component: () => import('@/pages/Menu.vue'),
+    name: ROUTE_NAMES.main,
+    component: () => import('@/pages/Main.vue'),
   },
   {
-    path: '/create',
-    name: ROUTE_NAMES.create,
+    path: '/generate',
+    name: ROUTE_NAMES.generate,
     component: () => import('@/pages/Generation.vue'),
   },
   {
@@ -28,13 +28,8 @@ const routes = [
     component: () => import('@/pages/Certificates.vue'),
   },
   {
-    path: '/home',
-    name: ROUTE_NAMES.home,
-    component: () => import('@/pages/Home.vue'),
-  },
-  {
-    path: '/setting',
-    name: ROUTE_NAMES.setting,
+    path: '/settings',
+    name: ROUTE_NAMES.settings,
     component: () => import('@/pages/Setting.vue'),
   },
   {
