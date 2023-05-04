@@ -1,6 +1,7 @@
 {
   "validations": {
     "field-error_required": "Please fill out this field",
+    "field-error_required-all": "Please fill out all fields",
     "field-error_email": "Field must be a valid email",
     "field-error_address": "Invalid address",
     "field-error_auth-code": "Code is required",

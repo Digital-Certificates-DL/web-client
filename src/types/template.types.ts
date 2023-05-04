@@ -1,22 +1,22 @@
 // import { UserTypes } from '@/types/user.types'
 
 export type TemplateTypes = {
-  File?: string
-  Name?: TemplateField
-  Course?: TemplateField
-  Credits?: TemplateField
-  SerialNumber?: TemplateField
-  Date?: TemplateField
-  Exam?: TemplateField
-  QR?: TemplateField
-  Level?: TemplateField
-  Note?: TemplateField
-  Points?: TemplateField
+  File: string
+  Name: TemplateField
+  Course: TemplateField
+  Credits: TemplateField
+  SerialNumber: TemplateField
+  Date: TemplateField
+  Exam: TemplateField
+  QR: TemplateField
+  Level: TemplateField
+  Note: TemplateField
+  Points: TemplateField
 }
 
 export type TemplateField = {
-  X: string
-  Y: string
+  X?: string
+  Y?: string
   Size?: string
   Font?: string
   High?: string
@@ -28,4 +28,10 @@ export type CreateTemplateResponse = {
     name: string
     prepared_img: Uint8Array
   }
+}
+
+export type TemplateRequestData = {
+  template: TemplateTypes
+  backgroundImg: string
+  isCompleted: boolean
 }

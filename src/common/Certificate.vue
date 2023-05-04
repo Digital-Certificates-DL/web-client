@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
 

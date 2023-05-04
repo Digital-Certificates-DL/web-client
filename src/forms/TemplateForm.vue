@@ -1,151 +1,164 @@
 <template>
-  <div class="template-form__img">
-    <file-field @submitted="getImg" />
+  <div v-if="!isFormValid">
+    <error-message message="getFieldErrorMessage('required-all')" />
   </div>
-  <div class="complex-form">
+  <div class="template-form">
     <input-field
+      class="template-form__input"
       label="High"
       type="text"
       v-model="form.QR.High"
-      placeholder="image size H"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Width"
       type="text"
       v-model="form.QR.Width"
-      placeholder="image size W"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="X"
       type="text"
       v-model="form.QR.X"
-      placeholder="image position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Y"
       type="text"
       v-model="form.QR.Y"
-      placeholder="image position(y)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Size"
       type="text"
       v-model="form.Name.Size"
-      placeholder="name font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="X"
       type="text"
       v-model="form.Name.X"
-      placeholder="name position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Y"
       type="text"
       v-model="form.Name.Y"
-      placeholder="name position(y)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Size"
       type="text"
       v-model="form.Date.Size"
-      placeholder="date font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="X"
       type="text"
       v-model="form.Date.X"
-      placeholder="date position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Y"
       type="text"
       v-model="form.Date.Y"
-      placeholder="date position(y)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Size"
       type="text"
       v-model="form.Points.Size"
-      placeholder="mark font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="X"
       type="text"
       v-model="form.Points.X"
-      placeholder="mark position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Y"
       type="text"
       v-model="form.Points.Y"
-      placeholder="mark position(y)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="SerialNumber Size"
       type="text"
       v-model="form.SerialNumber.Size"
-      placeholder="serial number font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="SerialNumber X"
       type="text"
       v-model="form.SerialNumber.X"
-      placeholder="serial numbe position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="SerialNumber Y"
       type="text"
       v-model="form.SerialNumber.Y"
-      placeholder="serial numbe position(y)"
+      @update:model-values="test"
     />
 
     <input-field
+      class="template-form__input"
       label="Level Size"
       type="text"
       v-model="form.Level.Size"
-      placeholder="level font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Level X"
       type="text"
       v-model="form.Level.X"
-      placeholder="level position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="Level Y"
       type="text"
       v-model="form.Level.Y"
-      placeholder="level position(y)"
+      @update:model-values="test"
     />
 
     <input-field
+      class="template-form__input"
       label="form.field1"
       type="text"
       v-model="form.Note.Size"
-      placeholder="note font size"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="form.field1"
       type="text"
       v-model="form.Note.X"
-      placeholder="note position(x)"
+      @update:model-values="test"
     />
     <input-field
+      class="template-form__input"
       label="form.field1"
       type="text"
       v-model="form.Note.Y"
-      placeholder="note position(y)"
+      @update:model-values="test"
     />
-
-    <div class="complex-form__actions">
-      <app-button
-        class="complex-form__submit-btn"
-        type="submit"
-        text="Submit"
-        @click="createTemplate"
-      />
-    </div>
   </div>
 </template>
 
@@ -154,7 +167,9 @@ import { TemplateTypes, TemplateField } from '@/types'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
 import { reactive, ref } from 'vue'
-import FileField from '@/fields/FileField.vue'
+import { useFormValidation } from '@/composables'
+import { address, required } from '@/validators'
+import ErrorMessage from '@/common/ErrorMessage.vue'
 
 const form = reactive({
   Name: {
@@ -220,21 +235,31 @@ const form = reactive({
 } as TemplateTypes)
 
 const emit = defineEmits<{
-  (
-    e: 'submitted',
-    template: TemplateTypes,
-    img: Uint8Array,
-    isCompleted: boolean,
-  ): boolean
+  (e: 'update-template', template: TemplateTypes): boolean
 }>()
-const img = ref(new Uint8Array())
 
-const getImg = (file: Uint8Array) => {
-  img.value = file
-}
-const createTemplate = () => {
-  emit('submitted', form, img.value, false)
+const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
+  address: { required, address },
+})
+
+const test = () => {
+  if (!isFormValid) return
+
+  emit('update-template', form)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.template-form {
+  //min-width: toRem(1000);
+  display: grid;
+  //grid-template-columns: repeat(3, 1fr);
+  //gap: toRem(80);
+}
+
+.template-form__input {
+  //width: 30%;
+  padding: toRem(5);
+  margin-bottom: toRem(20);
+}
+</style>
