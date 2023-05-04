@@ -21,13 +21,13 @@ import { address } from 'bitcoinjs-lib'
 //todo  find utxos in first 100 keys
 
 export class Bitcoin {
-  static addressInfoList: AddressInfo[] = []
-  static getUTXOBip32Testnet = async (mnph: string) => {
+  public addressInfoList: AddressInfo[] = []
+  public getUTXOBip32Testnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
     let index = 0
     const bip = bip32.fromSeed(seed, testnet)
-    while (emptyAddreeses < 30) {
+    while (emptyAddreeses < 5) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const key = bip.derivePath(path)
@@ -37,6 +37,7 @@ export class Bitcoin {
           pubkey: keyPair.publicKey,
           network: testnet,
         })
+        console.log(address)
         const utxos = await api
           .get<TxList>(
             'https://api.blockcypher.com/v1/btc/test3/addrs/' + address,
@@ -54,11 +55,14 @@ export class Bitcoin {
             return txs
           })
         if (utxos.length !== 0) {
-          const result = utxos.filter(data => !data.spent)
+          const result = utxos.filter(
+            data => !data.spent && data.tx_output_n !== -1,
+          )
           if (result.length === 0) {
             emptyAddreeses++
             continue
           }
+          console.log('result: ', result)
           const addressInfo: AddressInfo = {
             path: path,
             address: address || '',
@@ -68,14 +72,17 @@ export class Bitcoin {
           emptyAddreeses = 0
         }
       }
+      emptyAddreeses++
       index++
       console.log('index', index)
+
       console.log('addresses info list', this.addressInfoList)
     }
     console.log(this.addressInfoList)
+    return this.addressInfoList
   }
 
-  static getUTXOBip32Main = async (mnph: string) => {
+  public getUTXOBip32Main = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
     let index = 0
@@ -125,10 +132,12 @@ export class Bitcoin {
       console.log('addresses info list', this.addressInfoList)
     }
     console.log(this.addressInfoList)
+
+    return this.addressInfoList
   }
 
   ///////////////////////
-  static PrepareLegacyTXTestnet = async (mnph: string) => {
+  public PrepareLegacyTXTestnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
       return bytes
     })
@@ -137,19 +146,29 @@ export class Bitcoin {
     let fee = 0
     let butxoAmount = 0
     let utxo: UTXO[] = []
-
+    console.log('after better', this.addressInfoList)
     const betterUTXO = await this.betterUtxoTestnet(3, 556 + 557 + 558)
     if (!betterUTXO) {
       return
     }
+    console.log('before better: ', betterUTXO)
+
     fee = betterUTXO.value
     utxo = betterUTXO.txs
     butxoAmount = betterUTXO.utxoAmount
-
     if (utxo.length) {
       for (let i = 0; i < utxo.length; i++) {
+        console.log(utxo[i])
+        if (utxo[i].tx_output_n === -1) {
+          //todo remove utxo
+
+          console.log('skip')
+          return
+        }
         const hex = await this.getTxTestnet(utxo[i].tx_hash)
         const txHex = new Buffer(hex, 'hex')
+        console.log(utxo)
+
         psbt.addInput({
           hash: utxo[i].tx_hash,
           index: utxo[i].tx_output_n,
@@ -161,10 +180,8 @@ export class Bitcoin {
     const bip = bip32.fromSeed(seed, testnet)
     const key = bip.derivePath(betterUTXO.addressInfo.path)
     const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
-
-    const exchangeKey = bip.derivePath(
-      this.prepareExPath(betterUTXO.addressInfo.path),
-    )
+    const exPath = this.prepareExPath(betterUTXO.addressInfo.path)
+    const exchangeKey = bip.derivePath(exPath)
     const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
     const ex = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
@@ -194,13 +211,16 @@ export class Bitcoin {
     psbt.finalizeAllInputs()
     const hex = psbt.extractTransaction().toHex()
     const exAddress = ex.address
+
     return {
       hex,
       exAddress,
+      exPath,
+      balance,
     }
   }
 
-  static async SendToTestnet(tx: string) {
+  public async SendToTestnet(tx: string) {
     const res = await axios
       .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
       .then(function (response) {
@@ -213,7 +233,7 @@ export class Bitcoin {
     return res as PustTxResponce
   }
 
-  static async calculateFeeTestnet(outs: number, ins: number) {
+  public async calculateFeeTestnet(outs: number, ins: number) {
     const size = ins * 148 + outs * 34 + 10 - ins
     // const size = ins * 180 + outs * 34 + 10 - ins
     let fee = 10
@@ -229,7 +249,7 @@ export class Bitcoin {
     return size * Number(fee)
   }
 
-  private static async getTxTestnet(hash: string) {
+  private async getTxTestnet(hash: string) {
     const tx = await axios
       .get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
@@ -245,7 +265,7 @@ export class Bitcoin {
     return tx
   }
 
-  private static async betterUtxoTestnet(outs: number, txsValue: number) {
+  private async betterUtxoTestnet(outs: number, txsValue: number) {
     for (const addressInfo of this.addressInfoList) {
       const largeTxs: UTXO[] = []
       const smaller: UTXO[] = []
@@ -314,19 +334,48 @@ export class Bitcoin {
     return key.address
   }
 
-  private static prepareExPath = (path: string) => {
+  private prepareExPath = (path: string) => {
     const addressIndex = path.replace('m/', '')
     if (addressIndex[0] === '0') {
       return 'm/1/' + addressIndex[2]
     }
-    return 'm/1/' + addressIndex[2] + 1
+    return 'm/1/' + Number(addressIndex[2]) + 1
   }
 
-  private static sort = (a: UTXO, b: UTXO) => {
+  public setNewUTXO = (
+    address: string,
+    path: string,
+    hex: string,
+    value: number,
+  ) => {
+    const newUTXO = {
+      tx_hash: hex,
+      value: value,
+    } as UTXO
+
+    const index = this.addressInfoList.findIndex(
+      data => data.address === address,
+    )
+    if (index < 0) {
+      const UTXOs: UTXO[] = []
+      UTXOs.push(newUTXO)
+
+      const newAddressInfo = {
+        path: path,
+        address: address,
+        utxos: UTXOs,
+      } as AddressInfo
+      this.addressInfoList.push(newAddressInfo)
+      return
+    }
+    this.addressInfoList[index].utxos.push(newUTXO)
+  }
+
+  private sort = (a: UTXO, b: UTXO) => {
     return a.value - b.value
   }
 
-  private static reverseSort = (a: UTXO, b: UTXO) => {
+  private reverseSort = (a: UTXO, b: UTXO) => {
     return b.value - a.value
   }
 }
