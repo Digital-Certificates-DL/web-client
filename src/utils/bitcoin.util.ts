@@ -17,6 +17,7 @@ import {
 } from '@/types/bitcoin.types'
 import { api } from '@/api'
 import { address } from 'bitcoinjs-lib'
+import path from 'path'
 
 //todo  find utxos in first 100 keys
 
@@ -27,7 +28,7 @@ export class Bitcoin {
     let emptyAddreeses = 0
     let index = 0
     const bip = bip32.fromSeed(seed, testnet)
-    while (emptyAddreeses < 5) {
+    while (emptyAddreeses < 10) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const key = bip.derivePath(path)
@@ -71,10 +72,12 @@ export class Bitcoin {
           this.addressInfoList.push(addressInfo)
           emptyAddreeses = 0
         }
+        console.log('path', path)
       }
       emptyAddreeses++
       index++
       console.log('index', index)
+      console.log('emptyAddreeses', emptyAddreeses)
 
       console.log('addresses info list', this.addressInfoList)
     }
@@ -160,8 +163,9 @@ export class Bitcoin {
       for (let i = 0; i < utxo.length; i++) {
         console.log(utxo[i])
         if (utxo[i].tx_output_n === -1) {
-          //todo remove utxo
-
+          this.addressInfoList = this.addressInfoList.filter(data =>
+            data.utxos.filter(data => data.tx_output_n !== -1),
+          )
           console.log('skip')
           return
         }
@@ -211,6 +215,10 @@ export class Bitcoin {
     psbt.finalizeAllInputs()
     const hex = psbt.extractTransaction().toHex()
     const exAddress = ex.address
+
+    this.addressInfoList = this.addressInfoList.filter(
+      data => data.utxos.length !== 0,
+    )
 
     return {
       hex,
@@ -339,7 +347,8 @@ export class Bitcoin {
     if (addressIndex[0] === '0') {
       return 'm/1/' + addressIndex[2]
     }
-    return 'm/1/' + Number(addressIndex[2]) + 1
+    const newpath = parseInt(addressIndex[2], 10) + 1
+    return 'm/1/' + newpath
   }
 
   public setNewUTXO = (
