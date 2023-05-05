@@ -11,13 +11,18 @@ import axios from 'axios'
 import { Network } from 'bitcoinjs-lib/src/networks'
 import {
   AddressInfo,
+  TxsListNewAPI,
+  OutNewAPI,
   PustTxResponce,
   TxList,
+  TxNewAPI,
   UTXO,
+  AddressInfoNewAPI,
 } from '@/types/bitcoin.types'
 import { api } from '@/api'
 import { address } from 'bitcoinjs-lib'
 import path from 'path'
+import log from 'loglevel'
 
 //todo  find utxos in first 100 keys
 
@@ -139,6 +144,67 @@ export class Bitcoin {
     return this.addressInfoList
   }
 
+  public getUTXOBip32MainNewAPI = async (mnph: string) => {
+    const addressInfoList = []
+    const seed = await mnemonicToSeedAsync(mnph)
+    console.log('seed', seed)
+
+    let emptyAddreeses = 0
+    let index = 0
+    const bip = bip32.fromSeed(seed)
+    while (emptyAddreeses < 10) {
+      for (let i = 0; i < 2; i++) {
+        const path = 'm/' + i + '/' + index
+        const key = bip.derivePath(path)
+        const keyPair = ECPair.fromWIF(key.toWIF())
+
+        const { address } = bitcoin.payments.p2pkh({
+          pubkey: keyPair.publicKey,
+        })
+        const utxos = await api
+          .get<TxsListNewAPI>(
+            'https://blockchain.info/address/' + address + '?format=json',
+          )
+          .then(function (response) {
+            let txs: TxNewAPI[] = []
+            if (response.data.txs) {
+              txs = response.data.txs
+            }
+
+            return txs
+          })
+        console.log('path', path)
+
+        if (utxos.length !== 0) {
+          const result = utxos.filter(data => data.out)
+          const outs = result.filter(data =>
+            data.out.filter(data => !data.spent && data.addr === address),
+          )
+          if (outs.length === 0) {
+            emptyAddreeses++
+            continue
+          }
+          const addressInfo: AddressInfoNewAPI = {
+            path: path,
+            address: address || '',
+            utxos: result,
+          }
+          addressInfoList.push(addressInfo)
+          emptyAddreeses = 0
+        }
+      }
+      index++
+      emptyAddreeses++
+      console.log('index', index)
+      console.log('emptyAddreeses', emptyAddreeses)
+
+      console.log('addresses info list', this.addressInfoList)
+    }
+    console.log(addressInfoList)
+
+    return this.addressInfoList
+  }
+
   ///////////////////////
   public PrepareLegacyTXTestnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
@@ -229,6 +295,7 @@ export class Bitcoin {
   }
 
   public async SendToTestnet(tx: string) {
+    // todo add token
     const res = await axios
       .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
       .then(function (response) {

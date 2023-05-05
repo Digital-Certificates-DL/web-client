@@ -77,3 +77,62 @@ export interface AddressInfo {
   address: string
   utxos: UTXO[]
 }
+
+//////////////////////////
+export interface TxsListNewAPI {
+  hash160: string
+  address: string
+  n_tx: number
+  total_received: number
+  total_sent: number
+  final_balance: number
+  txs: TxNewAPI[]
+}
+
+export interface TxNewAPI {
+  ver: number
+  inputs: Input[]
+  block_height: number
+  relayed_by: string
+  out: OutNewAPI[]
+  lock_time: number
+  result: number
+  size: number
+  time: number
+  tx_index: number
+  vin_sz: number
+  hash: string
+  vout_sz: number
+}
+
+export interface InputNewAPI {
+  sequence: number
+  prev_out: PrevOutNewAPI
+  script: string
+}
+
+export interface PrevOutNewAPI {
+  spent: boolean
+  tx_index: number
+  type: number
+  addr: string
+  value: number
+  n: number
+  script: string
+}
+
+export interface OutNewAPI {
+  spent: boolean
+  tx_index: number
+  type: number
+  addr: string
+  value: number
+  n: number
+  script: string
+}
+
+export type AddressInfoNewAPI = {
+  path: string
+  address: string
+  utxos: TxNewAPI[]
+}
