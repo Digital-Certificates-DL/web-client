@@ -10,12 +10,9 @@
         v-model="form.search"
         @update:model-value="search"
       />
-      <div class="certificates__btns">
-        <app-button
-          class="certificates__btn"
-          @click="bitcoinTimestamp"
-          text="Bitcoin"
-        />
+      <div v-if="generateCount > 0" class="certificates__btns">
+        <p>{{ generateCount }}</p>
+        <app-button class="certificates__btn" text="Generate All" />
       </div>
     </div>
     <div v-if="isModalActive">
@@ -63,10 +60,9 @@ const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 let userBuffer
-const listForTimestamp: UserJSONResponse[] = []
 
 const listForCreate: UserJSONResponse[] = []
-
+const generateCount = ref(0)
 const form = reactive({
   search: '',
 })
@@ -77,15 +73,6 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
 
 const closeModal = () => {
   isModalActive.value = false
-}
-
-const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-  if (state) {
-    listForTimestamp.push(user)
-
-    return
-  }
-  listForTimestamp.filter(item => item !== user)
 }
 
 const refresh = async () => {
@@ -149,8 +136,9 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   return users
 }
 const createPDF = async (users: UserJSONResponse[]) => {
-  const resp = await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/', {
+  const resp = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/certificate/',
+    {
       body: {
         data: {
           data: users, //todo make better
@@ -160,38 +148,12 @@ const createPDF = async (users: UserJSONResponse[]) => {
           name: userState.setting.Name,
         },
       },
-    })
-    .then(resp => {
-      const users = prepareUserImg(resp.data)
-      userState.students = users.data
-      return resp
-    })
-  return resp.data.data
-}
+    },
+  )
 
-const bitcoinTimestamp = async () => {
-  if (
-    userState.setting.KeyPathID === 0 ||
-    userState.setting.KeyPathID === undefined
-  ) {
-    userState.setting.KeyPathID = 0
-  }
-  const users = listForTimestamp
-  for (const user of users) {
-    const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.SendMnemonicPhrase,
-      userState.setting.KeyPathID,
-    )
-    const hex = tx?.hex || ''
-    userState.setting.KeyPathID = tx?.index || userState.setting.KeyPathID++
-    if (hex === '') {
-      return
-    }
-    const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    user.attributes.TxHash = sendResp.data.tx.hash
-    userState.setting.LastExAddress = tx?.exAddress || ''
-  }
-  await updateUsers(users)
+  const updatedUsers = prepareUserImg(resp.data)
+  userState.students = updatedUsers.data
+  return resp.data.data
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {

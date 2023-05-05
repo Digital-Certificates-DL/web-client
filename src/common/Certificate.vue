@@ -1,5 +1,6 @@
 <template>
   <div class="generation">
+    <checkbox-field :model-value="isSelected" />
     <img class="certificate_img" :src="props.user.attributes.Img" alt="" />
     <p class="certificate__name">
       {{ props.user.attributes.Participant }}
@@ -7,7 +8,7 @@
     <p>
       {{ props.user.attributes.Date }}
     </p>
-    <div class="certificate__btns">
+    <div v-if="isGenerated" class="certificate__btns">
       <app-button
         class="certificate__btn"
         @click="emit('openModal', true, props.user)"
@@ -20,25 +21,28 @@
       >
         <img src="static/branding/download.png" alt="download img" />
       </app-button>
-      <input
-        v-model="isSelected"
-        type="checkbox"
-        @input="emit('select', !isSelected, props.user)"
+    </div>
+    <div v-else class="certificate__btns">
+      <app-button
+        class="certificate__btn"
+        :text="'Generate'"
+        @click="emit('select', isSelected, props.user)"
       />
     </div>
   </div>
-  <hr />
 </template>
 
 <script setup lang="ts">
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
+import CheckboxField from '@/fields/CheckboxField.vue'
 
 const isSelected = false
 
 const props = withDefaults(
   defineProps<{
     user: UserJSONResponse
+    isGenerated: boolean
   }>(),
   {},
 )

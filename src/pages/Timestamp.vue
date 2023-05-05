@@ -22,10 +22,10 @@
     </div>
 
     <div class="timestamp__list">
-      <div v-if="userSetting.students.length === 0">
+      <div v-if="userState.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
-      <div v-for="(item, key) in userSetting.students" :value="key" :key="item">
+      <div v-for="(item, key) in userState.students" :value="key" :key="item">
         <timestemp-item :name="item.attributes.Participant" />
       </div>
     </div>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useUsersModules } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store/modules/use-users.modules'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
@@ -47,7 +47,7 @@ import { reactive } from 'vue'
 import btc from '@/utils/bitcoin.util'
 
 import TimestempItem from '@/common/TimestempItem.vue'
-const userSetting = useUsersModules()
+const userState = useUserStore()
 
 let currentUser: UserJSONResponse
 
@@ -62,12 +62,12 @@ const form = reactive({
 
 let userBuffer
 const search = () => {
-  userBuffer = userSetting.students
+  userBuffer = userState.students
 
   if (form.search === '' && userBuffer !== undefined) {
-    userSetting.students = userBuffer
+    userState.students = userBuffer
   }
-  userSetting.students.filter(item =>
+  userState.students.filter(item =>
     item.attributes.Participant.includes(form.search),
   )
 }
@@ -84,44 +84,44 @@ const prepareUserImg = (users: UserJSONResponseList) => {
 
 const bitcoinTimestamp = async () => {
   if (
-    userSetting.setting.KeyPathID === 0 ||
-    userSetting.setting.KeyPathID === undefined
+    userState.setting.KeyPathID === 0 ||
+    userState.setting.KeyPathID === undefined
   ) {
-    userSetting.setting.KeyPathID = 0
+    userState.setting.KeyPathID = 0
   }
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userSetting.setting.SendKey,
-      userSetting.setting.KeyPathID,
+      userState.setting.SendMnemonicPhrase,
+      userState.setting.KeyPathID,
     )
     const hex = tx?.hex || ''
-    userSetting.setting.KeyPathID = tx?.index || userSetting.setting.KeyPathID++
+    userState.setting.KeyPathID = tx?.index || userState.setting.KeyPathID++
     if (hex === '') {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
     user.attributes.TxHash = sendResp.data.tx.hash
-    userSetting.setting.LastExAddress = tx?.exAddress || ''
+    userState.setting.LastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const usersResp = await api
-    .post<UserJSONResponseList>('/integrations/ccp/certificate/bitcoin', {
+  //todo chack it
+  const usersResp = await api.post<UserJSONResponseList>(
+    '/integrations/ccp/certificate/',
+    {
       data: {
         data: users,
-        address: userSetting.setting.Address,
-        name: userSetting.setting.Name,
-        url: userSetting.setting.Url,
+        address: userState.setting.Address,
+        name: userState.setting.Name,
+        url: userState.setting.Url,
       },
-    })
-    .then(resp => {
-      return resp
-    })
+    },
+  )
 
-  userSetting.students = prepareUserImg(usersResp.data)
+  userState.students = prepareUserImg(usersResp.data)
 }
 
 // const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
