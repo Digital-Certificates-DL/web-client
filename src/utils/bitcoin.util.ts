@@ -117,7 +117,7 @@ export class Bitcoin {
             if (response.data.unconfirmed_txrefs) {
               txs = txs.concat(response.data.unconfirmed_txrefs)
             }
-
+            console.log('txs in address: ', txs)
             return txs
           })
         if (utxos.length !== 0) {
@@ -126,6 +126,7 @@ export class Bitcoin {
             emptyAddreeses++
             continue
           }
+
           const addressInfo: AddressInfo = {
             path: path,
             address: address || '',
@@ -170,7 +171,7 @@ export class Bitcoin {
             if (response.data.txs) {
               txs = response.data.txs
             }
-
+            console.log('txs in address: ', txs)
             return txs
           })
         console.log('path', path)
