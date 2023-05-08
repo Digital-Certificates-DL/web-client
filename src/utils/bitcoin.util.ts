@@ -102,20 +102,20 @@ export class Bitcoin {
     if (utxo.length) {
       for (let i = 0; i < utxo.length; i++) {
         console.log(utxo[i])
-        if (utxo[i].tx_output_n === -1) {
+        if (utxo[i].vout === -1) {
           this.addressInfoList = this.addressInfoList.filter(data =>
-            data.utxos.filter(data => data.tx_output_n !== -1),
+            data.utxos.filter(data => data.vout !== -1),
           )
           console.log('skip')
           return
         }
-        const hex = await this.getTxTestnet(utxo[i].tx_hash)
+        const hex = await this.getTxTestnet(utxo[i].txid)
         const txHex = new Buffer(hex, 'hex')
         console.log(utxo)
 
         psbt.addInput({
-          hash: utxo[i].tx_hash,
-          index: utxo[i].tx_output_n,
+          hash: utxo[i].txid,
+          index: utxo[i].vout,
           nonWitnessUtxo: txHex,
         })
       }
@@ -296,10 +296,12 @@ export class Bitcoin {
     path: string,
     hex: string,
     value: number,
+    vout?: number,
   ) => {
     const newUTXO = {
-      tx_hash: hex,
+      txid: hex,
       value: value,
+      vout: vout || 3,
     } as UTXO
 
     const index = this.addressInfoList.findIndex(
