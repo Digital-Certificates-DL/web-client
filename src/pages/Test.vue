@@ -20,12 +20,15 @@ const test = async () => {
   console.log(form.test)
   console.log('start: new api')
 
-  const UTXOsNewApi = await bitcoin.getUTXOBip32MainNewAPI(form.test)
-  console.log(UTXOsNewApi)
+  await Bitcoin.testBlockStream()
+  // await bitcoin.test(form.test)
 
-  console.log('start: blockcypher')
-  const UTXOs = await bitcoin.getUTXOBip32Main(form.test)
-  console.log(UTXOs)
+  // const UTXOsNewApi = await bitcoin.getUTXOBip32MainNewAPI(form.test)
+  // console.log(UTXOsNewApi)
+  //
+  // console.log('start: blockcypher')
+  // const UTXOs = await bitcoin.getUTXOBip32Main(form.test)
+  // console.log(UTXOs)
   // console.log('start prepare ')
   // for (let i = 0; i < 4; i++) {
   //   const tx = await bitcoin.PrepareLegacyTXTestnet(form.test)

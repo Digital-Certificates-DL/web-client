@@ -43,96 +43,75 @@ export interface Output {
   script_type: string
 }
 
-export interface TxList {
-  address: string
-  total_received: number
-  total_sent: number
-  balance: number
-  unconfirmed_balance: number
-  final_balance: number
-  n_tx: number
-  unconfirmed_n_tx: number
-  final_n_tx: number
-  txrefs: UTXO[]
-  unconfirmed_txrefs: UTXO[]
-  tx_url: string
-}
-
-export interface UTXO {
-  tx_hash: string
-  block_height: number
-  tx_input_n: number
-  tx_output_n: number
-  value: number
-  ref_balance: number
-  spent: boolean
-  spent_by: string
-  confirmations: number
-  confirmed: string
-  double_spend: boolean
-}
-
 export interface AddressInfo {
   path: string
   address: string
-  utxos: UTXO[]
+  utxos: UTXOs
 }
 
-//////////////////////////
-export interface TxsListNewAPI {
-  hash160: string
-  address: string
-  n_tx: number
-  total_received: number
-  total_sent: number
-  final_balance: number
-  txs: TxNewAPI[]
-}
+////////////////
 
-export interface TxNewAPI {
-  ver: number
-  inputs: Input[]
-  block_height: number
-  relayed_by: string
-  out: OutNewAPI[]
-  lock_time: number
-  result: number
+export type BlockstreamTxList = Tx[]
+
+export interface Tx {
+  txid: string
+  version: number
+  locktime: number
+  vin: Vin[]
+  vout: Vout[]
   size: number
-  time: number
-  tx_index: number
-  vin_sz: number
-  hash: string
-  vout_sz: number
+  weight: number
+  fee: number
+  status: Status
 }
 
-export interface InputNewAPI {
+export interface Vin {
+  txid: string
+  vout: number
+  prevout: Prevout
+  scriptsig: string
+  scriptsig_asm: string
+  witness: string[]
+  is_coinbase: boolean
   sequence: number
-  prev_out: PrevOutNewAPI
-  script: string
+  inner_redeemscript_asm?: string
 }
 
-export interface PrevOutNewAPI {
-  spent: boolean
-  tx_index: number
-  type: number
-  addr: string
+export interface Prevout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
   value: number
-  n: number
-  script: string
 }
 
-export interface OutNewAPI {
-  spent: boolean
-  tx_index: number
-  type: number
-  addr: string
+export interface Vout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
   value: number
-  n: number
-  script: string
 }
 
-export type AddressInfoNewAPI = {
-  path: string
-  address: string
-  utxos: TxNewAPI[]
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
+}
+
+export type UTXOs = UTXO[]
+
+export interface UTXO {
+  txid: string
+  vout: number
+  status: Status
+  value: number
+}
+
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
 }
