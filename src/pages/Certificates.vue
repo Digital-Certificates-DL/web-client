@@ -1,4 +1,11 @@
 <template>
+  <div v-if="isUnauthorized">
+    <auth-modal
+      :token-link="authLink"
+      @close-modal="closeModal"
+      @with-code="updateCode"
+    />
+  </div>
   <div class="certificates">
     <app-navbar />
 
@@ -36,7 +43,7 @@
         <certificate
           :user="item"
           @open-modal="openModal"
-          @select-for-timestamp="selectForTimestamp"
+          @select-for-timestamp="selectForCreate"
         />
       </div>
     </div>
@@ -55,11 +62,15 @@ import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { Signature } from '@/utils/signature.utils'
+import AuthModal from '@/common/modals/AuthModal.vue'
 
 const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 let userBuffer
+
+const isUnauthorized = ref(false)
+const authLink = ref('')
 
 const listForCreate: UserJSONResponse[] = []
 const generateCount = ref(0)
@@ -87,6 +98,11 @@ const refresh = async () => {
       },
     },
   )
+
+  console.log(users)
+
+  if (users.isLinksExist === false) {
+  }
   userState.students = prepareUserImg(users.data).data
 }
 
@@ -157,8 +173,8 @@ const createPDF = async (users: UserJSONResponse[]) => {
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponseList>(
-    '/integrations/ccp/certificate/bitcoin',
+  const { data } = await api.put<UserJSONResponseList>(
+    '/integrations/ccp/certificate/',
     {
       body: {
         data: {
@@ -171,10 +187,13 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     },
   )
 
+  // todo check  error
   userState.students = data.data
 }
 
 const autoRefresh = () => {
+  console.log('start')
+
   if (userState.students.length === 0) {
     refresh()
   }
