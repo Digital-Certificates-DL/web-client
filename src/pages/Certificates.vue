@@ -1,12 +1,12 @@
 <template>
-  <div v-if="isUnauthorized">
-    <auth-modal
-      :token-link="authLink"
-      @close-modal="closeModal"
-      @with-code="updateCode"
-    />
-  </div>
   <div class="certificates">
+    <div v-if="isUnauthorized">
+      <auth-modal
+        :token-link="authLink"
+        @close-modal="closeModal"
+        @with-code="updateCode"
+      />
+    </div>
     <app-navbar />
 
     <h1>{{ $t('certificates.certificates-title') }}</h1>
@@ -57,7 +57,6 @@ import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
-import btc from '@/utils/bitcoin.util'
 import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -129,6 +128,19 @@ const generate = async () => {
   await router.push(ROUTE_NAMES.timestamp)
 }
 
+const updateCode = async (code: string) => {
+  isUnauthorized.value = false
+  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+    body: {
+      data: {
+        code: code,
+        name: userState.setting.Name,
+      },
+    },
+  })
+
+  isUnauthorized.value = false
+}
 const sign = (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.SignKey)
   for (const user of users) {

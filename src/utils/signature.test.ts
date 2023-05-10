@@ -24,7 +24,7 @@ describe('Performs bitcoin signature class unit test', () => {
       'HCzWDJNZdqBC9n2Av+4EbfUY/XZYbdXkRhBvIXSPpNq8e1zJ+voN+K/IJz33mDw/FBfJin/ZP8H1GBeErxfq1B4=',
     )
   })
-  ////////////
+
   test('signature should return correct value', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',

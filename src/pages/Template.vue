@@ -1,24 +1,27 @@
 <template>
-  <div class="template__body">
-    <div>
-      <div v-if="img == 0" class="template__img-wrp">
-        <img
-          class="template__img"
-          src="static/branding/default-template.png"
-          alt="error"
-        />
-      </div>
-      <div v-else class="template__img-wrp">
-        <img class="template__img" :src="img" alt="error" />
-      </div>
+  <div class="template">
+    <app-navbar />
+    <div class="template__body">
+      <div>
+        <div v-if="img == 0" class="template__img-wrp">
+          <img
+            class="template__img"
+            src="static/branding/default-template.png"
+            alt="error"
+          />
+        </div>
+        <div v-else class="template__img-wrp">
+          <img class="template__img" :src="img" alt="error" />
+        </div>
 
-      <file-field :color="'success'" @submitted="getBackgroundImg" />
-      <div class="complex-form__actions">
-        <app-button type="submit" text="Submit" @click="createTemplate" />
-        <app-button type="submit" text="Submit" @click="Prepare" />
+        <file-field :color="'success'" @submitted="getBackgroundImg" />
+        <div class="complex-form__actions">
+          <app-button type="submit" text="Submit" @click="createTemplate" />
+          <app-button type="submit" text="Submit" @click="Prepare" />
+        </div>
       </div>
+      <template-form @update-template="getTemplateData" />
     </div>
-    <template-form @update-template="getTemplateData" />
   </div>
 </template>
 
@@ -34,7 +37,7 @@ import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { ref } from 'vue'
 import FileField from '@/fields/FileField.vue'
-import { AppButton } from '@/common'
+import { AppButton, AppNavbar } from '@/common'
 
 const img = ref('')
 const templateData = {

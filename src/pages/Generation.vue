@@ -26,7 +26,6 @@
             label="Name"
             type="text"
             v-model="certificatesInfo.Name"
-            :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
@@ -144,13 +143,8 @@ const parsedData = async (sheepUrl?: string) => {
         },
       },
     )
-    .then(resp => {
-      if (resp.status === 403) {
-        return
-      }
-      return resp
-    })
     .catch(err => {
+      console.log(err)
       if (err.response.data.data.attributes.link) {
         isUnauthorized.value = true
         authLink.value = err.response.data.data.attributes.link
