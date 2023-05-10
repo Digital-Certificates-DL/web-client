@@ -90,18 +90,16 @@ import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton, AppNavbar } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import {
-  UnauthorizedResponse,
-  UserJSONResponseList,
-  UserJSONResponse,
-} from '@/types/user.types'
+import { UserJSONResponseList } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+import { JsonApiResponseError } from '@distributedlab/jac'
 
 import AuthModal from '@/common/modals/AuthModal.vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
+import { ErrorHandler } from '@/helpers'
 const userState = useUserStore()
 
 const isUnauthorized = ref(false)
@@ -131,8 +129,8 @@ const start = async () => {
   router.push(ROUTE_NAMES.certificates)
 }
 const parsedData = async (sheepUrl?: string) => {
-  const resp = await api
-    .post<UserJSONResponseList | UnauthorizedResponse>(
+  try {
+    const resp = await api.post<UserJSONResponseList>(
       '/integrations/ccp/users/empty',
       {
         body: {
@@ -143,15 +141,13 @@ const parsedData = async (sheepUrl?: string) => {
         },
       },
     )
-    .catch(err => {
-      console.log(err)
-      if (err.response.data.data.attributes.link) {
-        isUnauthorized.value = true
-        authLink.value = err.response.data.data.attributes.link
-      }
-    })
-
-  return resp as UserJSONResponseList | undefined
+    console.log(resp.status)
+    return resp.data as UserJSONResponseList
+  } catch (err) {
+    console.log({ ...err })
+    console.log(err.meta)
+    ErrorHandler.process(err)
+  }
 }
 const cancel = async () => {
   await router.push(ROUTE_NAMES.main)
