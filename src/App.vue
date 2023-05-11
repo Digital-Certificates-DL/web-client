@@ -15,10 +15,10 @@ import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { PROVIDERS } from '@/enums'
 
-import { useWeb3ProvidersStore } from '@/store'
+import { useUserStore, useWeb3ProvidersStore } from '@/store'
 
 const web3Store = useWeb3ProvidersStore()
-
+const userState = useUserStore()
 const isAppInitialized = ref(false)
 const init = async () => {
   try {

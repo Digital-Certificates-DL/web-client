@@ -1,13 +1,24 @@
 <template>
   <div class="generation">
     <checkbox-field :model-value="isSelected" />
-    <img class="certificate_img" :src="props.user.attributes.Img" alt="" />
+    <div v-if="props.user.Img === undefined">
+      <img
+        class="certificate_img"
+        src="static/branding/apple-touch-icon.png"
+        alt=""
+      />
+    </div>
+    <div v-else>
+      <img class="certificate_img" :src="props.user.Img" alt="" />
+      <p>{{ props.user.Img }}</p>
+    </div>
     <p class="certificate__name">
-      {{ props.user.attributes.Participant }}
+      {{ props.user.Participant }}
     </p>
     <p>
-      {{ props.user.attributes.Date }}
+      {{ props.user.Date }}
     </p>
+
     <div v-if="isGenerated" class="certificate__btns">
       <app-button
         class="certificate__btn"
@@ -17,7 +28,7 @@
       </app-button>
       <app-button
         class="certificate__btn certificate__btn-download"
-        @click="window.open(props.user.attributes.Certificate, '_blank')"
+        @click="window.open(props.user.Certificate, '_blank')"
       >
         <img src="static/branding/download.png" alt="download img" />
       </app-button>
@@ -39,13 +50,12 @@ import CheckboxField from '@/fields/CheckboxField.vue'
 
 const isSelected = false
 
-const props = withDefaults(
-  defineProps<{
-    user: UserJSONResponse
-    isGenerated: boolean
-  }>(),
-  {},
-)
+const props = defineProps<{
+  user: UserJSONResponse
+  isGenerated?: boolean
+}>()
+
+console.log(props.user.Img)
 
 const emit = defineEmits<{
   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean

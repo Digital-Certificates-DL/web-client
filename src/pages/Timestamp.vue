@@ -25,8 +25,11 @@
       <div v-if="userState.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
-      <div v-for="(item, key) in userState.students" :value="key" :key="item">
-        <timestemp-item :name="item.attributes.Participant" />
+      <div v-for="(item, key) in users" :value="key" :key="item">
+        <timestemp-item
+          :name="item.attributes.Participant"
+          :date="item.attributes.Date"
+        />
       </div>
     </div>
     <div class="timestamp__img-wrp">
@@ -43,7 +46,7 @@ import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
 import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
 
 import TimestempItem from '@/common/TimestempItem.vue'
@@ -59,6 +62,8 @@ const listForCreate: UserJSONResponse[] = []
 const form = reactive({
   search: '',
 })
+
+const users = ref([] as UserJSONResponse[])
 
 let userBuffer
 const search = () => {
@@ -112,11 +117,13 @@ const updateUsers = async (users: UserJSONResponse[]) => {
   const usersResp = await api.post<UserJSONResponseList>(
     '/integrations/ccp/certificate/',
     {
-      data: {
-        data: users,
-        address: userState.setting.Address,
-        name: userState.setting.Name,
-        url: userState.setting.Url,
+      body: {
+        data: {
+          data: users,
+          address: userState.setting.Address,
+          name: userState.setting.Name,
+          url: userState.setting.Url,
+        },
       },
     },
   )

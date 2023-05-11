@@ -90,7 +90,7 @@ import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton, AppNavbar } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import { UserJSONResponseList } from '@/types/user.types'
+import { UserJSONResponse, UserJSONResponseList } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -125,13 +125,15 @@ const start = async () => {
   if (users === undefined) {
     return
   }
-  userState.students = users.data
-  router.push(ROUTE_NAMES.certificates)
+  userState.students = users
+  console.log('users: ', userState.students)
+  console.log('users: ', users)
+  await router.push(ROUTE_NAMES.certificates)
 }
 const parsedData = async (sheepUrl?: string) => {
   try {
     const resp = await api.post<UserJSONResponseList>(
-      '/integrations/ccp/users/empty',
+      '/integrations/ccp/users/',
       {
         body: {
           data: {
@@ -142,10 +144,8 @@ const parsedData = async (sheepUrl?: string) => {
       },
     )
     console.log(resp.status)
-    return resp.data as UserJSONResponseList
+    return resp.data as UserJSONResponse[]
   } catch (err) {
-    console.log({ ...err })
-    console.log(err.meta)
     ErrorHandler.process(err)
   }
 }

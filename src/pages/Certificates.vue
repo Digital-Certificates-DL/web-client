@@ -14,8 +14,7 @@
       <input-field
         class="certificates__search-input"
         placeholder="find"
-        v-model="form.search"
-        @update:model-value="search"
+        @update="search"
       />
       <div v-if="generateCount > 0" class="certificates__btns">
         <p>{{ generateCount }}</p>
@@ -31,20 +30,14 @@
         <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
       </div>
-      <div v-if="userState.students.length === 0">
-        <error-message message="Empty certificate list" />
-      </div>
-
-      <div
-        v-for="(item, key) in userState.students"
-        :value="key"
-        :key="item.attributes"
-      >
-        <certificate
-          :user="item"
-          @open-modal="openModal"
-          @select-for-timestamp="selectForCreate"
-        />
+      <!--      <div v-if="userList.data == 0">-->
+      <!--        <error-message message="Empty certificate list" />-->
+      <!--      </div>-->
+      <!--      <p>{{ userList }}</p>-->
+      <!--      todo  fix user response-->
+      <div v-for="(item, key) in userList" :value="key" :key="item">
+        <!--        <p>{{ item }}</p>-->
+        <certificate :user="item" @open-modal="openModal" />
       </div>
     </div>
   </div>
@@ -71,6 +64,8 @@ let userBuffer
 const isUnauthorized = ref(false)
 const authLink = ref('')
 
+const userList = ref([] as UserJSONResponse[])
+
 const listForCreate: UserJSONResponse[] = []
 const generateCount = ref(0)
 const form = reactive({
@@ -85,7 +80,10 @@ const closeModal = () => {
   isModalActive.value = false
 }
 
+console.log(userState.students)
+
 const refresh = async () => {
+  console.log('test')
   const users = await api.post<UserJSONResponseList>(
     '/integrations/ccp/users/',
     {
@@ -98,16 +96,25 @@ const refresh = async () => {
     },
   )
 
+  // console.log(users)
+  //
+  // if (users.isLinksExist === false) {
+  // }
+  // console.log('users ', prepareUserImg(data))
+  // userList.value = prepareUserImg(data).data
+  console.log('users ', userList.value)
   console.log(users)
+  userList.value = users.data
 
-  if (users.isLinksExist === false) {
-  }
-  userState.students = prepareUserImg(users.data).data
+  console.log('users ', users.data)
+  console.log('users ', userList.value)
 }
 
 const search = () => {
   userBuffer = userState.students
+  console.log('test ', userState.students)
 
+  console.log('start')
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
@@ -155,12 +162,14 @@ const sign = (users: UserJSONResponse[]) => {
 }
 
 const prepareUserImg = (users: UserJSONResponseList) => {
+  console.log(users)
   const list: UserJSONResponse[] = users.data
+  console.log('pr')
   for (const user of list) {
     user.attributes.Img =
       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
   }
-
+  console.log('users: ', users)
   return users
 }
 const createPDF = async (users: UserJSONResponse[]) => {
@@ -207,8 +216,11 @@ const autoRefresh = () => {
   console.log('start')
 
   if (userState.students.length === 0) {
+    console.log('refresh')
     refresh()
   }
+  console.log('auto: ', userList.value)
+  userList.value = userState.students
 }
 
 autoRefresh()
