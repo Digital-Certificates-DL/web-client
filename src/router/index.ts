@@ -23,6 +23,11 @@ const routes = [
     component: () => import('@/pages/Template.vue'),
   },
   {
+    path: '/home',
+    name: ROUTE_NAMES.home,
+    component: () => import('@/pages/Home.vue'),
+  },
+  {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
     component: () => import('@/pages/Certificates.vue'),

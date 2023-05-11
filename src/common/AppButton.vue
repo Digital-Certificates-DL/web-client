@@ -175,7 +175,7 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg-hover: var(--primary-dark);
     --app-button-filled-bg-active: var(--primary-dark);
 
-    --app-button-filled-text: var(--text-primary-invert-main);
+    --app-button-filled-text: var(--text-secondary-dark);
     --app-button-filled-text-hover: var(--text-primary-invert-main);
 
     --app-button-bg: var(--app-button-filled-bg);

@@ -4,6 +4,7 @@ export enum ROUTE_NAMES {
   certificates = 'certificates',
   template = 'template',
   generate = 'generate',
+  home = 'home',
   main = 'main',
   timestamp = 'timestamp',
 }

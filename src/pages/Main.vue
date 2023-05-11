@@ -86,6 +86,16 @@
           color="error"
           @click="router.push(ROUTE_NAMES.template)"
         />
+
+        <main-nav
+          :title="'Home'"
+          body="Ac integer sapien nisl turpis arcu integer.
+           Pellentesque phasellus egestas pharetra quam cursus "
+          description="home"
+          class="main__btn"
+          color="info"
+          @click="router.push(ROUTE_NAMES.home)"
+        />
       </div>
     </div>
   </div>
