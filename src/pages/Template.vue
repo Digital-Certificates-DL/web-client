@@ -15,9 +15,23 @@
         </div>
 
         <file-field :color="'success'" @submitted="getBackgroundImg" />
-        <div class="complex-form__actions">
-          <app-button type="submit" text="Submit" @click="createTemplate" />
-          <app-button type="submit" text="Submit" @click="Prepare" />
+        <div class="template__btns">
+          <app-button
+            type="submit"
+            :scheme="'filled'"
+            :color="'success'"
+            :size="'medium'"
+            text="show"
+            @click="createTemplate"
+          />
+          <app-button
+            type="submit"
+            :color="'success'"
+            :scheme="'filled'"
+            text="save"
+            :size="'medium'"
+            @click="save"
+          />
         </div>
       </div>
       <template-form @update-template="getTemplateData" />
@@ -38,15 +52,22 @@ import { ROUTE_NAMES } from '@/enums'
 import { ref } from 'vue'
 import FileField from '@/fields/FileField.vue'
 import { AppButton, AppNavbar } from '@/common'
+import { useRoute } from 'vue-router'
+import { useUserStore } from '@/store'
 
 const img = ref('')
-const templateData = {
+const userState = useUserStore()
+
+const templateData = ref({
   template: {} as TemplateTypes,
   backgroundImg: img.value,
   isCompleted: false,
-} as TemplateRequestData
+} as TemplateRequestData)
 const getBackgroundImg = (preparedImg: string) => {
+  console.log(preparedImg)
   img.value = preparedImg
+  templateData.value.backgroundImg = preparedImg
+  console.log('template img: ', templateData.value.backgroundImg)
 }
 
 const prepareImg = (img: Uint8Array) => {
@@ -54,38 +75,44 @@ const prepareImg = (img: Uint8Array) => {
 }
 
 const getTemplateData = (template: TemplateTypes) => {
-  templateData.template = template
-  templateData.backgroundImg = img.value
+  console.log(template, ' template')
+  templateData.value.template = template
+  templateData.value.backgroundImg = img.value
+
+  console.log('template: ', templateData)
 }
 
-const createTemplate = async (templateData: TemplateRequestData) => {
-  const res = await api.post<CreateTemplateResponse>(
+const save = async () => {
+  templateData.value.isCompleted = true
+  await createTemplate()
+}
+
+const createTemplate = async () => {
+  console.log('create: ', templateData)
+  console.log(templateData.value)
+  const { data } = await api.post<CreateTemplateResponse>(
     '/integrations/ccp/certificate/template',
     {
       body: {
         data: {
+          relationships: {
+            user: userState.setting.Name,
+          },
           attributes: {
-            template: templateData.template,
-            background_img: base64ToArrayBuffer(templateData.backgroundImg),
-            is_completed: templateData.isCompleted,
+            template: templateData.value.template,
+            background_img: templateData.value.backgroundImg,
+            is_completed: templateData.value.isCompleted,
           },
         },
       },
     },
   )
-  img.value = prepareImg(res.data.attributes.prepared_img)
-  if (templateData.isCompleted) {
+  console.log(data, ' data ')
+  img.value = prepareImg(data.background_img)
+  templateData.value.backgroundImg = prepareImg(data.background_img)
+  if (templateData.value.isCompleted) {
     await router.push(ROUTE_NAMES.main)
   }
-}
-
-const base64ToArrayBuffer = (base64: string) => {
-  const binaryString = atob(base64)
-  const bytes = new Uint8Array(binaryString.length)
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i)
-  }
-  return bytes.buffer
 }
 </script>
 
@@ -100,5 +127,10 @@ const base64ToArrayBuffer = (base64: string) => {
 
 .template__img {
   max-width: toRem(800);
+}
+
+.template__btns {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

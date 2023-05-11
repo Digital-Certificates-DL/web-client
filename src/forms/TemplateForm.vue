@@ -1,163 +1,163 @@
 <template>
-  <div v-if="!isFormValid">
-    <error-message message="getFieldErrorMessage('required-all')" />
-  </div>
+  <!--  <div v-if="!isFormValid">-->
+  <!--    <error-message message="getFieldErrorMessage('required-all')" />-->
+  <!--  </div>-->
   <div class="template-form">
     <input-field
       class="template-form__input"
       label="High"
       type="text"
-      v-model="form.QR.High"
-      @update:model-values="test"
+      v-model="form.high"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Width"
       type="text"
-      v-model="form.QR.Width"
-      @update:model-values="test"
+      v-model="form.width"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="X"
       type="text"
-      v-model="form.QR.X"
-      @update:model-values="test"
+      v-model="form.qr.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Y"
       type="text"
-      v-model="form.QR.Y"
-      @update:model-values="test"
+      v-model="form.qr.y"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Size"
       type="text"
-      v-model="form.Name.Size"
-      @update:model-values="test"
+      v-model="form.name.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="X"
       type="text"
-      v-model="form.Name.X"
-      @update:model-values="test"
+      v-model="form.name.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Y"
       type="text"
-      v-model="form.Name.Y"
-      @update:model-values="test"
+      v-model="form.name.y"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Size"
       type="text"
-      v-model="form.Date.Size"
-      @update:model-values="test"
+      v-model="form.date.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="X"
       type="text"
-      v-model="form.Date.X"
-      @update:model-values="test"
+      v-model="form.date.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Y"
       type="text"
-      v-model="form.Date.Y"
-      @update:model-values="test"
+      v-model="form.date.y"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Size"
       type="text"
-      v-model="form.Points.Size"
-      @update:model-values="test"
+      v-model="form.points.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="X"
       type="text"
-      v-model="form.Points.X"
-      @update:model-values="test"
+      v-model="form.points.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Y"
       type="text"
-      v-model="form.Points.Y"
-      @update:model-values="test"
+      v-model="form.points.y"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="SerialNumber Size"
       type="text"
-      v-model="form.SerialNumber.Size"
-      @update:model-values="test"
+      v-model="form.serial_number.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="SerialNumber X"
       type="text"
-      v-model="form.SerialNumber.X"
-      @update:model-values="test"
+      v-model="form.serial_number.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="SerialNumber Y"
       type="text"
-      v-model="form.SerialNumber.Y"
-      @update:model-values="test"
+      v-model="form.serial_number.y"
+      @input="test"
     />
 
     <input-field
       class="template-form__input"
       label="Level Size"
       type="text"
-      v-model="form.Level.Size"
-      @update:model-values="test"
+      v-model="form.level.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Level X"
       type="text"
-      v-model="form.Level.X"
-      @update:model-values="test"
+      v-model="form.level.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="Level Y"
       type="text"
-      v-model="form.Level.Y"
-      @update:model-values="test"
+      v-model="form.level.y"
+      @input="test"
     />
 
     <input-field
       class="template-form__input"
       label="form.field1"
       type="text"
-      v-model="form.Note.Size"
-      @update:model-values="test"
+      v-model="form.note.size"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="form.field1"
       type="text"
-      v-model="form.Note.X"
-      @update:model-values="test"
+      v-model="form.note.x"
+      @input="test"
     />
     <input-field
       class="template-form__input"
       label="form.field1"
       type="text"
-      v-model="form.Note.Y"
-      @update:model-values="test"
+      v-model="form.note.y"
+      @input="test"
     />
   </div>
 </template>
@@ -172,65 +172,67 @@ import { address, required } from '@/validators'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 
 const form = reactive({
-  Name: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  high: '' as unknown as number,
+  width: '' as unknown as number,
+  name: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Course: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  course: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Date: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  date: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Points: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  points: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Credits: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  credits: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Exam: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  exam: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Level: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  level: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  SerialNumber: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  serial_number: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  Note: {
-    X: '',
-    Y: '',
-    Size: '',
-    Font: '',
+  note: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
-  QR: {
-    X: '',
-    Y: '',
-    High: '',
-    Width: '',
+  qr: {
+    x: '' as unknown as number,
+    y: '' as unknown as number,
+    size: '' as unknown as number,
+    font: '',
   } as TemplateField,
 } as TemplateTypes)
 
@@ -238,13 +240,8 @@ const emit = defineEmits<{
   (e: 'update-template', template: TemplateTypes): boolean
 }>()
 
-const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  address: { required, address },
-})
-
 const test = () => {
-  if (!isFormValid) return
-
+  console.log('form ', form)
   emit('update-template', form)
 }
 </script>
