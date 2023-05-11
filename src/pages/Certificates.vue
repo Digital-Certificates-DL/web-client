@@ -16,9 +16,15 @@
         placeholder="find"
         @update="search"
       />
+
       <div v-if="generateCount > 0" class="certificates__btns">
         <p>{{ generateCount }}</p>
-        <app-button class="certificates__btn" text="Generate All" />
+        <app-button
+          class="certificates__btn"
+          text="Generate All"
+          :color="'info'"
+          @click="generate"
+        />
       </div>
     </div>
     <div v-if="isModalActive">
@@ -30,14 +36,13 @@
         <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
       </div>
-      <!--      <div v-if="userList.data == 0">-->
-      <!--        <error-message message="Empty certificate list" />-->
-      <!--      </div>-->
-      <!--      <p>{{ userList }}</p>-->
-      <!--      todo  fix user response-->
+
       <div v-for="(item, key) in userList" :value="key" :key="item">
-        <!--        <p>{{ item }}</p>-->
-        <certificate :user="item" @open-modal="openModal" />
+        <certificate
+          :user="item"
+          @open-modal="openModal"
+          @select="selectItem"
+        />
       </div>
     </div>
   </div>
@@ -55,6 +60,9 @@ import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { Signature } from '@/utils/signature.utils'
 import AuthModal from '@/common/modals/AuthModal.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const userState = useUserStore()
 const isModalActive = ref(false)
@@ -65,7 +73,6 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 
 const userList = ref([] as UserJSONResponse[])
-
 const listForCreate: UserJSONResponse[] = []
 const generateCount = ref(0)
 const form = reactive({
@@ -124,7 +131,7 @@ const search = () => {
 }
 
 const generate = async () => {
-  const users = userState.students
+  const users = listForCreate
   // loaderState.value = 'Signing users'
   const signatures = sign(users)
   // loaderState.value = 'Creating PDF for users'
@@ -150,12 +157,11 @@ const updateCode = async (code: string) => {
 }
 const sign = (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.SignKey)
+  console.log(users, ' users')
   for (const user of users) {
-    if (
-      user.attributes.Signature === undefined ||
-      user.attributes.Signature == ''
-    ) {
-      user.attributes.Signature = signature.signMsg(user.attributes.Msg)
+    console.log(user, ' user')
+    if (user.Signature === undefined || user.Signature == '') {
+      user.Signature = signature.signMsg(user.Msg)
     }
   }
   return users
@@ -178,7 +184,7 @@ const createPDF = async (users: UserJSONResponse[]) => {
     {
       body: {
         data: {
-          data: users, //todo make better
+          users: users, //todo make better
           address:
             userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
           url: userState.setting.Url,
@@ -225,13 +231,21 @@ const autoRefresh = () => {
 
 autoRefresh()
 
-const selectForCreate = (state: boolean, user: UserJSONResponse) => {
+console.log(route.params) // Output: 'keyword' (assuming the query parameter name is "q")
+
+const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {
-    listForCreate.push(user)
+    listForCreate.push(item)
+    console.log(listForCreate, 'list')
+    generateCount.value = listForCreate.length
     return
   }
 
-  listForCreate.filter(item => item !== user)
+  const index = listForCreate.indexOf(item, 0)
+  if (index > -1) {
+    listForCreate.splice(index, 1)
+  }
+  generateCount.value = listForCreate.length
 }
 </script>
 

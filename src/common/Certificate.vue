@@ -37,7 +37,7 @@
       <app-button
         class="certificate__btn"
         :text="'Generate'"
-        @click="emit('select', isSelected, props.user)"
+        @click="selectItem"
       />
     </div>
   </div>
@@ -46,21 +46,25 @@
 <script setup lang="ts">
 import AppButton from '@/common/AppButton.vue'
 import { UserJSONResponse } from '@/types'
+import { ref } from 'vue'
 import CheckboxField from '@/fields/CheckboxField.vue'
 
-const isSelected = false
+const isSelected = ref(false)
 
 const props = defineProps<{
   user: UserJSONResponse
   isGenerated?: boolean
 }>()
 
-console.log(props.user.Img)
-
 const emit = defineEmits<{
   (e: 'openModal', state: boolean, user: UserJSONResponse): boolean
   (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
+
+const selectItem = () => {
+  isSelected.value = !isSelected.value
+  emit('select', isSelected.value, props.user)
+}
 </script>
 
 <style lang="scss" scoped>

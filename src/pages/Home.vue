@@ -22,12 +22,8 @@
       <div class="home__content-template">
         <div class="home__content-subtitle">
           <p>{{ templateListTitle }}</p>
-          <app-button :text="'see more'" :route="certificates" />
+          <app-button :text="'see more'" />
         </div>
-
-        <!--        <div v-if="certificates.data.length === 0">-->
-        <!--          <error-message :message="'You have not template'" />-->
-        <!--        </div>-->
         <div class="home__items">
           <div v-for="(item, key) in templates" :value="key" :key="item">
             <home-item :img="item.img" :title="item.template_name" />
@@ -45,9 +41,6 @@
             }"
           />
         </div>
-        <!--          <div v-if="certificates.data.length === 0">-->
-        <!--            <error-message message="'You have not certificates'" />-->
-        <!--          </div>-->
 
         <div class="home__items">
           <div
