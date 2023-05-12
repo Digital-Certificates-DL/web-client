@@ -43,16 +43,75 @@ export interface Output {
   script_type: string
 }
 
-export interface UTXO {
-  tx_hash: string
-  block_height: number
-  tx_input_n: number
-  tx_output_n: number
+export interface AddressInfo {
+  path: string
+  address: string
+  utxos: UTXOs
+}
+
+////////////////
+
+export type BlockstreamTxList = Tx[]
+
+export interface Tx {
+  txid: string
+  version: number
+  locktime: number
+  vin: Vin[]
+  vout: Vout[]
+  size: number
+  weight: number
+  fee: number
+  status: Status
+}
+
+export interface Vin {
+  txid: string
+  vout: number
+  prevout: Prevout
+  scriptsig: string
+  scriptsig_asm: string
+  witness: string[]
+  is_coinbase: boolean
+  sequence: number
+  inner_redeemscript_asm?: string
+}
+
+export interface Prevout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
   value: number
-  ref_balance: number
-  spent: boolean
-  spent_by: string
-  confirmations: number
-  confirmed: string
-  double_spend: boolean
+}
+
+export interface Vout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
+  value: number
+}
+
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
+}
+
+export type UTXOs = UTXO[]
+
+export interface UTXO {
+  txid: string
+  vout: number
+  status: Status
+  value: number
+}
+
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
 }

@@ -20,7 +20,7 @@ export type TemplateField = {
   x?: number
   y?: number
   size?: number
-  font?: strign
+  font?: string
   high?: number
   width?: number
 }

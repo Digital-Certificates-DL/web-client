@@ -1,3 +1,5 @@
+import { AddressInfo, UTXO } from '@/types/bitcoin.types'
+
 export type UserTypes = {
   Date: string
   Participant: string
@@ -33,8 +35,8 @@ export type UserSetting = {
   Org: string
   SignKey: string
   Address: string
-  KeyPathID: number
   LastExAddress: string
   SendMnemonicPhrase: string
   Url: string
+  AddressInfoList: AddressInfo[]
 }

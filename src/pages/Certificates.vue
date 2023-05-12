@@ -67,7 +67,6 @@ const route = useRoute()
 const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
-let userBuffer
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
@@ -117,6 +116,7 @@ const refresh = async () => {
   console.log('users ', userList.value)
 }
 
+let userBuffer
 const search = () => {
   userBuffer = userState.students
   console.log('test ', userState.students)
@@ -231,7 +231,7 @@ const autoRefresh = () => {
 
 autoRefresh()
 
-console.log(route.params) // Output: 'keyword' (assuming the query parameter name is "q")
+console.log(route.params)
 
 const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {

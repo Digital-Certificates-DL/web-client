@@ -96,6 +96,14 @@
           color="info"
           @click="router.push(ROUTE_NAMES.home)"
         />
+        <nav-button
+          :title="'test'"
+          description="generate certificates"
+          body="Ac integer sapien nisl turpis arcu integer. +
+           Pellentesque phasellus egestas pharetra quam cursus"
+          class="btn"
+          @click="test"
+        />
       </div>
     </div>
   </div>
