@@ -167,13 +167,12 @@ const sign = (users: UserJSONResponse[]) => {
   return users
 }
 
-const prepareUserImg = (users: UserJSONResponseList) => {
+const prepareUserImg = (users: UserJSONResponse[]) => {
   console.log(users)
-  const list: UserJSONResponse[] = users.data
+  const list: UserJSONResponse[] = users
   console.log('pr')
   for (const user of list) {
-    user.attributes.Img =
-      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
   }
   console.log('users: ', users)
   return users
@@ -193,7 +192,7 @@ const createPDF = async (users: UserJSONResponse[]) => {
       },
     },
   )
-
+  console.log(resp.data)
   const updatedUsers = prepareUserImg(resp.data)
   userState.students = updatedUsers.data
   return resp.data.data

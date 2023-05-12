@@ -1,6 +1,6 @@
 <template>
   <div class="timestamp">
-    <app-header />
+    <app-navbar />
 
     <h1>{{ certificatesTitle }}</h1>
     <div class="certificates__search">
@@ -22,18 +22,15 @@
     </div>
 
     <div class="timestamp__list">
-      <div v-if="userState.students.length === 0">
-        <error-message message="Empty certificate list" />
-      </div>
+      <!--      <div v-if="userState.students.length === 0">-->
+      <!--        <error-message message="Empty certificate list" />-->
+      <!--      </div>-->
       <div v-for="(item, key) in users" :value="key" :key="item">
-        <timestemp-item
-          :name="item.attributes.Participant"
-          :date="item.attributes.Date"
-        />
+        <timestemp-item :name="item.Participant" :date="item.Date" />
       </div>
     </div>
     <div class="timestamp__img-wrp">
-      <img :src="currentUser.attributes.Img" alt="Certificate preview" />
+      <!--      <img :src="currentUser.Img" alt="Certificate preview" />-->
     </div>
   </div>
 </template>
@@ -44,12 +41,12 @@ import { UserJSONResponse, UserJSONResponseList } from '@/types'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
-import AppHeader from '@/common/AppHeader.vue'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
 
 import TimestempItem from '@/common/TimestempItem.vue'
+import AppNavbar from '@/common/AppNavbar.vue'
 const userState = useUserStore()
 
 let currentUser: UserJSONResponse
@@ -72,16 +69,13 @@ const search = () => {
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
-  userState.students.filter(item =>
-    item.attributes.Participant.includes(form.search),
-  )
+  userState.students.filter(item => item.Participant.includes(form.search))
 }
 
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
-    user.attributes.Img =
-      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
   }
 
   return users.data
@@ -106,7 +100,7 @@ const bitcoinTimestamp = async () => {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    user.attributes.TxHash = sendResp.data.tx.hash
+    user.TxHash = sendResp.data.tx.hash
     userState.setting.LastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)
