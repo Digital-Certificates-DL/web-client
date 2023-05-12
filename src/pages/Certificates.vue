@@ -135,7 +135,9 @@ const generate = async () => {
   // loaderState.value = 'Signing users'
   const signatures = sign(users)
   // loaderState.value = 'Creating PDF for users'
+
   userState.students = await createPDF(signatures)
+
   // loaderState.value = ''
   // isLoader.value = false
 
@@ -195,7 +197,7 @@ const createPDF = async (users: UserJSONResponse[]) => {
   console.log(resp.data)
   const updatedUsers = prepareUserImg(resp.data)
   userState.students = updatedUsers.data
-  return resp.data.data
+  return resp.data
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {

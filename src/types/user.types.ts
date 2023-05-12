@@ -1,6 +1,6 @@
 import { AddressInfo, UTXO } from '@/types/bitcoin.types'
 
-export type UserTypes = {
+export type UserJSONResponse = {
   Date: string
   Participant: string
   CourseTitle: string
@@ -18,11 +18,11 @@ export type UserTypes = {
   Img: string
 }
 
-export type UserJSONResponse = {
-  ID: string
-  Type: string
-  attributes: UserTypes
-}
+// export type UserJSONResponse = {
+//   ID: string
+//   Type: string
+//   attributes: UserTypes
+// }
 
 export type UserJSONResponseList = {
   data: UserJSONResponse[]

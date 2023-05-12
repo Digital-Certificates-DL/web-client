@@ -83,6 +83,7 @@ export class Bitcoin {
   public getUTXOBip32TestnetBlockstream = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
+    console.log(mnph)
     let index = 0
     const bip = bip32.fromSeed(seed)
     while (emptyAddreeses < 10) {
