@@ -1,18 +1,23 @@
 <template>
   <div class="certificates">
-    <h1>{{ $t('certificates.certificates-title') }}</h1>
-    <div class="certificates__search">
-      <input-field
-        class="certificates__search-input"
-        placeholder="find"
-        v-model="form.search"
-        @update:model-value="search"
-      />
+    <h2>{{ $t('certificates.certificates-title') }}</h2>
+    <div class="certificates__search-wrp">
+      <div class="certificates__search-input-wrp">
+        <input-field
+          class="certificates__search-input"
+          placeholder="find"
+          v-model="form.search"
+          @update:model-value="search"
+        />
+      </div>
       <div class="certificates__btns">
         <app-button
           class="certificates__btn"
+          scheme="filled"
+          :size="'medium'"
+          :color="'info'"
           @click="bitcoinTimestamp"
-          text="Bitcoin"
+          :text="'Bitcoin'"
         />
       </div>
     </div>
@@ -167,14 +172,22 @@ const autoRefresh = () => {
 autoRefresh()
 </script>
 
-<style lang="scss" scoped>
-.certificates__search {
-  width: toRem(458);
+<style scoped lang="scss">
+.certificates {
+  margin: 0 auto;
+  width: toRem(1400);
+}
+
+.certificates__search-wrp {
+  margin-top: toRem(24);
+  display: flex;
+  justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.certificates__search-input {
+.certificates__search-input-wrp {
   margin-bottom: toRem(20);
+  width: toRem(458);
 }
 
 .certificates__btns {
@@ -183,8 +196,8 @@ autoRefresh()
 }
 
 .certificates__btn {
-  background: var(--primary-dark);
-  width: toRem(100);
+  height: toRem(52);
+  border-radius: toRem(8);
 }
 
 .certificates__list-titles {

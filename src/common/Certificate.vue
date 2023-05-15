@@ -14,10 +14,10 @@
     <div class="certificate__btns">
       <app-button
         class="certificate__btn"
+        :text="$t('certificate.mint-text')"
         @click="emit('OpenModal', true, props.user)"
-      >
-        {{ $t('certificate.mint-text') }}
-      </app-button>
+      />
+
       <app-button
         class="certificate__btn certificate__btn-download"
         @click="window.open(props.user.attributes.Certificate, '_blank')"
@@ -64,7 +64,10 @@ const props = withDefaults(
 }
 
 .certificate_img {
-  width: toRem(100);
+  @include respond-to(large) {
+    width: toRem(74);
+    border-radius: toRem(4);
+  }
 }
 
 .certificate__name {
