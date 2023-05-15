@@ -1,11 +1,13 @@
 <template>
-  <div class="main-page">
+  <div class="main__page">
     <div class="main__info">
       <app-logo class="main__logo" />
-      <span class="main__info-name">{{ $t('main.page-info-name') }}</span>
-      <h3 class="main__info-description">
+      <h1 class="main__info-name">
+        {{ $t('main.page-info-name') }}
+      </h1>
+      <p class="main__info-description">
         {{ $t('main.page-info-desc') }}
-      </h3>
+      </p>
     </div>
     <div class="main__body">
       <div class="main__provider-side">
@@ -18,31 +20,23 @@
               {{ $t('main.metamask-desc') }}
             </p>
             <app-button
-              scheme="flat"
-              size="small"
               class="main__metamask-btn main__btn-connect"
-              :text="'Connect'"
+              :text="$t('main.metamask-connect-btn')"
+              :color="'info'"
               @click="connect"
               :disabled="web3Store.provider.isConnected"
             />
           </div>
           <div v-else class="main__metamask">
-            <app-button
-              scheme="flat"
-              size="small"
-              class="main__metamask-btn"
-              color="primary"
-              :text="web3Store.provider.selectedAddress || 'Connect'"
-              @click="connect"
-              :disabled="web3Store.provider.isConnected"
-            />
+            <p>
+              {{ web3Store.provider.selectedAddress }}
+            </p>
             <app-button
               v-if="web3Store.provider.isConnected"
               class="main__metamask-btn"
-              :text="'Disconnect'"
-              scheme="flat"
-              color="primary"
-              size="small"
+              :text="$t('main.metamask-disconnect-btn')"
+              color="info"
+              size="large"
               @click="web3Store.provider.disconnect"
             />
           </div>
@@ -52,28 +46,28 @@
         <nav-button
           :title="'Settings'"
           description="Your settings"
-          class="main__btn"
+          class="main__card"
           color="warning"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
+          size="large"
+          :body="$t('main.page-settings-desc')"
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <nav-button
           :title="'Certificates'"
           description="Your certificates"
-          class="main__btn"
+          class="main__card"
           color="info"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
+          size="large"
+          :body="$t('main.page-certificates-desc')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
         <nav-button
           :title="'Generation'"
           description="generate certificates"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
-          class="main__btn"
+          :body="$t('main.page-generation-desc')"
+          class="main__card"
           color="success"
+          size="large"
           @click="router.push(ROUTE_NAMES.generate)"
         />
       </div>
@@ -104,11 +98,10 @@ const connect = async () => {
 </script>
 
 <style lang="scss" scoped>
-.main_page {
-  display: flex;
-  justify-items: center;
+.main__page {
+  max-width: toRem(1400);
+  margin: auto;
 }
-
 .main__info {
   display: grid;
   margin-top: toRem(80);
@@ -120,7 +113,7 @@ const connect = async () => {
 .main__info-name {
   margin: auto;
   padding: toRem(20);
-  font-size: toRem(25);
+  //font-size: toRem(25);
 }
 
 .main__logo {
@@ -150,8 +143,8 @@ const connect = async () => {
   place-content: center;
   border-radius: toRem(8);
   padding: toRem(12);
-  width: toRem(642);
-  height: toRem(432);
+  width: toRem(652);
+  height: toRem(346);
 }
 
 .main__endpoints-side {
@@ -172,19 +165,8 @@ const connect = async () => {
   font-size: toRem(20);
 }
 
-.main__btn {
-  min-width: toRem(200);
-  min-height: toRem(200);
-  padding: toRem(40);
-}
-
-.web3-page__card {
-  position: relative;
-  display: grid;
-  gap: toRem(8);
-  border: toRem(1) solid var(--border-primary-main);
-  border-radius: toRem(8);
-  padding: toRem(12);
+.main__card {
+  max-width: toRem(304);
 }
 
 .main__card-indicator {
@@ -202,11 +184,15 @@ const connect = async () => {
 }
 
 .main__metamask-btn {
+  max-width: toRem(200);
+  margin: toRem(20) auto;
   width: 100%;
 }
 
 .main__info-description {
   font-size: toRem(16);
+  max-width: toRem(426);
+  text-align: center;
   color: var(--text-primary-light);
 }
 </style>

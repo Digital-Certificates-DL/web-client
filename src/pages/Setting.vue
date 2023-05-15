@@ -2,16 +2,16 @@
   <div class="setting">
     <div class="setting_body">
       <div class="setting__info">
-        <h1 class="setting__title">
+        <h3 class="setting__title">
           {{ $t('settings.page-name') }}
-        </h1>
+        </h3>
         <p>
           {{ $t('settings.title') }}
         </p>
       </div>
-      <h1 class="settings__fields-title">
+      <h3 class="settings__fields-title">
         {{ $t('settings.general-title') }}
-      </h1>
+      </h3>
       <input-field
         class="settings__form"
         label="Name of organization"
@@ -24,9 +24,9 @@
         type="text"
         v-model="form.Name"
       />
-      <h1 class="settings__fields-title">
+      <h3 class="settings__fields-title">
         {{ $t('settings.sign-key-title') }}
-      </h1>
+      </h3>
       <input-field
         label="Bitcoin Timestamping Mnemonic Phrase"
         class="settings__form"

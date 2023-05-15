@@ -65,8 +65,13 @@
     "generate-body": "",
     "metamask-connect": "Connect to MetaMask",
     "page-info-name": "Service name",
-    "page-info-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'",
-    "metamask-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'"
+    "page-info-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-settings-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-certificates-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-generation-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "metamask-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "metamask-connect-btn": "Connect to MetaMask",
+    "metamask-disconnect-btn": "Disconnect"
   },
   "certificates": {
     "certificates-title": "Previously certificates",
