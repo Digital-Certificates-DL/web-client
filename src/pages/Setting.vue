@@ -1,6 +1,5 @@
 <template>
   <div class="setting">
-    <app-navbar />
     <div class="setting_body">
       <div class="setting__info">
         <h1 class="setting__title">
@@ -26,7 +25,7 @@
         v-model="form.Name"
       />
       <h1 class="settings__fields-title">
-        {{ $t('settings.general-title') }}
+        {{ $t('settings.sign-key-title') }}
       </h1>
       <input-field
         label="Bitcoin Timestamping Mnemonic Phrase"
@@ -45,12 +44,19 @@
         class="settings__form"
         type="text"
         v-model="form.SignKey"
-        :error-message="getFieldErrorMessage('settings')"
+        :error-message="getFieldErrorMessage('SignKey')"
       />
       <div class="settings__btns">
-        <app-button text="Save" :color="'primary'" @click="save" />
         <app-button
+          class="settings__btn"
+          text="Save"
+          :color="'info'"
+          @click="save"
+        />
+        <app-button
+          class="settings__btn"
           text="Cancel"
+          :color="'info'"
           :route="{
             name: $routes.main,
           }"
@@ -134,6 +140,10 @@ const save = async () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: toRem(80);
+}
+
+.settings__btn {
+  width: toRem(100);
 }
 
 .settings__fields-title {

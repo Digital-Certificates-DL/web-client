@@ -1,7 +1,5 @@
 <template>
   <div class="certificates">
-    <app-navbar />
-
     <h1>{{ $t('certificates.certificates-title') }}</h1>
     <div class="certificates__search">
       <input-field

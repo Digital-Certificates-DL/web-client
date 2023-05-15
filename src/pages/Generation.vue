@@ -7,7 +7,6 @@
     />
   </div>
   <div v-else class="generation">
-    <app-navbar />
     <div class="generation__title">
       <h1>{{ $t('generation.title') }}</h1>
     </div>
