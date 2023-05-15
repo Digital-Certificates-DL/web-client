@@ -1,4 +1,4 @@
-export type UserTypes = {
+export type UserJSONResponse = {
   Date: string
   Participant: string
   CourseTitle: string
@@ -16,11 +16,11 @@ export type UserTypes = {
   Img: string
 }
 
-export type UserJSONResponse = {
-  ID: string
-  Type: string
-  attributes: UserTypes
-}
+// export type UserJSONResponse = {
+//   ID: string
+//   Type: string
+//   attributes: UserTypes
+// }
 
 export type UserJSONResponseList = {
   data: UserJSONResponse[]
@@ -37,19 +37,4 @@ export type UserSetting = {
   LastExAddress: string
   SendMnemonicPhrase: string
   Url: string
-}
-
-export type UnauthorizedTypesAttributes = {
-  link: string
-}
-
-export type UnauthorizedTypes = {
-  ID: string
-  Type: string
-  attributes: UnauthorizedTypesAttributes
-}
-export type UnauthorizedResponse = {
-  data: UnauthorizedTypes
-  Included: object[]
-  Links: object
 }

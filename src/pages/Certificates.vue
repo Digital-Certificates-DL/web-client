@@ -33,12 +33,7 @@
       <div v-if="userState.students.length === 0">
         <error-message message="Empty certificate list" />
       </div>
-
-      <div
-        v-for="(item, key) in userState.students"
-        :value="key"
-        :key="item.attributes"
-      >
+      <div v-for="(item, key) in userState.students" :value="key" :key="item">
         <certificate
           :user="item"
           @open-modal="openModal"
@@ -57,7 +52,7 @@ import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
-import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
+import { ErrorMessage, AppButton, Certificate } from '@/common'
 
 const userState = useUserStore()
 const isModalActive = ref(false)
@@ -72,11 +67,14 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   isModalActive.value = state
   currentUser = user
 }
-const prepareUserImg = (users: UserJSONResponseList) => {
-  for (const user of users.data) {
-    user.attributes.Img =
-      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+const prepareUserImg = (users: UserJSONResponse[]) => {
+  for (const user of users) {
+    if (user.CertificateImg === null) {
+      continue
+    }
+    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
   }
+  console.log('preparing images', users)
 
   return users
 }
@@ -95,7 +93,7 @@ const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 }
 
 const refresh = async () => {
-  const users = await api.post<UserJSONResponseList>(
+  const { data } = await api.post<UserJSONResponse[]>(
     '/integrations/ccp/users/',
     {
       body: {
@@ -106,7 +104,9 @@ const refresh = async () => {
       },
     },
   )
-  userState.students = prepareUserImg(users.data).data
+  console.log('users: ', data)
+  userState.students = prepareUserImg(data)
+  console.log('user with  img: ', userState.students)
 }
 
 const search = () => {
@@ -115,9 +115,7 @@ const search = () => {
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
-  userState.students.filter(item =>
-    item.attributes.Participant.includes(form.search),
-  )
+  userState.students.filter(item => item.Participant.includes(form.search))
 }
 
 const bitcoinTimestamp = async () => {
@@ -151,7 +149,7 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     {
       body: {
         data: {
-          data: users,
+          users: users,
           address: userState.setting.Address,
           name: userState.setting.Name,
           url: userState.setting.Url,
@@ -160,7 +158,8 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     },
   )
 
-  userState.students = data.data
+  console.log('users: ', data)
+  userState.students = data
 }
 
 const autoRefresh = () => {
