@@ -82,7 +82,7 @@ ul {
 
 p {
   line-height: 2;
-
+  font-size: toRem(16);
   @include respond-to(tablet) { line-height: 1.6; }
 }
 

@@ -8,7 +8,7 @@
   </div>
   <div v-else class="generation">
     <div class="generation__title">
-      <h1>{{ $t('generation.title') }}</h1>
+      <h2>{{ $t('generation.title') }}</h2>
     </div>
     <div class="generation__body">
       <div class="generation__step">
@@ -17,15 +17,15 @@
         </p>
 
         <div class="generation__collection-name generation__step-field">
-          <h3 class="generation__subtitle-num">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step1-description') }}
-          </h3>
+          </p>
           <input-field
             class="generation__text-input"
             label="Name"
             type="text"
             v-model="certificatesInfo.Name"
-            :error-message="getFieldErrorMessage('name')"
+            :error-message="getFieldErrorMessage('Name')"
           />
         </div>
       </div>
@@ -34,17 +34,13 @@
         <p class="generation__step-number">
           {{ $t('generation.step2') }}
         </p>
-        <div class="generation__upload-files generation__step-field">
-          <h3 class="generation__subtitle-num">
+        <div class="generation__choose-template-wrp generation__step-field">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step2-description') }}
-          </h3>
-          <input-field
-            class="generation__file-input"
-            id="image-file"
-            type="file"
-            label="template"
-            v-model="certificatesInfo.Template"
-          />
+          </p>
+          <div class="generation__choose-template">
+            <!--            <img src="/public" alt="" />-->
+          </div>
           <!--todo  make better ^-->
         </div>
       </div>
@@ -53,9 +49,9 @@
           {{ $t('generation.step3') }}
         </p>
         <div class="generation__upload-files generation__step-field">
-          <h3 class="generation__subtitle-num">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step3-description') }}
-          </h3>
+          </p>
           <input-field
             class="generation__text-input"
             label="Link"
@@ -88,13 +84,9 @@
 import { reactive, ref } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
-import { AppButton, AppNavbar } from '@/common'
+import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import {
-  UnauthorizedResponse,
-  UserJSONResponseList,
-  UserJSONResponse,
-} from '@/types/user.types'
+import { UserJSONResponseList, UserJSONResponse } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'

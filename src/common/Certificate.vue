@@ -1,5 +1,6 @@
 <template>
   <div class="certificate">
+    <checkbox-field :model-value="isSelected" />
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
@@ -27,11 +28,6 @@
       >
         <img src="static/branding/download.png" alt="download img" />
       </app-button>
-      <input-field
-        v-model="isSelected"
-        type="checkbox"
-        @input="emit('SelectForTimestamp', !isSelected, props.user)"
-      />
     </div>
   </div>
 </template>
@@ -39,13 +35,15 @@
 <script setup lang="ts">
 import { AppButton } from '@/common'
 import { UserJSONResponse } from '@/types'
-import { InputField } from '@/fields'
+import { CheckboxField } from '@/fields'
 
-const isSelected = false
+import { ref } from 'vue'
+
+const isSelected = ref(false)
 
 const emit = defineEmits<{
   (e: 'OpenModal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'SelectForTimestamp', state: boolean, user: UserJSONResponse): boolean
+  (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
 
 const props = withDefaults(
@@ -54,6 +52,11 @@ const props = withDefaults(
   }>(),
   {},
 )
+
+const selectItem = () => {
+  isSelected.value = !isSelected.value
+  emit('select', isSelected.value, props.user)
+}
 </script>
 
 <style lang="scss" scoped>
