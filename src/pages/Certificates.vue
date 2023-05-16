@@ -16,13 +16,12 @@
           :size="'medium'"
           :color="'info'"
           @click="bitcoinTimestamp"
-          :text="$t('certificates.bitcoin-btn')"
+          :text="$t('certificates.certificates-bitcoin-btn')"
         />
       </div>
     </div>
-    <div v-if="isModalActive">
-      <modal-info @cancel="closeModal" :user="currentUser" />
-    </div>
+    <modal-info v-model:is-shown="isModalActive" :user="currentUser" />
+
     <div class="certificates__list">
       <div class="certificates__list-titles">
         <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
@@ -30,7 +29,7 @@
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
       </div>
       <div v-if="userState.students.length === 0">
-        <error-message message="Empty certificate list" />
+        <error-message :message="$t('certificates.error-certificate-list')" />
       </div>
       <div v-for="(item, key) in userState.students" :value="key" :key="item">
         <certificate
@@ -75,10 +74,6 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
   }
 
   return users
-}
-
-const closeModal = () => {
-  isModalActive.value = false
 }
 
 const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {

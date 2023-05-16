@@ -50,17 +50,6 @@
   "web3-page": {
     "loading-error-msg": "Oops... Something went wrong"
   },
-  "erc20": {
-    "loading-error-msg": "Oops... Something went wrong",
-    "title": "ERC20",
-    "name-lbl": "Name",
-    "symbol-lbl": "Symbol",
-    "decimals-lbl": "Decimals",
-    "total-supply-lbl": "Total supply",
-    "balance-lbl": "Balance",
-    "transfer-lbl": "Transfer",
-    "mint-lbl": "Mint"
-  },
   "main": {
     "metamask-connect": "Connect to MetaMask",
     "page-info-name": "Service name",
@@ -82,7 +71,9 @@
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
-    "certificates-subtitle-date": "Date"
+    "certificates-subtitle-date": "Date",
+    "certificates-bitcoin-btn": "Bitcoin",
+    "error-certificate-list": "Empty certificate list"
   },
   "generation": {
     "title":"Create new certificate",
@@ -112,8 +103,12 @@
     "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
   },
   "certificate-modal": {
-    "user-name" : "Full name",
-    "title" : "SBT issuance"
+    "title" : "SBT issuance",
+    "label-participant": "Full name",
+    "label-date": "Issued on",
+    "label-course": "Course name",
+    "label-metamask-address": "Student’s MetaMask address"
+
 
   }
 

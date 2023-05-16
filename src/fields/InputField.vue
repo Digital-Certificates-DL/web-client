@@ -273,6 +273,7 @@ $z-index-side-nodes: 1;
   padding: var(--field-padding);
   background: var(--field-bg-primary);
   box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary);
+  border-radius: toRem(8);
   border: none;
 
   @include field-text;

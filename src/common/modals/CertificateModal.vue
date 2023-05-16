@@ -1,31 +1,62 @@
 <template>
-  <modal>
-    <div class="certificate-modal__img-wrp">
-      <img :src="props.user.attributes.Img" alt="Certificate" />
-    </div>
-    <h1 class="certificate-modal__title">
-      {{ $t('certificate-modal.title') }}
-    </h1>
-    <div class="certificate-modal__name">
-      <label for="participant">
-        {{ $t('certificate-modal.user-name') }}
-      </label>
-      <p id="participant">
-        {{ props.user.attributes.Participant }}
-      </p>
-    </div>
-    <p>{{ props.user.attributes.Date }}</p>
-    <p>{{ props.user.attributes.CourseTitle }}</p>
-    <input-field
-      label="address"
-      type="text"
-      v-model="form.address"
-      :error-message="getFieldErrorMessage('address')"
-    />
-    <div class="certificate-modal__btns">
-      <app-button text="mint" @click="mint" />
-      <app-button text="cancel" @click="emit('cancel', false)" />
-    </div>
+  <modal
+    :is-shown="props.isShown"
+    @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
+  >
+    <template #default="{ modal }">
+      <div class="certificate-modal">
+        <div class="certificate-modal__img-wrp">
+          <img
+            class="certificate-modal__img"
+            :src="props.user.Img || '/static/branding/template.jpg'"
+            alt="Certificate"
+          />
+        </div>
+        <h3 class="certificate-modal__title">
+          {{ $t('certificate-modal.title') }}
+        </h3>
+        <p class="certificate-modal__label">
+          {{ $t('certificate-modal.label-participant') }}
+        </p>
+
+        <h4>
+          {{ props.user.Participant }}
+        </h4>
+
+        <p class="certificate-modal__label">
+          {{ $t('certificate-modal.label-date') }}
+        </p>
+        <h4>{{ props.user.Date }}</h4>
+        <p class="certificate-modal__label">
+          {{ $t('certificate-modal.label-course') }}
+        </p>
+
+        <h4>{{ props.user.CourseTitle }}</h4>
+        <p class="certificate-modal__form-label">
+          {{ $t('certificate-modal.label-metamask-address') }}
+        </p>
+        <input-field
+          placeholder="address"
+          type="text"
+          v-model="form.address"
+          :error-message="getFieldErrorMessage('address')"
+        />
+        <div class="certificate-modal__btns">
+          <app-button
+            class="certificate-modal__btn"
+            text="mint"
+            :color="'info'"
+            @click="mint"
+          />
+          <app-button
+            class="certificate-modal__btn"
+            text="cancel"
+            :color="'info'"
+            @click="modal.close"
+          />
+        </div>
+      </div>
+    </template>
   </modal>
 </template>
 
@@ -50,12 +81,10 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
   address: { required, address },
 })
 
-const props = withDefaults(
-  defineProps<{
-    user: UserJSONResponse
-  }>(),
-  {},
-)
+const props = defineProps<{
+  isShown: boolean
+  user: UserJSONResponse
+}>()
 
 const mint = async () => {
   if (!isFormValid()) return
@@ -65,17 +94,17 @@ const mint = async () => {
       body: {
         data: {
           Description:
-            props.user.attributes.Date +
+            props.user.Date +
             ' ' +
-            props.user.attributes.Participant +
+            props.user.Participant +
             ' ' +
-            props.user.attributes.CourseTitle +
+            props.user.CourseTitle +
             ' ' +
-            props.user.attributes.Points +
+            props.user.Points +
             ' ' +
-            props.user.attributes.Note,
-          Img: props.user.attributes.CertificateImg,
-          Name: 'Certificate - ' + props.user.attributes.Participant,
+            props.user.Note,
+          Img: props.user.CertificateImg,
+          Name: 'Certificate - ' + props.user.Participant,
         },
       },
     },
@@ -87,23 +116,52 @@ const mint = async () => {
 }
 
 const emit = defineEmits<{
-  (e: 'cancel', state: boolean): boolean
+  (event: 'update:is-shown', value: boolean): void
 }>()
 </script>
 
 <style scoped lang="scss">
+.certificate-modal {
+  width: toRem(475);
+  height: toRem(796);
+  background: var(--background-primary-main);
+  border-radius: 1rem;
+  flex-direction: row;
+  padding: toRem(24);
+  position: fixed;
+  display: grid;
+}
+
 .certificate-modal__img-wrp {
   display: flex;
   justify-content: center;
 }
 
+.certificate-modal__img {
+  width: toRem(427);
+}
+
 .certificate-modal__title {
-  padding: toRem(30) 0;
+  padding: toRem(10) 0;
   margin: auto;
 }
 
 .certificate-modal__btns {
   display: flex;
   justify-content: space-between;
+}
+
+.certificate-modal__btn {
+  width: toRem(200);
+}
+
+.certificate-modal__label {
+  font-size: toRem(14);
+  color: var(--text-secondary-light);
+}
+
+.certificate-modal__form-label {
+  font-size: toRem(14);
+  color: var(--text-primary-main);
 }
 </style>

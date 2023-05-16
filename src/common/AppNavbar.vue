@@ -10,7 +10,7 @@
             src="/branding/metamask.png"
             alt="metamask ico"
           />
-          <p>{{ web3Store.provider.selectedAddress! || 'Connect' }}</p>
+          <p>{{ preparedAddress || 'Connect' }}</p>
         </app-button>
       </div>
       <div class="app-navbar__settings">
@@ -27,11 +27,16 @@
 <script lang="ts" setup>
 import { AppLogo, AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
+import { ref } from 'vue'
 
 const web3Store = useWeb3ProvidersStore()
-
+const preparedAddress = ref('')
 const connect = async () => {
   await web3Store.provider.connect()
+  preparedAddress.value =
+    web3Store.provider.selectedAddress!.slice(0, 6) +
+    '...' +
+    web3Store.provider.selectedAddress!.slice(-4)
 }
 </script>
 
