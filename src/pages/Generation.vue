@@ -22,7 +22,6 @@
           </p>
           <input-field
             class="generation__text-input"
-            type="text"
             v-model="certificatesInfo.name"
             @input="validateField"
             :class="readyFiled"
@@ -58,7 +57,6 @@
           </p>
           <input-field
             class="generation__text-input"
-            type="text"
             v-model="certificatesInfo.link"
             :class="readyFiled"
             :error-message="getFieldErrorMessage('link')"
@@ -169,8 +167,8 @@ const parsedData = async (sheepUrl?: string) => {
 const sign = (users: UserJSONResponseList) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users.data) {
-    if (user.Signature === undefined || user.Signature == '') {
-      user.Signature = signature.signMsg(user.Msg)
+    if (user.signature === undefined || user.signature == '') {
+      user.signature = signature.signMsg(user.msg)
     }
   }
   return users
@@ -179,7 +177,7 @@ const sign = (users: UserJSONResponseList) => {
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
-    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
   return users

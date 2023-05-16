@@ -20,7 +20,7 @@
         />
       </div>
     </div>
-    <modal-info v-model:is-shown="isModalActive" :user="currentUser" />
+    <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
 
     <div class="certificates__list">
       <div class="certificates__list-titles">
@@ -45,33 +45,38 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import ModalInfo from '@/common/modals/CertificateModal.vue'
 import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
-import { ErrorMessage, AppButton, Certificate } from '@/common'
+import {
+  ErrorMessage,
+  AppButton,
+  Certificate,
+  CertificateModal,
+} from '@/common'
 
 const userState = useUserStore()
 const isModalActive = ref(false)
-let currentUser: UserJSONResponse
-let userBuffer
+const currentUser = ref({} as UserJSONResponse)
 const listForTimestamp: UserJSONResponse[] = []
+
+let userBuffer: UserJSONResponse[]
 
 const form = reactive({
   search: '',
 })
 const openModal = (state: boolean, user: UserJSONResponse) => {
   isModalActive.value = state
-  currentUser = user
+  currentUser.value = user
 }
 const prepareUserImg = (users: UserJSONResponse[]) => {
   for (const user of users) {
-    if (user.CertificateImg === null) {
+    if (user.certificateImg === null) {
       continue
     }
-    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
   return users
@@ -107,7 +112,7 @@ const find = () => {
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
-  userState.students.filter(item => item.Participant.includes(form.search))
+  userState.students.filter(item => item.participant.includes(form.search))
 }
 
 const bitcoinTimestamp = async () => {
@@ -129,7 +134,7 @@ const bitcoinTimestamp = async () => {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    user.TxHash = sendResp.data.tx.hash
+    user.txHash = sendResp.data.tx.hash
     userState.setting.lastExAddress = tx?.exAddress || ''
   }
   await updateUsers(users)

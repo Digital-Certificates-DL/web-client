@@ -39,9 +39,6 @@ const props = withDefaults(
   }>(),
   {
     color: 'primary',
-    title: '',
-    description: '',
-    body: '',
     size: 'medium',
   },
 )

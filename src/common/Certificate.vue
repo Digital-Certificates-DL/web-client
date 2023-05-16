@@ -4,16 +4,16 @@
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
-        :src="props.user.Img || '/static/branding/template.jpg'"
+        :src="props.user.img || '@/../static/branding/template.jpg'"
         alt="certificate"
       />
     </div>
 
     <p class="certificate__name">
-      {{ props.user.Participant }}
+      {{ props.user.participant }}
     </p>
     <p>
-      {{ props.user.Date }}
+      {{ props.user.date }}
     </p>
     <div class="certificate__btns">
       <app-button
@@ -24,9 +24,9 @@
 
       <app-button
         class="certificate__btn certificate__btn-download"
-        @click="window.open(props.user.Certificate, '_blank')"
+        @click="window.open(props.user.certificate, '_blank')"
       >
-        <img src="static/branding/download.png" alt="download img" />
+        <img src="@/../static/branding/download.png" alt="download img" />
       </app-button>
     </div>
   </div>
@@ -46,12 +46,9 @@ const emit = defineEmits<{
   (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
 
-const props = withDefaults(
-  defineProps<{
-    user: UserJSONResponse
-  }>(),
-  {},
-)
+const props = defineProps<{
+  user: UserJSONResponse
+}>()
 
 const selectItem = () => {
   isSelected.value = !isSelected.value

@@ -11,13 +11,14 @@
 </template>
 
 <script lang="ts" setup>
-/* create skeletons */
 import { Spinner, Skeleton } from '@/common/loaders'
+
+type SCHEMA = 'spinner' | 'skeleton'
 
 withDefaults(
   defineProps<{
-    scheme?: 'spinner' | 'skeleton'
-    title?: ''
+    scheme?: SCHEMA
+    title?: string
   }>(),
   {
     scheme: 'spinner',

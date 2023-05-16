@@ -8,7 +8,7 @@
         <div class="certificate-modal__img-wrp">
           <img
             class="certificate-modal__img"
-            :src="props.user.Img || '/static/branding/template.jpg'"
+            :src="props.user.img || '/static/branding/template.jpg'"
             alt="Certificate"
           />
         </div>
@@ -20,37 +20,36 @@
         </p>
 
         <h4>
-          {{ props.user.Participant }}
+          {{ props.user.participant }}
         </h4>
 
         <p class="certificate-modal__label">
           {{ $t('certificate-modal.label-date') }}
         </p>
-        <h4>{{ props.user.Date }}</h4>
+        <h4>{{ props.user.date }}</h4>
         <p class="certificate-modal__label">
           {{ $t('certificate-modal.label-course') }}
         </p>
 
-        <h4>{{ props.user.CourseTitle }}</h4>
+        <h4>{{ props.user.courseTitle }}</h4>
         <p class="certificate-modal__form-label">
           {{ $t('certificate-modal.label-metamask-address') }}
         </p>
         <input-field
           placeholder="address"
-          type="text"
           v-model="form.address"
           :error-message="getFieldErrorMessage('address')"
         />
         <div class="certificate-modal__btns">
           <app-button
             class="certificate-modal__btn"
-            text="mint"
+            :text="$t('certificate-modal.mint-btn')"
             :color="'info'"
             @click="mint"
           />
           <app-button
             class="certificate-modal__btn"
-            text="cancel"
+            :text="$t('certificate-modal.close-btn')"
             :color="'info'"
             @click="modal.close"
           />
@@ -94,17 +93,17 @@ const mint = async () => {
       body: {
         data: {
           Description:
-            props.user.Date +
+            props.user.date +
             ' ' +
-            props.user.Participant +
+            props.user.participant +
             ' ' +
-            props.user.CourseTitle +
+            props.user.courseTitle +
             ' ' +
-            props.user.Points +
+            props.user.points +
             ' ' +
-            props.user.Note,
-          Img: props.user.CertificateImg,
-          Name: 'Certificate - ' + props.user.Participant,
+            props.user.note,
+          Img: props.user.certificateImg,
+          Name: 'certificate - ' + props.user.participant,
         },
       },
     },

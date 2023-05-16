@@ -7,7 +7,7 @@
         <app-button @click="connect" class="app-navbar__btn">
           <img
             class="app-navbar__img"
-            src="/branding/metamask.png"
+            src="@/../static/branding/metamask.png"
             alt="metamask ico"
           />
           <p>{{ preparedAddress || 'Connect' }}</p>
@@ -16,7 +16,7 @@
       <div class="app-navbar__settings">
         <form>
           <app-button class="app-navbar__btn" route="settings">
-            <img src="/static/branding/setting.png" alt="setting ico" />
+            <img src="@/../static/branding/setting.png" alt="setting ico" />
           </app-button>
         </form>
       </div>
@@ -29,14 +29,14 @@ import { AppLogo, AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { ref } from 'vue'
 
-const web3Store = useWeb3ProvidersStore()
+const { provider } = useWeb3ProvidersStore()
 const preparedAddress = ref('')
 const connect = async () => {
-  await web3Store.provider.connect()
+  await provider.connect()
   preparedAddress.value =
-    web3Store.provider.selectedAddress!.slice(0, 6) +
+    provider.selectedAddress!.slice(0, 6) +
     '...' +
-    web3Store.provider.selectedAddress!.slice(-4)
+    provider.selectedAddress!.slice(-4)
 }
 </script>
 

@@ -14,14 +14,12 @@
       </h3>
       <input-field
         class="settings__form"
-        type="text"
         v-model="form.org"
         :label="$t('settings.org-name-form-label')"
         :error-message="getFieldErrorMessage('org')"
       />
       <input-field
         class="settings__form"
-        type="text"
         v-model="form.name"
         :label="$t('settings.account-name-form-label')"
         :error-message="getFieldErrorMessage('name')"
@@ -31,21 +29,18 @@
       </h3>
       <input-field
         class="settings__form"
-        type="text"
-        :label="$t('settings.bitcoin-phrase-form-label')"
         v-model="form.sendMnemonicPhrase"
+        :label="$t('settings.bitcoin-phrase-form-label')"
         :error-message="getFieldErrorMessage('sendMnemonicPhrase')"
       />
       <input-field
         class="settings__form"
-        type="text"
         v-model="form.url"
         :label="$t('settings.url-form-label')"
         :error-message="getFieldErrorMessage('url')"
       />
       <input-field
         class="settings__form"
-        type="text"
         v-model="form.signKey"
         :label="$t('settings.wif-form-label')"
         :error-message="getFieldErrorMessage('signKey')"

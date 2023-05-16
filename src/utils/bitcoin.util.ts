@@ -78,11 +78,11 @@ export class Bitcoin {
     }
     if (utxo.length) {
       for (let i = 0; i < utxo.length; i++) {
-        const hex = await this.getTxTestnet(utxo[i].tx_hash)
+        const hex = await this.getTxTestnet(utxo[i].txHash)
         const txHex = new Buffer(hex, 'hex')
         psbt.addInput({
-          hash: utxo[i].tx_hash,
-          index: utxo[i].tx_output_n,
+          hash: utxo[i].txHash,
+          index: utxo[i].txOutputN,
           nonWitnessUtxo: txHex,
         })
       }
@@ -146,10 +146,10 @@ export class Bitcoin {
     }
 
     for (let i = 0; i < utxo.length; i++) {
-      const hex = await this.getTxMainnet(utxo[i].tx_hash)
+      const hex = await this.getTxMainnet(utxo[i].txHash)
 
       psbt.addInput({
-        hash: utxo[i].tx_hash || '',
+        hash: utxo[i].txHash || '',
         index: i,
         nonWitnessUtxo: new Buffer(hex, 'hex'),
       })

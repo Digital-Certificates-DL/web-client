@@ -4,8 +4,8 @@ export type PustTxResponce = {
   }
 }
 
-export interface Tx {
-  block_height: number
+export type Tx = {
+  blockHeight: number
   hash: string
   addresses: string[]
   total: number
@@ -13,46 +13,46 @@ export interface Tx {
   size: number
   vsize: number
   preference: string
-  relayed_by: string
+  relayedBy: string
   received: string
   ver: number
-  lock_time: number
-  double_spend: boolean
-  vin_sz: number
-  vout_sz: number
+  lockTime: number
+  doubleSpend: boolean
+  vinSz: number
+  voutSz: number
   confirmations: number
   inputs: Input[]
   outputs: Output[]
 }
 
-export interface Input {
-  prev_hash: string
-  output_index: number
+export type Input = {
+  prevHash: string
+  outputIndex: number
   script: string
-  output_value: number
+  outputValue: number
   sequence: number
   addresses: string[]
-  script_type: string
+  scriptType: string
   age: number
 }
 
-export interface Output {
+export type Output = {
   value: number
   script: string
   addresses: string[]
-  script_type: string
+  scriptType: string
 }
 
-export interface UTXO {
-  tx_hash: string
-  block_height: number
-  tx_input_n: number
-  tx_output_n: number
+export type UTXO = {
+  txHash: string
+  blockHeight: number
+  txInputN: number
+  txOutputN: number
   value: number
-  ref_balance: number
+  refBalance: number
   spent: boolean
-  spent_by: string
+  spentBy: string
   confirmations: number
   confirmed: string
-  double_spend: boolean
+  doubleSpend: boolean
 }

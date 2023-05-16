@@ -21,9 +21,9 @@
             </p>
             <app-button
               class="main__metamask-btn main__btn-connect"
+              @click="connect"
               :text="$t('main.metamask-connect-btn')"
               :color="'info'"
-              @click="connect"
               :disabled="web3Store.provider.isConnected"
             />
           </div>
@@ -34,9 +34,9 @@
             <app-button
               v-if="web3Store.provider.isConnected"
               class="main__metamask-btn"
-              :text="$t('main.metamask-disconnect-btn')"
               color="info"
               size="large"
+              :text="$t('main.metamask-disconnect-btn')"
               @click="web3Store.provider.disconnect"
             />
           </div>
@@ -44,30 +44,30 @@
       </div>
       <div class="main__endpoints-side">
         <nav-button
-          :title="$t('main.main-nav-settings-title')"
-          :description="$t('main.main-nav-settings-description')"
           class="main__card"
           color="warning"
           size="large"
           :body="$t('main.main-nav-settings-body')"
+          :title="$t('main.main-nav-settings-title')"
+          :description="$t('main.main-nav-settings-description')"
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <nav-button
-          :title="$t('main.main-nav-certificates-title')"
-          :description="$t('main.main-nav-certificates-description')"
           class="main__card"
           color="info"
           size="large"
           :body="$t('main.main-nav-certificates-body')"
+          :title="$t('main.main-nav-certificates-title')"
+          :description="$t('main.main-nav-certificates-description')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
         <nav-button
-          :title="$t('main.main-nav-generation-title')"
-          :description="$t('main.main-nav-generation-description')"
-          :body="$t('main.main-nav-generation-body')"
           class="main__card"
           color="success"
           size="large"
+          :title="$t('main.main-nav-generation-title')"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
           @click="router.push(ROUTE_NAMES.generate)"
         />
       </div>

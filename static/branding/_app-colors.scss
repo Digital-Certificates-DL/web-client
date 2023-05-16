@@ -3,13 +3,13 @@ $white-rgb: hexToRGB($white);
 $black: #000000;
 $black-rgb: hexToRGB($black);
 
-$background-primary-light: #FAFAFA;
+$background-primary-light: #fafafa;
 $background-primary-main: #fffbfe;
-$background-primary-dark: #F9F9F9;
+$background-primary-dark: #f9f9f9;
 
 $background-secondary-light: #f4efff;
 $background-secondary-main: #e6ddfb;
-$background-secondary-dark: #0066FF;
+$background-secondary-dark: #0066ff;
 
 /* status colors */
 
@@ -25,14 +25,14 @@ $warning-light: #f16709;
 $warning-main: #ff6d00;
 $warning-dark: #c43c00;
 
-$info-light: #3F97FF;
-$info-main: #0066FF;
-$info-dark: #3F97FF;
+$info-light: #3f97ff;
+$info-main: #0066ff;
+$info-dark: #3f97ff;
 
 /* brand colors */
 
 $primary-light: #0066d0;
-$primary-main: #0066FF;
+$primary-main: #0066ff;
 $primary-dark: #4f378b;
 
 $primary-light-rgb: hexToRGB($primary-light);
