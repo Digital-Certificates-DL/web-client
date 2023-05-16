@@ -16,12 +16,6 @@ export type UserJSONResponse = {
   Img: string
 }
 
-// export type UserJSONResponse = {
-//   ID: string
-//   Type: string
-//   attributes: UserTypes
-// }
-
 export type UserJSONResponseList = {
   data: UserJSONResponse[]
   Included: object[]

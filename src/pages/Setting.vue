@@ -152,6 +152,7 @@ const save = async () => {
 
 .settings__btn {
   width: toRem(100);
+  border-radius: toRem(8);
 }
 
 .settings__fields-title {

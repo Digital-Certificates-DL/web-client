@@ -7,14 +7,12 @@
     />
   </div>
   <div v-else class="generation">
-    <div :class="dynamicClass" @click="toggleClass">Dynamic Class Example</div>
-
     <div class="generation__title">
       <h2>{{ $t('generation.title') }}</h2>
     </div>
     <div class="generation__body">
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step1') }}
         </p>
 
@@ -24,23 +22,25 @@
           </p>
           <input-field
             class="generation__text-input"
-            label="Name"
             type="text"
             v-model="certificatesInfo.name"
+            @input="validateField"
+            :class="readyFiled"
+            :label="$t('generation.step1-placeholder')"
             :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
 
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step2') }}
         </p>
         <div class="generation__choose-template-wrp generation__step-field">
           <p class="generation__subtitle-num">
             {{ $t('generation.step2-description') }}
           </p>
-          <div class="generation__choose-template-list">
+          <div class="generation__choose-template-list" :class="readyFiled">
             <div class="generation__choose-template"></div>
             <div class="generation__choose-template"></div>
             <div class="generation__choose-template"></div>
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step3') }}
         </p>
         <div class="generation__upload-files generation__step-field">
@@ -58,10 +58,11 @@
           </p>
           <input-field
             class="generation__text-input"
-            label="Link"
             type="text"
-            @input="updateLink"
             v-model="certificatesInfo.link"
+            :class="readyFiled"
+            :error-message="getFieldErrorMessage('link')"
+            :label="$t('generation.step3-placeholder')"
           />
         </div>
       </div>
@@ -69,14 +70,14 @@
         <app-button
           class="generation__btn"
           type="submit"
-          text="Start"
+          :text="$t('generation.start-btn')"
           :color="'success'"
           @click="start"
         />
         <app-button
           class="generation__btn"
           type="submit"
-          text="Cancel"
+          :text="$t('generation.cancel-btn')"
           :color="'success'"
           @click="router.push(ROUTE_NAMES.main)"
         />
@@ -106,26 +107,33 @@ const authLink = ref('')
 
 const certificatesInfo = reactive({
   name: '',
-  template: '',
   link: '',
   table: null,
 })
 
-const isActive = ref(false)
+const isReady = ref(false)
 
-const dynamicClass = computed(() => {
-  return isActive.value ? 'active' : ''
+const readyFiled = computed(() => {
+  return isReady.value ? 'generation__step-field--ready' : ''
 })
 
-// Function to toggle the isActive value
-const toggleClass = () => {
-  isActive.value = !isActive.value
+const readyNumber = computed(() => {
+  return isReady.value ? 'generation__step-number--ready' : ''
+})
+
+const validateField = () => {
+  if (isFormValid()) {
+    isReady.value = true
+    return
+  }
+  isReady.value = false
 }
 
-const { getFieldErrorMessage, isFormValid, isFieldsValid } = useFormValidation(
+const { getFieldErrorMessage, isFormValid } = useFormValidation(
   certificatesInfo,
   {
     name: { required },
+    link: { required },
   },
 )
 
@@ -149,7 +157,6 @@ const parsedData = async (sheepUrl?: string) => {
       },
     })
     .catch(err => {
-      console.log(err)
       if (err.metadata.link) {
         isUnauthorized.value = true
         authLink.value = err.metadata.link
@@ -158,6 +165,7 @@ const parsedData = async (sheepUrl?: string) => {
 
   return resp as UserJSONResponseList | undefined
 }
+
 const sign = (users: UserJSONResponseList) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users.data) {
@@ -230,10 +238,6 @@ const updateCode = async (code: string) => {
   font-size: toRem(14);
   width: toRem(30);
   height: toRem(30);
-
-  &--ready {
-    background: var(--secondary-dark);
-  }
 }
 
 .generation__text-input {
@@ -241,6 +245,7 @@ const updateCode = async (code: string) => {
   width: toRem(458);
   margin-bottom: toRem(20);
   margin-top: toRem(20);
+  padding-left: toRem(20);
 }
 
 .generation__file-input {
@@ -250,14 +255,6 @@ const updateCode = async (code: string) => {
   height: toRem(222);
 }
 
-.generation__step-field {
-  margin-left: toRem(28);
-
-  &--ready {
-    border-left: var(--secondary-dark) toRem(2) solid;
-  }
-}
-
 .generation__step {
   display: flex;
   margin-top: toRem(20);
@@ -265,6 +262,7 @@ const updateCode = async (code: string) => {
 
 .generation__choose-template-list {
   display: flex;
+  padding-left: toRem(20);
 }
 
 .generation__choose-template {
@@ -277,7 +275,6 @@ const updateCode = async (code: string) => {
 
 .generation__btns {
   display: flex;
-  //justify-content: left;
   margin-left: toRem(60);
 }
 
@@ -290,7 +287,12 @@ const updateCode = async (code: string) => {
   margin-left: toRem(20);
 }
 
-.active {
-  background-color: red;
+.generation__step-field--ready {
+  border-left: var(--secondary-dark) toRem(2) solid;
+}
+
+.generation__step-number--ready {
+  background: var(--secondary-dark);
+  color: var(--white);
 }
 </style>

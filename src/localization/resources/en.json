@@ -83,7 +83,11 @@
     "step3-description": "Write a link to  google sheet",
     "step1": "1",
     "step2": "2",
-    "step3": "3"
+    "step3": "3",
+    "step3-placeholder": "Link",
+    "step1-placeholder": "Name",
+    "start-btn": "Start",
+    "cancel-btn": "Cancel"
   },
   "certificate": {
     "mint-text": "Make sbt issuance",

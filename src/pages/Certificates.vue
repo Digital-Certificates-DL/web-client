@@ -27,6 +27,7 @@
         <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
+        <p></p>
       </div>
       <div v-if="userState.students.length === 0">
         <error-message :message="$t('certificates.error-certificate-list')" />
