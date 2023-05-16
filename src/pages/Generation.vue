@@ -7,6 +7,8 @@
     />
   </div>
   <div v-else class="generation">
+    <div :class="dynamicClass" @click="toggleClass">Dynamic Class Example</div>
+
     <div class="generation__title">
       <h2>{{ $t('generation.title') }}</h2>
     </div>
@@ -24,8 +26,8 @@
             class="generation__text-input"
             label="Name"
             type="text"
-            v-model="certificatesInfo.Name"
-            :error-message="getFieldErrorMessage('Name')"
+            v-model="certificatesInfo.name"
+            :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
@@ -38,10 +40,12 @@
           <p class="generation__subtitle-num">
             {{ $t('generation.step2-description') }}
           </p>
-          <div class="generation__choose-template">
-            <!--            <img src="/public" alt="" />-->
+          <div class="generation__choose-template-list">
+            <div class="generation__choose-template"></div>
+            <div class="generation__choose-template"></div>
+            <div class="generation__choose-template"></div>
+            <!--todo  make better ^-->
           </div>
-          <!--todo  make better ^-->
         </div>
       </div>
       <div class="generation__step">
@@ -56,11 +60,12 @@
             class="generation__text-input"
             label="Link"
             type="text"
-            v-model="certificatesInfo.Link"
+            @input="updateLink"
+            v-model="certificatesInfo.link"
           />
         </div>
       </div>
-      <div class="generation__btns">
+      <div class="generation__step-field generation__btns">
         <app-button
           class="generation__btn"
           type="submit"
@@ -81,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
@@ -100,22 +105,33 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 
 const certificatesInfo = reactive({
-  Name: '',
-  Template: null,
-  Link: '',
-  Table: null,
+  name: '',
+  template: '',
+  link: '',
+  table: null,
 })
 
-const { getFieldErrorMessage, isFormValid } = useFormValidation(
+const isActive = ref(false)
+
+const dynamicClass = computed(() => {
+  return isActive.value ? 'active' : ''
+})
+
+// Function to toggle the isActive value
+const toggleClass = () => {
+  isActive.value = !isActive.value
+}
+
+const { getFieldErrorMessage, isFormValid, isFieldsValid } = useFormValidation(
   certificatesInfo,
   {
-    Name: { required },
+    name: { required },
   },
 )
 
 const start = async () => {
   if (!isFormValid) return
-  const users = await parsedData(certificatesInfo.Link)
+  const users = await parsedData(certificatesInfo.link)
   if (users === undefined) {
     return
   }
@@ -132,16 +148,11 @@ const parsedData = async (sheepUrl?: string) => {
         },
       },
     })
-    .then(resp => {
-      if (resp.status === 403) {
-        return
-      }
-      return resp
-    })
     .catch(err => {
-      if (err.response.data.data.link) {
+      console.log(err)
+      if (err.metadata.link) {
         isUnauthorized.value = true
-        authLink.value = err.response.data.data.link
+        authLink.value = err.metadata.link
       }
     })
 
@@ -205,6 +216,11 @@ const updateCode = async (code: string) => {
 </script>
 
 <style lang="scss" scoped>
+.generation {
+  width: var(--page-large);
+  margin: 0 auto;
+}
+
 .generation__step-number {
   display: flex;
   justify-content: center;
@@ -214,10 +230,10 @@ const updateCode = async (code: string) => {
   font-size: toRem(14);
   width: toRem(30);
   height: toRem(30);
-}
 
-.generation__step-number--ready {
-  background: var(--secondary-dark);
+  &--ready {
+    background: var(--secondary-dark);
+  }
 }
 
 .generation__text-input {
@@ -234,8 +250,12 @@ const updateCode = async (code: string) => {
   height: toRem(222);
 }
 
-.generation__step-field--ready {
-  border-left: var(--secondary-dark) toRem(2) solid;
+.generation__step-field {
+  margin-left: toRem(28);
+
+  &--ready {
+    border-left: var(--secondary-dark) toRem(2) solid;
+  }
 }
 
 .generation__step {
@@ -243,14 +263,34 @@ const updateCode = async (code: string) => {
   margin-top: toRem(20);
 }
 
+.generation__choose-template-list {
+  display: flex;
+}
+
+.generation__choose-template {
+  width: toRem(314);
+  height: toRem(222);
+  background: var(--background-primary-dark);
+  border-radius: toRem(12);
+  margin-right: toRem(15);
+}
+
 .generation__btns {
   display: flex;
-  justify-content: space-between;
-  width: toRem(350);
-  margin-left: toRem(80);
+  //justify-content: left;
+  margin-left: toRem(60);
+}
+
+.generation__btn {
+  width: toRem(200);
+  margin-right: toRem(16);
 }
 
 .generation__subtitle-num {
   margin-left: toRem(20);
+}
+
+.active {
+  background-color: red;
 }
 </style>

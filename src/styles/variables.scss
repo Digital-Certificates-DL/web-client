@@ -111,6 +111,9 @@
   /* transition duration */
   --field-transition-duration: 0.2s;
 
+  /*page size*/
+  --page-large: #{toRem(1400)};
+
   /* paddings */
   --field-padding-top: #{toRem(14)};
   --field-padding-right: #{toRem(16)};

@@ -5,8 +5,8 @@
       <div class="certificates__search-input-wrp">
         <input-field
           class="certificates__search-input"
-          placeholder="find"
           v-model="form.search"
+          :placeholder="$t('certificates.certificates-find')"
           @update:model-value="find"
         />
       </div>

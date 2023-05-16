@@ -99,7 +99,7 @@ const connect = async () => {
 
 <style lang="scss" scoped>
 .main__page {
-  max-width: toRem(1400);
+  max-width: var(--page-large);
   margin: auto;
 }
 

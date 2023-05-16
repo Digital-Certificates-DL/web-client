@@ -73,7 +73,8 @@
     "certificates-subtitle-course": "Course",
     "certificates-subtitle-date": "Date",
     "certificates-bitcoin-btn": "Bitcoin",
-    "error-certificate-list": "Empty certificate list"
+    "error-certificate-list": "Empty certificate list",
+    "certificates-find": "find"
   },
   "generation": {
     "title":"Create new certificate",

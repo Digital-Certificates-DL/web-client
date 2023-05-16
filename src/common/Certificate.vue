@@ -19,7 +19,7 @@
       <app-button
         class="certificate__btn"
         :text="$t('certificate.mint-text')"
-        @click="emit('OpenModal', true, props.user)"
+        @click="emit('open-modal', true, props.user)"
       />
 
       <app-button
@@ -42,7 +42,7 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'OpenModal', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', state: boolean, user: UserJSONResponse): boolean
   (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
 
@@ -67,7 +67,7 @@ const selectItem = () => {
   margin-top: toRem(20);
   padding-bottom: toRem(10);
   border-bottom: var(--text-primary-dark), toRem(2), solid;
-  max-width: toRem(1400);
+  max-width: var(--page-large);
 }
 
 .certificate_img {

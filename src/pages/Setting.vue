@@ -1,5 +1,5 @@
 <template>
-  <div class="setting">
+  <div class="settings">
     <div class="settings__body">
       <div class="settings__info">
         <h3 class="settings__title">
@@ -122,6 +122,11 @@ const save = async () => {
 }
 </script>
 <style scoped lang="scss">
+.settings {
+  width: var(--page-large);
+  margin: auto;
+}
+
 .settings__body {
   display: grid;
   justify-items: center;
