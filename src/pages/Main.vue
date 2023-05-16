@@ -44,27 +44,27 @@
       </div>
       <div class="main__endpoints-side">
         <nav-button
-          :title="'Settings'"
-          description="Your settings"
+          :title="$t('main.main-nav-settings-title')"
+          :description="$t('main.main-nav-settings-description')"
           class="main__card"
           color="warning"
           size="large"
-          :body="$t('main.page-settings-desc')"
+          :body="$t('main.main-nav-settings-body')"
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <nav-button
-          :title="'Certificates'"
-          description="Your certificates"
+          :title="$t('main.main-nav-certificates-title')"
+          :description="$t('main.main-nav-certificates-description')"
           class="main__card"
           color="info"
           size="large"
-          :body="$t('main.page-certificates-desc')"
+          :body="$t('main.main-nav-certificates-body')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
         <nav-button
-          :title="'Generation'"
-          description="generate certificates"
-          :body="$t('main.page-generation-desc')"
+          :title="$t('main.main-nav-generation-title')"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
           class="main__card"
           color="success"
           size="large"
@@ -102,6 +102,7 @@ const connect = async () => {
   max-width: toRem(1400);
   margin: auto;
 }
+
 .main__info {
   display: grid;
   margin-top: toRem(80);
@@ -113,7 +114,6 @@ const connect = async () => {
 .main__info-name {
   margin: auto;
   padding: toRem(20);
-  //font-size: toRem(25);
 }
 
 .main__logo {

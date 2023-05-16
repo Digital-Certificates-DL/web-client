@@ -29,12 +29,12 @@ export type UserJSONResponseList = {
 }
 
 export type UserSetting = {
-  Name: string
-  Org: string
-  SignKey: string
-  Address: string
-  KeyPathID: number
-  LastExAddress: string
-  SendMnemonicPhrase: string
-  Url: string
+  name: string
+  org: string
+  signKey: string
+  address: string
+  keyPathID: number
+  lastExAddress: string
+  sendMnemonicPhrase: string
+  url: string
 }

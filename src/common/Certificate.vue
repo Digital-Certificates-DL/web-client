@@ -1,6 +1,6 @@
 <template>
   <div class="certificate">
-    <checkbox-field :model-value="isSelected" />
+    <checkbox-field :model-value="isSelected" @click="selectItem" />
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"

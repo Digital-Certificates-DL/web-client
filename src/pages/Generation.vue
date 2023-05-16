@@ -124,17 +124,14 @@ const start = async () => {
 }
 const parsedData = async (sheepUrl?: string) => {
   const resp = await api
-    .post<UserJSONResponseList | UnauthorizedResponse>(
-      '/integrations/ccp/users/empty',
-      {
-        body: {
-          data: {
-            name: userState.setting.Name,
-            url: sheepUrl || userState.setting.Url,
-          },
+    .post<UserJSONResponse[]>('/integrations/ccp/users/empty', {
+      body: {
+        data: {
+          name: userState.setting.name,
+          url: sheepUrl || userState.setting.url,
         },
       },
-    )
+    })
     .then(resp => {
       if (resp.status === 403) {
         return
@@ -142,22 +139,19 @@ const parsedData = async (sheepUrl?: string) => {
       return resp
     })
     .catch(err => {
-      if (err.response.data.data.attributes.link) {
+      if (err.response.data.data.link) {
         isUnauthorized.value = true
-        authLink.value = err.response.data.data.attributes.link
+        authLink.value = err.response.data.data.link
       }
     })
 
   return resp as UserJSONResponseList | undefined
 }
 const sign = (users: UserJSONResponseList) => {
-  const signature = new Signature(userState.setting.SignKey)
+  const signature = new Signature(userState.setting.signKey)
   for (const user of users.data) {
-    if (
-      user.attributes.Signature === undefined ||
-      user.attributes.Signature == ''
-    ) {
-      user.attributes.Signature = signature.signMsg(user.attributes.Msg)
+    if (user.Signature === undefined || user.Signature == '') {
+      user.Signature = signature.signMsg(user.Msg)
     }
   }
   return users
@@ -166,8 +160,7 @@ const sign = (users: UserJSONResponseList) => {
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
-    user.attributes.Img =
-      'data:image/png;base64,' + user.attributes.CertificateImg.toString()
+    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
   }
 
   return users
@@ -180,9 +173,9 @@ const createPDF = async (users: UserJSONResponseList) => {
         data: {
           data: users.data,
           address:
-            userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-          url: userState.setting.Url,
-          name: userState.setting.Name,
+            userState.setting.address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          url: userState.setting.url,
+          name: userState.setting.name,
         },
       },
     },
@@ -202,7 +195,7 @@ const updateCode = async (code: string) => {
     body: {
       data: {
         code: code,
-        name: userState.setting.Name,
+        name: userState.setting.name,
       },
     },
   })
@@ -211,7 +204,7 @@ const updateCode = async (code: string) => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .generation__step-number {
   display: flex;
   justify-content: center;

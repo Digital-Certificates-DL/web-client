@@ -43,8 +43,9 @@ const connect = async () => {
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 toRem(4) toRem(16) rgba(0, 0, 0, 0.06);
   margin-bottom: toRem(20);
+
   @include respond-to(tablet) {
     flex-wrap: wrap;
   }
