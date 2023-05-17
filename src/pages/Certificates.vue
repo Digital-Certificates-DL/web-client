@@ -47,7 +47,7 @@
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
-import InputField from '@/fields/InputField.vue'
+import { InputField } from '@/fields'
 import { reactive, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
 import {

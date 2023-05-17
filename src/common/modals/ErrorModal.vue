@@ -6,7 +6,7 @@
     <template #default="{ modal }">
       <div class="error-modal">
         <error-message class="error-modal__data-err" :message="props.message" />
-        <app-button text="close" @click="modal.close" />
+        <app-button text="$t('error-modal.close-btn')" @click="modal.close" />
       </div>
     </template>
   </modal>

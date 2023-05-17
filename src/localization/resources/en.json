@@ -122,6 +122,9 @@
     "close-btn": "Close",
     "get-access-btn": "Get access",
     "send-code-btn": "Send code"
+  },
+  "error-modal": {
+    "close-btn": "Close"
   }
 
 }

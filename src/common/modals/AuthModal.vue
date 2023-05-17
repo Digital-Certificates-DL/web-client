@@ -16,15 +16,15 @@
           :color="'info'"
           @click="window.open(props.tokenLink, '_blank')"
         />
-        <div class="certificate-modal__btns">
+        <div class="auth-modal__btns">
           <app-button
-            class="auth-modal__btn auth-modal__btn-nav"
+            class="auth-modal__btn"
             :text="$t('auth-modal.send-code-btn')"
             :color="'info'"
             @click="sendCode"
           />
           <app-button
-            class="auth-modal__btn auth-modal__btn-nav"
+            class="auth-modal__btn"
             :text="$t('auth-modal.close-btn')"
             :color="'info'"
             @click="modal.close"
@@ -78,6 +78,11 @@ const sendCode = () => {
 
 .auth-modal__btn {
   width: toRem(200);
+}
+
+.auth-modal__btns {
+  display: flex;
+  justify-content: space-between;
 }
 
 .auth-modal__btn-link {
