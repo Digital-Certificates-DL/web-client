@@ -1,42 +1,31 @@
 <template>
   <div class="certificates">
-    <div v-if="isUnauthorized">
-      <auth-modal
-        :token-link="authLink"
-        @close-modal="closeModal"
-        @with-code="updateCode"
-      />
-    </div>
-    <app-navbar />
-
-    <h1>{{ $t('certificates.certificates-title') }}</h1>
-    <div class="certificates__search">
-      <input-field
-        class="certificates__search-input"
-        placeholder="find"
-        @update="search"
-      />
-
-      <div v-if="generateCount > 0" class="certificates__btns">
-        <p>{{ generateCount }}</p>
-        <app-button
-          class="certificates__btn"
-          text="Generate All"
-          :color="'info'"
-          @click="generate"
+    <h2>{{ $t('certificates.certificates-title') }}</h2>
+    <div class="certificates__search-wrp">
+      <div class="certificates__search-input-wrp">
+        <input-field
+          class="certificates__search-input"
+          v-model="form.search"
+          :placeholder="$t('certificates.certificates-find')"
+          @update:model-value="find"
         />
+        <div v-if="generateCount > 0">
+          <app-button :text="'generate'" @click="generate" />
+        </div>
       </div>
     </div>
-    <div v-if="isModalActive">
-      <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
-    </div>
+    <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
+
     <div class="certificates__list">
       <div class="certificates__list-titles">
         <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
+        <p></p>
       </div>
-
+      <div v-if="userList.length === 0">
+        <error-message :message="$t('certificates.error-certificate-list')" />
+      </div>
       <div v-for="(item, key) in userList" :value="key" :key="item">
         <certificate
           :user="item"
@@ -50,57 +39,73 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import ModalInfo from '@/common/modals/CertificateModal.vue'
-import { UserJSONResponse, UserJSONResponseList } from '@/types'
+import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
-import { AppNavbar, ErrorMessage, AppButton, Certificate } from '@/common'
-import { router } from '@/router'
+import { ErrorMessage, Certificate, CertificateModal } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
-import { Signature } from '@/utils/signature.utils'
-import AuthModal from '@/common/modals/AuthModal.vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
+import { Signature } from '@/utils'
+import { useRouter } from '@/router'
+import AppButton from '@/common/AppButton.vue'
 
+const router = useRouter()
 const userState = useUserStore()
 const isModalActive = ref(false)
-let currentUser: UserJSONResponse
+const currentUser = ref({} as UserJSONResponse)
+// const listForTimestamp: UserJSONResponse[] = []
 
-const isUnauthorized = ref(false)
-const authLink = ref('')
+let userBuffer: UserJSONResponse[]
+
+// const isUnauthorized = ref(false)
+// const authLink = ref('')
 
 const userList = ref([] as UserJSONResponse[])
-const listForCreate: UserJSONResponse[] = []
+const listForCreate = ref([] as UserJSONResponse[])
 const generateCount = ref(0)
 const form = reactive({
   search: '',
 })
 const openModal = (state: boolean, user: UserJSONResponse) => {
   isModalActive.value = state
-  currentUser = user
+  currentUser.value = user
+}
+const prepareUserImg = (users: UserJSONResponse[]) => {
+  for (const user of users) {
+    if (user.certificateImg === null) {
+      continue
+    }
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+  }
+
+  return users
 }
 
+// const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
+//   if (state) {
+//     listForTimestamp.push(user)
+//
+//     return
+//   }
+//   listForTimestamp.filter(item => item !== user)
+// }
 const closeModal = () => {
   isModalActive.value = false
 }
-
-console.log(userState.students)
-
 const refresh = async () => {
-  console.log('test')
-  const users = await api.post<UserJSONResponseList>(
+  const { data } = await api.post<UserJSONResponse[]>(
     '/integrations/ccp/users/',
     {
       body: {
         data: {
-          url: userState.setting.Url,
-          name: userState.setting.Name,
+          url: userState.setting.url,
+          name: userState.setting.name,
         },
       },
     },
   )
+  userState.students = prepareUserImg(data)
 
   // console.log(users)
   //
@@ -108,32 +113,23 @@ const refresh = async () => {
   // }
   // console.log('users ', prepareUserImg(data))
   // userList.value = prepareUserImg(data).data
-  console.log('users ', userList.value)
-  console.log(users)
-  userList.value = users.data
 
-  console.log('users ', users.data)
-  console.log('users ', userList.value)
+  userList.value = data
 }
 
-let userBuffer
-const search = () => {
+const find = () => {
   userBuffer = userState.students
-  console.log('test ', userState.students)
 
-  console.log('start')
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
-  userState.students.filter(item =>
-    item.attributes.Participant.includes(form.search),
-  )
+  userState.students.filter(item => item.participant.includes(form.search))
 }
 
 const generate = async () => {
-  const users = listForCreate
+  const users = listForCreate.value
   // loaderState.value = 'Signing users'
-  const signatures = sign(users)
+  const signatures = await sign(users)
   // loaderState.value = 'Creating PDF for users'
 
   userState.students = await createPDF(signatures)
@@ -144,120 +140,108 @@ const generate = async () => {
   await router.push(ROUTE_NAMES.timestamp)
 }
 
-const updateCode = async (code: string) => {
-  isUnauthorized.value = false
-  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    body: {
-      data: {
-        code: code,
-        name: userState.setting.Name,
-      },
-    },
-  })
-
-  isUnauthorized.value = false
-}
-const sign = (users: UserJSONResponse[]) => {
-  const signature = new Signature(userState.setting.SignKey)
-  console.log(users, ' users')
+// const updateCode = async (code: string) => {
+//   isUnauthorized.value = false
+//   await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
+//     body: {
+//       data: {
+//         code: code,
+//         name: userState.setting.Name,
+//       },
+//     },
+//   })
+//
+//   isUnauthorized.value = false
+// }
+const sign = async (users: UserJSONResponse[]) => {
+  const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
-    console.log(user, ' user')
-    if (user.Signature === undefined || user.Signature == '') {
-      user.Signature = signature.signMsg(user.Msg)
+    if (user.signature === undefined || user.signature == '') {
+      user.signature = signature.signMsg(user.msg)
     }
   }
+
   return users
 }
 
-const prepareUserImg = (users: UserJSONResponse[]) => {
-  console.log(users)
-  const list: UserJSONResponse[] = users
-  console.log('pr')
-  for (const user of list) {
-    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
-  }
-  console.log('users: ', users)
-  return users
-}
 const createPDF = async (users: UserJSONResponse[]) => {
-  const resp = await api.post<UserJSONResponseList>(
+  const { data } = await api.post<UserJSONResponse[]>(
     '/integrations/ccp/certificate/',
     {
       body: {
         data: {
           users: users, //todo make better
           address:
-            userState.setting.Address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-          url: userState.setting.Url,
-          name: userState.setting.Name,
+            userState.setting.address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          url: userState.setting.url,
+          name: userState.setting.name,
         },
       },
     },
   )
-  console.log(resp.data)
-  const updatedUsers = prepareUserImg(resp.data)
-  userState.students = updatedUsers.data
-  return resp.data
+  const updatedUsers = prepareUserImg(data)
+  userState.students = updatedUsers
+  return data
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.put<UserJSONResponseList>(
+  const { data } = await api.put<UserJSONResponse[]>(
     '/integrations/ccp/certificate/',
     {
       body: {
         data: {
-          data: users,
-          address: userState.setting.Address,
-          name: userState.setting.Name,
-          url: userState.setting.Url,
+          users: users,
+          address: userState.setting.address,
+          name: userState.setting.name,
+          url: userState.setting.url,
         },
       },
     },
   )
 
-  // todo check  error
-  userState.students = data.data
+  userState.students = data
 }
 
 const autoRefresh = () => {
-  console.log('start')
-
   if (userState.students.length === 0) {
-    console.log('refresh')
     refresh()
   }
-  console.log('auto: ', userList.value)
   userList.value = userState.students
 }
 
 autoRefresh()
 
-console.log(route.params)
-
 const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {
-    listForCreate.push(item)
-    console.log(listForCreate, 'list')
-    generateCount.value = listForCreate.length
+    listForCreate.value.push(item)
+    generateCount.value = listForCreate.value.length
     return
   }
 
-  const index = listForCreate.indexOf(item, 0)
+  const index = listForCreate.value.indexOf(item, 0)
   if (index > -1) {
-    listForCreate.splice(index, 1)
+    listForCreate.value.splice(index, 1)
   }
-  generateCount.value = listForCreate.length
+  generateCount.value = listForCreate.value.length
 }
 </script>
 
-<style lang="scss" scoped>
-.certificates__search {
-  width: toRem(458);
+<style scoped lang="scss">
+.certificates {
+  margin: 0 auto;
+  width: toRem(1400);
+}
+
+.certificates__search-wrp {
+  margin-top: toRem(24);
+  display: flex;
+  justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.certificates__search-input {
+.certificates__search-input-wrp {
   margin-bottom: toRem(20);
+  width: toRem(458);
 }
 
 .certificates__btns {
@@ -266,8 +250,8 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 }
 
 .certificates__btn {
-  background: var(--primary-dark);
-  width: toRem(100);
+  height: toRem(52);
+  border-radius: toRem(8);
 }
 
 .certificates__list-titles {

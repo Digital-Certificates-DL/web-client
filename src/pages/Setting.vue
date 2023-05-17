@@ -1,62 +1,61 @@
 <template>
-  <div class="setting">
-    <app-navbar />
-    <div class="setting_body">
-      <div class="setting__info">
-        <h1 class="setting__title">
+  <div class="settings">
+    <div class="settings__body">
+      <div class="settings__info">
+        <h3 class="settings__title">
           {{ $t('settings.page-name') }}
-        </h1>
+        </h3>
         <p>
           {{ $t('settings.title') }}
         </p>
       </div>
-      <h1 class="settings__fields-title">
+      <h3 class="settings__fields-title">
         {{ $t('settings.general-title') }}
-      </h1>
+      </h3>
       <input-field
         class="settings__form"
-        label="Name of organization"
-        type="text"
-        v-model="form.Org"
+        v-model="form.org"
+        :label="$t('settings.org-name-form-label')"
+        :error-message="getFieldErrorMessage('org')"
       />
       <input-field
-        label="Account name"
         class="settings__form"
-        type="text"
-        v-model="form.Name"
+        v-model="form.name"
+        :label="$t('settings.account-name-form-label')"
+        :error-message="getFieldErrorMessage('name')"
       />
-      <h1 class="settings__fields-title">
-        {{ $t('settings.general-title') }}
-      </h1>
+      <h3 class="settings__fields-title">
+        {{ $t('settings.sign-key-title') }}
+      </h3>
       <input-field
-        label="Bitcoin Timestamping Mnemonic Phrase"
         class="settings__form"
-        type="text"
-        v-model="form.SendMnemonicPhrase"
-      />
-      <input-field
-        label="Google Sheet URL"
-        class="settings__form"
-        type="text"
-        v-model="form.Url"
+        v-model="form.sendMnemonicPhrase"
+        :label="$t('settings.bitcoin-phrase-form-label')"
+        :error-message="getFieldErrorMessage('sendMnemonicPhrase')"
       />
       <input-field
-        label="Bitcoin Corporate Signing Key (WIF)"
         class="settings__form"
-        type="text"
-        v-model="form.SignKey"
+        v-model="form.url"
+        :label="$t('settings.url-form-label')"
+        :error-message="getFieldErrorMessage('url')"
+      />
+      <input-field
+        class="settings__form"
+        v-model="form.signKey"
+        :label="$t('settings.wif-form-label')"
+        :error-message="getFieldErrorMessage('signKey')"
       />
       <div class="settings__btns">
         <app-button
-          text="Save"
-          size="medium"
-          :color="'success'"
+          class="settings__btn"
+          :text="$t('settings.save-btn-title')"
+          :color="'info'"
           @click="save"
         />
         <app-button
-          text="Cancel"
-          size="medium"
-          :color="'success'"
+          class="settings__btn"
+          :text="$t('settings.cancel-btn-title')"
+          :color="'info'"
           :route="{
             name: $routes.main,
           }"
@@ -73,11 +72,10 @@ import { UserJSONResponseList, UserSetting } from '@/types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import AppButton from '@/common/AppButton.vue'
+import { AppButton } from '@/common'
 import btc from '@/utils/bitcoin.util'
 
 import { api } from '@/api'
-import { AppNavbar } from '@/common'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 
@@ -85,33 +83,33 @@ const router = useRouter()
 const userState = useUserStore()
 
 const form = reactive({
-  Name: '',
-  Org: '',
-  SignKey: '',
-  SendMnemonicPhrase: '',
-  Url: '',
+  name: '',
+  org: '',
+  signKey: '',
+  sendMnemonicPhrase: '',
+  url: '',
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  Name: { required },
-  Org: { required },
-  SignKey: { required },
-  SendMnemonicPhrase: { required },
-  Url: { required },
+  name: { required },
+  org: { required },
+  signKey: { required },
+  sendMnemonicPhrase: { required },
+  url: { required },
 })
 
 const save = async () => {
-  if (!isFormValid) return
+  if (!isFormValid()) return
   userState.setting = form
-  const address = btc.Bitcoin.getAddressFromWIF(form.SignKey)
+  const address = btc.Bitcoin.getAddressFromWIF(form.signKey)
 
-  userState.setting.Address = address || ''
+  userState.setting.address = address || ''
 
   await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
     body: {
       data: {
         code: '',
-        name: userState.setting.Name,
+        name: userState.setting.name,
       },
     },
   })
@@ -119,12 +117,17 @@ const save = async () => {
 }
 </script>
 <style scoped lang="scss">
-.setting_body {
+.settings {
+  width: var(--page-large);
+  margin: auto;
+}
+
+.settings__body {
   display: grid;
   justify-items: center;
 }
 
-.setting__info {
+.settings__info {
   display: grid;
   justify-items: center;
   max-height: toRem(100);
@@ -142,11 +145,16 @@ const save = async () => {
   gap: toRem(80);
 }
 
+.settings__btn {
+  width: toRem(100);
+  border-radius: toRem(8);
+}
+
 .settings__fields-title {
   margin-bottom: toRem(30);
 }
 
-.setting__title {
+.settings__title {
   margin-bottom: toRem(20);
 }
 </style>

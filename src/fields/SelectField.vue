@@ -132,7 +132,7 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: number | string): void
+  (e: 'update:model-value', value: number | string): void
 }>()
 
 const attrs = useAttrs()
@@ -192,7 +192,7 @@ const closeDropdown = () => {
 const select = (value: string | number) => {
   if (isDisabled.value || isReadonly.value) return
 
-  emit('update:modelValue', value)
+  emit('update:model-value', value)
   closeDropdown()
 }
 

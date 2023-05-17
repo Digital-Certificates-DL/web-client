@@ -1,6 +1,7 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
     <router-view v-slot="{ Component, route }">
+      <app-navbar v-if="route.fullPath !== '/main'" />
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
         <component class="app__main" :is="Component" />
       </transition>
@@ -15,10 +16,10 @@ import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { PROVIDERS } from '@/enums'
 
-import { useUserStore, useWeb3ProvidersStore } from '@/store'
+import AppNavbar from '@/common/AppNavbar.vue'
+import { useWeb3ProvidersStore } from '@/store'
 
 const web3Store = useWeb3ProvidersStore()
-const userState = useUserStore()
 const isAppInitialized = ref(false)
 const init = async () => {
   try {

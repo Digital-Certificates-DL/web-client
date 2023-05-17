@@ -1,16 +1,17 @@
 <template>
   <div class="home-nav">
     <div class="home-nav__info">
-      <p class="home-nav__test home-nav__title">
+      <h3 class="home-nav__title">
         {{ props.title }}
-      </p>
-      <p class="home-nav__test home-nav__description">
+      </h3>
+      <p class="home-nav__description">
         {{ props.description }}
       </p>
     </div>
     <div class="home-nav__btns">
       <app-button
         class="home-nav__btn"
+        :color="'info'"
         :text="props.name"
         @click="emit('active')"
       />
@@ -21,22 +22,13 @@
 <script lang="ts" setup>
 import AppButton from '@/common/AppButton.vue'
 
-const props = withDefaults(
-  defineProps<{
-    color: string
-    title: string
-    name: string
-    description: string
-    router: string
-  }>(),
-  {
-    color: '',
-    title: '',
-    name: '',
-    description: '',
-    router: '',
-  },
-)
+const props = defineProps<{
+  color: string
+  title: string
+  name: string
+  description: string
+  router: string
+}>()
 
 const emit = defineEmits<{
   (e: 'active'): boolean
@@ -46,12 +38,19 @@ const emit = defineEmits<{
 <style lang="scss" scoped>
 .home-nav {
   width: 40%;
-  border-radius: toRem(10);
   border: toRem(1) solid var(--border-primary-main);
   padding: toRem(20);
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  width: toRem(652);
+  height: toRem(160);
+
+  /* border/border-tertiary */
+
+  border: toRem(2) solid var(--background-primary-dark);
+  border-radius: toRem(8);
 }
 
 .home-nav__description {

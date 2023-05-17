@@ -7,75 +7,75 @@
     />
   </div>
   <div v-else class="generation">
-    <app-navbar />
     <div class="generation__title">
-      <h1>{{ $t('generation.title') }}</h1>
+      <h2>{{ $t('generation.title') }}</h2>
     </div>
     <div class="generation__body">
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step1') }}
         </p>
 
         <div class="generation__collection-name generation__step-field">
-          <h3 class="generation__subtitle-num">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step1-description') }}
-          </h3>
+          </p>
           <input-field
             class="generation__text-input"
-            label="Name"
-            type="text"
-            v-model="certificatesInfo.Name"
+            v-model="certificatesInfo.name"
+            @input="validateField"
+            :class="readyFiled"
+            :label="$t('generation.step1-placeholder')"
+            :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
 
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step2') }}
         </p>
-        <div class="generation__upload-files generation__step-field">
-          <h3 class="generation__subtitle-num">
+        <div class="generation__choose-template-wrp generation__step-field">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step2-description') }}
-          </h3>
-          <input-field
-            class="generation__file-input"
-            id="image-file"
-            type="file"
-            label="template"
-            v-model="certificatesInfo.Template"
-          />
-          <!--todo  make better ^-->
+          </p>
+          <div class="generation__choose-template-list" :class="readyFiled">
+            <div class="generation__choose-template"></div>
+            <div class="generation__choose-template"></div>
+            <div class="generation__choose-template"></div>
+            <!--todo  make better ^-->
+          </div>
         </div>
       </div>
       <div class="generation__step">
-        <p class="generation__step-number">
+        <p class="generation__step-number" :class="readyNumber">
           {{ $t('generation.step3') }}
         </p>
         <div class="generation__upload-files generation__step-field">
-          <h3 class="generation__subtitle-num">
+          <p class="generation__subtitle-num">
             {{ $t('generation.step3-description') }}
-          </h3>
+          </p>
           <input-field
             class="generation__text-input"
-            label="Link"
-            type="text"
-            v-model="certificatesInfo.Link"
+            v-model="certificatesInfo.link"
+            :class="readyFiled"
+            :error-message="getFieldErrorMessage('link')"
+            :label="$t('generation.step3-placeholder')"
           />
         </div>
       </div>
-      <div class="generation__btns">
+      <div class="generation__step-field generation__btns">
         <app-button
           class="generation__btn"
           type="submit"
-          text="Start"
+          :text="$t('generation.start-btn')"
           :color="'success'"
           @click="start"
         />
         <app-button
           class="generation__btn"
           type="submit"
-          text="Cancel"
+          :text="$t('generation.cancel-btn')"
           :color="'success'"
           @click="router.push(ROUTE_NAMES.main)"
         />
@@ -85,11 +85,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
-import { AppButton, AppNavbar } from '@/common'
-import { Signature } from '@/utils/signature.utils'
+import { AppButton } from '@/common'
+import { Signature } from '@/utils/signature.util'
 import { UserJSONResponse, UserJSONResponseList } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
@@ -106,22 +106,40 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 
 const certificatesInfo = reactive({
-  Name: '',
-  Template: null,
-  Link: '',
-  Table: null,
+  name: '',
+  link: '',
+  table: null,
 })
+
+const isReady = ref(false)
+
+const readyFiled = computed(() => {
+  return isReady.value ? 'generation__step-field--ready' : ''
+})
+
+const readyNumber = computed(() => {
+  return isReady.value ? 'generation__step-number--ready' : ''
+})
+
+const validateField = () => {
+  if (isFormValid()) {
+    isReady.value = true
+    return
+  }
+  isReady.value = false
+}
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(
   certificatesInfo,
   {
-    Name: { required },
+    name: { required },
+    link: { required },
   },
 )
 
 const start = async () => {
   if (!isFormValid) return
-  const users = await parsedData(certificatesInfo.Link)
+  const users = await parsedData(certificatesInfo.link)
   if (users === undefined) {
     return
   }
@@ -132,20 +150,24 @@ const start = async () => {
 }
 const parsedData = async (sheepUrl?: string) => {
   try {
-    const resp = await api.post<UserJSONResponseList>(
+    const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
           data: {
-            name: userState.setting.Name,
-            url: sheepUrl || userState.setting.Url,
+            name: userState.setting.name,
+            url: userState.setting.url,
           },
         },
       },
     )
-    console.log(resp.status)
-    return resp.data as UserJSONResponse[]
+    // console.log(data.status)
+    return data as UserJSONResponse[]
   } catch (err) {
+    if (err.metadata.link) {
+      isUnauthorized.value = true
+      authLink.value = err.metadata.link
+    }
     ErrorHandler.process(err)
   }
 }
@@ -163,7 +185,7 @@ const updateCode = async (code: string) => {
     body: {
       data: {
         code: code,
-        name: userState.setting.Name,
+        name: userState.setting.name,
       },
     },
   })
@@ -172,7 +194,12 @@ const updateCode = async (code: string) => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.generation {
+  width: var(--page-large);
+  margin: 0 auto;
+}
+
 .generation__step-number {
   display: flex;
   justify-content: center;
@@ -184,15 +211,12 @@ const updateCode = async (code: string) => {
   height: toRem(30);
 }
 
-.generation__step-number--ready {
-  background: var(--secondary-dark);
-}
-
 .generation__text-input {
   display: block;
   width: toRem(458);
   margin-bottom: toRem(20);
   margin-top: toRem(20);
+  padding-left: toRem(20);
 }
 
 .generation__file-input {
@@ -202,23 +226,44 @@ const updateCode = async (code: string) => {
   height: toRem(222);
 }
 
-.generation__step-field--ready {
-  border-left: var(--secondary-dark) toRem(2) solid;
-}
-
 .generation__step {
   display: flex;
   margin-top: toRem(20);
 }
 
+.generation__choose-template-list {
+  display: flex;
+  padding-left: toRem(20);
+}
+
+.generation__choose-template {
+  width: toRem(314);
+  height: toRem(222);
+  background: var(--background-primary-dark);
+  border-radius: toRem(12);
+  margin-right: toRem(15);
+}
+
 .generation__btns {
   display: flex;
-  justify-content: space-between;
-  width: toRem(350);
-  margin-left: toRem(80);
+  margin-left: toRem(60);
+}
+
+.generation__btn {
+  width: toRem(200);
+  margin-right: toRem(16);
 }
 
 .generation__subtitle-num {
   margin-left: toRem(20);
+}
+
+.generation__step-field--ready {
+  border-left: var(--secondary-dark) toRem(2) solid;
+}
+
+.generation__step-number--ready {
+  background: var(--secondary-dark);
+  color: var(--white);
 }
 </style>

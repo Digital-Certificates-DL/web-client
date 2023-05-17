@@ -1,4 +1,4 @@
-import { Signature } from './signature.utils'
+import { Signature } from './signature.util'
 
 describe('Performs bitcoin signature class unit test', () => {
   test('signature should return correct value', () => {

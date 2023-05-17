@@ -82,6 +82,7 @@ ul {
 
 p {
   line-height: 2;
+  font-size: toRem(16);
 
   @include respond-to(tablet) { line-height: 1.6; }
 }
@@ -98,19 +99,22 @@ h5 {
 }
 
 h1 {
-  font-size: toRem(24);
+  font-size: toRem(46);
 }
 
 h2 {
-  font-size: toRem(24);
+  font-size: toRem(40);
 }
 
 h3 {
-  font-size: toRem(18);
+  font-size: toRem(28);
 }
 
 h4 {
-  font-size: toRem(16);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
 }
 
 h5 {

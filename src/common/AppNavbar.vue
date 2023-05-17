@@ -5,14 +5,18 @@
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
         <app-button @click="connect" class="app-navbar__btn">
-          <img class="app-navbar__img" src="/branding/metamask.png" alt="" />
-          <p>{{ web3Store.provider.selectedAddress! || 'Connect' }}</p>
+          <img
+            class="app-navbar__img"
+            src="@/../static/branding/metamask.png"
+            alt="metamask ico"
+          />
+          <p>{{ preparedAddress || 'Connect' }}</p>
         </app-button>
       </div>
       <div class="app-navbar__settings">
         <form>
           <app-button class="app-navbar__btn" route="settings">
-            <img src="/static/branding/setting.png" alt="setting ico" />
+            <img src="@/../static/branding/setting.png" alt="setting ico" />
           </app-button>
         </form>
       </div>
@@ -23,11 +27,16 @@
 <script lang="ts" setup>
 import { AppLogo, AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
+import { ref } from 'vue'
 
-const web3Store = useWeb3ProvidersStore()
-
+const { provider } = useWeb3ProvidersStore()
+const preparedAddress = ref('')
 const connect = async () => {
-  await web3Store.provider.connect()
+  await provider.connect()
+  preparedAddress.value =
+    provider.selectedAddress!.slice(0, 6) +
+    '...' +
+    provider.selectedAddress!.slice(-4)
 }
 </script>
 
@@ -39,6 +48,8 @@ const connect = async () => {
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
+  box-shadow: 0 toRem(4) toRem(16) rgba(0, 0, 0, 0.06);
+  margin-bottom: toRem(20);
 
   @include respond-to(tablet) {
     flex-wrap: wrap;

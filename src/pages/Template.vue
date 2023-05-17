@@ -1,6 +1,5 @@
 <template>
   <div class="template">
-    <app-navbar />
     <div class="template__body">
       <div>
         <div v-if="img == 0" class="template__img-wrp">

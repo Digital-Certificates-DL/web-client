@@ -1,16 +1,18 @@
 <template>
-  <div class="main-page">
+  <div class="main__page">
     <div class="main__info">
       <app-logo class="main__logo" />
-      <span class="main__info-name">{{ $t('main.page-info-name') }}</span>
-      <h3 class="main__info-description">
+      <h1 class="main__info-name">
+        {{ $t('main.page-info-name') }}
+      </h1>
+      <p class="main__info-description">
         {{ $t('main.page-info-desc') }}
-      </h3>
+      </p>
     </div>
     <div class="main__body">
       <div class="main__provider-side">
         <div>
-          <div v-if="!web3Store.provider.isConnected" class="main__metamask">
+          <div v-if="!provider.isConnected" class="main__metamask">
             <p class="main__metamask-title">
               {{ $t('main.metamask-connect') }}
             </p>
@@ -18,71 +20,62 @@
               {{ $t('main.metamask-desc') }}
             </p>
             <app-button
-              scheme="flat"
-              size="small"
               class="main__metamask-btn main__btn-connect"
-              :text="'Connect'"
               @click="connect"
-              :disabled="web3Store.provider.isConnected"
+              :text="$t('main.metamask-connect-btn')"
+              :color="'info'"
+              :disabled="provider.isConnected"
             />
           </div>
           <div v-else class="main__metamask">
+            <p>
+              {{ provider.selectedAddress }}
+            </p>
             <app-button
-              scheme="flat"
-              size="small"
+              v-if="provider.isConnected"
               class="main__metamask-btn"
-              color="primary"
-              :text="web3Store.provider.selectedAddress || 'Connect'"
-              @click="connect"
-              :disabled="web3Store.provider.isConnected"
-            />
-            <app-button
-              v-if="web3Store.provider.isConnected"
-              class="main__metamask-btn"
-              :text="'Disconnect'"
-              scheme="flat"
-              color="primary"
-              size="small"
-              @click="web3Store.provider.disconnect"
+              color="info"
+              size="large"
+              :text="$t('main.metamask-disconnect-btn')"
+              @click="provider.disconnect"
             />
           </div>
         </div>
       </div>
       <div class="main__endpoints-side">
         <main-nav
-          :title="'Settings'"
-          description="Your settings"
-          class="main__btn"
+          class="main__card"
           color="warning"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
+          size="large"
+          :body="$t('main.main-nav-settings-body')"
+          :title="$t('main.main-nav-settings-title')"
+          :description="$t('main.main-nav-settings-description')"
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <main-nav
-          :title="'Certificates'"
-          description="Your certificates"
-          class="main__btn"
+          class="main__card"
           color="info"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
+          size="large"
+          :body="$t('main.main-nav-certificates-body')"
+          :title="$t('main.main-nav-certificates-title')"
+          :description="$t('main.main-nav-certificates-description')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
         <main-nav
-          :title="'Generation'"
-          description="generate certificates"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus"
-          class="main__btn"
+          class="main__card"
           color="success"
+          size="large"
+          :title="$t('main.main-nav-generation-title')"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
           @click="router.push(ROUTE_NAMES.generate)"
         />
 
         <main-nav
           :title="'Template'"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus "
-          description="generate certificates"
-          class="main__btn"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
+          class="main__card"
           color="error"
           @click="router.push(ROUTE_NAMES.template)"
         />
@@ -92,17 +85,16 @@
           body="Ac integer sapien nisl turpis arcu integer.
            Pellentesque phasellus egestas pharetra quam cursus "
           description="home"
-          class="main__btn"
+          class="main__card"
           color="info"
           @click="router.push(ROUTE_NAMES.home)"
         />
-        <nav-button
+        <main-nav
           :title="'test'"
-          description="generate certificates"
-          body="Ac integer sapien nisl turpis arcu integer. +
-           Pellentesque phasellus egestas pharetra quam cursus"
-          class="btn"
-          @click="test"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
+          class="main__card"
+          @click="router.push(ROUTE_NAMES.test)"
         />
       </div>
     </div>
@@ -117,15 +109,13 @@ import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
-// import NavButton from '@/common/NavButton.vue'
-import AppLogo from '@/common/AppLogo.vue'
-import MainNav from '@/common/MainNav.vue'
+import { AppLogo, MainNav } from '@/common'
 
-const web3Store = useWeb3ProvidersStore()
+const { provider } = useWeb3ProvidersStore()
 
 const connect = async () => {
   try {
-    await web3Store.provider.connect()
+    await provider.connect()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -133,9 +123,9 @@ const connect = async () => {
 </script>
 
 <style lang="scss" scoped>
-.main_page {
-  display: flex;
-  justify-items: center;
+.main__page {
+  max-width: var(--page-large);
+  margin: auto;
 }
 
 .main__info {
@@ -149,7 +139,6 @@ const connect = async () => {
 .main__info-name {
   margin: auto;
   padding: toRem(20);
-  font-size: toRem(25);
 }
 
 .main__logo {
@@ -179,8 +168,8 @@ const connect = async () => {
   place-content: center;
   border-radius: toRem(8);
   padding: toRem(12);
-  width: toRem(642);
-  height: toRem(432);
+  width: toRem(652);
+  height: toRem(346);
 }
 
 .main__endpoints-side {
@@ -201,19 +190,8 @@ const connect = async () => {
   font-size: toRem(20);
 }
 
-.main__btn {
-  min-width: toRem(200);
-  min-height: toRem(200);
-  padding: toRem(40);
-}
-
-.web3-page__card {
-  position: relative;
-  display: grid;
-  gap: toRem(8);
-  border: toRem(1) solid var(--border-primary-main);
-  border-radius: toRem(8);
-  padding: toRem(12);
+.main__card {
+  max-width: toRem(304);
 }
 
 .main__card-indicator {
@@ -231,11 +209,15 @@ const connect = async () => {
 }
 
 .main__metamask-btn {
+  max-width: toRem(200);
+  margin: toRem(20) auto;
   width: 100%;
 }
 
 .main__info-description {
   font-size: toRem(16);
+  max-width: toRem(426);
+  text-align: center;
   color: var(--text-primary-light);
 }
 </style>

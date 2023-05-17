@@ -4,8 +4,8 @@ export type PustTxResponce = {
   }
 }
 
-export interface Tx {
-  block_height: number
+export type Tx = {
+  blockHeight: number
   hash: string
   addresses: string[]
   total: number
@@ -13,34 +13,34 @@ export interface Tx {
   size: number
   vsize: number
   preference: string
-  relayed_by: string
+  relayedBy: string
   received: string
   ver: number
-  lock_time: number
-  double_spend: boolean
-  vin_sz: number
-  vout_sz: number
+  lockTime: number
+  doubleSpend: boolean
+  vinSz: number
+  voutSz: number
   confirmations: number
   inputs: Input[]
   outputs: Output[]
 }
 
-export interface Input {
-  prev_hash: string
-  output_index: number
+export type Input = {
+  prevHash: string
+  outputIndex: number
   script: string
-  output_value: number
+  outputValue: number
   sequence: number
   addresses: string[]
-  script_type: string
+  scriptType: string
   age: number
 }
 
-export interface Output {
+export type Output = {
   value: number
   script: string
   addresses: string[]
-  script_type: string
+  scriptType: string
 }
 
 export interface AddressInfo {
@@ -51,9 +51,9 @@ export interface AddressInfo {
 
 ////////////////
 
-export type BlockstreamTxList = Tx[]
+export type BlockstreamTxList = Transaction[]
 
-export interface Tx {
+export interface Transaction {
   txid: string
   version: number
   locktime: number
@@ -101,7 +101,6 @@ export interface Status {
 }
 
 export type UTXOs = UTXO[]
-
 export interface UTXO {
   txid: string
   vout: number

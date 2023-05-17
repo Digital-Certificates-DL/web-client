@@ -87,7 +87,7 @@
   /* Field variables */
 
   /* --------------------------------------- */
-  --field-bg-primary: var(--background-primary-main);
+  --field-bg-primary: var(--background-primary-dark);
   --field-bg-secondary: var(--background-secondary-light);
 
   /* label */
@@ -110,6 +110,9 @@
 
   /* transition duration */
   --field-transition-duration: 0.2s;
+
+  /* page size */
+  --page-large: #{toRem(1400)};
 
   /* paddings */
   --field-padding-top: #{toRem(14)};

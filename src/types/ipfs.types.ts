@@ -3,7 +3,7 @@ export type IpfsAttributes = {
 }
 
 export type IpfsJSONResponse = {
-  ID: string
-  Type: string
+  id: string
+  type: string
   attributes: IpfsAttributes
 }

@@ -1,5 +1,3 @@
-// import { UserTypes } from '@/types/user.types'
-
 export type TemplateTypes = {
   file: string
   width: number

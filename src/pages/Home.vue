@@ -1,38 +1,46 @@
 <template>
   <div class="home">
-    <app-navbar />
     <div class="home__body">
-      <h1>{{ homeCreate }}</h1>
+      <h2>{{ $t('home.title') }}</h2>
       <div class="home__body-create">
         <home-body-nav
           @active="router.push(ROUTE_NAMES.generate)"
-          :title="'Create'"
-          :name="'Create'"
-          :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
+          :title="$t('home.create-title')"
+          :name="$t('home.create-name')"
+          :description="$t('home.create-description')"
         />
         <home-body-nav
           @active="router.push(ROUTE_NAMES.template)"
-          :title="'Upload new template'"
-          :name="'Upload'"
-          :description="'Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.'"
+          :title="$t('home.upload-title')"
+          :name="$t('home.upload-name')"
+          :description="$t('home.upload-description')"
         />
       </div>
     </div>
     <div class="home__content">
       <div class="home__content-template">
         <div class="home__content-subtitle">
-          <p>{{ templateListTitle }}</p>
+          <h2>{{ templateListTitle }}</h2>
           <app-button :text="'see more'" />
         </div>
         <div class="home__items">
-          <div v-for="(item, key) in templates" :value="key" :key="item">
-            <home-item :img="item.img" :title="item.template_name" />
+          <error-message
+            v-if="templates === undefined"
+            :message="$t('home.error-templates-nil')"
+          />
+          <div
+            v-else
+            v-for="(item, key) in templates.slice(0, 4)"
+            :value="key"
+            :key="item"
+          >
+            <home-item :img="item.img" :title="item" />
           </div>
         </div>
       </div>
       <div class="home__content-certificates">
         <div class="home__content-subtitle">
-          <p>{{ certificatesTitle }}</p>
+          <h2>{{ certificatesTitle }}</h2>
 
           <app-button
             :text="'see more'"
@@ -43,15 +51,20 @@
         </div>
 
         <div class="home__items">
+          <error-message
+            v-if="templates === undefined"
+            :message="$t('home.error-certificate-nil')"
+          />
           <div
+            v-else
             v-for="(item, key) in certificates.slice(0, 4)"
             :value="key"
             :key="item"
           >
             <home-item
               class="home__item"
-              :img="item.Img"
-              :title="item.Participant"
+              :img="item.img"
+              :title="item.participant"
             />
           </div>
         </div>
@@ -61,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import HomeBodyNav from '@/common/HomeBodyNav.vue'
+import HomeBodyNav from '@/common/HomeNav.vue'
 
 const homeCreate = 'Create New'
 
@@ -70,12 +83,14 @@ import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import {
   CreateTemplateResponse,
+  TemplateRequestData,
   UserJSONResponse,
   UserJSONResponseList,
 } from '@/types'
 import { ref } from 'vue'
 import { api } from '@/api'
 import { useUserStore } from '@/store'
+import ErrorMessage from '@/common/ErrorMessage.vue'
 
 const templates = ref([])
 const certificates = ref([] as UserJSONResponse[])
@@ -90,13 +105,13 @@ const templateListTitle = 'My templates'
 const certificatesTitle = 'Previously certificates'
 
 const getUsers = async () => {
-  const { data } = await api.post<UserJSONResponseList>(
+  const { data } = await api.post<UserJSONResponse[]>(
     '/integrations/ccp/users/',
     {
       body: {
         data: {
-          name: userState.setting.Name,
-          url: userState.setting.Url,
+          name: userState.setting.name,
+          url: userState.setting.url,
         },
       },
     },
@@ -107,14 +122,14 @@ const getUsers = async () => {
   //     authLink.value = err.response.data.data.attributes.link
   //   }
   // })
-  certificates.value = data
+
+  certificates.value = prepareUserImg(data)
 }
 
 const getTemplates = async () => {
-  const { data } = await api.get<CreateTemplateResponse>(
-    '/integrations/ccp/certificate/template/' + userState.setting.Name,
+  const { data } = await api.get<TemplateRequestData>(
+    '/integrations/ccp/certificate/template/' + userState.setting.name,
   )
-  console.log(data)
 
   templates.value = data
 
@@ -131,7 +146,7 @@ const updateCode = async (code: string) => {
     body: {
       data: {
         code: code,
-        name: userState.setting.Name,
+        name: userState.setting.name,
       },
     },
   })
@@ -142,20 +157,25 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   currentUser = user
 }
 
-// const prepareUserImg = (users: UserJSONResponseList) => {
-//   //todo  move to  helpers
-//   for (const user of users.data) {
-//     user.attributes.Img =
-//       'data:image/png;base64,' + user.attributes.CertificateImg.toString()
-//   }
-//   return users
-// }
+const prepareUserImg = (users: UserJSONResponse[]) => {
+  //todo  move to  helpers
+  for (const user of users) {
+    console.log('user ', user)
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+  }
+  return users
+}
 
 getUsers()
 getTemplates()
 </script>
 
 <style scoped lang="scss">
+.home {
+  max-width: var(--page-large);
+  margin: 0 auto;
+}
+
 .home__body-create {
   display: flex;
   justify-content: space-between;
