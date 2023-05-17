@@ -1,4 +1,5 @@
 <template>
+  <loader-modal v-model:is-shown="isLoading" />
   <div class="certificates">
     <h2>{{ $t('certificates.certificates-title') }}</h2>
     <div class="certificates__search-wrp">
@@ -14,7 +15,11 @@
         </div>
       </div>
     </div>
-    <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
+    <certificate-modal
+      v-model:is-shown="isModalActive"
+      v-model:state="processState"
+      :user="currentUser"
+    />
 
     <div class="certificates__list">
       <div class="certificates__list-titles">
@@ -49,13 +54,14 @@ import { ROUTE_NAMES } from '@/enums'
 import { Signature } from '@/utils'
 import { useRouter } from '@/router'
 import AppButton from '@/common/AppButton.vue'
+import LoaderModal from '@/common/modals/LoaderModal.vue'
 
 const router = useRouter()
 const userState = useUserStore()
 const isModalActive = ref(false)
 const currentUser = ref({} as UserJSONResponse)
 // const listForTimestamp: UserJSONResponse[] = []
-
+const isLoading = ref(false)
 let userBuffer: UserJSONResponse[]
 
 // const isUnauthorized = ref(false)
@@ -64,6 +70,7 @@ let userBuffer: UserJSONResponse[]
 const userList = ref([] as UserJSONResponse[])
 const listForCreate = ref([] as UserJSONResponse[])
 const generateCount = ref(0)
+const processState = ref('')
 const form = reactive({
   search: '',
 })
@@ -71,6 +78,7 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   isModalActive.value = state
   currentUser.value = user
 }
+
 const prepareUserImg = (users: UserJSONResponse[]) => {
   for (const user of users) {
     if (user.certificateImg === null) {
@@ -128,12 +136,17 @@ const find = () => {
 
 const generate = async () => {
   const users = listForCreate.value
-  // loaderState.value = 'Signing users'
+
+  isLoading.value = true
+  processState.value = 'Sign data'
+
   const signatures = await sign(users)
-  // loaderState.value = 'Creating PDF for users'
+  processState.value = 'Create pdfs'
 
   userState.students = await createPDF(signatures)
+  processState.value = ''
 
+  isLoading.value = false
   // loaderState.value = ''
   // isLoader.value = false
 

@@ -7,6 +7,7 @@
     />
   </div>
   <div v-else class="generation">
+    <loader-modal is-shown="" state="Parse data" />
     <div class="generation__title">
       <h2>{{ $t('generation.title') }}</h2>
     </div>
@@ -89,7 +90,6 @@ import { reactive, ref, computed } from 'vue'
 import InputField from '@/fields/InputField.vue'
 import { api } from '@/api'
 import { AppButton } from '@/common'
-import { Signature } from '@/utils/signature.util'
 import { UserJSONResponse, UserJSONResponseList } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
@@ -100,7 +100,9 @@ import AuthModal from '@/common/modals/AuthModal.vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { ErrorHandler } from '@/helpers'
+import LoaderModal from '@/common/modals/LoaderModal.vue'
 const userState = useUserStore()
+const isLoading = ref(false)
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
@@ -143,9 +145,12 @@ const start = async () => {
   if (users === undefined) {
     return
   }
+  isLoading.value = true
   userState.students = users
   console.log('users: ', userState.students)
   console.log('users: ', users)
+  isLoading.value = false
+
   await router.push(ROUTE_NAMES.certificates)
 }
 const parsedData = async (sheepUrl?: string) => {

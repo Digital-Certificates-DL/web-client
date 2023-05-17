@@ -1,8 +1,6 @@
 <template>
   <div class="timestamp">
-    <app-navbar />
-
-    <h1>{{ certificatesTitle }}</h1>
+    <h2>{{ certificatesTitle }}</h2>
     <div class="certificates__search">
       <input-field
         class="timestamp__search-input"
@@ -30,18 +28,18 @@
 
       <div class="timestamp__body">
         <div class="timestamp__list">
-          <!--      <div v-if="userState.students.length === 0">-->
-          <!--        <error-message message="Empty certificate list" />-->
-          <!--      </div>-->
-          <div v-for="(item, key) in userList" :value="key" :key="item">
-            <timestemp-item
-              :name="item.Participant"
-              :date="item.Date"
-              :user="item"
-              @select="selectItem"
-              @open-modal="openModal"
-            />
-          </div>
+          <!--          <div v-if="userState.students.length === 0">-->
+          <!--            <error-message message="Empty certificate list" />-->
+          <!--          </div>-->
+          <!--          <div v-for="(item, key) in userList" :value="key" :key="item">-->
+          <!--            <timestemp-item-->
+          <!--              :name="item.participant"-->
+          <!--              :date="item.date"-->
+          <!--              :user="item"-->
+          <!--              @select="selectItem"-->
+          <!--              @open-modal="openModal"-->
+          <!--            />-->
+          <!--          </div>-->
         </div>
 
         <div class="timestamp__img-wrp">
@@ -93,7 +91,7 @@ const search = () => {
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
   }
-  userState.students.filter(item => item.Participant.includes(form.search))
+  userState.students.filter(item => item.participant.includes(form.search))
 }
 
 const openModal = (state: boolean, user: UserJSONResponse) => {
@@ -103,7 +101,7 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
-    user.Img = 'data:image/png;base64,' + user.CertificateImg.toString()
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
   return users.data
@@ -116,7 +114,7 @@ const bitcoinTimestamp = async () => {
   const bitcoin = new Bitcoin()
 
   const UTXOs = await bitcoin.getUTXOBip32TestnetBlockstream(
-    userState.setting.SendMnemonicPhrase,
+    userState.setting.sendMnemonicPhrase,
   )
 
   console.log(UTXOs)
@@ -124,7 +122,7 @@ const bitcoinTimestamp = async () => {
   console.log('listForTimestamp ', listForTimestamp)
   for (const user of listForTimestamp.value) {
     const tx = await bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.SendMnemonicPhrase,
+      userState.setting.sendMnemonicPhrase,
     )
     console.log('tx: ', tx)
     const hex = tx?.hex || ''
@@ -144,7 +142,7 @@ const bitcoinTimestamp = async () => {
     console.log('data tx ', data.tx)
     console.log('data tx hash ', data.tx.hash)
     console.log('user ', user)
-    user.TxHash = data.tx.hash.toString()
+    user.txHash = data.tx.hash.toString()
 
     console.log('resp: ', data)
     bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
@@ -165,9 +163,9 @@ const updateUsers = async (users: UserJSONResponse[]) => {
       body: {
         data: {
           users: users,
-          address: userState.setting.Address,
-          name: userState.setting.Name,
-          url: userState.setting.Url,
+          address: userState.setting.address,
+          name: userState.setting.name,
+          url: userState.setting.url,
         },
       },
     },
@@ -213,6 +211,11 @@ autoRefresh()
 </script>
 
 <style lang="scss" scoped>
+.timestamp {
+  width: var(--page-large);
+  margin: 0 auto;
+}
+
 .timestamp__img-wrp {
   max-width: 40%;
 }
@@ -228,5 +231,9 @@ autoRefresh()
 .timestamp__body {
   margin-top: toRem(20);
   display: flex;
+}
+
+.timestamp__search-input {
+  width: toRem(426);
 }
 </style>
