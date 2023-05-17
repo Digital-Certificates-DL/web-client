@@ -1,5 +1,5 @@
 <template>
-  <loader-modal v-model:is-shown="isLoading" />
+  <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   <div class="certificates">
     <h2>{{ $t('certificates.certificates-title') }}</h2>
     <div class="certificates__search-wrp">
@@ -15,11 +15,7 @@
         </div>
       </div>
     </div>
-    <certificate-modal
-      v-model:is-shown="isModalActive"
-      v-model:state="processState"
-      :user="currentUser"
-    />
+    <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
 
     <div class="certificates__list">
       <div class="certificates__list-titles">
@@ -102,25 +98,23 @@ const closeModal = () => {
   isModalActive.value = false
 }
 const refresh = async () => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/users/',
-    {
-      body: {
-        data: {
-          url: userState.setting.url,
-          name: userState.setting.name,
+  try {
+    const resp = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/users/',
+      {
+        body: {
+          data: {
+            url: userState.setting.url,
+            name: userState.setting.name,
+          },
         },
       },
-    },
-  )
+    )
+    console.log(resp)
+  } catch (err) {
+    console.log(err)
+  }
   userState.students = prepareUserImg(data)
-
-  // console.log(users)
-  //
-  // if (users.isLinksExist === false) {
-  // }
-  // console.log('users ', prepareUserImg(data))
-  // userList.value = prepareUserImg(data).data
 
   userList.value = data
 }

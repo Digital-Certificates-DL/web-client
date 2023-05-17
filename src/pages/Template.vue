@@ -63,10 +63,8 @@ const templateData = ref({
   isCompleted: false,
 } as TemplateRequestData)
 const getBackgroundImg = (preparedImg: string) => {
-  console.log(preparedImg)
   img.value = preparedImg
   templateData.value.backgroundImg = preparedImg
-  console.log('template img: ', templateData.value.backgroundImg)
 }
 
 const prepareImg = (img: Uint8Array) => {
@@ -74,11 +72,8 @@ const prepareImg = (img: Uint8Array) => {
 }
 
 const getTemplateData = (template: TemplateTypes) => {
-  console.log(template, ' template')
   templateData.value.template = template
   templateData.value.backgroundImg = img.value
-
-  console.log('template: ', templateData)
 }
 
 const save = async () => {
@@ -87,15 +82,13 @@ const save = async () => {
 }
 
 const createTemplate = async () => {
-  console.log('create: ', templateData)
-  console.log(templateData.value)
   const { data } = await api.post<CreateTemplateResponse>(
     '/integrations/ccp/certificate/template',
     {
       body: {
         data: {
           relationships: {
-            user: userState.setting.Name,
+            user: userState.setting.name,
           },
           attributes: {
             template: templateData.value.template,
@@ -106,9 +99,8 @@ const createTemplate = async () => {
       },
     },
   )
-  console.log(data, ' data ')
-  img.value = prepareImg(data.background_img)
-  templateData.value.backgroundImg = prepareImg(data.background_img)
+  img.value = prepareImg(data.backgroundImg)
+  templateData.value.backgroundImg = prepareImg(data.backgroundImg)
   if (templateData.value.isCompleted) {
     await router.push(ROUTE_NAMES.main)
   }

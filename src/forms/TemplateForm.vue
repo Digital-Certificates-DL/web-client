@@ -241,7 +241,6 @@ const emit = defineEmits<{
 }>()
 
 const test = () => {
-  console.log('form ', form)
   emit('update-template', form)
 }
 </script>

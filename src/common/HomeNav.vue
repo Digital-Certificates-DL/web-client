@@ -37,20 +37,18 @@ const emit = defineEmits<{
 
 <style lang="scss" scoped>
 .home-nav {
-  width: 40%;
-  border: toRem(1) solid var(--border-primary-main);
-  padding: toRem(20);
+  border: toRem(2) solid var(--border-primary-main);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 
-  width: toRem(652);
-  height: toRem(160);
-
-  /* border/border-tertiary */
-
-  border: toRem(2) solid var(--background-primary-dark);
   border-radius: toRem(8);
+  //max-width: toRem(652);
+  //max-height: toRem(160);
+
+  //@include respond-to(large) {
+  height: toRem(160);
+  //}
 }
 
 .home-nav__description {
@@ -69,7 +67,7 @@ const emit = defineEmits<{
   margin-right: toRem(20);
 }
 
-.home-nav__btn {
-  width: 70%;
-}
+//.home-nav__btn {
+//  width: 70%;
+//}
 </style>

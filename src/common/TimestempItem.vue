@@ -60,7 +60,6 @@ const emit = defineEmits<{
 
 const selectItem = () => {
   isSelected.value = !isSelected.value
-  console.log(props.user)
   emit('select', isSelected.value, props.user)
 }
 </script>

@@ -3,14 +3,13 @@
     <div class="home-item__img-wrp">
       <div v-if="props.img === ''">
         <img
-          src="@/../static/branding/template.jpg"
+          :src="props.img || '@/../static/branding/template.jpg'"
           class="home-item__img"
           alt="not found"
         />
       </div>
       <div v-else>
         <img class="home-item__img" :src="props.img" alt="error" />
-        <!--        <p>{{ props.img }}</p>-->
       </div>
     </div>
     <div class="home-item__title">

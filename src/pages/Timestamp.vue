@@ -6,25 +6,28 @@
         class="timestamp__search-input"
         placeholder="find"
         v-model="form.search"
-        @update:model-value="search"
+        @update:model-value="find"
       />
       <div class="timestamp__btns">
-        <div v-if="timestampCount > 0" class="certificates__btns">
-          <p>{{ timestampCount }}</p>
+        <!--        <div v-if="timestampCount > 0" class="certificates__btns">-->
+        <!--          <p>{{ timestampCount }}</p>-->
 
-          <!--          <app-button class="timestamp__btn" @click="find" text="Find" />-->
+        <!--          &lt;!&ndash;          <app-button class="timestamp__btn" @click="find" text="Find" />&ndash;&gt;-->
 
-          <app-button
-            class="timestamp__btn"
-            @click="bitcoinTimestamp"
-            :color="'success'"
-            text="Bitcoin"
-          />
-        </div>
+        <!--          <app-button-->
+        <!--            class="timestamp__btn"-->
+        <!--            @click="bitcoinTimestamp"-->
+        <!--            :color="'success'"-->
+        <!--            text="Bitcoin"-->
+        <!--          />-->
+        <!--        </div>-->
       </div>
-      <div v-if="isModalActive">
-        <modal-info @cancel="closeModal" :user="currentUser"></modal-info>
-      </div>
+      <!--      <div v-if="isModalActive">-->
+      <!--        <certificate-modal-->
+      <!--          :user="currentUser"-->
+      <!--          v-model:is-shown="isModalActive"-->
+      <!--        />-->
+      <!--      </div>-->
 
       <div class="timestamp__body">
         <div class="timestamp__list">
@@ -43,11 +46,11 @@
         </div>
 
         <div class="timestamp__img-wrp">
-          <img
-            class="timestamp__img"
-            src="static/branding/template.jpg"
-            alt="Certificate preview"
-          />
+          <!--          <img-->
+          <!--            class="timestamp__img"-->
+          <!--            src="static/branding/template.jpg"-->
+          <!--            alt="Certificate preview"-->
+          <!--          />-->
         </div>
       </div>
     </div>
@@ -57,26 +60,21 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
-import ErrorMessage from '@/common/ErrorMessage.vue'
-import AppButton from '@/common/AppButton.vue'
+// import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
-import btc, { Bitcoin } from '@/utils/bitcoin.util'
+import { Bitcoin } from '@/utils/bitcoin.util'
 
-import TimestempItem from '@/common/TimestempItem.vue'
-import AppNavbar from '@/common/AppNavbar.vue'
-import { timestamp } from '@vueuse/core'
-import ModalInfo from '@/common/modals/CertificateModal.vue'
 const userState = useUserStore()
 
-const currentUser = ref({} as UserJSONResponse)
-const isModalActive = ref(false)
+// const currentUser = ref({} as UserJSONResponse)
 
 const timestampCount = ref(0)
 
 const certificatesTitle = 'Previously certificates'
 const listForTimestamp = ref([] as UserJSONResponse[])
+const isModalActive = ref(false)
 
 const form = reactive({
   search: '',
@@ -85,7 +83,7 @@ const form = reactive({
 const userList = ref([] as UserJSONResponse[])
 
 let userBuffer
-const search = () => {
+const find = () => {
   userBuffer = userState.students
 
   if (form.search === '' && userBuffer !== undefined) {
@@ -94,10 +92,6 @@ const search = () => {
   userState.students.filter(item => item.participant.includes(form.search))
 }
 
-const openModal = (state: boolean, user: UserJSONResponse) => {
-  isModalActive.value = state
-  currentUser.value = user
-}
 const prepareUserImg = (users: UserJSONResponseList) => {
   const list: UserJSONResponse[] = users.data
   for (const user of list) {
@@ -107,9 +101,6 @@ const prepareUserImg = (users: UserJSONResponseList) => {
   return users.data
 }
 
-const closeModal = () => {
-  isModalActive.value = false
-}
 const bitcoinTimestamp = async () => {
   const bitcoin = new Bitcoin()
 
@@ -117,9 +108,6 @@ const bitcoinTimestamp = async () => {
     userState.setting.sendMnemonicPhrase,
   )
 
-  console.log(UTXOs)
-  console.log('start prepare ')
-  console.log('listForTimestamp ', listForTimestamp)
   for (const user of listForTimestamp.value) {
     const tx = await bitcoin.PrepareLegacyTXTestnet(
       userState.setting.sendMnemonicPhrase,
@@ -134,22 +122,15 @@ const bitcoinTimestamp = async () => {
     }
     console.log('tx: ', tx)
     if (tx === undefined) {
-      console.log('continue')
       continue
     }
     const { data } = await bitcoin.SendToTestnet(hex)
-    console.log('data ', data)
-    console.log('data tx ', data.tx)
-    console.log('data tx hash ', data.tx.hash)
-    console.log('user ', user)
+
     user.txHash = data.tx.hash.toString()
 
-    console.log('resp: ', data)
     bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
-    console.log('set: ', bitcoin.addressInfoList)
   }
   const users = await updateUsers(listForTimestamp.value)
-  console.log(users, ' updated ')
   userList.value = users
 }
 

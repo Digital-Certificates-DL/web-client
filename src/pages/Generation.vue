@@ -7,7 +7,7 @@
     />
   </div>
   <div v-else class="generation">
-    <loader-modal is-shown="" state="Parse data" />
+    <loader-modal :is-shown="isLoading" state="Parse data" />
     <div class="generation__title">
       <h2>{{ $t('generation.title') }}</h2>
     </div>
@@ -94,7 +94,6 @@ import { UserJSONResponse, UserJSONResponseList } from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { JsonApiResponseError } from '@distributedlab/jac'
 
 import AuthModal from '@/common/modals/AuthModal.vue'
 import { useFormValidation } from '@/composables'
@@ -147,8 +146,7 @@ const start = async () => {
   }
   isLoading.value = true
   userState.students = users
-  console.log('users: ', userState.students)
-  console.log('users: ', users)
+
   isLoading.value = false
 
   await router.push(ROUTE_NAMES.certificates)

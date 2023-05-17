@@ -2,14 +2,16 @@
   <div class="home">
     <div class="home__body">
       <h2>{{ $t('home.title') }}</h2>
-      <div class="home__body-create">
+      <div class="home__body-nav">
         <home-body-nav
+          class="home__body-nav-item"
           @active="router.push(ROUTE_NAMES.generate)"
           :title="$t('home.create-title')"
           :name="$t('home.create-name')"
           :description="$t('home.create-description')"
         />
         <home-body-nav
+          class="home__body-nav-item"
           @active="router.push(ROUTE_NAMES.template)"
           :title="$t('home.upload-title')"
           :name="$t('home.upload-name')"
@@ -20,27 +22,28 @@
     <div class="home__content">
       <div class="home__content-template">
         <div class="home__content-subtitle">
-          <h2>{{ templateListTitle }}</h2>
+          <h3>{{ templateListTitle }}</h3>
           <app-button :text="'see more'" />
         </div>
         <div class="home__items">
-          <error-message
-            v-if="templates === undefined"
-            :message="$t('home.error-templates-nil')"
-          />
+          <div v-if="templates === undefined">
+            <div>
+              <div class="home__item-mock"></div>
+            </div>
+          </div>
+          <div class="home__item-mock"></div>
           <div
-            v-else
             v-for="(item, key) in templates.slice(0, 4)"
             :value="key"
             :key="item"
           >
-            <home-item :img="item.img" :title="item" />
+            <home-item :img="item.backgroundImg" :title="item.templateName" />
           </div>
         </div>
       </div>
       <div class="home__content-certificates">
         <div class="home__content-subtitle">
-          <h2>{{ certificatesTitle }}</h2>
+          <h3>{{ certificatesTitle }}</h3>
 
           <app-button
             :text="'see more'"
@@ -52,7 +55,7 @@
 
         <div class="home__items">
           <error-message
-            v-if="templates === undefined"
+            v-if="certificates === undefined"
             :message="$t('home.error-certificate-nil')"
           />
           <div
@@ -92,7 +95,7 @@ import { api } from '@/api'
 import { useUserStore } from '@/store'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 
-const templates = ref([])
+const templates = ref([] as TemplateRequestData[])
 const certificates = ref([] as UserJSONResponse[])
 
 const isUnauthorized = ref(false)
@@ -105,33 +108,44 @@ const templateListTitle = 'My templates'
 const certificatesTitle = 'Previously certificates'
 
 const getUsers = async () => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/users/',
-    {
-      body: {
-        data: {
-          name: userState.setting.name,
-          url: userState.setting.url,
+  try {
+    const { data } = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/users/',
+      {
+        body: {
+          data: {
+            name: userState.setting.name,
+            url: userState.setting.url,
+          },
         },
       },
-    },
-  )
-  // .catch(err => {
-  //   if (err.response.data.data.attributes.link) {
-  //     isUnauthorized.value = true
-  //     authLink.value = err.response.data.data.attributes.link
-  //   }
-  // })
-
-  certificates.value = prepareUserImg(data)
+    )
+    certificates.value = prepareUserImg(data)
+  } catch ({ ...err }) {
+    if (err.name === 'ForbiddenError') {
+      console.log('err')
+      try {
+        const { data } = await api.put('/integrations/ccp/users/token', {
+          body: {
+            data: {
+              name: userState.setting.name,
+            },
+          },
+        })
+        console.log(data, ' data')
+      } catch (err) {
+        console.log('internal  err ', err)
+      }
+    }
+  }
 }
 
 const getTemplates = async () => {
-  const { data } = await api.get<TemplateRequestData>(
+  const { data } = await api.get<TemplateRequestData[]>(
     '/integrations/ccp/certificate/template/' + userState.setting.name,
   )
 
-  templates.value = data
+  templates.value = prepareTemplateImg(data)
 
   //todo check error
 }
@@ -152,11 +166,6 @@ const updateCode = async (code: string) => {
   })
 }
 
-const openModal = (state: boolean, user: UserJSONResponse) => {
-  isModalActive.value = state
-  currentUser = user
-}
-
 const prepareUserImg = (users: UserJSONResponse[]) => {
   //todo  move to  helpers
   for (const user of users) {
@@ -166,24 +175,46 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
   return users
 }
 
+const prepareTemplateImg = (templates: TemplateRequestData[]) => {
+  //todo  move to  helpers
+  for (const template of templates) {
+    console.log('user ', template)
+    template.backgroundImg = 'data:image/png;base64,' + template.backgroundImg
+  }
+  return templates
+}
+
 getUsers()
 getTemplates()
 </script>
 
 <style scoped lang="scss">
 .home {
-  max-width: var(--page-large);
+  width: var(--page-large);
   margin: 0 auto;
 }
 
-.home__body-create {
+.home__body-nav {
   display: flex;
   justify-content: space-between;
 }
+
+.home__body-nav-item {
+  margin: toRem(10);
+  //width: toRem(602);
+}
+
 .home__items {
   display: flex;
   justify-content: space-around;
   padding: toRem(20);
+}
+
+.home__item-mock {
+  width: toRem(314);
+  height: toRem(222);
+  border-radius: toRem(8);
+  background: var(--background-primary-dark);
 }
 
 .home__content-subtitle {

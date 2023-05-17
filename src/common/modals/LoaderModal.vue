@@ -6,8 +6,8 @@
     <template #default="{ modal }">
       <div class="loader-modal">
         <loader />
+        <p>{{ props.state }}</p>
       </div>
-      <p>{{ props.state }}</p>
     </template>
   </modal>
 </template>

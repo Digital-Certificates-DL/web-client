@@ -24,14 +24,13 @@ export type TemplateField = {
 }
 
 export type CreateTemplateResponse = {
-  attributes: {
-    name: string
-    background_img: Uint8Array
-  }
+  name: string
+  backgroundImg: Uint8Array
 }
 
 export type TemplateRequestData = {
   template: TemplateTypes
   backgroundImg: string
+  templateName: string
   isCompleted: boolean
 }

@@ -113,7 +113,7 @@ const save = async () => {
       },
     },
   })
-  await router.push(ROUTE_NAMES.main)
+  await router.push(ROUTE_NAMES.home)
 }
 </script>
 <style scoped lang="scss">
