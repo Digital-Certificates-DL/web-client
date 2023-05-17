@@ -2,7 +2,7 @@
   <div v-if="isUnauthorized">
     <auth-modal
       :token-link="authLink"
-      @close-modal="closeModal"
+      v-model:is-shown="isUnauthorized"
       @with-code="updateCode"
     />
   </div>
@@ -86,7 +86,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, computed } from 'vue'
-import InputField from '@/fields/InputField.vue'
+import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
@@ -200,10 +200,6 @@ const createPDF = async (users: UserJSONResponseList) => {
   users = prepareUserImg(resp.data)
   userState.students = users.data
   await router.push(ROUTE_NAMES.certificates)
-}
-
-const closeModal = () => {
-  isUnauthorized.value = false
 }
 
 const updateCode = async (code: string) => {

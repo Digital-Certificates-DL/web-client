@@ -76,15 +76,13 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton } from '@/common'
+import { AppButton, NavButton, AppLogo } from '@/common'
 
 import { useWeb3ProvidersStore } from '@/store'
 
 import { ErrorHandler } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
-import NavButton from '@/common/NavButton.vue'
-import AppLogo from '@/common/AppLogo.vue'
 
 const web3Store = useWeb3ProvidersStore()
 

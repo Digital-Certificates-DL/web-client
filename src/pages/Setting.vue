@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import InputField from '@/fields/InputField.vue'
+import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import { UserJSONResponseList, UserSetting } from '@/types'
 import { useUserStore } from '@/store/modules/use-users.modules'
