@@ -46,6 +46,7 @@
       <div v-for="(item, key) in userList" :value="key" :key="item">
         <certificate
           :user="item"
+          :is-show="isShowCertificateCheckbox"
           @open-modal="openModal"
           @select="selectItem"
         />
@@ -82,6 +83,7 @@ let userBuffer: UserJSONResponse[]
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
+const isShowCertificateCheckbox = ref(false)
 
 const userList = ref([] as UserJSONResponse[])
 const selectedItems = ref([] as UserJSONResponse[])
@@ -380,6 +382,10 @@ const autoRefresh = () => {
 autoRefresh()
 
 const selectItem = (state: boolean, item: UserJSONResponse) => {
+  if (selectedItems.value.length < 1) {
+    isShowCertificateCheckbox.value = false
+  }
+  isShowCertificateCheckbox.value = true
   if (state) {
     selectedItems.value.push(item)
     generateCount.value = selectedItems.value.length

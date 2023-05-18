@@ -1,7 +1,11 @@
 <template>
   <div class="certificate">
-    <checkbox-field :model-value="isSelected" @click="selectItem" />
-    <div class="certificate__img-wrp">
+    <checkbox-field
+      v-show="isShow"
+      :model-value="isSelected"
+      @click="selectItem"
+    />
+    <div class="certificate__img-wrp" @click="selectItem">
       <img
         class="home-item__img"
         :src="props.user.img || '@/../static/branding/template.jpg'"
@@ -66,6 +70,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
+  isShow: boolean
   user: UserJSONResponse
 }>()
 
