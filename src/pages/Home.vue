@@ -55,9 +55,9 @@
         </div>
 
         <div v-if="templates.length === 0" class="home__items">
-          <div class="home__item home__item-mock"></div>
-          <div class="home__item home__item-mock"></div>
-          <div class="home__item home__item-mock"></div>
+          <div class="= home__item-mock"></div>
+          <div class="home__item-mock"></div>
+          <div class="home__item-mock"></div>
         </div>
         <div v-else class="home__items">
           <div

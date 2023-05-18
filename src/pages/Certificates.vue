@@ -10,9 +10,24 @@
           :placeholder="$t('certificates.certificates-find')"
           @update:model-value="find"
         />
-        <div v-if="generateCount > 0">
-          <app-button :text="'generate'" @click="generate" />
-        </div>
+      </div>
+      <div class="certificates__filters">
+        <app-dropdown :items="dropDownCourseList" @select-item="findByCourse" />
+        <app-dropdown
+          :title="'Data'"
+          :items="dropDownDataList"
+          :main-image="'@/../static/branding/data-ico.png'"
+          @select-item="findByDate"
+        />
+        <app-dropdown
+          :title="'All'"
+          :items="dropDownStateList"
+          :main-image="'@/../static/branding/success-ico.png'"
+        />
+      </div>
+
+      <div v-if="generateCount > 0">
+        <app-button :text="'generate'" @click="generate" />
       </div>
     </div>
     <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
@@ -40,6 +55,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
+
 import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
@@ -51,22 +67,72 @@ import { Signature } from '@/utils'
 import { useRouter } from '@/router'
 import AppButton from '@/common/AppButton.vue'
 import LoaderModal from '@/common/modals/LoaderModal.vue'
+import AppDropdown from '@/common/AppDropdown.vue'
+import { DropdownItem } from '@/types/dropdown.types'
+import { Duration } from '@/utils/duration.util'
+import { Time } from '@/utils/time'
 
 const router = useRouter()
 const userState = useUserStore()
 const isModalActive = ref(false)
 const currentUser = ref({} as UserJSONResponse)
-// const listForTimestamp: UserJSONResponse[] = []
 const isLoading = ref(false)
 let userBuffer: UserJSONResponse[]
 
-// const isUnauthorized = ref(false)
-// const authLink = ref('')
+const isUnauthorized = ref(false)
+const authLink = ref('')
 
 const userList = ref([] as UserJSONResponse[])
 const listForCreate = ref([] as UserJSONResponse[])
 const generateCount = ref(0)
 const processState = ref('')
+
+const dropDownCourseList = [
+  {
+    img: '@/../static/branding/solidity-ico.png',
+    text: 'Solidity',
+  },
+  {
+    img: '@/../static/branding/solidity-ico.png',
+    text: 'Golang',
+  },
+  {
+    img: '@/../static/branding/solidity-ico.png',
+    text: 'Database',
+  },
+  {
+    img: '@/../static/branding/solidity-ico.png',
+    text: 'Defi',
+  },
+] as DropdownItem[]
+
+const dropDownDataList = [
+  {
+    text: 'Solidity',
+  },
+  {
+    text: 'Golang',
+  },
+  {
+    text: 'Database',
+  },
+  {
+    text: 'Defi',
+  },
+] as DropdownItem[]
+
+const dropDownStateList = [
+  {
+    text: 'All',
+  },
+  {
+    text: 'Generated',
+  },
+  {
+    text: 'Not generated',
+  },
+] as DropdownItem[]
+
 const form = reactive({
   search: '',
 })
@@ -94,9 +160,7 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 //   }
 //   listForTimestamp.filter(item => item !== user)
 // }
-const closeModal = () => {
-  isModalActive.value = false
-}
+
 const refresh = async () => {
   try {
     const { data } = await api.post<UserJSONResponse[]>(
@@ -110,8 +174,7 @@ const refresh = async () => {
         },
       },
     )
-    certificates.value = prepareUserImg(data)
-    userList.value = data
+    userList.value = prepareUserImg(data)
   } catch ({ ...err }) {
     console.log('err ', err.name)
     if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
@@ -125,21 +188,107 @@ const refresh = async () => {
             },
           },
         })
-        console.log(data, ' data')
+
+        console.log(data, 'err data')
+        authLink.value = data!.toString()
+        isUnauthorized.value = true
       } catch (err) {
         console.log('internal  err ', err)
       }
+    } else if (err.name === 'NotFoundError') {
+      console.log('NotFoundError ROUTER')
+      await router.push(ROUTE_NAMES.settings)
     }
   }
 }
+
+// const find = () => {
+//   userBuffer = userState.students
+//
+//   if (form.search === '' && userBuffer !== undefined) {
+//     userState.students = userBuffer
+//   }
+//   userState.students.filter(item => item.participant.includes(form.search))
+// }
 
 const find = () => {
   userBuffer = userState.students
 
   if (form.search === '' && userBuffer !== undefined) {
     userState.students = userBuffer
+    return
   }
-  userState.students.filter(item => item.participant.includes(form.search))
+
+  const searchQuery = form.search.toLowerCase()
+  const filteredUsers = userBuffer.filter(user => {
+    const participant = user.participant.toLowerCase()
+    return participant.includes(searchQuery)
+  })
+
+  userState.students = filteredUsers
+}
+
+const findByCourse = (filter: DropdownItem) => {
+  const currentCourse = filter.text
+  userBuffer = userState.students
+  //todo add types
+  if (
+    (currentCourse === '' || currentCourse === 'All') &&
+    userBuffer !== undefined
+  ) {
+    userState.students = userBuffer
+    return
+  }
+
+  const searchQuery = currentCourse.toLowerCase()
+  const filteredUsers = userBuffer.filter(user => {
+    const courseTitle = user.courseTitle.toLowerCase()
+    return courseTitle.includes(searchQuery)
+  })
+
+  userState.students = filteredUsers
+}
+
+const findByDate = (filter: DropdownItem) => {
+  const currentDate = filter.text
+
+  userBuffer = userState.students
+  //todo add types
+  if (
+    (currentDate === '' || currentDate === 'All') &&
+    userBuffer !== undefined
+  ) {
+    userState.students = userBuffer
+    return
+  }
+  let diff: Duration
+  switch (currentDate) {
+    case 'Week':
+      diff = new Duration({ days: 7 })
+      break
+    case 'Day':
+      diff = new Duration({ days: 1 })
+      break
+    case 'Month':
+      diff = new Duration({ months: 1 })
+      break
+    case 'Year':
+      diff = new Duration({ years: 1 })
+      break
+  }
+
+  const filteredUsers = userBuffer.filter(user => {
+    const timeNow = new Time()
+    const exTime = new Time(user.date)
+    const delta = timeNow.diff(exTime)
+
+    if (delta < diff.asMilliseconds) {
+      return true
+    }
+    return false
+  })
+
+  userState.students = filteredUsers
 }
 
 const generate = async () => {
@@ -155,25 +304,23 @@ const generate = async () => {
   processState.value = ''
 
   isLoading.value = false
-  // loaderState.value = ''
-  // isLoader.value = false
 
   await router.push(ROUTE_NAMES.timestamp)
 }
 
-// const updateCode = async (code: string) => {
-//   isUnauthorized.value = false
-//   await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
-//     body: {
-//       data: {
-//         code: code,
-//         name: userState.setting.Name,
-//       },
-//     },
-//   })
-//
-//   isUnauthorized.value = false
-// }
+const updateCode = async (code: string) => {
+  isUnauthorized.value = false
+  await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
+    body: {
+      data: {
+        code: code,
+        name: userState.setting.name,
+      },
+    },
+  })
+
+  isUnauthorized.value = false
+}
 const sign = async (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
@@ -256,13 +403,15 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 .certificates__search-wrp {
   margin-top: toRem(24);
   display: flex;
-  justify-content: space-between;
-  border-radius: toRem(20);
+  align-items: center;
 }
 
 .certificates__search-input-wrp {
-  margin-bottom: toRem(20);
   width: toRem(458);
+  margin-right: toRem(30); //background: #7b6eff;
+  //height: toRem(52);
+  //justify-content: space-around;
+  //border-radius: toRem(20);
 }
 
 .certificates__btns {
@@ -273,6 +422,13 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 .certificates__btn {
   height: toRem(52);
   border-radius: toRem(8);
+}
+
+.certificates__filters {
+  display: flex;
+  max-width: toRem(400);
+  width: 30%;
+  justify-content: space-between;
 }
 
 .certificates__list-titles {
