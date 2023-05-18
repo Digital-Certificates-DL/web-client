@@ -133,6 +133,9 @@
     "create-name": "Upload",
     "create-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
     "title" : "Create new",
+    "template-list-title": "My templates",
+    "certificate-list-title": "Previously certificates",
+    "get-all-btn": "See more",
     "error-templates-nil": "templates was not found",
     "error-certificate-nil": "certificates was not found"
   }

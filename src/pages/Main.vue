@@ -61,24 +61,6 @@
           :description="$t('main.main-nav-certificates-description')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
-        <main-nav
-          class="main__card"
-          color="success"
-          size="large"
-          :title="$t('main.main-nav-generation-title')"
-          :description="$t('main.main-nav-generation-description')"
-          :body="$t('main.main-nav-generation-body')"
-          @click="router.push(ROUTE_NAMES.generate)"
-        />
-
-        <main-nav
-          :title="'Template'"
-          :description="$t('main.main-nav-generation-description')"
-          :body="$t('main.main-nav-generation-body')"
-          class="main__card"
-          color="error"
-          @click="router.push(ROUTE_NAMES.template)"
-        />
 
         <main-nav
           :title="'Home'"

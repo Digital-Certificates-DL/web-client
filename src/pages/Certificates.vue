@@ -99,24 +99,38 @@ const closeModal = () => {
 }
 const refresh = async () => {
   try {
-    const resp = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
           data: {
-            url: userState.setting.url,
             name: userState.setting.name,
+            url: userState.setting.url,
           },
         },
       },
     )
-    console.log(resp)
-  } catch (err) {
-    console.log(err)
+    certificates.value = prepareUserImg(data)
+    userList.value = data
+  } catch ({ ...err }) {
+    console.log('err ', err.name)
+    if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
+      console.log('err')
+      try {
+        const { data } = await api.post('/integrations/ccp/users/token', {
+          body: {
+            data: {
+              name: userState.setting.name,
+              code: '',
+            },
+          },
+        })
+        console.log(data, ' data')
+      } catch (err) {
+        console.log('internal  err ', err)
+      }
+    }
   }
-  userState.students = prepareUserImg(data)
-
-  userList.value = data
 }
 
 const find = () => {

@@ -22,16 +22,44 @@
     <div class="home__content">
       <div class="home__content-template">
         <div class="home__content-subtitle">
-          <h3>{{ templateListTitle }}</h3>
-          <app-button :text="'see more'" />
+          <h3>{{ $t('home.template-list-title') }}</h3>
+          <app-button :text="$t('home.get-all-btn')" />
         </div>
-        <div class="home__items">
-          <div v-if="templates === undefined">
-            <div>
-              <div class="home__item-mock"></div>
+        <div>
+          <div v-if="templates.length === 0" class="home__items">
+            <div class="home__item home__item-mock"></div>
+            <div class="home__item home__item-mock"></div>
+            <div class="home__item home__item-mock"></div>
+          </div>
+          <div v-else class="home__items">
+            <div
+              v-for="(item, key) in templates.slice(0, 4)"
+              :value="key"
+              :key="item"
+            >
+              <home-item :img="item.backgroundImg" :title="item.templateName" />
             </div>
           </div>
-          <div class="home__item-mock"></div>
+        </div>
+      </div>
+      <div class="home__content-certificates">
+        <div class="home__content-subtitle">
+          <h3>{{ $t('home.certificate-list-title') }}</h3>
+
+          <app-button
+            :text="$t('home.get-all-btn')"
+            :route="{
+              name: $routes.certificates,
+            }"
+          />
+        </div>
+
+        <div v-if="templates.length === 0" class="home__items">
+          <div class="home__item home__item-mock"></div>
+          <div class="home__item home__item-mock"></div>
+          <div class="home__item home__item-mock"></div>
+        </div>
+        <div v-else class="home__items">
           <div
             v-for="(item, key) in templates.slice(0, 4)"
             :value="key"
@@ -41,45 +69,12 @@
           </div>
         </div>
       </div>
-      <div class="home__content-certificates">
-        <div class="home__content-subtitle">
-          <h3>{{ certificatesTitle }}</h3>
-
-          <app-button
-            :text="'see more'"
-            :route="{
-              name: $routes.certificates,
-            }"
-          />
-        </div>
-
-        <div class="home__items">
-          <error-message
-            v-if="certificates === undefined"
-            :message="$t('home.error-certificate-nil')"
-          />
-          <div
-            v-else
-            v-for="(item, key) in certificates.slice(0, 4)"
-            :value="key"
-            :key="item"
-          >
-            <home-item
-              class="home__item"
-              :img="item.img"
-              :title="item.participant"
-            />
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import HomeBodyNav from '@/common/HomeNav.vue'
-
-const homeCreate = 'Create New'
 
 import { AppNavbar, HomeItem, AppButton } from '@/common'
 import { router } from '@/router'
@@ -104,9 +99,6 @@ const userState = useUserStore()
 const isModalActive = ref(false)
 let currentUser: UserJSONResponse
 
-const templateListTitle = 'My templates'
-const certificatesTitle = 'Previously certificates'
-
 const getUsers = async () => {
   try {
     const { data } = await api.post<UserJSONResponse[]>(
@@ -122,16 +114,19 @@ const getUsers = async () => {
     )
     certificates.value = prepareUserImg(data)
   } catch ({ ...err }) {
-    if (err.name === 'ForbiddenError') {
+    console.log('err ', err.name)
+    if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
       console.log('err')
       try {
-        const { data } = await api.put('/integrations/ccp/users/token', {
+        const { data } = await api.post('/integrations/ccp/users/token', {
           body: {
             data: {
               name: userState.setting.name,
+              code: '',
             },
           },
         })
+        authLink.value = data
         console.log(data, ' data')
       } catch (err) {
         console.log('internal  err ', err)
@@ -141,6 +136,10 @@ const getUsers = async () => {
 }
 
 const getTemplates = async () => {
+  if (userState.setting.name === undefined) {
+    templates.value = []
+    return
+  }
   const { data } = await api.get<TemplateRequestData[]>(
     '/integrations/ccp/certificate/template/' + userState.setting.name,
   )
@@ -206,14 +205,16 @@ getTemplates()
 
 .home__items {
   display: flex;
-  justify-content: space-around;
-  padding: toRem(20);
+  justify-content: space-between;
+  //padding: toRem(20);
+  //margin: toRem(10);
 }
 
 .home__item-mock {
-  width: toRem(314);
+  width: toRem(300);
   height: toRem(222);
   border-radius: toRem(8);
+
   background: var(--background-primary-dark);
 }
 
