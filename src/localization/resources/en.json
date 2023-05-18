@@ -76,6 +76,7 @@
     "certificates-subtitle-course": "Course",
     "certificates-subtitle-date": "Date",
     "certificates-bitcoin-btn": "Bitcoin",
+    "generate-btn": "Generate",
     "error-certificate-list": "Empty certificate list",
     "certificates-find": "find"
   },
@@ -94,7 +95,8 @@
   },
   "certificate": {
     "mint-text": "Make sbt issuance",
-    "bitcoin-btn": "Bitcoin"
+    "bitcoin-btn": "Bitcoin",
+    "generate-btn": "Generate"
   },
   "settings": {
     "title": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",

@@ -183,11 +183,11 @@ autoRefresh()
 
 // const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
 //   if (state) {
-//     listForCreate.push(user)
+//     selectedItems.push(user)
 //     return
 //   }
 //
-//   listForCreate.filter(item => item !== user)
+//   selectedItems.filter(item => item !== user)
 // }
 </script>
 

@@ -3,14 +3,9 @@
 </template>
 
 <script lang="ts" setup>
-withDefaults(
-  defineProps<{
-    title?: string
-  }>(),
-  {
-    title: '',
-  },
-)
+defineProps<{
+  title?: string
+}>()
 </script>
 
 <style lang="scss" scoped>

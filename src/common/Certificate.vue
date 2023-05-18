@@ -15,7 +15,18 @@
     <p>
       {{ props.user.date }}
     </p>
-    <div class="certificate__btns">
+    <div
+      class="certificate__btns"
+      v-if="
+        props.user.digitalCertificate != undefined ||
+        props.user.digitalCertificate !== ''
+      "
+    >
+      <app-button
+        class="certificate__btn"
+        :text="$t('certificate.mint-text')"
+        @click="emit('open-modal', true, props.user)"
+      />
       <app-button
         class="certificate__btn"
         :text="$t('certificate.mint-text')"
@@ -28,6 +39,14 @@
       >
         <img src="@/../static/branding/download.png" alt="download img" />
       </app-button>
+    </div>
+
+    <div class="certificate__btns" v-else>
+      <app-button
+        class="certificate__btn"
+        :text="$t('certificate.generate-btn')"
+        @click="emit('open-modal', true, props.user)"
+      />
     </div>
   </div>
 </template>

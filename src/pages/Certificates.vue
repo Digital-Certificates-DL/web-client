@@ -27,7 +27,8 @@
       </div>
 
       <div v-if="generateCount > 0">
-        <app-button :text="'generate'" @click="generate" />
+        <app-button :text="$t('certificates.generate-btn')" @click="generate" />
+        <app-button :text="$t('certificates.bitcoin-btn')" @click="timestamp" />
       </div>
     </div>
     <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
@@ -83,7 +84,7 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 
 const userList = ref([] as UserJSONResponse[])
-const listForCreate = ref([] as UserJSONResponse[])
+const selectedItems = ref([] as UserJSONResponse[])
 const generateCount = ref(0)
 const processState = ref('')
 
@@ -151,15 +152,6 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 
   return users
 }
-
-// const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-//   if (state) {
-//     listForTimestamp.push(user)
-//
-//     return
-//   }
-//   listForTimestamp.filter(item => item !== user)
-// }
 
 const refresh = async () => {
   try {
@@ -292,20 +284,28 @@ const findByDate = (filter: DropdownItem) => {
 }
 
 const generate = async () => {
-  const users = listForCreate.value
-
   isLoading.value = true
   processState.value = 'Sign data'
 
-  const signatures = await sign(users)
+  const signatures = await sign(selectedItems.value)
   processState.value = 'Create pdfs'
 
-  userState.students = await createPDF(signatures)
+  const users = await createPDF(signatures)
   processState.value = ''
 
   isLoading.value = false
 
-  await router.push(ROUTE_NAMES.timestamp)
+  await router.push({
+    name: ROUTE_NAMES.timestamp,
+    params: { data: JSON.stringify(users) },
+  })
+}
+
+const timestamp = async () => {
+  await router.push({
+    name: ROUTE_NAMES.timestamp,
+    params: { data: JSON.stringify(selectedItems.value) },
+  })
 }
 
 const updateCode = async (code: string) => {
@@ -381,16 +381,16 @@ autoRefresh()
 
 const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {
-    listForCreate.value.push(item)
-    generateCount.value = listForCreate.value.length
+    selectedItems.value.push(item)
+    generateCount.value = selectedItems.value.length
     return
   }
 
-  const index = listForCreate.value.indexOf(item, 0)
+  const index = selectedItems.value.indexOf(item, 0)
   if (index > -1) {
-    listForCreate.value.splice(index, 1)
+    selectedItems.value.splice(index, 1)
   }
-  generateCount.value = listForCreate.value.length
+  generateCount.value = selectedItems.value.length
 }
 </script>
 
