@@ -64,9 +64,8 @@
 
         <main-nav
           :title="'Home'"
-          body="Ac integer sapien nisl turpis arcu integer.
-           Pellentesque phasellus egestas pharetra quam cursus "
-          description="home"
+          :description="$t('main.main-nav-generation-description')"
+          :body="$t('main.main-nav-generation-body')"
           class="main__card"
           color="info"
           @click="router.push(ROUTE_NAMES.home)"
@@ -116,6 +115,16 @@ const connect = async () => {
   grid-row: span;
   justify-content: center;
   padding-bottom: toRem(60);
+
+  @include respond-to(medium) {
+    margin-top: toRem(60);
+    padding-bottom: toRem(40);
+  }
+
+  @include respond-to(xmedium) {
+    margin-top: toRem(70);
+    padding-bottom: toRem(50);
+  }
 }
 
 .main__info-name {
@@ -131,7 +140,7 @@ const connect = async () => {
 
 .main__body {
   display: flex;
-  align-content: center;
+  //align-content: center;
   justify-content: space-between;
   background: radial-gradient(
     50% 50% at 50% 50%,
@@ -145,17 +154,29 @@ const connect = async () => {
   text-align: center;
 }
 
+.main__provider-side {
+  display: flex;
+  align-items: center;
+}
+
 .main__metamask {
   display: grid;
   place-content: center;
   border-radius: toRem(8);
   padding: toRem(12);
-  width: toRem(652);
-  height: toRem(346);
+  max-width: toRem(652);
+  max-height: toRem(346);
+
+  @include respond-to(medium) {
+    padding: toRem(12);
+    max-width: toRem(452);
+    max-height: toRem(246);
+  }
 }
 
 .main__endpoints-side {
   display: grid;
+  margin-left: toRem(10);
   grid-template-columns: repeat(2, 1fr);
   gap: toRem(80);
   grid-auto-rows: toRem(150);
@@ -164,16 +185,27 @@ const connect = async () => {
 .main__metamask-title {
   font-size: toRem(35);
   margin: auto;
+
+  @include respond-to(xmedium) {
+    font-size: toRem(27);
+  }
 }
 
 .main__metamask-definition {
   text-align: center;
   color: var(--text-secondary-light);
   font-size: toRem(20);
+  @include respond-to(xmedium) {
+    font-size: toRem(14);
+  }
 }
 
 .main__card {
   max-width: toRem(304);
+
+  @include respond-to(xmedium) {
+    width: toRem(250);
+  }
 }
 
 .main__card-indicator {

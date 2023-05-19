@@ -8,7 +8,7 @@
     <p class="main-nav__description">
       {{ props.description }}
     </p>
-    <p :class="navClasses">
+    <p class="main-nav__description" :class="navClasses">
       {{ props.body }}
     </p>
   </div>
@@ -54,6 +54,12 @@ const navClasses = computed(() =>
 
   &--large {
     max-width: toRem(304);
+  }
+}
+
+.main-nav__description {
+  @include respond-to(xmedium) {
+    font-size: toRem(14);
   }
 }
 
