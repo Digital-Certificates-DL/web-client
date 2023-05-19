@@ -1,4 +1,9 @@
 <template>
+  <auth-modal
+    :token-link="authLink"
+    @with-code="updateCode"
+    :is-shown="isUnauthorized"
+  />
   <div class="home">
     <div class="home__body">
       <h2>{{ $t('home.title') }}</h2>
@@ -76,11 +81,10 @@
 <script lang="ts" setup>
 import HomeBodyNav from '@/common/HomeNav.vue'
 
-import { AppNavbar, HomeItem, AppButton } from '@/common'
+import { HomeItem, AppButton } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import {
-  CreateTemplateResponse,
   TemplateRequestData,
   UserJSONResponse,
   UserJSONResponseList,
@@ -88,7 +92,7 @@ import {
 import { ref } from 'vue'
 import { api } from '@/api'
 import { useUserStore } from '@/store'
-import ErrorMessage from '@/common/ErrorMessage.vue'
+import AuthModal from '@/common/modals/AuthModal.vue'
 
 const templates = ref([] as TemplateRequestData[])
 const certificates = ref([] as UserJSONResponse[])
@@ -96,10 +100,9 @@ const certificates = ref([] as UserJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const userState = useUserStore()
-const isModalActive = ref(false)
-let currentUser: UserJSONResponse
 
 const getUsers = async () => {
+  console.log('get users')
   try {
     const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
@@ -113,8 +116,9 @@ const getUsers = async () => {
       },
     )
     certificates.value = prepareUserImg(data)
-  } catch ({ ...err }) {
-    console.log('err ', err.name)
+    return
+  } catch (err) {
+    console.log('err ', err.name, 'users')
     if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
       console.log('err')
       try {
@@ -126,8 +130,10 @@ const getUsers = async () => {
             },
           },
         })
-        authLink.value = data
         console.log(data, ' data')
+        authLink.value = data.link
+        isUnauthorized.value = true
+        console.log(authLink.value, 'auth')
       } catch (err) {
         console.log('internal  err ', err)
       }
@@ -140,11 +146,13 @@ const getTemplates = async () => {
     templates.value = []
     return
   }
-  const { data } = await api.get<TemplateRequestData[]>(
+  console.log('template before')
+  const resp = await api.get<TemplateRequestData[]>(
     '/integrations/ccp/certificate/template/' + userState.setting.name,
   )
 
-  templates.value = prepareTemplateImg(data)
+  console.log('temaplate data: ', resp)
+  templates.value = prepareTemplateImg(resp.data)
 
   //todo check error
 }
@@ -167,9 +175,14 @@ const updateCode = async (code: string) => {
 
 const prepareUserImg = (users: UserJSONResponse[]) => {
   //todo  move to  helpers
+  console.log('user ', users)
   for (const user of users) {
     console.log('user ', user)
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+
+    if (user.certificateImg == null) {
+      continue
+    }
+    user.img = 'data:image/png;base64,' + user.certificateImg
   }
   return users
 }
@@ -177,7 +190,10 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 const prepareTemplateImg = (templates: TemplateRequestData[]) => {
   //todo  move to  helpers
   for (const template of templates) {
-    console.log('user ', template)
+    console.log('template ', template)
+    if (temaplte.backgroundImg === null) {
+      continue
+    }
     template.backgroundImg = 'data:image/png;base64,' + template.backgroundImg
   }
   return templates

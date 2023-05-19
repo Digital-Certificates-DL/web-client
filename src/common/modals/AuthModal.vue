@@ -14,7 +14,7 @@
           class="auth-modal__btn auth-modal__btn-link"
           :text="$t('auth-modal.get-access-btn')"
           :color="'info'"
-          @click="window.open(props.tokenLink, '_blank')"
+          @click="openLink"
         />
         <div class="certificate-modal__btns">
           <app-button
@@ -60,6 +60,11 @@ const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
 
+const openLink = () => {
+  console.log('windows: ', window)
+  console.log('tokenLink: ', props.tokenLink)
+  window.open(props.tokenLink, '_blank')
+}
 const sendCode = () => {
   if (!isFormValid()) return
   emit('with-code', form.code)
