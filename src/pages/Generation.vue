@@ -159,12 +159,11 @@ const parsedData = async (sheepUrl?: string) => {
         body: {
           data: {
             name: userState.setting.name,
-            url: userState.setting.url,
+            url: sheepUrl || userState.setting.url,
           },
         },
       },
     )
-    // console.log(data.status)
     return data as UserJSONResponse[]
   } catch (err) {
     if (err.metadata.link) {
@@ -173,9 +172,6 @@ const parsedData = async (sheepUrl?: string) => {
     }
     ErrorHandler.process(err)
   }
-}
-const cancel = async () => {
-  await router.push(ROUTE_NAMES.main)
 }
 
 const closeModal = () => {

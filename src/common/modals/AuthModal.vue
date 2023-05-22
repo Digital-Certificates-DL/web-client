@@ -7,16 +7,17 @@
       <div class="auth-modal">
         <input-field
           v-model="form.code"
-          :label="$t('auth-code.input-code-label')"
+          :label="$t('auth-modal.input-code-label')"
           :error-message="getFieldErrorMessage('code')"
         />
         <app-button
           class="auth-modal__btn auth-modal__btn-link"
           :text="$t('auth-modal.get-access-btn')"
           :color="'info'"
+          size="medium"
           @click="openLink"
         />
-        <div class="certificate-modal__btns">
+        <div class="auth-modal__btns">
           <app-button
             class="auth-modal__btn auth-modal__btn-nav"
             :text="$t('auth-modal.send-code-btn')"
@@ -61,8 +62,6 @@ const emit = defineEmits<{
 }>()
 
 const openLink = () => {
-  console.log('windows: ', window)
-  console.log('tokenLink: ', props.tokenLink)
   window.open(props.tokenLink, '_blank')
 }
 const sendCode = () => {
@@ -74,18 +73,26 @@ const sendCode = () => {
 <style scoped lang="scss">
 .auth-modal {
   width: toRem(400);
-  height: toRem(600);
+  height: toRem(400);
   background: var(--white);
   border-radius: toRem(15);
   padding: toRem(24);
   display: grid;
 }
 
+.auth-modal__btns {
+  height: toRem(58);
+  display: flex;
+  justify-content: space-between;
+}
+
 .auth-modal__btn {
-  width: toRem(200);
+  width: toRem(100);
 }
 
 .auth-modal__btn-link {
-  width: toRem(200);
+  width: 100%;
+  max-height: toRem(58);
+  margin: 0 auto;
 }
 </style>

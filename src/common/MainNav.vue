@@ -66,7 +66,6 @@ const navClasses = computed(() =>
 .main-nav__btn {
   width: toRem(89);
   height: toRem(34);
-  //font-size: toRem(52);
   margin-bottom: toRem(8);
 }
 </style>

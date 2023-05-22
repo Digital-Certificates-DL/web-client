@@ -73,6 +73,7 @@ import AppDropdown from '@/common/AppDropdown.vue'
 import { DropdownItem } from '@/types/dropdown.types'
 import { Duration } from '@/utils/duration.util'
 import { Time } from '@/utils/time'
+import { ErrorHandler } from '@/helpers'
 
 const router = useRouter()
 const userState = useUserStore()
@@ -169,10 +170,8 @@ const refresh = async () => {
       },
     )
     userList.value = prepareUserImg(data)
-  } catch ({ ...err }) {
-    console.log('err ', err.name)
+  } catch (err) {
     if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
-      console.log('err')
       try {
         const { data } = await api.post('/integrations/ccp/users/token', {
           body: {
@@ -183,14 +182,13 @@ const refresh = async () => {
           },
         })
 
-        console.log(data, 'err data')
         authLink.value = data!.toString()
         isUnauthorized.value = true
-      } catch (err) {
-        console.log('internal  err ', err)
+      } catch (error) {
+        ErrorHandler.process(error)
       }
     } else if (err.name === 'NotFoundError') {
-      console.log('NotFoundError ROUTER')
+      debugger
       await router.push(ROUTE_NAMES.settings)
     }
   }
@@ -310,19 +308,20 @@ const timestamp = async () => {
   })
 }
 
-const updateCode = async (code: string) => {
-  isUnauthorized.value = false
-  await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
-    body: {
-      data: {
-        code: code,
-        name: userState.setting.name,
-      },
-    },
-  })
+// const updateCode = async (code: string) => {
+//   isUnauthorized.value = false
+//   await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
+//     body: {
+//       data: {
+//         code: code,
+//         name: userState.setting.name,
+//       },
+//     },
+//   })
+//
+//   isUnauthorized.value = false
+// }
 
-  isUnauthorized.value = false
-}
 const sign = async (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
@@ -354,23 +353,23 @@ const createPDF = async (users: UserJSONResponse[]) => {
   return data
 }
 
-const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.put<UserJSONResponse[]>(
-    '/integrations/ccp/certificate/',
-    {
-      body: {
-        data: {
-          users: users,
-          address: userState.setting.address,
-          name: userState.setting.name,
-          url: userState.setting.url,
-        },
-      },
-    },
-  )
-
-  userState.students = data
-}
+// const updateUsers = async (users: UserJSONResponse[]) => {
+//   const { data } = await api.put<UserJSONResponse[]>(
+//     '/integrations/ccp/certificate/',
+//     {
+//       body: {
+//         data: {
+//           users: users,
+//           address: userState.setting.address,
+//           name: userState.setting.name,
+//           url: userState.setting.url,
+//         },
+//       },
+//     },
+//   )
+//
+//   userState.students = data
+// }
 
 const autoRefresh = () => {
   if (userState.students.length === 0) {
@@ -414,10 +413,7 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 
 .certificates__search-input-wrp {
   width: toRem(458);
-  margin-right: toRem(30); //background: #7b6eff;
-  //height: toRem(52);
-  //justify-content: space-around;
-  //border-radius: toRem(20);
+  margin-right: toRem(30);
 }
 
 .certificates__btns {

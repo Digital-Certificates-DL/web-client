@@ -52,6 +52,8 @@ const selectItem = (item: DropdownItem) => {
 </script>
 
 <style scoped lang="scss">
+$index: 1;
+
 .app-dropdown {
   position: relative;
   display: inline-block;
@@ -73,7 +75,7 @@ const selectItem = (item: DropdownItem) => {
   padding: toRem(8);
   min-width: toRem(160);
   box-shadow: 0 toRem(8) toRem(16) 0 rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: $index;
 }
 
 .app-dropdown__content a {

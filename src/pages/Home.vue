@@ -93,6 +93,7 @@ import { ref } from 'vue'
 import { api } from '@/api'
 import { useUserStore } from '@/store'
 import AuthModal from '@/common/modals/AuthModal.vue'
+import { ErrorHandler } from '@/helpers'
 
 const templates = ref([] as TemplateRequestData[])
 const certificates = ref([] as UserJSONResponse[])
@@ -102,7 +103,6 @@ const authLink = ref('')
 const userState = useUserStore()
 
 const getUsers = async () => {
-  console.log('get users')
   try {
     const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
@@ -118,9 +118,7 @@ const getUsers = async () => {
     certificates.value = prepareUserImg(data)
     return
   } catch (err) {
-    console.log('err ', err.name, 'users')
     if (err.name === 'UnauthorizedError' || err.name === 'ForbiddenError') {
-      console.log('err')
       try {
         const { data } = await api.post('/integrations/ccp/users/token', {
           body: {
@@ -130,12 +128,10 @@ const getUsers = async () => {
             },
           },
         })
-        console.log(data, ' data')
         authLink.value = data.link
         isUnauthorized.value = true
-        console.log(authLink.value, 'auth')
-      } catch (err) {
-        console.log('internal  err ', err)
+      } catch (error) {
+        ErrorHandler.process(error)
       }
     }
   }
@@ -146,19 +142,11 @@ const getTemplates = async () => {
     templates.value = []
     return
   }
-  console.log('template before')
   const resp = await api.get<TemplateRequestData[]>(
     '/integrations/ccp/certificate/template/' + userState.setting.name,
   )
 
-  console.log('temaplate data: ', resp)
   templates.value = prepareTemplateImg(resp.data)
-
-  //todo check error
-}
-
-const closeModal = () => {
-  isUnauthorized.value = false
 }
 
 const updateCode = async (code: string) => {
@@ -174,11 +162,7 @@ const updateCode = async (code: string) => {
 }
 
 const prepareUserImg = (users: UserJSONResponse[]) => {
-  //todo  move to  helpers
-  console.log('user ', users)
   for (const user of users) {
-    console.log('user ', user)
-
     if (user.certificateImg == null) {
       continue
     }
@@ -188,9 +172,7 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 }
 
 const prepareTemplateImg = (templates: TemplateRequestData[]) => {
-  //todo  move to  helpers
   for (const template of templates) {
-    console.log('template ', template)
     if (temaplte.backgroundImg === null) {
       continue
     }
@@ -216,21 +198,17 @@ getTemplates()
 
 .home__body-nav-item {
   margin: toRem(10);
-  //width: toRem(602);
 }
 
 .home__items {
   display: flex;
   justify-content: space-between;
-  //padding: toRem(20);
-  //margin: toRem(10);
 }
 
 .home__item-mock {
   width: toRem(300);
   height: toRem(222);
   border-radius: toRem(8);
-
   background: var(--background-primary-dark);
 }
 

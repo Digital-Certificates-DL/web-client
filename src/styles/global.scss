@@ -96,21 +96,18 @@ h5 {
   font-family: var(--app-font-family);
   font-weight: 600;
   line-height: 1;
-
-
 }
 
 h1 {
   font-size: toRem(46);
-  @include respond-to(medium) {
 
+  @include respond-to(medium) {
     font-size: toRem(40);
   }
 
   @include respond-to(xmedium) {
     font-size: toRem(43);
   }
-
 }
 
 h2 {
@@ -127,7 +124,6 @@ h2 {
 
 h3 {
   font-size: toRem(28);
-
 
   @include respond-to(xmedium) {
     font-size: toRem(25);

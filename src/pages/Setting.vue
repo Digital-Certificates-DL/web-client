@@ -137,6 +137,10 @@ const save = async () => {
 .settings__form {
   margin-bottom: toRem(50);
   width: toRem(458);
+
+  @include respond-to(xmedium) {
+    margin-bottom: toRem(30);
+  }
 }
 
 .settings__btns {

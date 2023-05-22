@@ -70,13 +70,6 @@
           color="info"
           @click="router.push(ROUTE_NAMES.home)"
         />
-        <main-nav
-          :title="'test'"
-          :description="$t('main.main-nav-generation-description')"
-          :body="$t('main.main-nav-generation-body')"
-          class="main__card"
-          @click="router.push(ROUTE_NAMES.test)"
-        />
       </div>
     </div>
   </div>
@@ -104,6 +97,8 @@ const connect = async () => {
 </script>
 
 <style lang="scss" scoped>
+$opacity: 0.6;
+
 .main__page {
   max-width: var(--page-large);
   margin: auto;
@@ -140,14 +135,13 @@ const connect = async () => {
 
 .main__body {
   display: flex;
-  //align-content: center;
   justify-content: space-between;
   background: radial-gradient(
     50% 50% at 50% 50%,
     rgba(143, 189, 255, 0.38) 0%,
     rgba(255, 255, 255, 0) 100%
   );
-  opacity: 0.6;
+  opacity: $opacity;
 }
 
 .main__btn-connect {
@@ -195,6 +189,7 @@ const connect = async () => {
   text-align: center;
   color: var(--text-secondary-light);
   font-size: toRem(20);
+
   @include respond-to(xmedium) {
     font-size: toRem(14);
   }

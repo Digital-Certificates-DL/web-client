@@ -22,6 +22,7 @@
         <!--          />-->
         <!--        </div>-->
       </div>
+
       <!--      <div v-if="isModalActive">-->
       <!--        <certificate-modal-->
       <!--          :user="currentUser"-->
@@ -60,21 +61,16 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { UserJSONResponse, UserJSONResponseList } from '@/types'
-// import AppButton from '@/common/AppButton.vue'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { reactive, ref } from 'vue'
 import { Bitcoin } from '@/utils/bitcoin.util'
 
 const userState = useUserStore()
-
-// const currentUser = ref({} as UserJSONResponse)
-
 const timestampCount = ref(0)
 
 const certificatesTitle = 'Previously certificates'
 const listForTimestamp = ref([] as UserJSONResponse[])
-const isModalActive = ref(false)
 
 const form = reactive({
   search: '',
@@ -112,7 +108,6 @@ const bitcoinTimestamp = async () => {
     const tx = await bitcoin.PrepareLegacyTXTestnet(
       userState.setting.sendMnemonicPhrase,
     )
-    console.log('tx: ', tx)
     const hex = tx?.hex || ''
     const exAddress = tx?.exAddress || ''
     const exPath = tx?.exPath || ''
@@ -120,7 +115,6 @@ const bitcoinTimestamp = async () => {
     if (hex === '' || exAddress === '' || exPath === '' || balance === -1) {
       return
     }
-    console.log('tx: ', tx)
     if (tx === undefined) {
       continue
     }
@@ -135,9 +129,6 @@ const bitcoinTimestamp = async () => {
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  //todo check it
-
-  console.log('users update: ', users)
   const usersResp = await api.post<UserJSONResponseList>(
     '/integrations/ccp/certificate/bitcoin',
     {
@@ -156,18 +147,13 @@ const updateUsers = async (users: UserJSONResponse[]) => {
 }
 
 const autoRefresh = () => {
-  console.log('start')
-
   userList.value = userState.students
-  console.log('auto: ', userList.value)
   userList.value = userState.students
 }
 
 const selectItem = (state: boolean, item: UserJSONResponse) => {
-  console.log(item)
   if (state) {
     listForTimestamp.value.push(item)
-    console.log(listForTimestamp, 'list')
     timestampCount.value = listForTimestamp.value.length
     return
   }

@@ -41,14 +41,8 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-
   border-radius: toRem(8);
-  //max-width: toRem(652);
-  //max-height: toRem(160);
-
-  //@include respond-to(large) {
   height: toRem(160);
-  //}
 }
 
 .home-nav__description {
@@ -66,8 +60,4 @@ const emit = defineEmits<{
   justify-content: right;
   margin-right: toRem(20);
 }
-
-//.home-nav__btn {
-//  width: 70%;
-//}
 </style>

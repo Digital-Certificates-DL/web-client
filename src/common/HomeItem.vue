@@ -26,10 +26,6 @@ const props = defineProps<{
 </script>
 
 <style scoped lang="scss">
-//.home-item__image-wrp {
-//  max-width: toRem(00);
-//  max-height: toRem(100);
-//}
 .home-item__img {
   width: toRem(314);
   height: toRem(222);

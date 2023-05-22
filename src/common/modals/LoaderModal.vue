@@ -3,12 +3,10 @@
     :is-shown="isShown"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <template #default="{ modal }">
-      <div class="loader-modal">
-        <loader />
-        <p>{{ props.state }}</p>
-      </div>
-    </template>
+    <div class="loader-modal">
+      <loader />
+      <p>{{ props.state }}</p>
+    </div>
   </modal>
 </template>
 

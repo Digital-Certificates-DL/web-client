@@ -4,7 +4,7 @@ import BIP32Factory from 'bip32'
 import * as ecc from 'tiny-secp256k1'
 const bip32 = BIP32Factory(ecc)
 import ECPairFactory from 'ecpair'
-import { mnemonicToSeedAsync, validateMnemonicAsync } from 'bip39-web'
+import { mnemonicToSeedAsync } from 'bip39-web'
 
 const ECPair = ECPairFactory(ecc)
 import axios from 'axios'
@@ -14,16 +14,8 @@ import {
   PustTxResponce,
   UTXO,
   BlockstreamTxList,
-  Tx,
   UTXOs,
 } from '@/types/bitcoin.types'
-import { api } from '@/api'
-
-//todo  find utxos in first 100 keys
-
-import bip39 from 'bip39'
-import { UserJSONResponseList } from '@/types'
-import { Root } from 'postcss'
 
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
@@ -46,8 +38,7 @@ export class Bitcoin {
         if (address === undefined) {
           continue
         }
-        console.log('path: ', path)
-        console.log('address: ', address)
+
         const txs = await axios.get<BlockstreamTxList>(
           'https://blockstream.info/api/address/' + address + '/txs',
         )
@@ -72,10 +63,6 @@ export class Bitcoin {
       }
       index++
       emptyAddreeses++
-      console.log('index', index)
-      console.log('emptyAddreeses', emptyAddreeses)
-
-      console.log('addresses info list', this.addressInfoList)
     }
     return this.addressInfoList
   }
@@ -83,7 +70,6 @@ export class Bitcoin {
   public getUTXOBip32TestnetBlockstream = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
-    console.log(mnph)
     let index = 0
     const bip = bip32.fromSeed(seed)
     while (emptyAddreeses < 10) {
@@ -100,8 +86,6 @@ export class Bitcoin {
         if (address === undefined) {
           continue
         }
-        console.log('path: ', path)
-        console.log('address: ', address)
         const txs = await axios.get<BlockstreamTxList>(
           'https://blockstream.info/testnet/api/address/' + address + '/txs',
         )
@@ -125,10 +109,6 @@ export class Bitcoin {
         this.addressInfoList.push(addressInfo)
       }
       index++
-      console.log('index', index)
-      console.log('emptyAddreeses', emptyAddreeses)
-
-      console.log('addresses info list', this.addressInfoList)
     }
     return this.addressInfoList
   }
@@ -153,18 +133,14 @@ export class Bitcoin {
     butxoAmount = betterUTXO.utxoAmount
     if (utxo.length) {
       for (let i = 0; i < utxo.length; i++) {
-        console.log(utxo[i])
         if (utxo[i].vout === -1) {
           this.addressInfoList = this.addressInfoList.filter(data =>
             data.utxos.filter(data => data.vout !== -1),
           )
-          console.log('skip')
           return
         }
         const hex = await this.getTxTestnet(utxo[i].txid)
         const txHex = new Buffer(hex, 'hex')
-        console.log(utxo)
-
         psbt.addInput({
           hash: utxo[i].txid,
           index: utxo[i].vout,

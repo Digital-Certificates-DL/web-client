@@ -40,7 +40,8 @@
           v-model="form.address"
           :error-message="getFieldErrorMessage('address')"
         />
-        <div class="certificate-modal__btns">
+        <div class="auth-modal__btns">
+          1
           <app-button
             class="certificate-modal__btn"
             :text="$t('certificate-modal.mint-btn')"
@@ -145,7 +146,7 @@ const emit = defineEmits<{
   margin: auto;
 }
 
-.certificate-modal__btns {
+.auth-modal__btns {
   display: flex;
   justify-content: space-between;
 }
