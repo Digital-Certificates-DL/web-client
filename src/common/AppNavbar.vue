@@ -51,9 +51,26 @@ const connect = async () => {
   box-shadow: 0 toRem(4) toRem(16) rgba(0, 0, 0, 0.06);
   margin-bottom: toRem(20);
 
+  @include respond-to(xmedium) {
+    width: toRem(1280);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(1024);
+  }
+
   @include respond-to(tablet) {
     flex-wrap: wrap;
   }
+}
+
+.app-navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
+  border-bottom: var(--border-primary-main);
+  width: 100%;
 }
 
 .app-navbar__logo {

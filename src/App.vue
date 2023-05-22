@@ -66,9 +66,9 @@ const initUser = async () => {
   }
 }
 
-initUser()
 init()
 initProvider()
+initUser()
 </script>
 
 <style lang="scss" scoped>

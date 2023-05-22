@@ -86,9 +86,9 @@ const selectItem = () => {
 .certificate {
   display: flex;
   align-items: center;
-  margin-top: toRem(30);
+  margin-top: toRem(35);
   padding-bottom: toRem(10);
-  border-bottom: var(--border-primary-dark) toRem(1) solid;
+  border-bottom: var(--border-primary-main) toRem(1) solid;
   max-width: var(--page-large);
 }
 

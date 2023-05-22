@@ -1,10 +1,10 @@
 <template>
-  <auth-modal
-    :token-link="authLink"
-    @with-code="updateCode"
-    :is-shown="isUnauthorized"
-  />
   <div class="home">
+    <auth-modal
+      :token-link="authLink"
+      @with-code="updateCode"
+      :is-shown="isUnauthorized"
+    />
     <div class="home__body">
       <h2>{{ $t('home.title') }}</h2>
       <div class="home__body-nav">
@@ -187,8 +187,20 @@ getTemplates()
 
 <style scoped lang="scss">
 .home {
-  width: var(--page-large);
+  max-width: var(--page-large);
   margin: 0 auto;
+}
+
+.home__body {
+  width: var(--page-large);
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
 .home__body-nav {
@@ -197,7 +209,14 @@ getTemplates()
 }
 
 .home__body-nav-item {
-  margin: toRem(10);
+  margin: toRem(20) 0;
+  width: 47%;
+  height: toRem(150);
+
+  @include respond-to(xmedium) {
+    height: toRem(130);
+    width: 47%;
+  }
 }
 
 .home__items {
@@ -210,6 +229,16 @@ getTemplates()
   height: toRem(222);
   border-radius: toRem(8);
   background: var(--background-primary-dark);
+
+  @include respond-to(xmedium) {
+    width: toRem(250);
+    height: toRem(170);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(200);
+    height: toRem(150);
+  }
 }
 
 .home__content-subtitle {
