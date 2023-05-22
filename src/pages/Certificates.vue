@@ -289,6 +289,12 @@ const findByDate = (filter: DropdownItem) => {
 
 const generate = async () => {
   isLoading.value = true
+  processState.value = 'Validate data'
+  if (!validateItemListGenerate()) {
+    isLoading.value = false
+    return
+  }
+
   processState.value = 'Sign data'
 
   const signatures = await sign(selectedItems.value)
@@ -307,10 +313,11 @@ const generate = async () => {
 
 const timestamp = async () => {
   userState.bufferUserList = selectedItems.value
-
-  await router.push({
-    name: ROUTE_NAMES.timestamp,
-  })
+  if (validateItemListTimestamp()) {
+    await router.push({
+      name: ROUTE_NAMES.timestamp,
+    })
+  }
 }
 
 const sign = async (users: UserJSONResponse[]) => {
@@ -390,12 +397,44 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
   }
   isShowCertificateCheckbox.value = true
 }
+
+const validateItemListGenerate = () => {
+  for (const item of selectedItems.value) {
+    if (item.certificate !== '' || item.signature !== '') {
+      ErrorHandler.process(
+        'This student already has certificate, ' + item.participant,
+      )
+      return false
+    }
+  }
+  return true
+}
+
+const validateItemListTimestamp = () => {
+  for (const item of selectedItems.value) {
+    if (item.certificate === '' || item.signature === '') {
+      ErrorHandler.process(
+        'This student does not has certificate,' + item.participant,
+      )
+      return false
+    }
+  }
+  return true
+}
 </script>
 
 <style scoped lang="scss">
 .certificates {
   margin: 0 auto;
   width: toRem(1400);
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
 .certificates__nav {
@@ -424,13 +463,25 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 .certificates__btns {
   display: flex;
   justify-content: space-between;
-  width: 20%;
+  width: 30%;
   align-items: center;
 }
 
 .certificates__btn {
   height: toRem(52);
   border-radius: toRem(8);
+
+  @include respond-to(large) {
+    font-size: toRem(10);
+  }
+
+  @include respond-to(xmedium) {
+    font-size: toRem(8);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(6);
+  }
 }
 
 .certificates__filters {

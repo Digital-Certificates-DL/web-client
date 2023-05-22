@@ -96,7 +96,7 @@
     "cancel-btn": "Cancel"
   },
   "certificate": {
-    "mint-text": "Make sbt issuance",
+    "mint-text": "Make sbt",
     "bitcoin-btn": "Bitcoin",
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp"
