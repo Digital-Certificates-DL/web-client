@@ -17,7 +17,7 @@
       "node",
       "vite/client",
       "@types/lodash-es",
-      "jsona",
+      "json",
       "vitest/globals"
     ],
     "paths": {
