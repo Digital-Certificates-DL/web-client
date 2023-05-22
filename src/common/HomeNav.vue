@@ -23,11 +23,11 @@
 import AppButton from '@/common/AppButton.vue'
 
 const props = defineProps<{
-  color: string
-  title: string
-  name: string
-  description: string
-  router: string
+  color?: string
+  title?: string
+  name?: string
+  description?: string
+  router?: string
 }>()
 
 const emit = defineEmits<{

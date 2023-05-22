@@ -41,7 +41,6 @@
           :error-message="getFieldErrorMessage('address')"
         />
         <div class="auth-modal__btns">
-          1
           <app-button
             class="certificate-modal__btn"
             :text="$t('certificate-modal.mint-btn')"

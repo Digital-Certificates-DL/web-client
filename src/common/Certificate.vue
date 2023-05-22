@@ -5,52 +5,54 @@
       :model-value="isSelected"
       @click="selectItem"
     />
-    <div class="certificate__img-wrp" @click="selectItem">
-      <img
-        class="home-item__img"
-        :src="props.user.img || '@/../static/branding/template.jpg'"
-        alt="certificate"
-      />
-    </div>
+    <div class="certificate__body">
+      <div class="certificate__img-wrp" @click="selectItem">
+        <img
+          v-if="props.user.signature !== ''"
+          class="certificate__img"
+          :src="props.user.img || '@/../static/branding/template.jpg'"
+          alt="certificate"
+        />
+        <div v-else class="certificate__img"></div>
+        <p class="certificate__name">
+          {{ props.user.participant }}
+        </p>
+      </div>
+      <div class="certificate__titles">
+        <p>
+          {{ props.user.courseTitle }}
+        </p>
+        <p>
+          {{ props.user.date }}
+        </p>
+      </div>
 
-    <p class="certificate__name">
-      {{ props.user.participant }}
-    </p>
-    <p>
-      {{ props.user.date }}
-    </p>
-    <div
-      class="certificate__btns"
-      v-if="
-        props.user.digitalCertificate != undefined ||
-        props.user.digitalCertificate !== ''
-      "
-    >
-      <app-button
-        class="certificate__btn"
-        :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', true, props.user)"
-      />
-      <app-button
-        class="certificate__btn"
-        :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', true, props.user)"
-      />
+      <div class="certificate__btns" v-if="user.signature !== ''">
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.mint-text')"
+          @click="emit('open-modal', true, props.user)"
+        />
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.timestamp-btn')"
+          @click="emit('open-modal', true, props.user)"
+        />
 
-      <app-button
-        class="certificate__btn certificate__btn-download"
-        @click="window.open(props.user.certificate, '_blank')"
-      >
-        <img src="@/../static/branding/download.png" alt="download img" />
-      </app-button>
-    </div>
-
-    <div class="certificate__btns" v-else>
-      <app-button
-        class="certificate__btn"
-        :text="$t('certificate.generate-btn')"
-        @click="emit('open-modal', true, props.user)"
-      />
+        <app-button
+          class="certificate__btn certificate__btn-download"
+          @click="window.open(props.user.certificate, '_blank')"
+        >
+          <img src="@/../static/branding/download.png" alt="download img" />
+        </app-button>
+      </div>
+      <div class="certificate__btns" v-else>
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.generate-btn')"
+          @click="selectItem"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -83,22 +85,40 @@ const selectItem = () => {
 <style lang="scss" scoped>
 .certificate {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: toRem(20);
+  margin-top: toRem(30);
   padding-bottom: toRem(10);
-  border-bottom: var(--text-primary-dark), toRem(2), solid;
+  border-bottom: var(--border-primary-dark) toRem(1) solid;
   max-width: var(--page-large);
 }
 
-.home-item__img {
+.certificate__body {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.certificate__img-wrp {
+  display: flex;
+  align-items: center;
+}
+
+.certificate__img {
   width: toRem(74);
   border-radius: toRem(4);
+  margin-right: toRem(10);
 
   @include respond-to(large) {
     width: toRem(74);
     border-radius: toRem(4);
   }
+}
+
+.certificate__titles {
+  display: flex;
+  justify-content: space-between;
+  width: 40%;
 }
 
 .certificate__name {
@@ -120,5 +140,6 @@ const selectItem = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 20%;
 }
 </style>

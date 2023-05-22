@@ -2,9 +2,7 @@
   <div v-if="isAppInitialized" class="app__container">
     <router-view v-slot="{ Component, route }">
       <app-navbar v-if="route.fullPath !== '/main'" />
-      <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component class="app__main" :is="Component" />
-      </transition>
+      <component class="app__main" :is="Component" />
     </router-view>
   </div>
 </template>
@@ -17,7 +15,7 @@ import { config } from '@config'
 import { PROVIDERS } from '@/enums'
 
 import AppNavbar from '@/common/AppNavbar.vue'
-import { useWeb3ProvidersStore } from '@/store'
+import { useUserStore, useWeb3ProvidersStore } from '@/store'
 
 const web3Store = useWeb3ProvidersStore()
 const isAppInitialized = ref(false)
@@ -44,7 +42,33 @@ const init = async () => {
   isAppInitialized.value = true
 }
 
+const initProvider = async () => {
+  try {
+    useNotifications()
+    await web3Store.detectProviders()
+    const provider = web3Store.providers.find(
+      el => el.name === PROVIDERS.metamask,
+    )
+    await web3Store.provider.init(provider!)
+    document.title = config.APP_NAME
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+  isAppInitialized.value = true
+}
+
+const initUser = async () => {
+  try {
+    useNotifications()
+    useUserStore()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+initUser()
 init()
+initProvider()
 </script>
 
 <style lang="scss" scoped>

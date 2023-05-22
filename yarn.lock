@@ -88,19 +88,19 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@distributedlab/fetcher@0.2.0-rc.14":
-  version "0.2.0-rc.14"
-  resolved "https://registry.yarnpkg.com/@distributedlab/fetcher/-/fetcher-0.2.0-rc.14.tgz#43927135102750ce47b2325f6de8ec7d6d22de78"
-  integrity sha512-Slyvn2AkYBn9g0s6bHptL4tYZlHeQn55Qbd7zHXS0v09BfA3ehUIRqWOEk7pZrSgqhgbnPieM/JnAA2DwryZug==
+"@distributedlab/fetcher@0.2.0-rc.15":
+  version "0.2.0-rc.15"
+  resolved "https://registry.yarnpkg.com/@distributedlab/fetcher/-/fetcher-0.2.0-rc.15.tgz#9c2fe5a87f372834a461b3118415b32bf1570454"
+  integrity sha512-pPaZGodjXqiSPDVqCOnnal4ZsKhS/pKqQ2dSFQdWlSXZWDdST9S382sXniLRYbvmFtXwo/rCBJduTNVG1mGRzQ==
   dependencies:
     uuid "^9.0.0"
 
-"@distributedlab/jac@^0.2.0-rc.9":
-  version "0.2.0-rc.14"
-  resolved "https://registry.yarnpkg.com/@distributedlab/jac/-/jac-0.2.0-rc.14.tgz#c7ff843e815c107a23ed32c4d0eede38c4609425"
-  integrity sha512-XYOxfDy6TVouV4vHjzuT5ufIe7ns6iXzvfLFV5FRHBi8wj6dcEei+/VbsUydpJQsyCBARMCOOpVNnjIKwCSM7A==
+"@distributedlab/jac@^0.2.0-rc.15":
+  version "0.2.0-rc.15"
+  resolved "https://registry.yarnpkg.com/@distributedlab/jac/-/jac-0.2.0-rc.15.tgz#958c86266bc0cd0d1e50dd6d4069e14d9aba03eb"
+  integrity sha512-5ggO5J9Vzi9ss7Ep/QyDcDha3HnWG7MHJKiru3NrSs1d0v3zhoqycpwBWQw86+niilUa91T90zn8Qm4tSEKTbA==
   dependencies:
-    "@distributedlab/fetcher" "0.2.0-rc.14"
+    "@distributedlab/fetcher" "0.2.0-rc.15"
     lodash "^4.17.21"
 
 "@distributedlab/json-api-client@^2.2.1":

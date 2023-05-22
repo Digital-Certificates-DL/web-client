@@ -53,16 +53,6 @@
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <main-nav
-          class="main__card"
-          color="info"
-          size="large"
-          :body="$t('main.main-nav-certificates-body')"
-          :title="$t('main.main-nav-certificates-title')"
-          :description="$t('main.main-nav-certificates-description')"
-          @click="router.push(ROUTE_NAMES.certificates)"
-        />
-
-        <main-nav
           :title="'Home'"
           :description="$t('main.main-nav-generation-description')"
           :body="$t('main.main-nav-generation-body')"

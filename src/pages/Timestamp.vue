@@ -1,57 +1,52 @@
 <template>
   <div class="timestamp">
-    <h2>{{ certificatesTitle }}</h2>
+    <h2>{{ $t('timestamp.page-title') }}</h2>
     <div class="certificates__search">
-      <input-field
-        class="timestamp__search-input"
-        placeholder="find"
-        v-model="form.search"
-        @update:model-value="find"
-      />
+      <input-field class="timestamp__search-input" placeholder="find" />
+
       <div class="timestamp__btns">
-        <!--        <div v-if="timestampCount > 0" class="certificates__btns">-->
-        <!--          <p>{{ timestampCount }}</p>-->
+        <div v-if="selectedCount > 0" class="certificates__btns">
+          <p>{{ selectedCount }}</p>
 
-        <!--          &lt;!&ndash;          <app-button class="timestamp__btn" @click="find" text="Find" />&ndash;&gt;-->
-
-        <!--          <app-button-->
-        <!--            class="timestamp__btn"-->
-        <!--            @click="bitcoinTimestamp"-->
-        <!--            :color="'success'"-->
-        <!--            text="Bitcoin"-->
-        <!--          />-->
-        <!--        </div>-->
+          <app-button
+            class="timestamp__btn"
+            @click="bitcoinTimestamp"
+            :color="'success'"
+            text="Bitcoin"
+          />
+        </div>
       </div>
 
-      <!--      <div v-if="isModalActive">-->
-      <!--        <certificate-modal-->
-      <!--          :user="currentUser"-->
-      <!--          v-model:is-shown="isModalActive"-->
-      <!--        />-->
-      <!--      </div>-->
+      <div v-if="isModalActive">
+        <certificate-modal
+          :user="currentUser"
+          v-model:is-shown="isModalActive"
+        />
+      </div>
 
       <div class="timestamp__body">
         <div class="timestamp__list">
-          <!--          <div v-if="userState.students.length === 0">-->
-          <!--            <error-message message="Empty certificate list" />-->
-          <!--          </div>-->
-          <!--          <div v-for="(item, key) in userList" :value="key" :key="item">-->
-          <!--            <timestemp-item-->
-          <!--              :name="item.participant"-->
-          <!--              :date="item.date"-->
-          <!--              :user="item"-->
-          <!--              @select="selectItem"-->
-          <!--              @open-modal="openModal"-->
-          <!--            />-->
-          <!--          </div>-->
+          <div v-if="userList.length === 0">
+            <error-message message="Empty certificate list" />
+          </div>
+          <div v-for="(item, key) in userList" :value="key" :key="item">
+            <timestamp-item
+              :name="item.participant"
+              :date="item.date"
+              :user="item"
+              :is-show="isShowTimestampCheckbox"
+              @select="selectItem"
+              @open-modal="openModal"
+            />
+          </div>
         </div>
 
         <div class="timestamp__img-wrp">
-          <!--          <img-->
-          <!--            class="timestamp__img"-->
-          <!--            src="static/branding/template.jpg"-->
-          <!--            alt="Certificate preview"-->
-          <!--          />-->
+          <img
+            class="timestamp__img"
+            :src="currentUser.img || 'static/branding/template.jpg'"
+            alt="Certificate preview"
+          />
         </div>
       </div>
     </div>
@@ -60,51 +55,47 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { UserJSONResponse, UserJSONResponseList } from '@/types'
+import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { Bitcoin } from '@/utils/bitcoin.util'
+import TimestampItem from '@/common/TimestampItem.vue'
+import CertificateModal from '@/common/modals/CertificateModal.vue'
+import ErrorMessage from '@/common/ErrorMessage.vue'
+import AppButton from '@/common/AppButton.vue'
+import { tryOnBeforeMount } from '@vueuse/core'
+const isModalActive = ref(false)
+const currentUser = ref({} as UserJSONResponse)
+const selectedCount = ref(0)
 
 const userState = useUserStore()
-const timestampCount = ref(0)
-
-const certificatesTitle = 'Previously certificates'
-const listForTimestamp = ref([] as UserJSONResponse[])
-
-const form = reactive({
-  search: '',
-})
+// const timestampCount = ref(0)
+const isShowTimestampCheckbox = ref(false)
 
 const userList = ref([] as UserJSONResponse[])
+const selectedItems = ref([] as UserJSONResponse[])
 
-let userBuffer
-const find = () => {
-  userBuffer = userState.students
-
-  if (form.search === '' && userBuffer !== undefined) {
-    userState.students = userBuffer
-  }
-  userState.students.filter(item => item.participant.includes(form.search))
-}
-
-const prepareUserImg = (users: UserJSONResponseList) => {
-  const list: UserJSONResponse[] = users.data
-  for (const user of list) {
+const prepareUserImg = (users: UserJSONResponse[]) => {
+  for (const user of users) {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
-  return users.data
+  return users
 }
 
+const openModal = (state: boolean, user: UserJSONResponse) => {
+  isModalActive.value = state
+  currentUser.value = user
+}
 const bitcoinTimestamp = async () => {
   const bitcoin = new Bitcoin()
 
-  const UTXOs = await bitcoin.getUTXOBip32TestnetBlockstream(
+  await bitcoin.getUTXOBip32TestnetBlockstream(
     userState.setting.sendMnemonicPhrase,
   )
 
-  for (const user of listForTimestamp.value) {
+  for (const user of selectedItems.value) {
     const tx = await bitcoin.PrepareLegacyTXTestnet(
       userState.setting.sendMnemonicPhrase,
     )
@@ -124,12 +115,12 @@ const bitcoinTimestamp = async () => {
 
     bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
   }
-  const users = await updateUsers(listForTimestamp.value)
-  userList.value = users
+
+  userList.value = await updateUsers(selectedItems.value)
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const usersResp = await api.post<UserJSONResponseList>(
+  const { data } = await api.post<UserJSONResponse[]>(
     '/integrations/ccp/certificate/bitcoin',
     {
       body: {
@@ -143,38 +134,32 @@ const updateUsers = async (users: UserJSONResponse[]) => {
     },
   )
 
-  return prepareUserImg(usersResp.data)
+  return prepareUserImg(data)
 }
 
 const autoRefresh = () => {
-  userList.value = userState.students
-  userList.value = userState.students
+  userList.value = userState.bufferUserList
 }
-
 const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {
-    listForTimestamp.value.push(item)
-    timestampCount.value = listForTimestamp.value.length
+    selectedItems.value.push(item)
+    selectedCount.value = selectedItems.value.length
+    isShowTimestampCheckbox.value = true
     return
   }
 
-  const index = listForTimestamp.value.indexOf(item, 0)
+  const index = selectedItems.value.indexOf(item, 0)
   if (index > -1) {
-    listForTimestamp.value.splice(index, 1)
+    selectedItems.value.splice(index, 1)
   }
-  timestampCount.value = listForTimestamp.value.length
+  selectedCount.value = selectedItems.value.length
+  if (selectedItems.value.length < 1) {
+    isShowTimestampCheckbox.value = false
+    return
+  }
+  isShowTimestampCheckbox.value = true
 }
-
-autoRefresh()
-
-// const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
-//   if (state) {
-//     selectedItems.push(user)
-//     return
-//   }
-//
-//   selectedItems.filter(item => item !== user)
-// }
+tryOnBeforeMount(autoRefresh)
 </script>
 
 <style lang="scss" scoped>
@@ -201,6 +186,7 @@ autoRefresh()
 }
 
 .timestamp__search-input {
-  width: toRem(426);
+  padding-top: toRem(20);
+  width: 40%;
 }
 </style>

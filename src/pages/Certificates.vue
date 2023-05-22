@@ -2,31 +2,38 @@
   <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   <div class="certificates">
     <h2>{{ $t('certificates.certificates-title') }}</h2>
-    <div class="certificates__search-wrp">
-      <div class="certificates__search-input-wrp">
-        <input-field
-          class="certificates__search-input"
-          v-model="form.search"
-          :placeholder="$t('certificates.certificates-find')"
-          @update:model-value="find"
-        />
+    <div class="certificates__nav">
+      <div class="certificates__search-wrp">
+        <div class="certificates__search-input-wrp">
+          <input-field
+            class="certificates__search-input"
+            v-model="form.search"
+            :placeholder="$t('certificates.certificates-find')"
+            @update:model-value="find"
+          />
+        </div>
+        <div class="certificates__filters">
+          <app-dropdown
+            :items="dropDownCourseList"
+            @select-item="findByCourse"
+          />
+          <app-dropdown
+            :title="'Data'"
+            :items="dropDownDataList"
+            :main-image="'@/../static/branding/data-ico.png'"
+            @select-item="findByDate"
+          />
+          <app-dropdown
+            :title="'All'"
+            :items="dropDownStateList"
+            :main-image="'@/../static/branding/success-ico.png'"
+          />
+        </div>
       </div>
-      <div class="certificates__filters">
-        <app-dropdown :items="dropDownCourseList" @select-item="findByCourse" />
-        <app-dropdown
-          :title="'Data'"
-          :items="dropDownDataList"
-          :main-image="'@/../static/branding/data-ico.png'"
-          @select-item="findByDate"
-        />
-        <app-dropdown
-          :title="'All'"
-          :items="dropDownStateList"
-          :main-image="'@/../static/branding/success-ico.png'"
-        />
-      </div>
-
-      <div v-if="generateCount > 0">
+      <div v-if="selectedCount > 0" class="certificates__btns">
+        <p class="certificates__count">
+          {{ selectedCount }}
+        </p>
         <app-button :text="$t('certificates.generate-btn')" @click="generate" />
         <app-button :text="$t('certificates.bitcoin-btn')" @click="timestamp" />
       </div>
@@ -46,7 +53,7 @@
       <div v-for="(item, key) in userList" :value="key" :key="item">
         <certificate
           :user="item"
-          :is-show="isShowCertificateCheckbox"
+          v-model:is-show="isShowCertificateCheckbox"
           @open-modal="openModal"
           @select="selectItem"
         />
@@ -74,6 +81,7 @@ import { DropdownItem } from '@/types/dropdown.types'
 import { Duration } from '@/utils/duration.util'
 import { Time } from '@/utils/time'
 import { ErrorHandler } from '@/helpers'
+import { tryOnBeforeMount } from '@vueuse/core'
 
 const router = useRouter()
 const userState = useUserStore()
@@ -88,7 +96,7 @@ const isShowCertificateCheckbox = ref(false)
 
 const userList = ref([] as UserJSONResponse[])
 const selectedItems = ref([] as UserJSONResponse[])
-const generateCount = ref(0)
+const selectedCount = ref(0)
 const processState = ref('')
 
 const dropDownCourseList = [
@@ -112,16 +120,13 @@ const dropDownCourseList = [
 
 const dropDownDataList = [
   {
-    text: 'Solidity',
+    text: 'Day',
   },
   {
-    text: 'Golang',
+    text: 'Week',
   },
   {
-    text: 'Database',
-  },
-  {
-    text: 'Defi',
+    text: 'Month',
   },
 ] as DropdownItem[]
 
@@ -188,7 +193,6 @@ const refresh = async () => {
         ErrorHandler.process(error)
       }
     } else if (err.name === 'NotFoundError') {
-      debugger
       await router.push(ROUTE_NAMES.settings)
     }
   }
@@ -295,32 +299,19 @@ const generate = async () => {
 
   isLoading.value = false
 
+  userState.bufferUserList = users
   await router.push({
     name: ROUTE_NAMES.timestamp,
-    params: { data: JSON.stringify(users) },
   })
 }
 
 const timestamp = async () => {
+  userState.bufferUserList = selectedItems.value
+
   await router.push({
     name: ROUTE_NAMES.timestamp,
-    params: { data: JSON.stringify(selectedItems.value) },
   })
 }
-
-// const updateCode = async (code: string) => {
-//   isUnauthorized.value = false
-//   await api.post<UserJSONResponse[]>('/integrations/ccp/users/settings', {
-//     body: {
-//       data: {
-//         code: code,
-//         name: userState.setting.name,
-//       },
-//     },
-//   })
-//
-//   isUnauthorized.value = false
-// }
 
 const sign = async (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
@@ -378,16 +369,13 @@ const autoRefresh = () => {
   userList.value = userState.students
 }
 
-autoRefresh()
+tryOnBeforeMount(autoRefresh)
 
 const selectItem = (state: boolean, item: UserJSONResponse) => {
-  if (selectedItems.value.length < 1) {
-    isShowCertificateCheckbox.value = false
-  }
-  isShowCertificateCheckbox.value = true
   if (state) {
     selectedItems.value.push(item)
-    generateCount.value = selectedItems.value.length
+    selectedCount.value = selectedItems.value.length
+    isShowCertificateCheckbox.value = true
     return
   }
 
@@ -395,7 +383,12 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (index > -1) {
     selectedItems.value.splice(index, 1)
   }
-  generateCount.value = selectedItems.value.length
+  selectedCount.value = selectedItems.value.length
+  if (selectedCount.value < 1) {
+    isShowCertificateCheckbox.value = false
+    return
+  }
+  isShowCertificateCheckbox.value = true
 }
 </script>
 
@@ -405,10 +398,18 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
   width: toRem(1400);
 }
 
-.certificates__search-wrp {
-  margin-top: toRem(24);
+.certificates__nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.certificates__search-wrp {
+  margin-top: toRem(24);
+  width: 70%;
+  display: flex;
+  align-items: center;
+  margin-bottom: toRem(20);
 }
 
 .certificates__search-input-wrp {
@@ -416,9 +417,15 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
   margin-right: toRem(30);
 }
 
+.certificates__search-input {
+  width: toRem(458);
+}
+
 .certificates__btns {
   display: flex;
   justify-content: space-between;
+  width: 20%;
+  align-items: center;
 }
 
 .certificates__btn {
@@ -429,7 +436,7 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 .certificates__filters {
   display: flex;
   max-width: toRem(400);
-  width: 30%;
+  width: 100%;
   justify-content: space-between;
 }
 
@@ -438,5 +445,7 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
   justify-content: space-between;
   align-items: center;
   margin-top: toRem(20);
+  margin-left: toRem(120);
+  width: 83%;
 }
 </style>

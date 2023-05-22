@@ -12,6 +12,7 @@ export const useUserStore = defineStore('users-store', {
   state: () => {
     return {
       students: [] as UserJSONResponse[],
+      bufferUserList: [] as UserJSONResponse[],
       setting: {} as UserSetting,
       provider: useProvider(),
     }

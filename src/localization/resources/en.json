@@ -78,7 +78,9 @@
     "certificates-bitcoin-btn": "Bitcoin",
     "generate-btn": "Generate",
     "error-certificate-list": "Empty certificate list",
-    "certificates-find": "find"
+    "certificates-find": "find",
+    "bitcoin-btn": "Timestamp"
+
   },
   "generation": {
     "title":"Create new certificate",
@@ -96,7 +98,9 @@
   "certificate": {
     "mint-text": "Make sbt issuance",
     "bitcoin-btn": "Bitcoin",
-    "generate-btn": "Generate"
+    "generate-btn": "Generate",
+    "timestamp-btn": "Timestamp"
+
   },
   "settings": {
     "title": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -140,5 +144,11 @@
     "get-all-btn": "See more",
     "error-templates-nil": "templates was not found",
     "error-certificate-nil": "certificates was not found"
+  },
+  "timestamp": {
+    "page-title": "Previously certificates"
+  },
+  "timestamp-item":{
+    "timestamp-btn": "Timestamp"
   }
 }

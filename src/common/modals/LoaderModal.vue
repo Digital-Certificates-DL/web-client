@@ -5,7 +5,9 @@
   >
     <div class="loader-modal">
       <loader />
-      <p>{{ props.state }}</p>
+      <h2 class="loader-modal__title">
+        {{ props.state }}
+      </h2>
     </div>
   </modal>
 </template>
@@ -32,5 +34,9 @@ const emit = defineEmits<{
   border-radius: toRem(15);
   padding: toRem(24);
   display: grid;
+}
+
+.loader-modal__title {
+  margin: auto;
 }
 </style>
