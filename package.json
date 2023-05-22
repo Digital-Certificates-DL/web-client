@@ -61,6 +61,7 @@
     "pinia": "^2.0.28",
     "pinia-plugin-persistedstate": "^3.1.0",
     "postcss": "^8.4.20",
+    "rxjs": "^7.8.1",
     "secp256k1": "^5.0.0",
     "secp256k1-browserify": "^0.0.0",
     "tiny-secp256k1": "^2.2.1",

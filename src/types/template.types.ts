@@ -30,7 +30,7 @@ export type CreateTemplateResponse = {
 
 export type TemplateRequestData = {
   template: TemplateTypes
-  backgroundImg: string
-  templateName: string
+  background_img: string
+  template_name: string
   isCompleted: boolean
 }

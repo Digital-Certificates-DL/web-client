@@ -119,7 +119,15 @@ const save = async () => {
 <style scoped lang="scss">
 .settings {
   width: var(--page-large);
-  margin: auto;
+  margin: 0 auto;
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
 .settings__body {
@@ -140,6 +148,10 @@ const save = async () => {
 
   @include respond-to(xmedium) {
     margin-bottom: toRem(30);
+  }
+
+  @include respond-to(medium) {
+    margin-bottom: toRem(20);
   }
 }
 

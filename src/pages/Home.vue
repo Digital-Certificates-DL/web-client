@@ -38,11 +38,14 @@
           </div>
           <div v-else class="home__items">
             <div
-              v-for="(item, key) in templates.slice(0, 4)"
+              v-for="(item, key) in templates.slice(0, 3)"
               :value="key"
               :key="item"
             >
-              <home-item :img="item.backgroundImg" :title="item.templateName" />
+              <home-item
+                :img="item.background_img"
+                :title="item.template_name"
+              />
             </div>
           </div>
         </div>
@@ -66,11 +69,11 @@
         </div>
         <div v-else class="home__items">
           <div
-            v-for="(item, key) in templates.slice(0, 4)"
+            v-for="(item, key) in templates.slice(0, 3)"
             :value="key"
             :key="item"
           >
-            <home-item :img="item.backgroundImg" :title="item.templateName" />
+            <home-item :img="item.background_img" :title="item.template_name" />
           </div>
         </div>
       </div>
@@ -173,10 +176,10 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 
 const prepareTemplateImg = (templates: TemplateRequestData[]) => {
   for (const template of templates) {
-    if (temaplte.backgroundImg === null) {
+    if (template.background_img == null) {
       continue
     }
-    template.backgroundImg = 'data:image/png;base64,' + template.backgroundImg
+    template.background_img = 'data:image/png;base64,' + template.background_img
   }
   return templates
 }

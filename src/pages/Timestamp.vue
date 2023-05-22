@@ -1,4 +1,6 @@
 <template>
+  <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+
   <div class="timestamp">
     <h2>{{ $t('timestamp.page-title') }}</h2>
     <div class="certificates__search">
@@ -65,13 +67,18 @@ import CertificateModal from '@/common/modals/CertificateModal.vue'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
 import { tryOnBeforeMount } from '@vueuse/core'
+import LoaderModal from '@/common/modals/LoaderModal.vue'
+import { ErrorHandler } from '@/helpers'
+
 const isModalActive = ref(false)
 const currentUser = ref({} as UserJSONResponse)
 const selectedCount = ref(0)
 
 const userState = useUserStore()
-// const timestampCount = ref(0)
+
 const isShowTimestampCheckbox = ref(false)
+const processState = ref('')
+const isLoading = ref(false)
 
 const userList = ref([] as UserJSONResponse[])
 const selectedItems = ref([] as UserJSONResponse[])
@@ -89,34 +96,43 @@ const openModal = (state: boolean, user: UserJSONResponse) => {
   currentUser.value = user
 }
 const bitcoinTimestamp = async () => {
-  const bitcoin = new Bitcoin()
+  try {
+    const bitcoin = new Bitcoin()
+    isLoading.value = true
 
-  await bitcoin.getUTXOBip32TestnetBlockstream(
-    userState.setting.sendMnemonicPhrase,
-  )
-
-  for (const user of selectedItems.value) {
-    const tx = await bitcoin.PrepareLegacyTXTestnet(
+    processState.value = 'Getting UTXO'
+    await bitcoin.getUTXOBip32TestnetBlockstream(
       userState.setting.sendMnemonicPhrase,
     )
-    const hex = tx?.hex || ''
-    const exAddress = tx?.exAddress || ''
-    const exPath = tx?.exPath || ''
-    const balance = tx?.balance || -1
-    if (hex === '' || exAddress === '' || exPath === '' || balance === -1) {
-      return
-    }
-    if (tx === undefined) {
-      continue
-    }
-    const { data } = await bitcoin.SendToTestnet(hex)
+    processState.value = 'Prepare transaction'
 
-    user.txHash = data.tx.hash.toString()
+    for (const user of selectedItems.value) {
+      const tx = await bitcoin.PrepareLegacyTXTestnet(
+        userState.setting.sendMnemonicPhrase,
+      )
+      const hex = tx?.hex || ''
+      const exAddress = tx?.exAddress || ''
+      const exPath = tx?.exPath || ''
+      const balance = tx?.balance || -1
+      if (hex === '' || exAddress === '' || exPath === '' || balance === -1) {
+        return
+      }
+      if (tx === undefined) {
+        continue
+      }
+      const { data } = await bitcoin.SendToTestnet(hex)
 
-    bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
+      user.txHash = data.tx.hash.toString()
+
+      bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
+    }
+
+    userList.value = await updateUsers(selectedItems.value)
+    isLoading.value = false
+  } catch (error) {
+    isLoading.value = false
+    ErrorHandler.process(error)
   }
-
-  userList.value = await updateUsers(selectedItems.value)
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
@@ -166,6 +182,14 @@ tryOnBeforeMount(autoRefresh)
 .timestamp {
   width: var(--page-large);
   margin: 0 auto;
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
 .timestamp__img-wrp {
@@ -173,7 +197,19 @@ tryOnBeforeMount(autoRefresh)
 }
 
 .timestamp__img {
-  width: 100%;
+  width: toRem(400);
+
+  @include respond-to(large) {
+    width: toRem(400);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(300);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(200);
+  }
 }
 
 .timestamp__list {

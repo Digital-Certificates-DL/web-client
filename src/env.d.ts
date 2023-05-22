@@ -17,7 +17,7 @@ declare module '@vue/runtime-core' {
 interface ImportMetaEnv {
   VITE_ENVIRONMENT: string
   VITE_PORT: string
-  VITE_CONTRACT: string
+  VITE_APP_CONTRACT: string
   VITE_API_URL: string
   VITE_APP_NAME: string
 }

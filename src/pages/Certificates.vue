@@ -463,7 +463,7 @@ const validateItemListTimestamp = () => {
 .certificates__btns {
   display: flex;
   justify-content: space-between;
-  width: 30%;
+  width: 25%;
   align-items: center;
 }
 

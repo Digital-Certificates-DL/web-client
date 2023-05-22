@@ -45,6 +45,10 @@ const emit = defineEmits<{
   height: toRem(160);
 }
 
+.home-nav__title {
+  margin-bottom: toRem(10);
+}
+
 .home-nav__description {
   color: var(--border-primary-dark);
   font-size: toRem(12);

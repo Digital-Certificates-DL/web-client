@@ -42,11 +42,6 @@ const routes = [
     name: ROUTE_NAMES.timestamp,
     component: () => import('@/pages/Timestamp.vue'),
   },
-  {
-    path: '/test',
-    name: ROUTE_NAMES.test,
-    component: () => import('@/pages/Test.vue'),
-  },
 ]
 
 const router = createRouter({
