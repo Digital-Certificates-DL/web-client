@@ -75,6 +75,19 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       target: 'esnext',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id
+                .toString()
+                .split('node_modules/')[1]
+                .split('/')[0]
+                .toString()
+            }
+          },
+        },
+      },
     },
     optimizeDeps: {
       exclude: ['@syntect/wasm'],
