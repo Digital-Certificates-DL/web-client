@@ -73,6 +73,9 @@ export default defineConfig(({ command, mode }) => {
         buffer: 'buffer/index.js',
       },
     },
+    build: {
+      target: 'esnext',
+    },
     optimizeDeps: {
       exclude: ['@syntect/wasm'],
       esbuildOptions: {

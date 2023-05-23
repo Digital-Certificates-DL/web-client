@@ -156,6 +156,12 @@ $opacity: 0.6;
     max-width: toRem(452);
     max-height: toRem(246);
   }
+
+  @include respond-to(xmedium) {
+    padding: toRem(12);
+    max-width: toRem(502);
+    max-height: toRem(300);
+  }
 }
 
 .main__endpoints-side {

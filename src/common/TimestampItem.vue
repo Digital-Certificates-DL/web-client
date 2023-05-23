@@ -29,7 +29,7 @@
         class="certificate__btn certificate__btn-download"
         @click="window.open(props.user.certificate, '_blank')"
       >
-        <img src="static/branding/download.png" alt="download img" />
+        <img src="@/../static/branding/download.png" alt="download img" />
       </app-button>
     </div>
   </div>

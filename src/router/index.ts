@@ -18,11 +18,6 @@ const routes = [
     component: () => import('@/pages/Generation.vue'),
   },
   {
-    path: '/template',
-    name: ROUTE_NAMES.template,
-    component: () => import('@/pages/Template.vue'),
-  },
-  {
     path: '/home',
     name: ROUTE_NAMES.home,
     component: () => import('@/pages/Home.vue'),
