@@ -16,7 +16,7 @@ import { EthereumProvider } from '@/types/ethereum.types'
 export type ProviderInstance = EthereumProvider | unknown
 
 /**
- * provider, which we've designated, it has a name and instance
+ * provider, which we've designated, it has a accountName and instance
  */
 export type DesignatedProvider = {
   name: PROVIDERS

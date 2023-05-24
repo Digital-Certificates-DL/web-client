@@ -4,29 +4,30 @@
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <template #default="{ modal }">
-      <div class="auth-modal">
+      <div class="auth-modal__pane">
         <input-field
           v-model="form.code"
-          :label="$t('auth-code.input-code-label')"
+          :label="$t('auth-modal.input-code-label')"
           :error-message="getFieldErrorMessage('code')"
         />
         <app-button
           class="auth-modal__btn auth-modal__btn-link"
+          color="info"
+          size="medium"
           :text="$t('auth-modal.get-access-btn')"
-          :color="'info'"
-          @click="window.open(props.tokenLink, '_blank')"
+          @click="openLink"
         />
         <div class="auth-modal__btns">
           <app-button
-            class="auth-modal__btn"
+            class="auth-modal__btn auth-modal__btn-nav"
+            color="info"
             :text="$t('auth-modal.send-code-btn')"
-            :color="'info'"
             @click="sendCode"
           />
           <app-button
-            class="auth-modal__btn"
+            class="auth-modal__btn auth-modal__btn-nav"
+            color="info"
             :text="$t('auth-modal.close-btn')"
-            :color="'info'"
             @click="modal.close"
           />
         </div>
@@ -56,36 +57,42 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'with-code', code: string): boolean
+  (e: 'send-auth-code', code: string): boolean
   (event: 'update:is-shown', value: boolean): void
 }>()
 
+const openLink = () => {
+  window.open(props.tokenLink, '_blank')
+}
 const sendCode = () => {
   if (!isFormValid()) return
-  emit('with-code', form.code)
+  emit('send-auth-code', form.code)
 }
 </script>
 
 <style scoped lang="scss">
-.auth-modal {
+.auth-modal__pane {
   width: toRem(400);
-  height: toRem(600);
-  background: var(--white);
+  height: toRem(400);
+  background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
   display: grid;
 }
 
-.auth-modal__btn {
-  width: toRem(200);
-}
-
 .auth-modal__btns {
+  height: toRem(58);
   display: flex;
   justify-content: space-between;
 }
 
+.auth-modal__btn {
+  max-width: toRem(100);
+}
+
 .auth-modal__btn-link {
-  width: toRem(200);
+  width: 100%;
+  max-height: toRem(58);
+  margin: 0 auto;
 }
 </style>

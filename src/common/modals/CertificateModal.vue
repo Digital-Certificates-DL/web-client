@@ -1,15 +1,15 @@
 <template>
   <modal
-    :is-shown="props.isShown"
+    :is-shown="isShown"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <template #default="{ modal }">
-      <div class="certificate-modal">
+      <div class="certificate-modal__pane">
         <div class="certificate-modal__img-wrp">
           <img
             class="certificate-modal__img"
-            :src="props.user.img || '/static/branding/template.jpg'"
-            alt="Certificate"
+            :src="user.img || '/static/branding/template.jpg'"
+            :alt="$t('certificate-modal.certificate-alt')"
           />
         </div>
         <h3 class="certificate-modal__title">
@@ -20,37 +20,38 @@
         </p>
 
         <h4>
-          {{ props.user.participant }}
+          {{ user.participant }}
         </h4>
 
         <p class="certificate-modal__label">
           {{ $t('certificate-modal.label-date') }}
         </p>
-        <h4>{{ props.user.date }}</h4>
+        <h4>{{ user.date }}</h4>
         <p class="certificate-modal__label">
           {{ $t('certificate-modal.label-course') }}
         </p>
 
-        <h4>{{ props.user.courseTitle }}</h4>
+        <h4>{{ user.courseTitle }}</h4>
         <p class="certificate-modal__form-label">
-          {{ $t('certificate-modal.label-metamask-address') }}
+          {{ $t('certificate-modal.label-metamask-userBitcoinAddress') }}
         </p>
         <input-field
-          placeholder="address"
           v-model="form.address"
+          :label="$t('certificate-modal.label-metamask-userBitcoinAddress')"
           :error-message="getFieldErrorMessage('address')"
+          :disabled="isFormDisable"
         />
         <div class="certificate-modal__btns">
           <app-button
             class="certificate-modal__btn"
+            color="info"
             :text="$t('certificate-modal.mint-btn')"
-            :color="'info'"
             @click="mint"
           />
           <app-button
             class="certificate-modal__btn"
+            color="info"
             :text="$t('certificate-modal.close-btn')"
-            :color="'info'"
             @click="modal.close"
           />
         </div>
@@ -62,16 +63,16 @@
 <script lang="ts" setup>
 import { UserJSONResponse, IpfsJSONResponse } from '@/types'
 import { InputField } from '@/fields'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { required, address } from '@/validators'
-
 import { useErc721, useFormValidation } from '@/composables'
-
 import { api } from '@/api'
-import { config } from '@config'
 import { Modal, AppButton } from '@/common'
+import { ErrorHandler } from '@/helpers'
 
-const certificateSBT = useErc721(config.CONTRACT)
+const { safeMint } = useErc721()
+const isFormDisable = ref(false)
+
 const form = reactive({
   address: '',
 })
@@ -85,50 +86,61 @@ const props = defineProps<{
   user: UserJSONResponse
 }>()
 
-const mint = async () => {
-  if (!isFormValid()) return
-  const ipfsLink = await api.post<IpfsJSONResponse>(
-    '/integrations/ccp/certificate/ipfs',
-    {
-      body: {
-        data: {
-          Description:
-            props.user.date +
-            ' ' +
-            props.user.participant +
-            ' ' +
-            props.user.courseTitle +
-            ' ' +
-            props.user.points +
-            ' ' +
-            props.user.note,
-          Img: props.user.certificateImg,
-          Name: 'certificate - ' + props.user.participant,
-        },
-      },
-    },
-  )
-
-  const url = ipfsLink.data.attributes.url
-
-  await certificateSBT.safeMint(form.address, url)
-}
-
 const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
+
+const mint = async () => {
+  if (!isFormValid()) return
+  try {
+    isFormDisable.value = true
+    const ipfsLink = await api.post<IpfsJSONResponse>(
+      '/integrations/ccp/certificate/ipfs',
+      {
+        body: {
+          data: {
+            description: prepareTokenDescription(props.user),
+            img: props.user.certificateImg,
+            name: 'certificate - ' + props.user.participant,
+          },
+        },
+      },
+    )
+
+    const url = ipfsLink.data.attributes.url
+    await safeMint(form.address, url)
+    isFormDisable.value = false
+  } catch (error) {
+    isFormDisable.value = false
+    ErrorHandler.process(error)
+  }
+}
+
+const prepareTokenDescription = (user: UserJSONResponse) => {
+  return (
+    user.date +
+    ' ' +
+    user.participant +
+    ' ' +
+    user.courseTitle +
+    ' ' +
+    user.points +
+    ' ' +
+    user.note
+  )
+}
 </script>
 
 <style scoped lang="scss">
-.certificate-modal {
+.certificate-modal__pane {
+  display: grid;
+  position: fixed;
   width: toRem(475);
   height: toRem(796);
   background: var(--background-primary-main);
-  border-radius: 1rem;
+  border-radius: toRem(16);
   flex-direction: row;
   padding: toRem(24);
-  position: fixed;
-  display: grid;
 }
 
 .certificate-modal__img-wrp {

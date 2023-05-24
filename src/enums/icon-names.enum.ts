@@ -177,6 +177,7 @@ export enum ICON_NAMES {
   scale = 'scale',
   scissors = 'scissors',
   searchCircle = 'search-circle',
+  settings = 'settings',
   search = 'search',
   selector = 'selector',
   server = 'server',

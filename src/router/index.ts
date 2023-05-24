@@ -21,12 +21,12 @@ const routes = [
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/Certificates.vue'),
+    component: () => import('@/pages/PreviouslyCertificates.vue'),
   },
   {
     path: '/settings',
     name: ROUTE_NAMES.settings,
-    component: () => import('@/pages/Setting.vue'),
+    component: () => import('@/pages/SettingForm.vue'),
   },
 ]
 

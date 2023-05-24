@@ -6,45 +6,43 @@
         {{ $t('main.page-info-name') }}
       </h1>
       <p class="main__info-description">
-        {{ $t('main.page-info-desc') }}
+        {{ $t('main.page-info-description') }}
       </p>
     </div>
     <div class="main__body">
-      <div class="main__provider-side">
-        <div>
-          <div v-if="!web3Store.provider.isConnected" class="main__metamask">
-            <p class="main__metamask-title">
-              {{ $t('main.metamask-connect') }}
-            </p>
-            <p class="main__metamask-definition">
-              {{ $t('main.metamask-desc') }}
-            </p>
-            <app-button
-              class="main__metamask-btn main__btn-connect"
-              @click="connect"
-              :text="$t('main.metamask-connect-btn')"
-              :color="'info'"
-              :disabled="web3Store.provider.isConnected"
-            />
-          </div>
-          <div v-else class="main__metamask">
-            <p>
-              {{ web3Store.provider.selectedAddress }}
-            </p>
-            <app-button
-              v-if="web3Store.provider.isConnected"
-              class="main__metamask-btn"
-              color="info"
-              size="large"
-              :text="$t('main.metamask-disconnect-btn')"
-              @click="web3Store.provider.disconnect"
-            />
-          </div>
+      <div class="main__metamask-block">
+        <div v-if="!web3Store.provider.isConnected" class="main__metamask">
+          <p class="main__metamask-title">
+            {{ $t('main.metamask-connect') }}
+          </p>
+          <p class="main__metamask-definition">
+            {{ $t('main.metamask-description') }}
+          </p>
+          <app-button
+            class="main__metamask-btn main__btn-connect"
+            @click="connect"
+            :text="$t('main.metamask-connect-btn')"
+            :color="'info'"
+            :disabled="web3Store.provider.isConnected"
+          />
+        </div>
+        <div v-else class="main__metamask">
+          <p>
+            {{ web3Store.provider.selectedAddress }}
+          </p>
+          <app-button
+            v-if="web3Store.provider.isConnected"
+            class="main__metamask-btn"
+            color="info"
+            size="large"
+            :text="$t('main.metamask-disconnect-btn')"
+            @click="web3Store.provider.disconnect"
+          />
         </div>
       </div>
       <div class="main__endpoints-side">
         <nav-button
-          class="main__card"
+          class="main__navigation-item"
           color="warning"
           size="large"
           :body="$t('main.main-nav-settings-body')"
@@ -53,7 +51,7 @@
           @click="router.push(ROUTE_NAMES.settings)"
         />
         <nav-button
-          class="main__card"
+          class="main__navigation-item"
           color="info"
           size="large"
           :body="$t('main.main-nav-certificates-body')"
@@ -62,7 +60,7 @@
           @click="router.push(ROUTE_NAMES.certificates)"
         />
         <nav-button
-          class="main__card"
+          class="main__navigation-item"
           color="success"
           size="large"
           :title="$t('main.main-nav-generation-title')"
@@ -163,7 +161,7 @@ const connect = async () => {
   font-size: toRem(20);
 }
 
-.main__card {
+.main__navigation-item {
   max-width: toRem(304);
 }
 

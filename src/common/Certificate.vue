@@ -10,24 +10,23 @@
     </div>
 
     <p class="certificate__name">
-      {{ props.user.participant }}
+      {{ user.participant }}
     </p>
     <p>
-      {{ props.user.date }}
+      {{ user.date }}
     </p>
     <div class="certificate__btns">
       <app-button
         class="certificate__btn"
         :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', true, props.user)"
+        @click="emit('open-modal', user)"
       />
 
       <app-button
         class="certificate__btn certificate__btn-download"
-        @click="window.open(props.user.certificate, '_blank')"
-      >
-        <img src="@/../static/branding/download.png" alt="download img" />
-      </app-button>
+        icon-left="@/../static/branding/download.png"
+        @click="window.open(user.certificate, '_blank')"
+      />
     </div>
   </div>
 </template>
@@ -42,7 +41,7 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', user: UserJSONResponse): boolean
   (e: 'select', state: boolean, user: UserJSONResponse): boolean
 }>()
 
@@ -64,15 +63,19 @@ const selectItem = () => {
   margin-top: toRem(20);
   padding-bottom: toRem(10);
   border-bottom: var(--text-primary-dark), toRem(2), solid;
-  max-width: var(--page-large);
 }
 
 .certificate_img {
   width: toRem(74);
   border-radius: toRem(4);
 
-  @include respond-to(large) {
-    width: toRem(74);
+  @include respond-to(medium) {
+    width: toRem(54);
+    border-radius: toRem(4);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(64);
     border-radius: toRem(4);
   }
 }

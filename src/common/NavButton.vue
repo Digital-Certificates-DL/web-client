@@ -4,11 +4,14 @@
       class="nav-button__btn"
       :color="props.color"
       :text="props.title"
+      :route="{
+        name: $routes.settings,
+      }"
     />
     <p class="nav-button__description">
       {{ props.description }}
     </p>
-    <p :class="navClasses">
+    <p>
       {{ props.body }}
     </p>
   </div>
@@ -17,6 +20,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { AppButton } from '@/common'
+import { LocationAsRelativeRaw } from 'vue-router'
 
 type COLORS =
   | 'primary'
@@ -36,10 +40,12 @@ const props = withDefaults(
     description: string
     body: string
     size?: SIZES
+    route?: LocationAsRelativeRaw
   }>(),
   {
     color: 'primary',
     size: 'medium',
+    route: undefined,
   },
 )
 

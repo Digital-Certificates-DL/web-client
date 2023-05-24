@@ -23,12 +23,12 @@ export type UserJSONResponseList = {
 }
 
 export type UserSetting = {
-  name: string
-  org: string
+  accountName: string
+  organizationName: string
   signKey: string
-  address: string
+  userBitcoinAddress: string
   keyPathID: number
   lastExAddress: string
-  sendMnemonicPhrase: string
-  url: string
+  bip39MnemonicPhrase: string
+  urlGoogleSheet: string
 }

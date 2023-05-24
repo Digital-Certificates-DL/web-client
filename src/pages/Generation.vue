@@ -3,7 +3,7 @@
     <auth-modal
       :token-link="authLink"
       v-model:is-shown="isUnauthorized"
-      @with-code="updateCode"
+      @send-auth-code="updateCode"
     />
   </div>
   <div v-else class="generation">
@@ -12,69 +12,78 @@
     </div>
     <div class="generation__body">
       <div class="generation__step">
-        <p class="generation__step-number" :class="readyNumber">
-          {{ $t('generation.step1') }}
+        <p
+          class="generation__step-number"
+          :class="{ 'generation__step-numner--ready': isReady }"
+        >
+          {{ $t('generation.step-1') }}
         </p>
 
         <div class="generation__collection-name generation__step-field">
           <p class="generation__subtitle-num">
-            {{ $t('generation.step1-description') }}
+            {{ $t('generation.step-1-description') }}
           </p>
           <input-field
             class="generation__text-input"
             v-model="certificatesInfo.name"
             @input="validateField"
-            :class="readyFiled"
-            :label="$t('generation.step1-placeholder')"
+            :class="{ 'generation__step-number--ready': isReady }"
+            :label="$t('generation.step-1-placeholder')"
             :error-message="getFieldErrorMessage('name')"
           />
         </div>
       </div>
 
       <div class="generation__step">
-        <p class="generation__step-number" :class="readyNumber">
-          {{ $t('generation.step2') }}
+        <p
+          class="generation__step-number"
+          :class="{ 'generation__step-field--ready': isReady }"
+        >
+          {{ $t('generation.step-2') }}
         </p>
         <div class="generation__choose-template-wrp generation__step-field">
           <p class="generation__subtitle-num">
-            {{ $t('generation.step2-description') }}
+            {{ $t('generation.step-2-description') }}
           </p>
-          <div class="generation__choose-template-list" :class="readyFiled">
+          <div
+            class="generation__choose-template-list"
+            :class="{ 'generation__step-field--ready': isReady }"
+          >
             <div class="generation__choose-template"></div>
             <div class="generation__choose-template"></div>
             <div class="generation__choose-template"></div>
-            <!--todo  make better ^-->
           </div>
         </div>
       </div>
       <div class="generation__step">
-        <p class="generation__step-number" :class="readyNumber">
-          {{ $t('generation.step3') }}
+        <p
+          class="generation__step-number"
+          :class="{ 'generation__step-number--ready': isReady }"
+        >
+          {{ $t('generation.step-3') }}
         </p>
         <div class="generation__upload-files generation__step-field">
           <p class="generation__subtitle-num">
-            {{ $t('generation.step3-description') }}
+            {{ $t('generation.step-3-description') }}
           </p>
           <input-field
             class="generation__text-input"
             v-model="certificatesInfo.link"
-            :class="readyFiled"
+            :class="{ 'generation__step-field--ready': isReady }"
             :error-message="getFieldErrorMessage('link')"
-            :label="$t('generation.step3-placeholder')"
+            :label="$t('generation.step-3-placeholder')"
           />
         </div>
       </div>
       <div class="generation__step-field generation__btns">
         <app-button
           class="generation__btn"
-          type="submit"
           :text="$t('generation.start-btn')"
           :color="'success'"
           @click="start"
         />
         <app-button
           class="generation__btn"
-          type="submit"
           :text="$t('generation.cancel-btn')"
           :color="'success'"
           @click="router.push(ROUTE_NAMES.main)"
@@ -85,7 +94,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
@@ -95,13 +104,15 @@ import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 
-import AuthModal from '@/common/modals/AuthModal.vue'
+import { AuthModal } from '@/common/modals'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
+import { ErrorHandler } from '@/helpers'
 const userState = useUserStore()
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
+const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
 
 const certificatesInfo = reactive({
   name: '',
@@ -110,14 +121,6 @@ const certificatesInfo = reactive({
 })
 
 const isReady = ref(false)
-
-const readyFiled = computed(() => {
-  return isReady.value ? 'generation__step-field--ready' : ''
-})
-
-const readyNumber = computed(() => {
-  return isReady.value ? 'generation__step-number--ready' : ''
-})
 
 const validateField = () => {
   if (isFormValid()) {
@@ -138,35 +141,39 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(
 const start = async () => {
   if (!isFormValid) return
   const users = await parsedData(certificatesInfo.link)
-  if (users === undefined) {
+  if (!users) {
     return
   }
   const signatures = sign(users)
   await createPDF(signatures)
 }
 const parsedData = async (sheepUrl?: string) => {
-  const resp = await api
-    .post<UserJSONResponse[]>('/integrations/ccp/users/empty', {
-      body: {
-        data: {
-          name: userState.setting.name,
-          url: sheepUrl || userState.setting.url,
+  try {
+    const { data } = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/users/empty',
+      {
+        body: {
+          data: {
+            name: userState.setting.accountName,
+            url: sheepUrl || userState.setting.urlGoogleSheet,
+          },
         },
       },
-    })
-    .catch(err => {
-      if (err.metadata.link) {
-        isUnauthorized.value = true
-        authLink.value = err.metadata.link
-      }
-    })
-
-  return resp as UserJSONResponseList | undefined
+    )
+    return (data as UserJSONResponse[]) || undefined
+  } catch (error) {
+    if (error.metadata.link) {
+      isUnauthorized.value = true
+      authLink.value = error.metadata.link
+      return
+    }
+    ErrorHandler.process(error)
+  }
 }
 
-const sign = (users: UserJSONResponseList) => {
+const sign = (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
-  for (const user of users.data) {
+  for (const user of users) {
     if (user.signature === undefined || user.signature == '') {
       user.signature = signature.signMsg(user.msg)
     }
@@ -174,46 +181,51 @@ const sign = (users: UserJSONResponseList) => {
   return users
 }
 
-const prepareUserImg = (users: UserJSONResponseList) => {
-  const list: UserJSONResponse[] = users.data
+const prepareUserImg = (users: UserJSONResponse[]) => {
+  const list: UserJSONResponse[] = users
   for (const user of list) {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
   return users
 }
-const createPDF = async (users: UserJSONResponseList) => {
-  const resp = await api.post<UserJSONResponseList>(
-    '/integrations/ccp/certificate/',
-    {
-      body: {
-        data: {
-          data: users.data,
-          address:
-            userState.setting.address || '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-          url: userState.setting.url,
-          name: userState.setting.name,
+const createPDF = async (users: UserJSONResponse[]) => {
+  try {
+    const { data } = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/certificate/',
+      {
+        body: {
+          data: {
+            data: users,
+            address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
+            url: userState.setting.urlGoogleSheet,
+            name: userState.setting.accountName,
+          },
         },
       },
-    },
-  )
-  users = prepareUserImg(resp.data)
-  userState.students = users.data
-  await router.push(ROUTE_NAMES.certificates)
+    )
+    users = prepareUserImg(data)
+    userState.students = users
+    await router.push(ROUTE_NAMES.certificates)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 
 const updateCode = async (code: string) => {
-  isUnauthorized.value = false
-  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    body: {
-      data: {
-        code: code,
-        name: userState.setting.name,
+  try {
+    isUnauthorized.value = false
+    await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+      body: {
+        data: {
+          code: code,
+          name: userState.setting.accountName,
+        },
       },
-    },
-  })
-
-  isUnauthorized.value = false
+    })
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 </script>
 

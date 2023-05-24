@@ -4,21 +4,21 @@
 
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
-        <app-button @click="connect" class="app-navbar__btn">
-          <img
-            class="app-navbar__img"
-            src="@/../static/branding/metamask.png"
-            alt="metamask ico"
-          />
-          <p>{{ preparedAddress || 'Connect' }}</p>
-        </app-button>
+        <app-button
+          @click="connect"
+          icon-left="metamask"
+          :text="preparedAddress || 'Connect'"
+          class="app-navbar__btn"
+        />
       </div>
       <div class="app-navbar__settings">
-        <form>
-          <app-button class="app-navbar__btn" route="settings">
-            <img src="@/../static/branding/setting.png" alt="setting ico" />
-          </app-button>
-        </form>
+        <app-button
+          class="app-navbar__btn"
+          :icon-left="$icons.settings"
+          :route="{
+            name: $routes.settings,
+          }"
+        />
       </div>
     </div>
   </div>
@@ -41,6 +41,11 @@ const connect = async () => {
 </script>
 
 <style lang="scss" scoped>
+$box-shadow-r: 0;
+$box-shadow-g: 0;
+$box-shadow-b: 0;
+$box-shadow-a: 0.06;
+
 .app-navbar {
   display: flex;
   align-items: center;
@@ -48,7 +53,8 @@ const connect = async () => {
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
-  box-shadow: 0 toRem(4) toRem(16) rgba(0, 0, 0, 0.06);
+  box-shadow: 0 toRem(4) toRem(16)
+    rgba($box-shadow-r, $box-shadow-g, $box-shadow-b, $box-shadow-a);
   margin-bottom: toRem(20);
 
   @include respond-to(tablet) {

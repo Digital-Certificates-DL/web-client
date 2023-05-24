@@ -1,42 +1,43 @@
 <template>
-  <div class="certificates">
-    <h2>{{ $t('certificates.certificates-title') }}</h2>
-    <div class="certificates__search-wrp">
-      <div class="certificates__search-input-wrp">
-        <input-field
-          class="certificates__search-input"
-          v-model="form.search"
-          :placeholder="$t('certificates.certificates-find')"
-          @update:model-value="find"
-        />
-      </div>
-      <div class="certificates__btns">
+  <div class="previously-certificates">
+    <h2>{{ $t('previously-certificates.certificates-title') }}</h2>
+    <div class="previously-certificates__search-wrp">
+      <input-field
+        class="previously-certificates__search-input"
+        v-model="form.search"
+        :placeholder="$t('previously-certificates.certificates-find')"
+        @update:model-value="find"
+      />
+
+      <div class="previously-certificates__btns">
         <app-button
-          class="certificates__btn"
-          :size="'medium'"
-          :color="'info'"
+          class="previously-certificates__btn"
+          color="info"
+          size="medium"
           @click="bitcoinTimestamp"
-          :text="$t('certificates.certificates-bitcoin-btn')"
+          :text="$t('previously-certificates.certificates-bitcoin-btn')"
         />
       </div>
     </div>
     <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
 
     <div class="certificates__list">
-      <div class="certificates__list-titles">
+      <div class="certificates__list-subtitle">
         <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
         <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
         <p></p>
       </div>
-      <div v-if="userState.students.length === 0">
-        <error-message :message="$t('certificates.error-certificate-list')" />
+      <div v-if="!userState.students.length">
+        <error-message
+          :message="$t('previously-certificates.error-certificate-list')"
+        />
       </div>
       <div v-for="(item, key) in userState.students" :value="key" :key="item">
         <certificate
           :user="item"
           @open-modal="openModal"
-          @select-for-timestamp="selectForTimestamp"
+          @select="selectForTimestamp"
         />
       </div>
     </div>
@@ -62,15 +63,17 @@ const isModalActive = ref(false)
 const currentUser = ref({} as UserJSONResponse)
 const listForTimestamp: UserJSONResponse[] = []
 
-let userBuffer: UserJSONResponse[]
+const userBuffer = ref([] as UserJSONResponse[])
 
 const form = reactive({
+  //todo v-model
   search: '',
 })
-const openModal = (state: boolean, user: UserJSONResponse) => {
-  isModalActive.value = state
+const openModal = (user: UserJSONResponse) => {
+  isModalActive.value = true
   currentUser.value = user
 }
+
 const prepareUserImg = (users: UserJSONResponse[]) => {
   for (const user of users) {
     if (user.certificateImg === null) {
@@ -97,8 +100,8 @@ const refresh = async () => {
     {
       body: {
         data: {
-          url: userState.setting.url,
-          name: userState.setting.name,
+          url: userState.setting.urlGoogleSheet,
+          name: userState.setting.accountName,
         },
       },
     },
@@ -107,9 +110,9 @@ const refresh = async () => {
 }
 
 const find = () => {
-  userBuffer = userState.students
+  userBuffer.value = userState.students
 
-  if (form.search === '' && userBuffer !== undefined) {
+  if (form.search === '' && userBuffer.value !== undefined) {
     userState.students = userBuffer
   }
   userState.students.filter(item => item.participant.includes(form.search))
@@ -125,7 +128,7 @@ const bitcoinTimestamp = async () => {
   const users = listForTimestamp
   for (const user of users) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.sendMnemonicPhrase,
+      userState.setting.bip39MnemonicPhrase,
       userState.setting.keyPathID,
     )
     const hex = tx?.hex || ''
@@ -147,9 +150,9 @@ const updateUsers = async (users: UserJSONResponse[]) => {
       body: {
         data: {
           users: users,
-          address: userState.setting.address,
-          name: userState.setting.name,
-          url: userState.setting.url,
+          address: userState.setting.userBitcoinAddress,
+          name: userState.setting.accountName,
+          url: userState.setting.urlGoogleSheet,
         },
       },
     },
@@ -168,34 +171,34 @@ autoRefresh()
 </script>
 
 <style scoped lang="scss">
-.certificates {
+.previously-certificates {
   margin: 0 auto;
   width: toRem(1400);
 }
 
-.certificates__search-wrp {
+.previously-certificates__search-wrp {
   margin-top: toRem(24);
   display: flex;
   justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.certificates__search-input-wrp {
+.previously-certificates__search-input {
   margin-bottom: toRem(20);
   width: toRem(458);
 }
 
-.certificates__btns {
+.previously-certificates__btns {
   display: flex;
   justify-content: space-between;
 }
 
-.certificates__btn {
+.previously-certificates__btn {
   height: toRem(52);
   border-radius: toRem(8);
 }
 
-.certificates__list-titles {
+.certificates__list-subtitle {
   display: flex;
   justify-content: space-between;
   align-items: center;

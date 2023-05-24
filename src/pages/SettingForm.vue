@@ -1,61 +1,61 @@
 <template>
-  <div class="settings">
-    <div class="settings__body">
-      <div class="settings__info">
-        <h3 class="settings__title">
-          {{ $t('settings.page-name') }}
-        </h3>
+  <div class="setting-form">
+    <div class="setting-form__body">
+      <div class="setting-form__info">
+        <h2 class="setting-form__title">
+          {{ $t('setting-form.page-title') }}
+        </h2>
         <p>
-          {{ $t('settings.title') }}
+          {{ $t('setting-form.page-description') }}
         </p>
       </div>
-      <h3 class="settings__fields-title">
-        {{ $t('settings.general-title') }}
+      <h3 class="setting-form__fields-title">
+        {{ $t('setting-form.general-title') }}
       </h3>
       <input-field
-        class="settings__form"
-        v-model="form.org"
-        :label="$t('settings.org-name-form-label')"
+        class="setting-form__form-input"
+        v-model="form.organizationName"
+        :label="$t('setting-form.organization-name-form-label')"
         :error-message="getFieldErrorMessage('org')"
       />
       <input-field
-        class="settings__form"
-        v-model="form.name"
-        :label="$t('settings.account-name-form-label')"
+        class="setting-form__form-input"
+        v-model="form.accountName"
+        :label="$t('setting-form.account-name-form-label')"
         :error-message="getFieldErrorMessage('name')"
       />
-      <h3 class="settings__fields-title">
-        {{ $t('settings.sign-key-title') }}
+      <h3 class="setting-form__fields-title">
+        {{ $t('setting-form.sign-key-title') }}
       </h3>
       <input-field
-        class="settings__form"
-        v-model="form.sendMnemonicPhrase"
-        :label="$t('settings.bitcoin-phrase-form-label')"
+        class="setting-form__form-input"
+        v-model="form.bip39MnemonicPhrase"
+        :label="$t('setting-form.bitcoin-phrase-form-label')"
         :error-message="getFieldErrorMessage('sendMnemonicPhrase')"
       />
       <input-field
-        class="settings__form"
-        v-model="form.url"
-        :label="$t('settings.url-form-label')"
+        class="setting-form__form-input"
+        v-model="form.urlGoogleSheet"
+        :label="$t('setting-form.urlGoogleSheet-form-label')"
         :error-message="getFieldErrorMessage('url')"
       />
       <input-field
-        class="settings__form"
+        class="setting-form__form-input"
         v-model="form.signKey"
-        :label="$t('settings.wif-form-label')"
+        :label="$t('setting-form.wif-form-label')"
         :error-message="getFieldErrorMessage('signKey')"
       />
-      <div class="settings__btns">
+      <div class="setting-form__btns">
         <app-button
-          class="settings__btn"
-          :text="$t('settings.save-btn-title')"
-          :color="'info'"
+          class="setting-form__btn"
+          color="info"
+          :text="$t('setting-form.save-btn-title')"
           @click="save"
         />
         <app-button
-          class="settings__btn"
-          :text="$t('settings.cancel-btn-title')"
-          :color="'info'"
+          class="setting-form__btn"
+          color="info"
+          :text="$t('setting-form.cancel-btn-title')"
           :route="{
             name: $routes.main,
           }"
@@ -78,16 +78,17 @@ import btc from '@/utils/bitcoin.util'
 import { api } from '@/api'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
+import { ErrorHandler } from '@/helpers'
 
 const router = useRouter()
 const userState = useUserStore()
 
 const form = reactive({
-  name: '',
-  org: '',
+  accountName: '',
+  organizationName: '',
   signKey: '',
-  sendMnemonicPhrase: '',
-  url: '',
+  bip39MnemonicPhrase: '',
+  urlGoogleSheet: '',
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
@@ -103,58 +104,62 @@ const save = async () => {
   userState.setting = form
   const address = btc.Bitcoin.getAddressFromWIF(form.signKey)
 
-  userState.setting.address = address || ''
+  userState.setting.userBitcoinAddress = address || ''
 
-  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    body: {
-      data: {
-        code: '',
-        name: userState.setting.name,
+  try {
+    await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
+      body: {
+        data: {
+          code: '',
+          name: userState.setting.accountName,
+        },
       },
-    },
-  })
-  await router.push(ROUTE_NAMES.main)
+    })
+    await router.push(ROUTE_NAMES.main)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 </script>
 <style scoped lang="scss">
-.settings {
+.setting-form {
   width: var(--page-large);
   margin: auto;
 }
 
-.settings__body {
+.setting-form__body {
   display: grid;
   justify-items: center;
 }
 
-.settings__info {
+.setting-form__info {
   display: grid;
   justify-items: center;
   max-height: toRem(100);
   margin-bottom: toRem(50);
 }
 
-.settings__form {
+.setting-form__form-input {
   margin-bottom: toRem(50);
   width: toRem(458);
 }
 
-.settings__btns {
+.setting-form__btns {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: toRem(80);
 }
 
-.settings__btn {
+.setting-form__btn {
   width: toRem(100);
   border-radius: toRem(8);
 }
 
-.settings__fields-title {
+.setting-form__fields-title {
   margin-bottom: toRem(30);
 }
 
-.settings__title {
+.setting-form__title {
   margin-bottom: toRem(20);
 }
 </style>
