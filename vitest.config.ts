@@ -30,7 +30,6 @@ export default defineConfig(({ command, mode }) => {
       vue(),
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-        symbolId: '[accountName]',
       }),
       checker({
         overlay: {
