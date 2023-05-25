@@ -5,16 +5,19 @@
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
         <app-button
-          icon-left="metamask"
           class="app-navbar__btn"
+          color="info"
           :disabled="provider.isConnected"
           :text="preparedAddress || $t('app-navbar.metamask-connect')"
+          :icon-left="$icons.metamask"
           @click="connect"
         />
       </div>
+
       <div class="app-navbar__settings">
         <app-button
           class="app-navbar__btn"
+          color="info"
           :icon-left="$icons.settings"
           :route="{
             name: $routes.settings,
@@ -26,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AppLogo, AppButton } from '@/common'
+import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { onBeforeMount, ref } from 'vue'
 

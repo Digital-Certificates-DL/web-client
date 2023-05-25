@@ -10,7 +10,6 @@ export { default as AppNavbar } from '@/common/AppNavbar.vue'
 export { default as Notification } from '@/common/Notification.vue'
 export { default as Modal } from '@/common/Modal.vue'
 export { default as Certificate } from '@/common/Certificate.vue'
-export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as NavButton } from '@/common/NavButton.vue'
 
 export * from './modals'

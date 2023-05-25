@@ -8,7 +8,7 @@
         <div class="certificate-modal__img-wrp">
           <img
             class="certificate-modal__img"
-            :src="user.img || '@/..static/branding/template.jpg'"
+            :src="user.img || '/branding/template.jpg'"
             :alt="$t('certificate-modal.certificate-alt')"
           />
         </div>
@@ -33,13 +33,13 @@
 
         <h4>{{ user.courseTitle }}</h4>
         <p class="certificate-modal__form-label">
-          {{ $t('certificate-modal.label-metamask-userBitcoinAddress') }}
+          {{ $t('certificate-modal.label-metamask-address') }}
         </p>
         <input-field
           v-model="inputAddressValue"
-          :label="$t('certificate-modal.label-metamask-userBitcoinAddress')"
+          :label="$t('certificate-modal.label-metamask-address')"
           :error-message="
-            validateAddress ? '' : $t('validations.field-address')
+            validateAddress ? '' : $t('validations.field-error_address')
           "
           :disabled="isFieldDisable"
         />
@@ -54,6 +54,7 @@
             class="certificate-modal__btn"
             color="info"
             :text="$t('certificate-modal.close-btn')"
+            :disabled="isFieldDisable"
             @click="modal.close"
           />
         </div>
@@ -65,9 +66,8 @@
 <script lang="ts" setup>
 import { UserJSONResponse, IpfsJSONResponse } from '@/types'
 import { InputField } from '@/fields'
-import { reactive, ref } from 'vue'
-import { required, address } from '@/validators'
-import { useErc721, useFormValidation } from '@/composables'
+import { ref } from 'vue'
+import { useErc721 } from '@/composables'
 import { api } from '@/api'
 import { Modal, AppButton } from '@/common'
 import { ErrorHandler } from '@/helpers'
@@ -75,7 +75,7 @@ import { ErrorHandler } from '@/helpers'
 const { safeMint } = useErc721()
 const isFieldDisable = ref(false)
 const inputAddressValue = ref('')
-const isinputAddressValid = ref('')
+const isInputAddressValid = ref('')
 
 const props = defineProps<{
   isShown: boolean
@@ -91,7 +91,8 @@ const validateAddress = () => {
 }
 
 const mint = async () => {
-  if (!isinputAddressValid.value) return
+  if (!isInputAddressValid.value) return
+
   try {
     isFieldDisable.value = true
     const ipfsLink = await api.post<IpfsJSONResponse>(
@@ -111,6 +112,7 @@ const mint = async () => {
     isFieldDisable.value = false
   } catch (error) {
     isFieldDisable.value = false
+
     ErrorHandler.process(error)
   }
 }

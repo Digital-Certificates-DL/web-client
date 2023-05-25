@@ -12,39 +12,41 @@
       <h3 class="setting-form__fields-title">
         {{ $t('setting-form.general-title') }}
       </h3>
-      <input-field
-        class="setting-form__form-input"
-        v-model="form.organizationName"
-        :label="$t('setting-form.organization-name-form-label')"
-        :error-message="getFieldErrorMessage('organizationName')"
-      />
-      <input-field
-        class="setting-form__form-input"
-        v-model="form.accountName"
-        :label="$t('setting-form.account-name-form-label')"
-        :error-message="getFieldErrorMessage('accountName')"
-      />
-      <h3 class="setting-form__fields-title">
-        {{ $t('setting-form.sign-key-title') }}
-      </h3>
-      <input-field
-        class="setting-form__form-input"
-        v-model="form.bip39MnemonicPhrase"
-        :label="$t('setting-form.bitcoin-phrase-form-label')"
-        :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
-      />
-      <input-field
-        class="setting-form__form-input"
-        v-model="form.urlGoogleSheet"
-        :label="$t('setting-form.url-form-label')"
-        :error-message="getFieldErrorMessage('urlGoogleSheet')"
-      />
-      <input-field
-        class="setting-form__form-input"
-        v-model="form.signKey"
-        :label="$t('setting-form.wif-form-label')"
-        :error-message="getFieldErrorMessage('signKey')"
-      />
+      <form action="">
+        <input-field
+          class="setting-form__form-input"
+          v-model="form.organizationName"
+          :label="$t('setting-form.organization-name-form-label')"
+          :error-message="getFieldErrorMessage('organizationName')"
+        />
+        <input-field
+          class="setting-form__form-input"
+          v-model="form.accountName"
+          :label="$t('setting-form.account-name-form-label')"
+          :error-message="getFieldErrorMessage('accountName')"
+        />
+        <h3 class="setting-form__fields-title">
+          {{ $t('setting-form.sign-key-title') }}
+        </h3>
+        <input-field
+          class="setting-form__form-input"
+          v-model="form.bip39MnemonicPhrase"
+          :label="$t('setting-form.bitcoin-phrase-form-label')"
+          :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
+        />
+        <input-field
+          class="setting-form__form-input"
+          v-model="form.urlGoogleSheet"
+          :label="$t('setting-form.url-form-label')"
+          :error-message="getFieldErrorMessage('urlGoogleSheet')"
+        />
+        <input-field
+          class="setting-form__form-input"
+          v-model="form.signKey"
+          :label="$t('setting-form.wif-form-label')"
+          :error-message="getFieldErrorMessage('signKey')"
+        />
+      </form>
       <div class="setting-form__btns">
         <app-button
           class="setting-form__btn"

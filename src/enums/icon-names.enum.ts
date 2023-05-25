@@ -138,6 +138,7 @@ export enum ICON_NAMES {
   menuAlt3 = 'menu-alt-3',
   menuAlt4 = 'menu-alt-4',
   menu = 'menu',
+  metamask = 'metamask',
   microphone = 'microphone',
   minusCircle = 'minus-circle',
   minusSm = 'minus-sm',

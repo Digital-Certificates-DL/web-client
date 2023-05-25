@@ -4,8 +4,8 @@
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
-        :src="props.user.img || '@static/branding/template.jpg'"
-        alt="certificate"
+        :src="user.img || '/branding/template.jpg'"
+        :alt="$t('certificate.img-alt')"
       />
     </div>
 
@@ -62,7 +62,7 @@ const selectItem = () => {
   align-items: center;
   margin-top: toRem(20);
   padding-bottom: toRem(10);
-  border-bottom: var(--text-primary-dark), toRem(2), solid;
+  border-bottom: var(--border-primary-dark), toRem(2), solid;
 }
 
 .certificate_img {
@@ -71,12 +71,10 @@ const selectItem = () => {
 
   @include respond-to(medium) {
     width: toRem(54);
-    border-radius: toRem(4);
   }
 
   @include respond-to(xmedium) {
     width: toRem(64);
-    border-radius: toRem(4);
   }
 }
 

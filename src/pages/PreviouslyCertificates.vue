@@ -4,7 +4,7 @@
     <div class="previously-certificates__search-wrp">
       <input-field
         class="previously-certificates__search-input"
-        v-model="form.search"
+        v-model="searchInputValue"
         :placeholder="$t('previously-certificates.certificates-find')"
         @update:model-value="find"
       />
@@ -19,13 +19,16 @@
         />
       </div>
     </div>
-    <certificate-modal v-model:is-shown="isModalActive" :user="currentUser" />
+    <certificate-modal
+      v-model:is-shown="isCertificateModalShown"
+      :user="currentUser"
+    />
 
     <div class="certificates__list">
       <div class="certificates__list-subtitle">
-        <p>{{ $t('certificates.certificates-subtitle-name') }}</p>
-        <p>{{ $t('certificates.certificates-subtitle-course') }}</p>
-        <p>{{ $t('certificates.certificates-subtitle-date') }}</p>
+        <p>{{ $t('previously-certificates.certificates-subtitle-name') }}</p>
+        <p>{{ $t('previously-certificates.certificates-subtitle-course') }}</p>
+        <p>{{ $t('previously-certificates.certificates-subtitle-date') }}</p>
         <p></p>
       </div>
       <div v-if="!userState.students.length">
@@ -33,10 +36,10 @@
           :message="$t('previously-certificates.error-certificate-list')"
         />
       </div>
-      <div v-for="(item, key) in userState.students" :value="key" :key="item">
+      <div v-for="item in userState.students" :key="item.id">
         <certificate
           :user="item"
-          @open-modal="openModal"
+          @open-modal="openCertificateModal"
           @select="selectForTimestamp"
         />
       </div>
@@ -49,7 +52,7 @@ import { useUserStore } from '@/store/modules/use-users.modules'
 import { UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
-import { reactive, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import btc from '@/utils/bitcoin.util'
 import {
   ErrorMessage,
@@ -57,24 +60,22 @@ import {
   Certificate,
   CertificateModal,
 } from '@/common'
+import { ErrorHandler } from '@/helpers'
 
 const userState = useUserStore()
-const isModalActive = ref(false)
-const currentUser = ref({} as UserJSONResponse)
-const listForTimestamp: UserJSONResponse[] = []
 
-const userBuffer = ref([] as UserJSONResponse[])
+const isCertificateModalShown = ref(false)
+const currentUser = ref<UserJSONResponse>({} as UserJSONResponse)
+const listForTimestamp = ref<UserJSONResponse[]>([])
+const userBuffer = ref<UserJSONResponse[]>([])
+const searchInputValue = ref('')
 
-const form = reactive({
-  //todo v-model
-  search: '',
-})
-const openModal = (user: UserJSONResponse) => {
-  isModalActive.value = true
+const openCertificateModal = (user: UserJSONResponse) => {
+  isCertificateModalShown.value = true
   currentUser.value = user
 }
 
-const prepareUserImg = (users: UserJSONResponse[]) => {
+const prepareUsersImage = (users: UserJSONResponse[]) => {
   for (const user of users) {
     if (user.certificateImg === null) {
       continue
@@ -87,46 +88,50 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
 
 const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
   if (state) {
-    listForTimestamp.push(user)
+    listForTimestamp.value.push(user)
 
     return
   }
-  listForTimestamp.filter(item => item !== user)
+  listForTimestamp.value.filter(item => item !== user)
 }
 
 const refresh = async () => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/users/',
-    {
-      body: {
-        data: {
-          url: userState.setting.urlGoogleSheet,
-          name: userState.setting.accountName,
+  try {
+    const { data } = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/users/',
+      {
+        body: {
+          data: {
+            url: userState.setting.urlGoogleSheet,
+            name: userState.setting.accountName,
+          },
         },
       },
-    },
-  )
-  userState.students = prepareUserImg(data)
+    )
+    userState.students = prepareUsersImage(data)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 
 const find = () => {
   userBuffer.value = userState.students
 
-  if (form.search === '' && userBuffer.value !== undefined) {
-    userState.students = userBuffer
+  if (searchInputValue.value === '' && userBuffer.value) {
+    userState.students = userBuffer.value
   }
-  userState.students.filter(item => item.participant.includes(form.search))
+  userState.students.filter(item =>
+    item.participant.includes(searchInputValue.value),
+  )
 }
 
 const bitcoinTimestamp = async () => {
-  if (
-    userState.setting.keyPathID === 0 ||
-    userState.setting.keyPathID === undefined
-  ) {
+  if (userState.setting.keyPathID === 0 || !userState.setting.keyPathID) {
     userState.setting.keyPathID = 0
   }
+
   const users = listForTimestamp
-  for (const user of users) {
+  for (const user of users.value) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
       userState.setting.bip39MnemonicPhrase,
       userState.setting.keyPathID,
@@ -140,7 +145,7 @@ const bitcoinTimestamp = async () => {
     user.txHash = sendResp.data.tx.hash
     userState.setting.lastExAddress = tx?.exAddress || ''
   }
-  await updateUsers(users)
+  await updateUsers(users.value)
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
@@ -167,7 +172,7 @@ const autoRefresh = () => {
   }
 }
 
-autoRefresh()
+onBeforeMount(autoRefresh)
 </script>
 
 <style scoped lang="scss">

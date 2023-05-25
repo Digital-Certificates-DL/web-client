@@ -20,10 +20,10 @@
           </p>
           <app-button
             class="main__metamask-btn main__btn-connect"
-            @click="connect"
+            color="info"
             :text="$t('main.metamask-connect-btn')"
-            :color="'info'"
             :disabled="web3Store.provider.isConnected"
+            @click="connect"
           />
         </div>
         <div v-else class="main__metamask">
@@ -122,12 +122,8 @@ const connect = async () => {
   display: flex;
   align-content: center;
   justify-content: space-between;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    rgba(143, 189, 255, 0.38) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  opacity: 0.6;
+  background: var(--app-background-gradient);
+  opacity: var(--app-background-opacity);
 }
 
 .main__btn-connect {

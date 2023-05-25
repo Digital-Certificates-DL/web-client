@@ -78,13 +78,13 @@
       <div class="generation__step-field generation__btns">
         <app-button
           class="generation__btn"
-          color="success"
+          color="info"
           :text="$t('generation.start-btn')"
           @click="start"
         />
         <app-button
           class="generation__btn"
-          color="success"
+          color="info"
           :text="$t('generation.cancel-btn')"
           @click="router.push(ROUTE_NAMES.main)"
         />
@@ -174,7 +174,7 @@ const parsedData = async (sheepUrl?: string) => {
 const sign = (users: UserJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
-    if (user.signature === undefined || user.signature == '') {
+    if (!user.signature || user.signature == '') {
       user.signature = signature.signMsg(user.msg)
     }
   }

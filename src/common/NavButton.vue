@@ -1,12 +1,10 @@
 <template>
-  <div :class="navClasses">
+  <div :class="navButtonClasses">
     <app-button
       class="nav-button__btn"
       :color="props.color"
       :text="props.title"
-      :route="{
-        name: $routes.settings,
-      }"
+      :route="route"
     />
     <p class="nav-button__description">
       {{ props.description }}
@@ -49,7 +47,7 @@ const props = withDefaults(
   },
 )
 
-const navClasses = computed(() =>
+const navButtonClasses = computed(() =>
   ['nav-button', `nav-button--${props.size}`].join(' '),
 )
 </script>

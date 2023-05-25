@@ -6,7 +6,7 @@
     <template #default="{ modal }">
       <div class="auth-modal__pane">
         <input-field
-          v-model="code"
+          v-model="accessCodeInputValue"
           :label="$t('auth-modal.input-code-label')"
           :error-message="
             isInputValid ? '' : $t('validations.field-error_code')
@@ -17,13 +17,13 @@
           color="info"
           size="medium"
           :text="$t('auth-modal.get-access-btn')"
-          @click="openLink"
+          @click="window.open(props.tokenLink, '_blank')"
         />
         <div class="auth-modal__btns">
           <app-button
             class="auth-modal__btn auth-modal__btn-nav"
             color="info"
-            :text="$t('auth-modal.send-code-btn')"
+            :text="$t('auth-modal.send-codeInputValue-btn')"
             @click="sendCode"
           />
           <app-button
@@ -44,7 +44,7 @@ import { ref } from 'vue'
 import { Modal, AppButton } from '@/common'
 
 const isInputValid = ref(false)
-const code = ref('')
+const accessCodeInputValue = ref('')
 
 const props = defineProps<{
   isShown: boolean
@@ -56,28 +56,25 @@ const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
 
-const openLink = () => {
-  window.open(props.tokenLink, '_blank')
-}
 const sendCode = () => {
   if (!isInputValid.value) return
-  emit('send-auth-code', code.value)
+  emit('send-auth-code', accessCodeInputValue.value)
 }
 </script>
 
 <style scoped lang="scss">
 .auth-modal__pane {
+  display: grid;
   width: toRem(400);
   height: toRem(400);
   background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
-  display: grid;
 }
 
 .auth-modal__btns {
-  height: toRem(58);
   display: flex;
+  height: toRem(58);
   justify-content: space-between;
 }
 

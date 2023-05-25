@@ -1,10 +1,10 @@
 export type PustTxResponce = {
   data: {
-    tx: Tx
+    tx: BitcoinTransaction
   }
 }
 
-export type Tx = {
+export type BitcoinTransaction = {
   blockHeight: number
   hash: string
   addresses: string[]
@@ -21,11 +21,11 @@ export type Tx = {
   vinSz: number
   voutSz: number
   confirmations: number
-  inputs: Input[]
-  outputs: Output[]
+  inputs: BitcoinTransactionInput[]
+  outputs: BitcoinTransactionOutput[]
 }
 
-export type Input = {
+export type BitcoinTransactionInput = {
   prevHash: string
   outputIndex: number
   script: string
@@ -36,7 +36,7 @@ export type Input = {
   age: number
 }
 
-export type Output = {
+export type BitcoinTransactionOutput = {
   value: number
   script: string
   addresses: string[]
