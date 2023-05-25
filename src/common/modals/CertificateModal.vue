@@ -8,7 +8,7 @@
         <div class="certificate-modal__img-wrp">
           <img
             class="certificate-modal__img"
-            :src="user.img || '/static/branding/template.jpg'"
+            :src="user.img || '@/..static/branding/template.jpg'"
             :alt="$t('certificate-modal.certificate-alt')"
           />
         </div>
@@ -36,10 +36,12 @@
           {{ $t('certificate-modal.label-metamask-userBitcoinAddress') }}
         </p>
         <input-field
-          v-model="form.address"
+          v-model="inputAddressValue"
           :label="$t('certificate-modal.label-metamask-userBitcoinAddress')"
-          :error-message="getFieldErrorMessage('address')"
-          :disabled="isFormDisable"
+          :error-message="
+            validateAddress ? '' : $t('validations.field-address')
+          "
+          :disabled="isFieldDisable"
         />
         <div class="certificate-modal__btns">
           <app-button
@@ -71,15 +73,9 @@ import { Modal, AppButton } from '@/common'
 import { ErrorHandler } from '@/helpers'
 
 const { safeMint } = useErc721()
-const isFormDisable = ref(false)
-
-const form = reactive({
-  address: '',
-})
-
-const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  address: { required, address },
-})
+const isFieldDisable = ref(false)
+const inputAddressValue = ref('')
+const isinputAddressValid = ref('')
 
 const props = defineProps<{
   isShown: boolean
@@ -90,10 +86,14 @@ const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
 
+const validateAddress = () => {
+  return /^(0x){1}[0-9a-fA-F]{40}$/i.test(inputAddressValue.value)
+}
+
 const mint = async () => {
-  if (!isFormValid()) return
+  if (!isinputAddressValid.value) return
   try {
-    isFormDisable.value = true
+    isFieldDisable.value = true
     const ipfsLink = await api.post<IpfsJSONResponse>(
       '/integrations/ccp/certificate/ipfs',
       {
@@ -107,11 +107,10 @@ const mint = async () => {
       },
     )
 
-    const url = ipfsLink.data.attributes.url
-    await safeMint(form.address, url)
-    isFormDisable.value = false
+    await safeMint(inputAddressValue.value, ipfsLink.data.attributes.url)
+    isFieldDisable.value = false
   } catch (error) {
-    isFormDisable.value = false
+    isFieldDisable.value = false
     ErrorHandler.process(error)
   }
 }
@@ -139,7 +138,6 @@ const prepareTokenDescription = (user: UserJSONResponse) => {
   height: toRem(796);
   background: var(--background-primary-main);
   border-radius: toRem(16);
-  flex-direction: row;
   padding: toRem(24);
 }
 

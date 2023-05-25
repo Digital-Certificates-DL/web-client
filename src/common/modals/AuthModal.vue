@@ -6,9 +6,11 @@
     <template #default="{ modal }">
       <div class="auth-modal__pane">
         <input-field
-          v-model="form.code"
+          v-model="code"
           :label="$t('auth-modal.input-code-label')"
-          :error-message="getFieldErrorMessage('code')"
+          :error-message="
+            isInputValid ? '' : $t('validations.field-error_code')
+          "
         />
         <app-button
           class="auth-modal__btn auth-modal__btn-link"
@@ -38,18 +40,11 @@
 
 <script lang="ts" setup>
 import { InputField } from '@/fields'
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import { Modal, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
 
-const form = reactive({
-  code: '',
-})
-
-const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  code: { required },
-})
+const isInputValid = ref(false)
+const code = ref('')
 
 const props = defineProps<{
   isShown: boolean
@@ -65,8 +60,8 @@ const openLink = () => {
   window.open(props.tokenLink, '_blank')
 }
 const sendCode = () => {
-  if (!isFormValid()) return
-  emit('send-auth-code', form.code)
+  if (!isInputValid.value) return
+  emit('send-auth-code', code.value)
 }
 </script>
 

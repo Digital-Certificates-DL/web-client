@@ -16,13 +16,13 @@
         class="setting-form__form-input"
         v-model="form.organizationName"
         :label="$t('setting-form.organization-name-form-label')"
-        :error-message="getFieldErrorMessage('org')"
+        :error-message="getFieldErrorMessage('organizationName')"
       />
       <input-field
         class="setting-form__form-input"
         v-model="form.accountName"
         :label="$t('setting-form.account-name-form-label')"
-        :error-message="getFieldErrorMessage('name')"
+        :error-message="getFieldErrorMessage('accountName')"
       />
       <h3 class="setting-form__fields-title">
         {{ $t('setting-form.sign-key-title') }}
@@ -31,13 +31,13 @@
         class="setting-form__form-input"
         v-model="form.bip39MnemonicPhrase"
         :label="$t('setting-form.bitcoin-phrase-form-label')"
-        :error-message="getFieldErrorMessage('sendMnemonicPhrase')"
+        :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
       />
       <input-field
         class="setting-form__form-input"
         v-model="form.urlGoogleSheet"
-        :label="$t('setting-form.urlGoogleSheet-form-label')"
-        :error-message="getFieldErrorMessage('url')"
+        :label="$t('setting-form.url-form-label')"
+        :error-message="getFieldErrorMessage('urlGoogleSheet')"
       />
       <input-field
         class="setting-form__form-input"
@@ -92,11 +92,11 @@ const form = reactive({
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  name: { required },
-  org: { required },
+  accountName: { required },
+  organizationName: { required },
   signKey: { required },
-  sendMnemonicPhrase: { required },
-  url: { required },
+  bip39MnemonicPhrase: { required },
+  urlGoogleSheet: { required },
 })
 
 const save = async () => {

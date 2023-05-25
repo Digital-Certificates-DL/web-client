@@ -78,14 +78,14 @@
       <div class="generation__step-field generation__btns">
         <app-button
           class="generation__btn"
+          color="success"
           :text="$t('generation.start-btn')"
-          :color="'success'"
           @click="start"
         />
         <app-button
           class="generation__btn"
+          color="success"
           :text="$t('generation.cancel-btn')"
-          :color="'success'"
           @click="router.push(ROUTE_NAMES.main)"
         />
       </div>

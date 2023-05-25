@@ -91,7 +91,8 @@
   },
   "certificate": {
     "mint-text": "Make sbt issuance",
-    "bitcoin-btn": "Bitcoin"
+    "bitcoin-btn": "Bitcoin",
+    "img-alt":  "Certificate",
 
   },
   "setting-form": {
@@ -128,7 +129,7 @@
     "close-btn": "Close"
   },
   "app-navbar": {
-    "metamask-ico-alt": "metamask ico"
+    "metamask-ico-alt": "metamask ico",
+    "metamask-connect" : "Connect"
   }
-
 }

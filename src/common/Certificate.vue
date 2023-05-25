@@ -4,7 +4,7 @@
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
-        :src="props.user.img || '@/../static/branding/template.jpg'"
+        :src="props.user.img || '@static/branding/template.jpg'"
         alt="certificate"
       />
     </div>
@@ -24,7 +24,7 @@
 
       <app-button
         class="certificate__btn certificate__btn-download"
-        icon-left="@/../static/branding/download.png"
+        icon-left="download"
         @click="window.open(user.certificate, '_blank')"
       />
     </div>

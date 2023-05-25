@@ -5,10 +5,11 @@
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
         <app-button
-          @click="connect"
           icon-left="metamask"
-          :text="preparedAddress || 'Connect'"
           class="app-navbar__btn"
+          :disabled="provider.isConnected"
+          :text="preparedAddress || $t('app-navbar.metamask-connect')"
+          @click="connect"
         />
       </div>
       <div class="app-navbar__settings">
@@ -27,17 +28,28 @@
 <script lang="ts" setup>
 import { AppLogo, AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
 const { provider } = useWeb3ProvidersStore()
 const preparedAddress = ref('')
+
 const connect = async () => {
   await provider.connect()
-  preparedAddress.value =
-    provider.selectedAddress!.slice(0, 6) +
-    '...' +
-    provider.selectedAddress!.slice(-4)
+  prepareAddress()
 }
+
+const prepareAddress = () => {
+  if (provider.isConnected) {
+    preparedAddress.value =
+      provider.selectedAddress!.slice(0, 6) +
+      '...' +
+      provider.selectedAddress!.slice(-4)
+  }
+}
+
+onBeforeMount(() => {
+  prepareAddress()
+})
 </script>
 
 <style lang="scss" scoped>
