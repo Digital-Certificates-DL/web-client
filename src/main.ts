@@ -1,6 +1,7 @@
 import '@/styles/app.scss'
 import App from '@/App.vue'
 import log from 'loglevel'
+import 'virtual:svg-icons-register'
 
 import VueToastificationPlugin from 'vue-toastification'
 import { ICON_NAMES, ROUTE_NAMES } from '@/enums'

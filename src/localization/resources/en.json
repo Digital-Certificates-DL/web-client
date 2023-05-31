@@ -3,8 +3,9 @@
     "field-error_required": "Please fill out this field",
     "field-error_required-all": "Please fill out all fields",
     "field-error_email": "Field must be a valid email",
+    "field-error_code": "Code is required",
+    "field-error_sendMnemonicPhrase": "Not valid mnemonic",
     "field-error_address": "Invalid address",
-    "field-error_auth-code": "Code is required",
     "field-error_name": "Empty name",
     "field-error_settings": "We need fill all fields",
     "field-error_privateKey": "Invalid private key"
@@ -52,53 +53,130 @@
   "web3-page": {
     "loading-error-msg": "Oops... Something went wrong"
   },
-  "erc20": {
-    "loading-error-msg": "Oops... Something went wrong",
-    "title": "ERC20",
-    "name-lbl": "Name",
-    "symbol-lbl": "Symbol",
-    "decimals-lbl": "Decimals",
-    "total-supply-lbl": "Total supply",
-    "balance-lbl": "Balance",
-    "transfer-lbl": "Transfer",
-    "mint-lbl": "Mint"
-  },
   "main": {
-    "generate-title": "Generate",
-    "generate-body": "",
     "metamask-connect": "Connect to MetaMask",
     "page-info-name": "Service name",
-    "page-info-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'",
-    "metamask-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus'"
+    "metamask-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "metamask-connect-btn": "Connect to MetaMask",
+    "metamask-disconnect-btn": "Disconnect",
+    "main-nav-certificates-title": "Certificates",
+    "main-nav-certificates-description": "Your certificates",
+    "main-nav-home-title": "Home",
+    "main-nav-home-description": "Home",
+    "main-nav-settings-title": "Settings",
+    "main-nav-settings-description": "Your settings",
+    "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "main-nav-home-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
   },
-  "certificates": {
+  "previously-certificates-page": {
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
-    "certificates-subtitle-date": "Date"
+    "certificates-subtitle-date": "Date",
+    "certificates-bitcoin-btn": "Bitcoin",
+    "generate-btn": "Generate",
+    "error-certificate-list": "Empty certificate list",
+    "certificates-find": "find",
+    "bitcoin-btn": "Timestamp"
+
   },
-  "generation": {
+  "generation-page": {
     "title":"Create new certificate",
-    "step1-description": "Write a name for your certificate",
-    "step2-description": "Choose or upload template for a new certificate",
-    "step3-description": "Write a link to  google sheet",
-    "step1": "1",
-    "step2": "2",
-    "step3": "3"
+    "step-1-description": "Write a name for your certificate",
+    "step-2-description": "Choose or upload template for a new certificate",
+    "step-3-description": "Write a link to  google sheet",
+    "step-1": "1",
+    "step-2": "2",
+    "step-3": "3",
+    "step-3-placeholder": "Link",
+    "step-1-placeholder": "Name",
+    "start-btn": "Start",
+    "cancel-btn": "Cancel",
+    "upload-new-template-symbol": "+",
+    "upload-new-template": "Upload new template",
+    "choose-template": "Choose from my templates"
   },
   "certificate": {
-    "mint-text": "Make sbt issuance"
+    "mint-text": "Make sbt",
+    "bitcoin-btn": "Bitcoin",
+    "generate-btn": "Generate",
+    "timestamp-btn": "Timestamp",
+    "img-alt":  "Certificate"
   },
-  "settings": {
-    "title": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "page-name": "Setting",
+  "setting-form": {
+    "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
-    "general-title": "General settings"
+    "general-title": "General settings",
+    "cancel-btn-title": "Cancel",
+    "save-btn-title": "Save",
+    "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
+    "account-name-form-label": "Account name",
+    "organization-name-form-label": "Name of organization",
+    "url-form-label": "Google Sheet URL",
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
+  },
+  "setting-page": {
+    "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-title": "Setting",
+    "sign-key-title": "Key settings for signatures",
+    "general-title": "General settings",
+    "cancel-btn-title": "Cancel",
+    "save-btn-title": "Save",
+    "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
+    "account-name-form-label": "Account name",
+    "organization-name-form-label": "Name of organization",
+    "url-form-label": "Google Sheet URL",
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
   },
   "certificate-modal": {
-    "user-name" : "Full name",
-    "title" : "SBT issuance"
-
+    "title" : "SBT issuance",
+    "label-participant": "Full name",
+    "label-date": "Issued on",
+    "label-course": "Course name",
+    "label-metamask-address": "Student’s MetaMask address",
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "certificate-alt": "Certificate"
+  },
+  "auth-modal": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
+    "close-btn": "Close",
+    "get-access-btn": "Get access",
+    "send-code-btn": "Send code"
+  },
+  "app-navbar": {
+    "metamask-ico-alt": "metamask ico",
+    "metamask-connect" : "Connect"
+  },
+  "home": {
+    "upload-title": "Upload new template",
+    "upload-name": "Upload",
+    "upload-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
+    "create-title": "Generate certificates",
+    "create-name": "Generate",
+    "create-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
+    "title" : "Create new",
+    "template-list-title": "My templates",
+    "certificate-list-title": "Previously certificates",
+    "get-all-btn": "See more",
+    "error-templates-nil": "templates was not found",
+    "error-certificate-nil": "certificates was not found"
+  },
+  "timestamp-page": {
+    "page-title": "Previously certificates",
+    "bitcoin-btn": "Bitcoin",
+    "input-placeholder": "Find"
+  },
+  "timestamp-item":{
+    "timestamp-btn": "Timestamp"
+  },
+  "template_page": {
+    "title": "Upload new  template",
+    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.\n"
   }
 
 }

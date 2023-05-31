@@ -2,16 +2,7 @@
   <div class="spinner" />
 </template>
 
-<script lang="ts" setup>
-withDefaults(
-  defineProps<{
-    title?: string
-  }>(),
-  {
-    title: '',
-  },
-)
-</script>
+<script lang="ts" setup></script>
 
 <style lang="scss" scoped>
 .spinner {

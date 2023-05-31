@@ -1,1 +1,1 @@
-export { default as TemplateForm } from '@/forms/TemplateForm.vue'
+export { default as SettingForm } from '@/forms/SettingForm.vue'

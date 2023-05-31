@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "template.labels" . | nindent 4 }}
 data:
-  {{ .Values.config.name  }}: |
+  {{ .Values.config.accountName  }}: |
                               document.ENV = {
                                 {{ if  .Values.global.localstorage }}
                                 FILE_STORAGE: 'https://storage.{{ .Values.global.IngressDomain  }}/{{ .Values.config.data.BUCKET  }}',

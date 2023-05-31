@@ -1,12 +1,15 @@
 <template>
-  <div class="home-item">
-    <div class="home-item__image-wrp">
+  <div class="timestamp-item">
+    <div class="home-item__img-wrp">
       <div v-if="props.img === ''">
-        <img src="static/branding/template.jpg" class="home-item__img" alt="" />
+        <img
+          :src="props.img || '@/../static/branding/template.jpg'"
+          class="home-item__img"
+          alt="not found"
+        />
       </div>
       <div v-else>
-        <img class="certificate_img" :src="props.img" alt="" />
-        <p>{{ props.img }}</p>
+        <img class="home-item__img" :src="props.img" alt="error" />
       </div>
     </div>
     <div class="home-item__title">
@@ -16,25 +19,16 @@
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    img?: string
-    title?: string
-  }>(),
-  {
-    img: '',
-    title: '',
-  },
-)
+const props = defineProps<{
+  img?: string
+  title?: string
+}>()
 </script>
 
 <style scoped lang="scss">
-//.home-item__image-wrp {
-//  max-width: toRem(00);
-//  max-height: toRem(100);
-//}
 .home-item__img {
-  width: toRem(200);
-  //height: toRem(150);
+  width: toRem(314);
+  height: toRem(222);
+  border-radius: toRem(8);
 }
 </style>

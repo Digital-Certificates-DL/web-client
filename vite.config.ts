@@ -4,7 +4,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -34,6 +34,10 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       vue(),
       wasm(),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+        symbolId: '[name]',
+      }),
       checker({
         overlay: {
           initialIsOpen: false,
@@ -71,6 +75,22 @@ export default defineConfig(({ command, mode }) => {
         '@static': `${root}/../static`,
         events: 'events-polyfill',
         buffer: 'buffer/index.js',
+      },
+    },
+    build: {
+      target: 'esnext',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id
+                .toString()
+                .split('node_modules/')[1]
+                .split('/')[0]
+                .toString()
+            }
+          },
+        },
       },
     },
     optimizeDeps: {

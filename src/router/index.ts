@@ -10,37 +10,37 @@ const routes = [
   {
     path: '/main',
     name: ROUTE_NAMES.main,
-    component: () => import('@/pages/Main.vue'),
+    component: () => import('@/pages/MainPage.vue'),
   },
   {
     path: '/generate',
     name: ROUTE_NAMES.generate,
-    component: () => import('@/pages/Generation.vue'),
-  },
-  {
-    path: '/template',
-    name: ROUTE_NAMES.template,
-    component: () => import('@/pages/Template.vue'),
+    component: () => import('@/pages/GenerationPage.vue'),
   },
   {
     path: '/home',
     name: ROUTE_NAMES.home,
-    component: () => import('@/pages/Home.vue'),
+    component: () => import('@/pages/HomePage.vue'),
   },
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/Certificates.vue'),
+    component: () => import('@/pages/PreviouslyCertificatesPage.vue'),
   },
   {
     path: '/settings',
     name: ROUTE_NAMES.settings,
-    component: () => import('@/pages/Setting.vue'),
+    component: () => import('@/pages/SettingPage.vue'),
   },
   {
     path: '/timestamp',
     name: ROUTE_NAMES.timestamp,
     component: () => import('@/pages/Timestamp.vue'),
+  },
+  {
+    path: '/template',
+    name: ROUTE_NAMES.template,
+    component: () => import('@/pages/Template.vue'),
   },
 ]
 

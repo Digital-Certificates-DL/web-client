@@ -1,11 +1,11 @@
 export type PustTxResponce = {
   data: {
-    tx: Tx
+    tx: BitcoinTransaction
   }
 }
 
-export interface Tx {
-  block_height: number
+export type BitcoinTransaction = {
+  blockHeight: number
   hash: string
   addresses: string[]
   total: number
@@ -13,46 +13,104 @@ export interface Tx {
   size: number
   vsize: number
   preference: string
-  relayed_by: string
+  relayedBy: string
   received: string
   ver: number
-  lock_time: number
-  double_spend: boolean
-  vin_sz: number
-  vout_sz: number
+  lockTime: number
+  doubleSpend: boolean
+  vinSz: number
+  voutSz: number
   confirmations: number
-  inputs: Input[]
-  outputs: Output[]
+  inputs: BitcoinTransactionInput[]
+  outputs: BitcoinTransactionOutput[]
 }
 
-export interface Input {
-  prev_hash: string
-  output_index: number
+export type BitcoinTransactionInput = {
+  prevHash: string
+  outputIndex: number
   script: string
-  output_value: number
+  outputValue: number
   sequence: number
   addresses: string[]
-  script_type: string
+  scriptType: string
   age: number
 }
 
-export interface Output {
+export type BitcoinTransactionOutput = {
   value: number
   script: string
   addresses: string[]
-  script_type: string
+  scriptType: string
 }
 
-export interface UTXO {
-  tx_hash: string
-  block_height: number
-  tx_input_n: number
-  tx_output_n: number
+export interface AddressInfo {
+  path: string
+  address: string
+  utxos: UTXOs
+}
+
+////////////////
+
+export type BlockstreamTxList = Transaction[]
+
+export interface Transaction {
+  txid: string
+  version: number
+  locktime: number
+  vin: Vin[]
+  vout: Vout[]
+  size: number
+  weight: number
+  fee: number
+  status: Status
+}
+
+export interface Vin {
+  txid: string
+  vout: number
+  prevout: Prevout
+  scriptsig: string
+  scriptsig_asm: string
+  witness: string[]
+  is_coinbase: boolean
+  sequence: number
+  inner_redeemscript_asm?: string
+}
+
+export interface Prevout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
   value: number
-  ref_balance: number
-  spent: boolean
-  spent_by: string
-  confirmations: number
-  confirmed: string
-  double_spend: boolean
+}
+
+export interface Vout {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
+  value: number
+}
+
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
+}
+
+export type UTXOs = UTXO[]
+export interface UTXO {
+  txid: string
+  vout: number
+  status: Status
+  value: number
+}
+
+export interface Status {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
 }

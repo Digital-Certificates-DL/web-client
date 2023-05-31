@@ -46,7 +46,7 @@ enum EVENTS {
 }
 
 export default defineComponent({
-  name: 'checkbox-field',
+  name: 'c',
   components: { Icon },
   props: {
     modelValue: { type: Boolean, default: false },

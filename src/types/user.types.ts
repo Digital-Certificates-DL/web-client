@@ -1,40 +1,34 @@
-export type UserTypes = {
-  Date: string
-  Participant: string
-  CourseTitle: string
-  Points: string
-  SerialNumber: string
-  Note: string
-  Certificate: string
-  DataHash: string
-  TxHash: string
-  Signature: string | undefined
-  DigitalCertificate: string
-  ID: number
-  Msg: string
-  CertificateImg: Uint8Array
-  Img: string
-}
-
 export type UserJSONResponse = {
-  ID: string
-  Type: string
-  attributes: UserTypes
+  date: string
+  participant: string
+  courseTitle: string
+  points: string
+  serialNumber: string
+  note: string
+  certificate: string
+  dataHash: string
+  txHash: string
+  signature: string | undefined
+  digitalCertificate: string
+  id: number
+  msg: string
+  certificateImg: Uint8Array
+  img: string
 }
 
 export type UserJSONResponseList = {
   data: UserJSONResponse[]
-  Included: object[]
-  Links: object
+  included: object[]
+  links: object
 }
 
 export type UserSetting = {
-  Name: string
-  Org: string
-  SignKey: string
-  Address: string
-  KeyPathID: number
-  LastExAddress: string
-  SendMnemonicPhrase: string
-  Url: string
+  accountName: string
+  organizationName: string
+  signKey: string
+  userBitcoinAddress: string
+  keyPathID: number
+  lastExAddress: string
+  bip39MnemonicPhrase: string
+  urlGoogleSheet: string
 }

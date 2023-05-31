@@ -4,34 +4,61 @@
 
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
-        <app-button @click="connect" class="app-navbar__btn">
-          <img class="app-navbar__img" src="/branding/metamask.png" alt="" />
-          <p>{{ web3Store.provider.selectedAddress! || 'Connect' }}</p>
-        </app-button>
+        <app-button
+          class="app-navbar__btn"
+          :disabled="provider.isConnected"
+          :text="preparedAddress || $t('app-navbar.metamask-connect')"
+          :icon-left="$icons.metamask"
+          @click="connect"
+        />
       </div>
+
       <div class="app-navbar__settings">
-        <form>
-          <app-button class="app-navbar__btn" route="settings">
-            <img src="/static/branding/setting.png" alt="setting ico" />
-          </app-button>
-        </form>
+        <app-button
+          class="app-navbar__btn"
+          :icon-left="$icons.settings"
+          :route="{
+            name: $routes.settings,
+          }"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppLogo, AppButton } from '@/common'
+import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
+import { onBeforeMount, ref } from 'vue'
 
-const web3Store = useWeb3ProvidersStore()
+const { provider } = useWeb3ProvidersStore()
+const preparedAddress = ref('')
 
 const connect = async () => {
-  await web3Store.provider.connect()
+  await provider.connect()
+  prepareAddress()
 }
+
+const prepareAddress = () => {
+  if (provider.isConnected) {
+    preparedAddress.value =
+      provider.selectedAddress!.slice(0, 6) +
+      '...' +
+      provider.selectedAddress!.slice(-4)
+  }
+}
+
+onBeforeMount(() => {
+  prepareAddress()
+})
 </script>
 
 <style lang="scss" scoped>
+$box-shadow-r: 0;
+$box-shadow-g: 0;
+$box-shadow-b: 0;
+$box-shadow-a: 0.06;
+
 .app-navbar {
   display: flex;
   align-items: center;
@@ -39,10 +66,30 @@ const connect = async () => {
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
+  box-shadow: 0 toRem(4) toRem(16)
+    rgba($box-shadow-r, $box-shadow-g, $box-shadow-b, $box-shadow-a);
+  margin-bottom: toRem(20);
+
+  @include respond-to(xmedium) {
+    width: toRem(1280);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(1024);
+  }
 
   @include respond-to(tablet) {
     flex-wrap: wrap;
   }
+}
+
+.app-navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
+  border-bottom: var(--border-primary-main);
+  width: 100%;
 }
 
 .app-navbar__logo {
@@ -53,15 +100,33 @@ const connect = async () => {
 }
 
 .app-navbar__configuration {
+  width: 15%;
   display: flex;
+  justify-content: space-between;
 }
 
 .app-navbar__img {
   width: toRem(20);
 }
 
-.app-navbar__btn {
+.app-navbar__metamask {
+  width: toRem(175);
+
+  @include respond-to(xmedium) {
+    width: toRem(150);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(125);
+  }
+}
+
+.app-navbar__btn .app-navbar__settings {
   height: toRem(50);
   border-radius: toRem(8);
+
+  @include respond-to(xmedium) {
+    height: toRem(40);
+  }
 }
 </style>

@@ -82,6 +82,15 @@ ul {
 
 p {
   line-height: 2;
+  font-size: toRem(16);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(14);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(12);
+  }
 
   @include respond-to(tablet) { line-height: 1.6; }
 }
@@ -98,19 +107,46 @@ h5 {
 }
 
 h1 {
-  font-size: toRem(24);
+  font-size: toRem(46);
+
+  @include respond-to(medium) {
+    font-size: toRem(40);
+  }
+
+  @include respond-to(xmedium) {
+    font-size: toRem(43);
+  }
 }
 
 h2 {
-  font-size: toRem(24);
+  font-size: toRem(40);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(37);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(34);
+  }
 }
 
 h3 {
-  font-size: toRem(18);
+  font-size: toRem(28);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(25);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(23);
+  }
 }
 
 h4 {
-  font-size: toRem(16);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
 }
 
 h5 {

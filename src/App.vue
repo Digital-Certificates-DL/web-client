@@ -1,9 +1,8 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
     <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component class="app__main" :is="Component" />
-      </transition>
+      <app-navbar v-if="route.fullPath !== '/main'" />
+      <component class="app__main" :is="Component" />
     </router-view>
   </div>
 </template>
@@ -13,12 +12,12 @@ import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
-import { PROVIDERS } from '@/enums'
+import { PROVIDERS, ROUTE_NAMES } from '@/enums'
 
+import AppNavbar from '@/common/AppNavbar.vue'
 import { useUserStore, useWeb3ProvidersStore } from '@/store'
 
 const web3Store = useWeb3ProvidersStore()
-const userState = useUserStore()
 const isAppInitialized = ref(false)
 const init = async () => {
   try {
@@ -43,7 +42,33 @@ const init = async () => {
   isAppInitialized.value = true
 }
 
+const initProvider = async () => {
+  try {
+    useNotifications()
+    await web3Store.detectProviders()
+    const provider = web3Store.providers.find(
+      el => el.name === PROVIDERS.metamask,
+    )
+    await web3Store.provider.init(provider!)
+    document.title = config.APP_NAME
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+  isAppInitialized.value = true
+}
+
+const initUser = async () => {
+  try {
+    useNotifications()
+    useUserStore()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
 init()
+initProvider()
+initUser()
 </script>
 
 <style lang="scss" scoped>

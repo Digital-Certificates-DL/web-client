@@ -1,102 +1,96 @@
 <template>
-  <modal :is-shown="isShown">
-    <div class="modal__window">
-      <input-field
-        label="Code"
-        v-model="form.code"
-        :error-message="getFieldErrorMessage('auth-code')"
-      />
-      <app-button
-        class="modal__btn modal__btn-link"
-        text="Give access"
-        @click="window.open(props.tokenLink, '_blank')"
-      />
-      <div class="certificate-modal__btns">
-        <app-button
-          class="modal__btn modal__btn-nav"
-          text="Send code"
-          @click="sendCode"
+  <modal
+    :is-shown="isShown"
+    @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
+  >
+    <template #default="{ modal }">
+      <div class="auth-modal__pane">
+        <input-field
+          v-model="accessCodeInputValue"
+          :label="$t('auth-modal.input-code-label')"
+          :error-message="
+            accessCodeInputValue.length > 0
+              ? ''
+              : $t('validations.field-error_code')
+          "
         />
-        <app-button
-          class="modal__btn modal__btn-nav"
-          text="Cancel"
-          @click="emit('closeModal', false)"
-        />
+
+        <div class="auth-modal__btns">
+          <app-button
+            class="auth-modal__btn auth-modal__btn-nav"
+            color="info"
+            :text="$t('auth-modal.send-code-btn')"
+            @click="sendCode"
+          />
+          <app-button
+            class="auth-modal__btn auth-modal__btn-link"
+            color="info"
+            size="medium"
+            :text="$t('auth-modal.get-access-btn')"
+            @click="getAccess"
+          />
+          <app-button
+            class="auth-modal__btn auth-modal__btn-nav"
+            color="info"
+            :text="$t('auth-modal.close-btn')"
+            @click="modal.close"
+          />
+        </div>
       </div>
-    </div>
+    </template>
   </modal>
 </template>
 
 <script lang="ts" setup>
 import { InputField } from '@/fields'
-import { reactive } from 'vue'
-import AppButton from '@/common/AppButton.vue'
-import { Modal } from '@/common'
-import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
+import { ref } from 'vue'
+import { Modal, AppButton } from '@/common'
 
-const form = reactive({
-  code: '',
-})
+const accessCodeInputValue = ref('')
 
-const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  address: { required },
-})
-
-const props = withDefaults(
-  defineProps<{
-    isShown: boolean
-    tokenLink: string
-  }>(),
-  {
-    isShown: false,
-    tokenLink: '',
-  },
-)
+const props = defineProps<{
+  isShown: boolean
+  tokenLink: string
+}>()
 
 const emit = defineEmits<{
-  (e: 'closeModal', state: boolean): boolean
-  (e: 'withCode', code: string): boolean
+  (e: 'send-auth-code', code: string): boolean
+  (event: 'update:is-shown', value: boolean): void
 }>()
 
 const sendCode = () => {
-  if (!isFormValid()) return
-  emit('withCode', form.code)
+  console.log('send from child')
+  emit('send-auth-code', accessCodeInputValue.value)
+}
+
+const getAccess = () => {
+  window.open(props.tokenLink, '_blank')
 }
 </script>
 
 <style scoped lang="scss">
-.modal__window {
-  width: 30%;
-  height: 35%;
-  background: white;
-  border-radius: 1rem;
-  flex-direction: row;
-  padding: toRem(24);
-  position: fixed;
+.auth-modal__pane {
   display: grid;
+  width: toRem(400);
+  height: toRem(300);
+  background: var(--background-primary-main);
+  border-radius: toRem(15);
+  padding: toRem(24);
 }
 
-.certificate-modal__title {
-  padding-top: toRem(30);
-  padding-bottom: toRem(30);
-  margin: auto;
-}
-
-.certificate-modal__btns {
+.auth-modal__btns {
   display: flex;
+  height: toRem(58);
+
   justify-content: space-between;
 }
 
-.modal__btn {
-  height: toRem(40);
+.auth-modal__btn {
+  width: toRem(100);
 }
 
-.modal__btn-link {
-  width: 100%;
-}
-
-.modal__btn-nav {
-  width: 40%;
-}
+//.auth-modal__btn-link {
+//  max-height: toRem(58);
+//  margin: 0 auto;
+//}
 </style>

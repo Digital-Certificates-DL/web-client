@@ -1,13 +1,14 @@
 import { ref, computed } from 'vue'
 import { Erc721__factory, EthProviderRpcError } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
-import { handleEthError, sleep } from '@/helpers'
+import { handleEthError } from '@/helpers'
+import { config } from '@config'
 
-export const useErc721 = (address?: string) => {
+export const useErc721 = () => {
   const web3ProvidersStore = useWeb3ProvidersStore()
   const provider = computed(() => web3ProvidersStore.provider)
 
-  const contractAddress = ref(address || '')
+  const contractAddress = ref(config.CONTRACT || '')
 
   const contractInstance = computed(
     () =>
@@ -43,7 +44,6 @@ export const useErc721 = (address?: string) => {
         data,
       })
 
-      await sleep(1000)
       return receipt
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
@@ -64,7 +64,6 @@ export const useErc721 = (address?: string) => {
         data,
       })
 
-      await sleep(1000)
       return receipt
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
