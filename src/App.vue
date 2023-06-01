@@ -26,10 +26,13 @@ const init = async () => {
     useNotifications()
     document.title = config.APP_NAME
   } catch (error) {
+    isAppInitialized.value = false
     ErrorHandler.process(error)
   }
   isAppInitialized.value = true
+}
 
+const initProvider = async () => {
   try {
     useNotifications()
     await web3Store.detectProviders()
@@ -39,12 +42,14 @@ const init = async () => {
     await web3Store.provider.init(provider!)
     document.title = config.APP_NAME
   } catch (error) {
+    isAppInitialized.value = false
     ErrorHandler.process(error)
   }
   isAppInitialized.value = true
 }
 
 init()
+initProvider()
 </script>
 
 <style lang="scss" scoped>
