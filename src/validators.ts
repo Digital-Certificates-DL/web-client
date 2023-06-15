@@ -18,7 +18,7 @@ const messagePath = ({ $validator }: MessageProps) =>
 
 const withI18nMessage = createI18nMessage({ t, messagePath })
 
-const validateAddress = (address: string): boolean => {
+export const validateAddress = (address: string): boolean => {
   const re = new RegExp('^0x[a-fA-F0-9]{40}$')
   return re.test(address)
 }

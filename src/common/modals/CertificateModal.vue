@@ -39,7 +39,9 @@
           v-model="inputAddressValue"
           :label="$t('certificate-modal.label-metamask-address')"
           :error-message="
-            validateAddress ? '' : $t('validations.field-error_address')
+            validateAddress(inputAddressValue)
+              ? ''
+              : $t('validations.field-error_address')
           "
           :disabled="isFieldDisable"
         />
@@ -71,6 +73,7 @@ import { useErc721 } from '@/composables'
 import { api } from '@/api'
 import { Modal, AppButton } from '@/common'
 import { ErrorHandler } from '@/helpers'
+import { validateAddress } from '@/validators'
 
 const { safeMint } = useErc721()
 const isFieldDisable = ref(false)
@@ -85,10 +88,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
-
-const validateAddress = () => {
-  return /^(0x){1}[0-9a-fA-F]{40}$/i.test(inputAddressValue.value)
-}
 
 const mint = async () => {
   if (!isInputAddressValid.value) return

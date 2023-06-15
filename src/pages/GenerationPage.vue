@@ -1,91 +1,92 @@
 <template>
-  <div v-if="isUnauthorized">
+  <div class="generation-page">
     <auth-modal
-      :token-link="authLink"
       v-model:is-shown="isUnauthorized"
+      :token-link="authLink"
       @send-auth-code="updateCode"
     />
-  </div>
-  <div v-else class="generation">
-    <div class="generation__title">
-      <h2>{{ $t('generation.title') }}</h2>
+    <div class="generation-page__title">
+      <h2>{{ $t('generation-page.title') }}</h2>
     </div>
-    <div class="generation__body">
-      <div class="generation__step">
+    <div class="generation-page__body">
+      <div class="generation-page__step">
         <p
-          class="generation__step-number"
-          :class="{ 'generation__step-numner--ready': isReady }"
+          class="generation-page__step-number"
+          :class="{ 'generation-page__step-numner--ready': isReady }"
         >
-          {{ $t('generation.step-1') }}
+          {{ $t('generation-page.step-1') }}
         </p>
 
-        <div class="generation__collection-name generation__step-field">
-          <p class="generation__subtitle-num">
-            {{ $t('generation.step-1-description') }}
+        <div class="generation-page__collection-name generation__step-field">
+          <p class="generation-page__subtitle-num">
+            {{ $t('generation-page.step-1-description') }}
           </p>
           <input-field
-            class="generation__text-input"
-            v-model="certificatesInfo.name"
-            @input="validateField"
-            :class="{ 'generation__step-number--ready': isReady }"
-            :label="$t('generation.step-1-placeholder')"
-            :error-message="getFieldErrorMessage('name')"
+            v-model="nameFieldData"
+            class="generation-page__text-input"
+            :class="{ 'generation-page__step-number--ready': isReady }"
+            :label="$t('generation-page.step-1-placeholder')"
+            @input="validateNameField"
           />
         </div>
       </div>
 
-      <div class="generation__step">
+      <div class="generation-page__step">
         <p
-          class="generation__step-number"
-          :class="{ 'generation__step-field--ready': isReady }"
+          class="generation-page__step-number"
+          :class="{ 'generation-page__step-field--ready': isReady }"
         >
-          {{ $t('generation.step-2') }}
+          {{ $t('generation-page.step-2') }}
         </p>
-        <div class="generation__choose-template-wrp generation__step-field">
-          <p class="generation__subtitle-num">
-            {{ $t('generation.step-2-description') }}
+        <div
+          class="generation-page__choose-template-wrp generation__step-field"
+        >
+          <p class="generation-page__subtitle-num">
+            {{ $t('generation-page.step-2-description') }}
           </p>
           <div
-            class="generation__choose-template-list"
-            :class="{ 'generation__step-field--ready': isReady }"
+            class="generation-page__choose-template-list"
+            :class="{ 'generation-page__step-field--ready': isReady }"
           >
-            <div class="generation__choose-template"></div>
-            <div class="generation__choose-template"></div>
-            <div class="generation__choose-template"></div>
+            <div class="generation-page__choose-template"></div>
+            <div class="generation-page__choose-template"></div>
+            <div class="generation-page__choose-template"></div>
           </div>
         </div>
       </div>
-      <div class="generation__step">
+      <div class="generation-page__step">
         <p
-          class="generation__step-number"
+          class="generation-page__step-number"
           :class="{ 'generation__step-number--ready': isReady }"
         >
-          {{ $t('generation.step-3') }}
+          {{ $t('generation-page.step-3') }}
         </p>
-        <div class="generation__upload-files generation__step-field">
-          <p class="generation__subtitle-num">
-            {{ $t('generation.step-3-description') }}
+        <div class="generation-page__upload-files generation-page__step-field">
+          <p class="generation-page__subtitle-num">
+            {{ $t('generation-page.step-3-description') }}
           </p>
           <input-field
-            class="generation__text-input"
-            v-model="certificatesInfo.link"
-            :class="{ 'generation__step-field--ready': isReady }"
-            :error-message="getFieldErrorMessage('link')"
-            :label="$t('generation.step-3-placeholder')"
+            v-model="linkFieldData"
+            class="generation-page__text-input"
+            :class="{ 'generation-page__step-field--ready': isReady }"
+            :label="$t('generation-page.step-3-placeholder')"
+            @input="validateLinkField"
           />
         </div>
       </div>
-      <div class="generation__step-field generation__btns">
+      <div class="generation-page__step-field generation-page__btns">
         <app-button
-          class="generation__btn"
+          class="generation-page__btn"
           color="info"
-          :text="$t('generation.start-btn')"
+          size="large"
+          :text="$t('generation-page.start-btn')"
           @click="start"
         />
         <app-button
-          class="generation__btn"
+          class="generation-page__btn"
           color="info"
-          :text="$t('generation.cancel-btn')"
+          size="large"
+          :text="$t('generation-page.cancel-btn')"
           @click="router.push(ROUTE_NAMES.main)"
         />
       </div>
@@ -94,7 +95,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
@@ -105,42 +106,36 @@ import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 
 import { AuthModal } from '@/common/modals'
-import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
 import { ErrorHandler } from '@/helpers'
 const userState = useUserStore()
+
+const isNameFieldValid = ref(false)
+const isLinkFieldValid = ref(false)
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
 
-const certificatesInfo = reactive({
-  name: '',
-  link: '',
-  table: null,
-})
+const nameFieldData = ref('')
+const linkFieldData = ref('')
 
 const isReady = ref(false)
 
-const validateField = () => {
-  if (isFormValid()) {
-    isReady.value = true
-    return
+const validateNameField = () => {
+  if (nameFieldData.value) {
+    isNameFieldValid.value = true
   }
-  isReady.value = false
 }
 
-const { getFieldErrorMessage, isFormValid } = useFormValidation(
-  certificatesInfo,
-  {
-    name: { required },
-    link: { required },
-  },
-)
+const validateLinkField = () => {
+  if (linkFieldData.value) {
+    isLinkFieldValid.value = true
+  }
+}
 
 const start = async () => {
-  if (!isFormValid) return
-  const users = await parsedData(certificatesInfo.link)
+  if (!isLinkFieldValid.value || !isNameFieldValid.value) return
+  const users = await parsedData(linkFieldData.value)
   if (!users) {
     return
   }
@@ -230,12 +225,12 @@ const updateCode = async (code: string) => {
 </script>
 
 <style lang="scss" scoped>
-.generation {
+.generation-page {
   width: var(--page-large);
   margin: 0 auto;
 }
 
-.generation__step-number {
+.generation-page__step-number {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -246,7 +241,7 @@ const updateCode = async (code: string) => {
   height: toRem(30);
 }
 
-.generation__text-input {
+.generation-page__text-input {
   display: block;
   width: toRem(458);
   margin-bottom: toRem(20);
@@ -254,24 +249,24 @@ const updateCode = async (code: string) => {
   padding-left: toRem(20);
 }
 
-.generation__file-input {
+.generation-page__file-input {
   margin-bottom: toRem(20);
   margin-top: toRem(20);
   width: toRem(314);
   height: toRem(222);
 }
 
-.generation__step {
+.generation-page__step {
   display: flex;
   margin-top: toRem(20);
 }
 
-.generation__choose-template-list {
+.generation-page__choose-template-list {
   display: flex;
   padding-left: toRem(20);
 }
 
-.generation__choose-template {
+.generation-page__choose-template {
   width: toRem(314);
   height: toRem(222);
   background: var(--background-primary-dark);
@@ -279,26 +274,17 @@ const updateCode = async (code: string) => {
   margin-right: toRem(15);
 }
 
-.generation__btns {
+.generation-page__btns {
   display: flex;
   margin-left: toRem(60);
 }
 
-.generation__btn {
+.generation-page__btn {
   width: toRem(200);
   margin-right: toRem(16);
 }
 
-.generation__subtitle-num {
+.generation-page__subtitle-num {
   margin-left: toRem(20);
-}
-
-.generation__step-field--ready {
-  border-left: var(--secondary-dark) toRem(2) solid;
-}
-
-.generation__step-number--ready {
-  background: var(--secondary-dark);
-  color: var(--white);
 }
 </style>

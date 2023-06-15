@@ -1,39 +1,46 @@
 <template>
-  <div class="previously-certificates">
-    <h2>{{ $t('previously-certificates.certificates-title') }}</h2>
-    <div class="previously-certificates__search-wrp">
+  <div class="previously-certificates-page">
+    <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
+    <div class="previously-certificates-page__search-wrp">
       <input-field
-        class="previously-certificates__search-input"
         v-model="searchInputValue"
-        :placeholder="$t('previously-certificates.certificates-find')"
+        class="previously-certificates-page__search-input"
+        :placeholder="$t('previously-certificates-page.certificates-find')"
         @update:model-value="find"
       />
 
-      <div class="previously-certificates__btns">
+      <div class="previously-certificates-page__btns">
         <app-button
-          class="previously-certificates__btn"
+          class="previously-certificates-page__btn"
           color="info"
           size="medium"
           @click="bitcoinTimestamp"
-          :text="$t('previously-certificates.certificates-bitcoin-btn')"
+          :text="$t('previously-certificates-page.certificates-bitcoin-btn')"
         />
       </div>
     </div>
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
       :user="currentUser"
+      @update:model-value="isCertificateModalShown = $event"
     />
 
-    <div class="certificates__list">
-      <div class="certificates__list-subtitle">
-        <p>{{ $t('previously-certificates.certificates-subtitle-name') }}</p>
-        <p>{{ $t('previously-certificates.certificates-subtitle-course') }}</p>
-        <p>{{ $t('previously-certificates.certificates-subtitle-date') }}</p>
+    <div class="previously-certificates-page__list">
+      <div class="previously-certificates-page___list-subtitle">
+        <p>
+          {{ $t('previously-certificates-page.certificates-subtitle-name') }}
+        </p>
+        <p>
+          {{ $t('previously-certificates-page.certificates-subtitle-course') }}
+        </p>
+        <p>
+          {{ $t('previously-certificates-page.certificates-subtitle-date') }}
+        </p>
         <p></p>
       </div>
       <div v-if="!userState.students.length">
         <error-message
-          :message="$t('previously-certificates.error-certificate-list')"
+          :message="$t('previously-certificates-page.error-certificate-list')"
         />
       </div>
       <div v-for="item in userState.students" :key="item.id">
@@ -175,35 +182,34 @@ const autoRefresh = () => {
 onBeforeMount(autoRefresh)
 </script>
 
-<style scoped lang="scss">
-.previously-certificates {
+<style lang="scss">
+.previously-certificates-page {
   margin: 0 auto;
   width: toRem(1400);
 }
 
-.previously-certificates__search-wrp {
-  margin-top: toRem(24);
+.previously-certificates-page__search-wrp {
+  margin: toRem(24) 0;
   display: flex;
   justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.previously-certificates__search-input {
-  margin-bottom: toRem(20);
-  width: toRem(458);
+.previously-certificates-page__search-input {
+  width: 40%;
 }
 
-.previously-certificates__btns {
+.previously-certificates-page__btns {
   display: flex;
   justify-content: space-between;
 }
 
-.previously-certificates__btn {
+.previously-certificates-page__btn {
   height: toRem(52);
   border-radius: toRem(8);
 }
 
-.certificates__list-subtitle {
+.previously-certificates-page___list-subtitle {
   display: flex;
   justify-content: space-between;
   align-items: center;

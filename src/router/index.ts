@@ -10,23 +10,23 @@ const routes = [
   {
     path: '/main',
     name: ROUTE_NAMES.main,
-    component: () => import('@/pages/Main.vue'),
+    component: () => import('@/pages/MainPage.vue'),
   },
   {
     path: '/generate',
     name: ROUTE_NAMES.generate,
-    component: () => import('@/pages/Generation.vue'),
+    component: () => import('@/pages/GenerationPage.vue'),
   },
 
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/PreviouslyCertificates.vue'),
+    component: () => import('@/pages/PreviouslyCertificatesPage.vue'),
   },
   {
     path: '/settings',
     name: ROUTE_NAMES.settings,
-    component: () => import('@/pages/SettingForm.vue'),
+    component: () => import('@/pages/SettingPage.vue'),
   },
 ]
 

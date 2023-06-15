@@ -1,6 +1,6 @@
 <template>
   <div class="certificate">
-    <checkbox-field :model-value="isSelected" @click="selectItem" />
+    <checkbox-field v-model="isSelected" @click="selectItem" />
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
@@ -24,8 +24,8 @@
 
       <app-button
         class="certificate__btn certificate__btn-download"
-        icon-left="download"
-        @click="window.open(user.certificate, '_blank')"
+        :icon-left="ICON_NAMES.download"
+        @click="window.open(user.certificate, '_blank', 'noopener')"
       />
     </div>
   </div>
@@ -37,6 +37,7 @@ import { UserJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
+import { ICON_NAMES } from '@/enums'
 
 const isSelected = ref(false)
 

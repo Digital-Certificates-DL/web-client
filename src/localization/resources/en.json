@@ -41,15 +41,6 @@
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
-  "login-form": {
-    "login-lbl": "Login",
-    "password-lbl": "Password",
-    "login-success-msg": "Access granted",
-    "submit-btn": "Submit"
-  },
-  "web3-page": {
-    "loading-error-msg": "Oops... Something went wrong"
-  },
   "main": {
     "metamask-connect": "Connect to MetaMask",
     "page-info-name": "Service name",
@@ -67,7 +58,7 @@
     "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-generation-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
   },
-  "previously-certificates": {
+  "previously-certificates-page": {
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
@@ -76,7 +67,7 @@
     "error-certificate-list": "Empty certificate list",
     "certificates-find": "find"
   },
-  "generation": {
+  "generation-page": {
     "title":"Create new certificate",
     "step-1-description": "Write a name for your certificate",
     "step-2-description": "Choose or upload template for a new certificate",
@@ -107,6 +98,19 @@
     "url-form-label": "Google Sheet URL",
     "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
   },
+  "setting-page": {
+    "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-title": "Setting",
+    "sign-key-title": "Key settings for signatures",
+    "general-title": "General settings",
+    "cancel-btn-title": "Cancel",
+    "save-btn-title": "Save",
+    "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
+    "account-name-form-label": "Account name",
+    "organization-name-form-label": "Name of organization",
+    "url-form-label": "Google Sheet URL",
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
+  },
   "certificate-modal": {
     "title" : "SBT issuance",
     "label-participant": "Full name",
@@ -117,7 +121,7 @@
     "mint-btn": "Mint",
     "certificate-alt": "Certificate"
   },
-  "auth-modal": {
+  "auth-modal-form": {
     "title" : "SBT issuance",
     "input-code-label": "Code",
     "close-btn": "Close",

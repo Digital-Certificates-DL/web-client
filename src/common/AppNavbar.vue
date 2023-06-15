@@ -56,11 +56,6 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss" scoped>
-$box-shadow-r: 0;
-$box-shadow-g: 0;
-$box-shadow-b: 0;
-$box-shadow-a: 0.06;
-
 .app-navbar {
   display: flex;
   align-items: center;
@@ -68,8 +63,7 @@ $box-shadow-a: 0.06;
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
-  box-shadow: 0 toRem(4) toRem(16)
-    rgba($box-shadow-r, $box-shadow-g, $box-shadow-b, $box-shadow-a);
+  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black), 0.06);
   margin-bottom: toRem(20);
 
   @include respond-to(tablet) {
