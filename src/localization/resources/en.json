@@ -41,9 +41,9 @@
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
-  "main": {
+  "main-page": {
     "metamask-connect": "Connect to MetaMask",
-    "page-info-name": "Service name",
+    "page-info-title": "Service name",
     "metamask-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "metamask-connect-btn": "Connect to MetaMask",
     "metamask-disconnect-btn": "Disconnect",
@@ -116,10 +116,8 @@
     "label-participant": "Full name",
     "label-date": "Issued on",
     "label-course": "Course name",
-    "label-metamask-address": "Student’s MetaMask address",
-    "close-btn": "Close",
-    "mint-btn": "Mint",
-    "certificate-alt": "Certificate"
+    "certificate-alt": "Certificate",
+    "label-metamask-address": "Student’s MetaMask address"
   },
   "auth-modal-form": {
     "title" : "SBT issuance",
@@ -131,5 +129,10 @@
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"
+  },
+  "mint-form": {
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "placeholder-metamask-address": "Student’s MetaMask address"
   }
 }

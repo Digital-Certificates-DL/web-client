@@ -24,7 +24,7 @@
 
       <app-button
         class="certificate__btn certificate__btn-download"
-        :icon-left="ICON_NAMES.download"
+        :icon-left="$icons.download"
         @click="window.open(user.certificate, '_blank', 'noopener')"
       />
     </div>
@@ -37,7 +37,6 @@ import { UserJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
-import { ICON_NAMES } from '@/enums'
 
 const isSelected = ref(false)
 

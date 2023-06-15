@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-modal-form">
+  <form class="auth-form">
     <input-field
       v-model="accessCodeInputData"
       class="auth-modal-form__input"
@@ -8,7 +8,7 @@
       @input="validateCode"
     />
 
-    <div class="auth-modal-form__btns">
+    <div class="auth-form__btns">
       <app-button
         class="auth-modal-form__btn"
         color="info"
@@ -28,7 +28,7 @@
         @click="emit('close-modal')"
       />
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -61,13 +61,12 @@ const validateCode = () => {
 </script>
 
 <style scoped lang="scss">
-.auth-modal-form {
+.auth-form {
   display: grid;
 }
 
-.auth-modal-form__btns {
+.auth-form__btns {
   display: flex;
-  width: 100%;
   height: toRem(58);
   justify-content: space-between;
 }

@@ -1,60 +1,58 @@
 <template>
-  <div class="setting-form">
+  <form class="setting-form" action="">
     <h3 class="setting-form__fields-title">
       {{ $t('setting-page.general-title') }}
     </h3>
-    <form action="">
-      <input-field
-        v-model="form.organizationName"
-        class="setting-form__form-input"
-        :label="$t('setting-form.organization-name-form-label')"
-        :error-message="getFieldErrorMessage('organizationName')"
+    <input-field
+      v-model="form.organizationName"
+      class="setting-form__form-input"
+      :label="$t('setting-form.organization-name-form-label')"
+      :error-message="getFieldErrorMessage('organizationName')"
+    />
+    <input-field
+      v-model="form.accountName"
+      class="setting-form__form-input"
+      :label="$t('setting-form.account-name-form-label')"
+      :error-message="getFieldErrorMessage('accountName')"
+    />
+    <h3 class="setting-form__fields-title">
+      {{ $t('setting-form.sign-key-title') }}
+    </h3>
+    <input-field
+      v-model="form.bip39MnemonicPhrase"
+      class="setting-form__form-input"
+      :label="$t('setting-form.bitcoin-phrase-form-label')"
+      :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
+    />
+    <input-field
+      v-model="form.urlGoogleSheet"
+      class="setting-form__form-input"
+      :label="$t('setting-form.url-form-label')"
+      :error-message="getFieldErrorMessage('urlGoogleSheet')"
+    />
+    <input-field
+      v-model="form.signKey"
+      class="setting-form__form-input"
+      :label="$t('setting-form.wif-form-label')"
+      :error-message="getFieldErrorMessage('signKey')"
+    />
+    <div class="setting-form__btns">
+      <app-button
+        class="setting-form__btn"
+        color="info"
+        :text="$t('setting-form.save-btn-title')"
+        @click="save"
       />
-      <input-field
-        v-model="form.accountName"
-        class="setting-form__form-input"
-        :label="$t('setting-form.account-name-form-label')"
-        :error-message="getFieldErrorMessage('accountName')"
+      <app-button
+        class="setting-form__btn"
+        color="info"
+        :text="$t('setting-form.cancel-btn-title')"
+        :route="{
+          name: $routes.main,
+        }"
       />
-      <h3 class="setting-form__fields-title">
-        {{ $t('setting-form.sign-key-title') }}
-      </h3>
-      <input-field
-        v-model="form.bip39MnemonicPhrase"
-        class="setting-form__form-input"
-        :label="$t('setting-form.bitcoin-phrase-form-label')"
-        :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
-      />
-      <input-field
-        v-model="form.urlGoogleSheet"
-        class="setting-form__form-input"
-        :label="$t('setting-form.url-form-label')"
-        :error-message="getFieldErrorMessage('urlGoogleSheet')"
-      />
-      <input-field
-        v-model="form.signKey"
-        class="setting-form__form-input"
-        :label="$t('setting-form.wif-form-label')"
-        :error-message="getFieldErrorMessage('signKey')"
-      />
-      <div class="setting-form__btns">
-        <app-button
-          class="setting-form__btn"
-          color="info"
-          :text="$t('setting-form.save-btn-title')"
-          @click="save"
-        />
-        <app-button
-          class="setting-form__btn"
-          color="info"
-          :text="$t('setting-form.cancel-btn-title')"
-          :route="{
-            name: $routes.main,
-          }"
-        />
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </template>
 
 <script setup lang="ts">

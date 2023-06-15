@@ -1,28 +1,28 @@
 <template>
   <div class="previously-certificates-page">
     <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
-    <div class="previously-certificates-page__search-wrp">
-      <input-field
-        v-model="searchInputValue"
-        class="previously-certificates-page__search-input"
-        :placeholder="$t('previously-certificates-page.certificates-find')"
-        @update:model-value="find"
-      />
+    <div class="previously-certificates-page__search">
+      <div class="previously-certificates-page__search-input-wrp">
+        <input-field
+          v-model="searchInputValue"
+          :placeholder="$t('previously-certificates-page.certificates-find')"
+          @input="find"
+        />
+      </div>
 
       <div class="previously-certificates-page__btns">
         <app-button
           class="previously-certificates-page__btn"
           color="info"
           size="medium"
-          @click="bitcoinTimestamp"
           :text="$t('previously-certificates-page.certificates-bitcoin-btn')"
+          @click="bitcoinTimestamp"
         />
       </div>
     </div>
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
-      :user="currentUser"
-      @update:model-value="isCertificateModalShown = $event"
+      :certificate="currentCertificate"
     />
 
     <div class="previously-certificates-page__list">
@@ -71,20 +71,20 @@ import { ErrorHandler } from '@/helpers'
 
 const userState = useUserStore()
 
-const isCertificateModalShown = ref(false)
-const currentUser = ref<UserJSONResponse>({} as UserJSONResponse)
+const isCertificateModalShown = ref(true)
+const currentCertificate = ref<UserJSONResponse>({} as UserJSONResponse)
 const listForTimestamp = ref<UserJSONResponse[]>([])
-const userBuffer = ref<UserJSONResponse[]>([])
+const certificateBuffer = ref<UserJSONResponse[]>([])
 const searchInputValue = ref('')
 
 const openCertificateModal = (user: UserJSONResponse) => {
   isCertificateModalShown.value = true
-  currentUser.value = user
+  currentCertificate.value = user
 }
 
 const prepareUsersImage = (users: UserJSONResponse[]) => {
   for (const user of users) {
-    if (user.certificateImg === null) {
+    if (!user.certificateImg) {
       continue
     }
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
@@ -122,10 +122,10 @@ const refresh = async () => {
 }
 
 const find = () => {
-  userBuffer.value = userState.students
+  certificateBuffer.value = userState.students
 
-  if (searchInputValue.value === '' && userBuffer.value) {
-    userState.students = userBuffer.value
+  if (searchInputValue.value === '' && certificateBuffer.value) {
+    userState.students = certificateBuffer.value
   }
   userState.students.filter(item =>
     item.participant.includes(searchInputValue.value),
@@ -182,21 +182,21 @@ const autoRefresh = () => {
 onBeforeMount(autoRefresh)
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .previously-certificates-page {
   margin: 0 auto;
   width: toRem(1400);
 }
 
-.previously-certificates-page__search-wrp {
+.previously-certificates-page__search {
   margin: toRem(24) 0;
   display: flex;
   justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.previously-certificates-page__search-input {
-  width: 40%;
+.previously-certificates-page__search-input-wrp {
+  width: toRem(458);
 }
 
 .previously-certificates-page__btns {
