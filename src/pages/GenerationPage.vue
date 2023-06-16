@@ -100,7 +100,10 @@ import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import { UserJSONResponseList, UserJSONResponse } from '@/types/user.types'
+import {
+  CertificateJSONResponseList,
+  CertificateJSONResponse,
+} from '@/types/user.types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -144,7 +147,7 @@ const start = async () => {
 }
 const parsedData = async (sheepUrl?: string) => {
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/empty',
       {
         body: {
@@ -155,7 +158,7 @@ const parsedData = async (sheepUrl?: string) => {
         },
       },
     )
-    return (data as UserJSONResponse[]) || undefined
+    return (data as CertificateJSONResponse[]) || undefined
   } catch (error) {
     if (error.metadata.link) {
       isUnauthorized.value = true
@@ -166,7 +169,7 @@ const parsedData = async (sheepUrl?: string) => {
   }
 }
 
-const sign = (users: UserJSONResponse[]) => {
+const sign = (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
     if (!user.signature || user.signature == '') {
@@ -176,17 +179,17 @@ const sign = (users: UserJSONResponse[]) => {
   return users
 }
 
-const prepareUserImg = (users: UserJSONResponse[]) => {
-  const list: UserJSONResponse[] = users
+const prepareUserImg = (users: CertificateJSONResponse[]) => {
+  const list: CertificateJSONResponse[] = users
   for (const user of list) {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
   return users
 }
-const createPDF = async (users: UserJSONResponse[]) => {
+const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/certificate/',
       {
         body: {
@@ -210,14 +213,17 @@ const createPDF = async (users: UserJSONResponse[]) => {
 const updateCode = async (code: string) => {
   try {
     isUnauthorized.value = false
-    await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-      body: {
-        data: {
-          code: code,
-          name: userState.setting.accountName,
+    await api.post<CertificateJSONResponseList>(
+      '/integrations/ccp/users/settings',
+      {
+        body: {
+          data: {
+            code: code,
+            name: userState.setting.accountName,
+          },
         },
       },
-    })
+    )
   } catch (error) {
     ErrorHandler.process(error)
   }

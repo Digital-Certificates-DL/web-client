@@ -43,14 +43,14 @@
 </template>
 
 <script lang="ts" setup>
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 
 import { Modal } from '@/common'
 import { MintForm } from '@/forms'
 
 defineProps<{
   isShown: boolean
-  certificate: UserJSONResponse
+  certificate: CertificateJSONResponse
 }>()
 
 const emit = defineEmits<{

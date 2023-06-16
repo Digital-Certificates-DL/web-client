@@ -45,7 +45,7 @@
       </div>
       <div v-for="item in userState.students" :key="item.id">
         <certificate
-          :user="item"
+          :certificate="item"
           @open-modal="openCertificateModal"
           @select="selectForTimestamp"
         />
@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
@@ -72,39 +72,44 @@ import { ErrorHandler } from '@/helpers'
 const userState = useUserStore()
 
 const isCertificateModalShown = ref(true)
-const currentCertificate = ref<UserJSONResponse>({} as UserJSONResponse)
-const listForTimestamp = ref<UserJSONResponse[]>([])
-const certificateBuffer = ref<UserJSONResponse[]>([])
+const currentCertificate = ref<CertificateJSONResponse>(
+  {} as CertificateJSONResponse,
+)
+const listForTimestamp = ref<CertificateJSONResponse[]>([])
+const certificateBuffer = ref<CertificateJSONResponse[]>([])
 const searchInputValue = ref('')
 
-const openCertificateModal = (user: UserJSONResponse) => {
+const openCertificateModal = (certificate: CertificateJSONResponse) => {
   isCertificateModalShown.value = true
-  currentCertificate.value = user
+  currentCertificate.value = certificate
 }
 
-const prepareUsersImage = (users: UserJSONResponse[]) => {
-  for (const user of users) {
-    if (!user.certificateImg) {
+const prepareCertificatesImage = (certificates: CertificateJSONResponse[]) => {
+  for (const certificate of certificates) {
+    if (!certificate.certificateImg) {
       continue
     }
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+    certificate.img =
+      'data:image/png;base64,' + certificate.certificateImg.toString()
   }
 
-  return users
+  return certificates
 }
 
-const selectForTimestamp = (state: boolean, user: UserJSONResponse) => {
+const selectForTimestamp = (
+  state: boolean,
+  certificate: CertificateJSONResponse,
+) => {
   if (state) {
-    listForTimestamp.value.push(user)
-
+    listForTimestamp.value.push(certificate)
     return
   }
-  listForTimestamp.value.filter(item => item !== user)
+  listForTimestamp.value.filter(item => item !== certificate)
 }
 
 const refresh = async () => {
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
@@ -115,7 +120,7 @@ const refresh = async () => {
         },
       },
     )
-    userState.students = prepareUsersImage(data)
+    userState.students = prepareCertificatesImage(data)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -137,8 +142,8 @@ const bitcoinTimestamp = async () => {
     userState.setting.keyPathID = 0
   }
 
-  const users = listForTimestamp
-  for (const user of users.value) {
+  const certificates = listForTimestamp
+  for (const certificate of certificates.value) {
     const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
       userState.setting.bip39MnemonicPhrase,
       userState.setting.keyPathID,
@@ -149,19 +154,19 @@ const bitcoinTimestamp = async () => {
       return
     }
     const sendResp = await btc.Bitcoin.SendToTestnet(hex)
-    user.txHash = sendResp.data.tx.hash
+    certificate.txHash = sendResp.data.tx.hash
     userState.setting.lastExAddress = tx?.exAddress || ''
   }
-  await updateUsers(users.value)
+  await updateCertificates(certificates.value)
 }
 
-const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponse[]>(
+const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
+  const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/certificate/bitcoin',
     {
       body: {
         data: {
-          users: users,
+          users: certificates,
           address: userState.setting.userBitcoinAddress,
           name: userState.setting.accountName,
           url: userState.setting.urlGoogleSheet,

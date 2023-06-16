@@ -4,28 +4,28 @@
     <div class="certificate__img-wrp">
       <img
         class="certificate_img"
-        :src="user.img || '/branding/template.jpg'"
+        :src="certificate.img || '/branding/template.jpg'"
         :alt="$t('certificate.img-alt')"
       />
     </div>
 
     <p class="certificate__name">
-      {{ user.participant }}
+      {{ certificate.participant }}
     </p>
     <p>
-      {{ user.date }}
+      {{ certificate.date }}
     </p>
     <div class="certificate__btns">
       <app-button
         class="certificate__btn"
         :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', user)"
+        @click="emit('open-modal', certificate)"
       />
 
       <app-button
         class="certificate__btn certificate__btn-download"
         :icon-left="$icons.download"
-        @click="window.open(user.certificate, '_blank', 'noopener')"
+        @click="window.open(certificate.certificate, '_blank', 'noopener')"
       />
     </div>
   </div>
@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { AppButton } from '@/common'
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
@@ -41,17 +41,17 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', user: UserJSONResponse): boolean
-  (e: 'select', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', user: CertificateJSONResponse): boolean
+  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
-  user: UserJSONResponse
+  certificate: CertificateJSONResponse
 }>()
 
 const selectItem = () => {
   isSelected.value = !isSelected.value
-  emit('select', isSelected.value, props.user)
+  emit('select', isSelected.value, props.certificate)
 }
 </script>
 

@@ -34,7 +34,7 @@ import { AppButton } from '@/common'
 import { InputField } from '@/fields'
 
 import { api } from '@/api'
-import { IpfsJSONResponse, UserJSONResponse } from '@/types'
+import { IpfsJSONResponse, CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useErc721 } from '@/composables'
@@ -45,7 +45,7 @@ const inputAddressValue = ref('')
 const isInputAddressValid = ref('')
 
 const props = defineProps<{
-  certificate: UserJSONResponse
+  certificate: CertificateJSONResponse
 }>()
 
 const emit = defineEmits<{
@@ -81,17 +81,17 @@ const mint = async () => {
   }
 }
 
-const prepareTokenDescription = (user: UserJSONResponse) => {
+const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
   return (
-    user.date +
+    certificate.date +
     ' ' +
-    user.participant +
+    certificate.participant +
     ' ' +
-    user.courseTitle +
+    certificate.courseTitle +
     ' ' +
-    user.points +
+    certificate.points +
     ' ' +
-    user.note
+    certificate.note
   )
 }
 </script>

@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { InputField } from '@/fields'
 import { reactive } from 'vue'
-import { UserJSONResponseList, UserSetting } from '@/types'
+import { CertificateJSONResponseList, UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import btc from '@/utils/bitcoin.util'
@@ -96,14 +96,17 @@ const save = async () => {
   userState.setting.userBitcoinAddress = address || ''
 
   try {
-    await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-      body: {
-        data: {
-          code: '',
-          name: userState.setting.accountName,
+    await api.post<CertificateJSONResponseList>(
+      '/integrations/ccp/users/settings',
+      {
+        body: {
+          data: {
+            code: '',
+            name: userState.setting.accountName,
+          },
         },
       },
-    })
+    )
     await router.push(ROUTE_NAMES.main)
   } catch (error) {
     ErrorHandler.process(error)
