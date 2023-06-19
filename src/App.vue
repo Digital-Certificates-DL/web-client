@@ -12,7 +12,7 @@ import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
-import { PROVIDERS, ROUTE_NAMES } from '@/enums'
+import { PROVIDERS } from '@/enums'
 
 import AppNavbar from '@/common/AppNavbar.vue'
 import { useUserStore, useWeb3ProvidersStore } from '@/store'

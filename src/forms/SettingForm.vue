@@ -41,12 +41,14 @@
       <app-button
         class="setting-form__btn"
         color="info"
+        size="large"
         :text="$t('setting-form.save-btn-title')"
         @click="saveUserData"
       />
       <app-button
         class="setting-form__btn"
         color="info"
+        size="large"
         :text="$t('setting-form.cancel-btn-title')"
         :route="{
           name: $routes.main,
@@ -61,8 +63,7 @@ import { InputField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { reactive } from 'vue'
-import { UserJSONResponse, UserSetting } from '@/types'
-import { SettingForm } from '@/forms/index'
+import { UserSetting } from '@/types'
 import { AppButton } from '@/common'
 
 const form = reactive({
@@ -87,7 +88,6 @@ const emit = defineEmits<{
 
 const saveUserData = () => {
   if (!isFormValid()) return
-  console.log('send')
   emit('save-user-data', form)
 }
 </script>
@@ -120,8 +120,8 @@ const saveUserData = () => {
 }
 
 .setting-form__btns {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  justify-content: center;
   gap: toRem(80);
 }
 

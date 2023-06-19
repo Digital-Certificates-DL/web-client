@@ -90,7 +90,6 @@ import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from '@/router'
 
-import btc from '@/utils/bitcoin.util'
 import {
   ErrorMessage,
   AppButton,
@@ -181,8 +180,6 @@ const prepareUsersImage = (users: UserJSONResponse[]) => {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
-  console.log(users)
-
   return users
 }
 
@@ -201,7 +198,6 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 }
 
 const refresh = async () => {
-  console.log('userState.setting: ', userState.setting)
   try {
     const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
@@ -221,22 +217,22 @@ const refresh = async () => {
   }
 }
 
-const find = () => {
-  userBuffer.value = userState.students
-
-  if (searchInputValue.value === '' && userBuffer.value) {
-    userBuffer.value = userState.students
-    return
-  }
-
-  const searchQuery = searchInputValue.value.toLowerCase()
-  const filteredUsers = userBuffer.value.filter(user => {
-    const participant = user.participant.toLowerCase()
-    return participant.includes(searchQuery)
-  })
-
-  userState.students = filteredUsers
-}
+// const find = () => {
+//   userBuffer.value = userState.students
+//
+//   if (searchInputValue.value === '' && userBuffer.value) {
+//     userBuffer.value = userState.students
+//     return
+//   }
+//
+//   const searchQuery = searchInputValue.value.toLowerCase()
+//   const filteredUsers = userBuffer.value.filter(user => {
+//     const participant = user.participant.toLowerCase()
+//     return participant.includes(searchQuery)
+//   })
+//
+//   userState.students = filteredUsers
+// }
 
 const findByCourse = (filter: DropdownItem) => {
   const currentCourse = filter.text
@@ -383,23 +379,23 @@ const createPDF = async (users: UserJSONResponse[]) => {
   return data
 }
 
-const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/certificate/bitcoin',
-    {
-      body: {
-        data: {
-          users: users,
-          address: userState.setting.userBitcoinAddress,
-          name: userState.setting.accountName,
-          url: userState.setting.urlGoogleSheet,
-        },
-      },
-    },
-  )
-
-  userState.students = data
-}
+// const updateUsers = async (users: UserJSONResponse[]) => {
+//   const { data } = await api.post<UserJSONResponse[]>(
+//     '/integrations/ccp/certificate/bitcoin',
+//     {
+//       body: {
+//         data: {
+//           users: users,
+//           address: userState.setting.userBitcoinAddress,
+//           name: userState.setting.accountName,
+//           url: userState.setting.urlGoogleSheet,
+//         },
+//       },
+//     },
+//   )
+//
+//   userState.students = data
+// }
 
 const prepareUserImg = (users: UserJSONResponse[]) => {
   for (const user of users) {

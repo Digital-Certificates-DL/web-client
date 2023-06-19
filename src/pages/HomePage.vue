@@ -98,7 +98,6 @@ const authLink = ref('')
 const userState = useUserStore()
 
 const getUsers = async () => {
-  console.log(userState.setting)
   try {
     const { data } = await api.post<UserJSONResponse[]>(
       '/integrations/ccp/users/',
@@ -122,7 +121,6 @@ const getUsers = async () => {
         break
       case 'UnauthorizedError':
         try {
-          console.log('start')
           const { data } = await api.post('/integrations/ccp/users/token', {
             body: {
               data: {

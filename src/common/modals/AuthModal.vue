@@ -59,7 +59,6 @@ const emit = defineEmits<{
 }>()
 
 const sendCode = () => {
-  console.log('send from child')
   emit('send-auth-code', accessCodeInputValue.value)
 }
 
@@ -81,16 +80,10 @@ const getAccess = () => {
 .auth-modal__btns {
   display: flex;
   height: toRem(58);
-
   justify-content: space-between;
 }
 
 .auth-modal__btn {
   width: toRem(100);
 }
-
-//.auth-modal__btn-link {
-//  max-height: toRem(58);
-//  margin: 0 auto;
-//}
 </style>

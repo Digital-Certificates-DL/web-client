@@ -161,7 +161,6 @@ const downloadFile = () => {
 }
 
 .certificate__btn {
-  //width: toRem(140);
   height: toRem(50);
 }
 
@@ -176,15 +175,5 @@ const downloadFile = () => {
   justify-content: space-between;
   align-items: center;
   width: 20%;
-
-  //width: toRem(200);
-  //
-  //@include respond-to(large) {
-  //  width: toRem(150);
-  //}
-  //
-  //@include respond-to(xmedium) {
-  //  width: toRem(100);
-  //}
 }
 </style>

@@ -20,18 +20,18 @@ import { UserJSONResponseList, UserSetting } from '@/types'
 import { useUserStore } from '@/store'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import btc from '@/utils/bitcoin.util'
 
 import { api } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { SettingForm } from '@/forms'
+import { PrivKey } from '@ts-bitcoin/core'
 
 const router = useRouter()
 const { $state, initSettings } = useUserStore()
 
 const saveUserData = async (userData: UserSetting) => {
   initSettings(userData)
-  const address = btc.Bitcoin.getAddressFromWIF(userData.signKey)
+  const address = PrivKey.Mainnet.fromWif(userData.signKey).toString()
 
   $state.setting.userBitcoinAddress = address || ''
 

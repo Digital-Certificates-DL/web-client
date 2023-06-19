@@ -119,7 +119,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
@@ -143,7 +143,7 @@ const authLink = ref('')
 const isLoading = ref(false)
 const processState = ref('')
 
-const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
+// const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
 
 const certificatesInfo = reactive({
   name: '',
@@ -153,13 +153,13 @@ const certificatesInfo = reactive({
 
 const isReady = ref(false)
 
-const readyFiled = computed(() => {
-  return isReady.value ? 'generation__step-field--ready' : ''
-})
-
-const readyNumber = computed(() => {
-  return isReady.value ? 'generation__step-number--ready' : ''
-})
+// const readyFiled = computed(() => {
+//   return isReady.value ? 'generation__step-field--ready' : ''
+// })
+//
+// const readyNumber = computed(() => {
+//   return isReady.value ? 'generation__step-number--ready' : ''
+// })
 
 const validateField = () => {
   if (isFormValid()) {
@@ -189,7 +189,6 @@ const start = async () => {
   userState.students = users
 
   await generate(users)
-  console.log('test')
   await router.push({
     name: ROUTE_NAMES.timestamp,
   })
@@ -242,9 +241,7 @@ const createPDF = async (users: UserJSONResponse[]) => {
       body: {
         data: {
           users: users, //todo make better
-          address:
-            userState.setting.userBitcoinAddress ||
-            '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+          address: userState.setting.userBitcoinAddress,
           url: userState.setting.urlGoogleSheet,
           name: userState.setting.accountName,
         },
@@ -334,14 +331,10 @@ const updateCode = async (code: string) => {
   padding-left: toRem(20);
 }
 
-.generation__choose-template-content {
-}
-
 .generation__choose-template {
   display: flex;
   justify-content: center;
   align-items: center;
-
   width: toRem(314);
   height: toRem(222);
   background: var(--background-primary-dark);
