@@ -104,12 +104,14 @@
         <app-button
           class="generation__btn"
           color="info"
+          size="large"
           :text="$t('generation-page.start-btn')"
           @click="start"
         />
         <app-button
           class="generation__btn"
           color="info"
+          size="large"
           :text="$t('generation-page.cancel-btn')"
           @click="router.push(ROUTE_NAMES.main)"
         />
@@ -364,6 +366,7 @@ const updateCode = async (code: string) => {
 
 .generation__btn {
   width: toRem(200);
+  border-radius: toRem(8);
   margin-right: toRem(16);
 }
 
