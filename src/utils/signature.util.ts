@@ -64,7 +64,7 @@ export class Signature {
     return isValid
   }
 
-  static magicHash = (message: string | Buffer, messagePrefix?: string) => {
+  private magicHash = (message: string | Buffer, messagePrefix?: string) => {
     if (typeof messagePrefix !== 'string') {
       messagePrefix = Buffer.from(
         '\u0018Bitcoin Signed Message:\n',
