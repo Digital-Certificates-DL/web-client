@@ -4,7 +4,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -34,6 +34,10 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       vue(),
       wasm(),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+        symbolId: '[name]',
+      }),
       checker({
         overlay: {
           initialIsOpen: false,

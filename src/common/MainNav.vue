@@ -1,14 +1,15 @@
 <template>
-  <div :class="navClasses">
+  <div :class="navButtonClasses">
     <app-button
       class="main-nav__btn"
       :color="props.color"
       :text="props.title"
+      :route="route"
     />
     <p class="main-nav__description">
       {{ props.description }}
     </p>
-    <p class="main-nav__description" :class="navClasses">
+    <p class="main-nav__description" :class="navButtonClasses">
       {{ props.body }}
     </p>
   </div>
@@ -17,6 +18,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { AppButton } from '@/common'
+import { LocationAsRelativeRaw } from 'vue-router'
 
 type COLORS =
   | 'primary'
@@ -36,15 +38,17 @@ const props = withDefaults(
     description: string
     body: string
     size?: SIZES
+    route?: LocationAsRelativeRaw
   }>(),
   {
     color: 'primary',
     size: 'medium',
+    route: undefined,
   },
 )
 
-const navClasses = computed(() =>
-  ['main-nav', `main-nav--${props.size}`].join(' '),
+const navButtonClasses = computed(() =>
+  ['nav-button', `nav-button--${props.size}`].join(' '),
 )
 </script>
 

@@ -44,19 +44,10 @@
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
-  "login-form": {
-    "login-lbl": "Login",
-    "password-lbl": "Password",
-    "login-success-msg": "Access granted",
-    "submit-btn": "Submit"
-  },
-  "web3-page": {
-    "loading-error-msg": "Oops... Something went wrong"
-  },
-  "main": {
+  "main-page": {
     "metamask-connect": "Connect to MetaMask",
-    "page-info-name": "Service name",
-    "metamask-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-info-title": "Service name",
+    "metamask-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "metamask-connect-btn": "Connect to MetaMask",
     "metamask-disconnect-btn": "Disconnect",
     "main-nav-certificates-title": "Certificates",
@@ -65,12 +56,12 @@
     "main-nav-generation-description": "Generate certificates",
     "main-nav-settings-title": "Settings",
     "main-nav-settings-description": "Your settings",
-    "page-info-desc": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-generation-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
   },
-  "certificates": {
+  "previously-certificates-page": {
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
@@ -82,36 +73,53 @@
     "bitcoin-btn": "Timestamp"
 
   },
-  "generation": {
+  "generation-page": {
     "title":"Create new certificate",
-    "step1-description": "Write a name for your certificate",
-    "step2-description": "Choose or upload template for a new certificate",
-    "step3-description": "Write a link to  google sheet",
-    "step1": "1",
-    "step2": "2",
-    "step3": "3",
-    "step3-placeholder": "Link",
-    "step1-placeholder": "Name",
+    "step-1-description": "Write a name for your certificate",
+    "step-2-description": "Choose or upload template for a new certificate",
+    "step-3-description": "Write a link to  google sheet",
+    "step-1-title": "Write a name for your certificate",
+    "step-2-title": "Choose or upload template for a new certificate",
+    "step-3-title": "Write a link to  google sheet",
+    "step-1-number": "1",
+    "step-2-number": "2",
+    "step-3-number": "3",
+    "step-3-placeholder": "Link",
+    "step-1-placeholder": "Name",
     "start-btn": "Start",
     "cancel-btn": "Cancel"
   },
   "certificate": {
+    "img-alt":  "Certificate",
     "mint-text": "Make sbt",
     "bitcoin-btn": "Bitcoin",
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp"
 
   },
-  "settings": {
-    "title": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "page-name": "Setting",
+  "setting-form": {
+    "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings",
     "cancel-btn-title": "Cancel",
     "save-btn-title": "Save",
     "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
     "account-name-form-label": "Account name",
-    "org-name-form-label": "Name of organization",
+    "organization-name-form-label": "Name of organization",
+    "url-form-label": "Google Sheet URL",
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
+  },
+  "setting-page": {
+    "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "page-title": "Setting",
+    "sign-key-title": "Key settings for signatures",
+    "general-title": "General settings",
+    "cancel-btn-title": "Cancel",
+    "save-btn-title": "Save",
+    "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
+    "account-name-form-label": "Account name",
+    "organization-name-form-label": "Name of organization",
     "url-form-label": "Google Sheet URL",
     "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
   },
@@ -120,16 +128,24 @@
     "label-participant": "Full name",
     "label-date": "Issued on",
     "label-course": "Course name",
-    "label-metamask-address": "Student’s MetaMask address",
-    "close-btn": "Close",
-    "mint-btn": "Mint"
+    "certificate-alt": "Certificate",
+    "label-metamask-address": "Student’s MetaMask address"
   },
-  "auth-modal": {
+  "auth-modal-form": {
     "title" : "SBT issuance",
     "input-code-label": "Code",
     "close-btn": "Close",
     "get-access-btn": "Get access",
     "send-code-btn": "Send code"
+  },
+  "app-navbar": {
+    "metamask-ico-alt": "metamask ico",
+    "metamask-connect" : "Connect"
+  },
+  "mint-form": {
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "placeholder-metamask-address": "Student’s MetaMask address"
   },
   "home": {
     "upload-title": "Upload new template",
@@ -151,4 +167,5 @@
   "timestamp-item":{
     "timestamp-btn": "Timestamp"
   }
+
 }

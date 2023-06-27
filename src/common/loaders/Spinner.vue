@@ -2,7 +2,12 @@
   <div class="spinner" />
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'spinner',
+})
+
 defineProps<{
   title?: string
 }>()

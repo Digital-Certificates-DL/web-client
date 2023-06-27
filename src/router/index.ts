@@ -10,12 +10,12 @@ const routes = [
   {
     path: '/main',
     name: ROUTE_NAMES.main,
-    component: () => import('@/pages/Main.vue'),
+    component: () => import('@/pages/MainPage.vue'),
   },
   {
     path: '/generate',
     name: ROUTE_NAMES.generate,
-    component: () => import('@/pages/Generation.vue'),
+    component: () => import('@/pages/GenerationPage.vue'),
   },
   {
     path: '/home',
@@ -25,12 +25,12 @@ const routes = [
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/Certificates.vue'),
+    component: () => import('@/pages/PreviouslyCertificatesPage.vue'),
   },
   {
     path: '/settings',
     name: ROUTE_NAMES.settings,
-    component: () => import('@/pages/Setting.vue'),
+    component: () => import('@/pages/SettingPage.vue'),
   },
   {
     path: '/timestamp',

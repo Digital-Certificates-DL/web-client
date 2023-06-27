@@ -18,8 +18,8 @@
 
   /* status colors */
   --success-light: #{$success-light};
-  --success-main: #{$primary-main};
-  --success-dark: #{$background-secondary-dark};
+  --success-main: #{$success-main};
+  --success-dark: #{$success-dark};
 
   --error-light: #{$error-light};
   --error-main: #{$error-main};
@@ -35,15 +35,15 @@
 
   /* brand colors */
   --primary-light: #{$primary-light};
-  --primary-main: #{$background-primary-light};
-  --primary-dark: #{$background-secondary-dark};
+  --primary-main: #{$primary-main};
+  --primary-dark: #{$primary-dark};
   --primary-light-rgb: #{$primary-light-rgb};
   --primary-main-rgb: #{$primary-main-rgb};
   --primary-dark-rgb: #{$primary-dark-rgb};
 
   --secondary-light: #{$secondary-light};
   --secondary-main: #{$secondary-main};
-  --secondary-dark: #{$primary-main};
+  --secondary-dark: #{$secondary-dark};
 
   --tertiary-light: #{$tertiary-light};
   --tertiary-main: #{$tertiary-main};
@@ -76,6 +76,14 @@
   --app-font-family: 'Roboto', 'Arial', sans-serif;
   --app-padding-right: #{toRem(92)};
   --app-padding-left: #{toRem(92)};
+
+  --app-background-opacity: 0.6;
+
+  --app-background-gradient: #{radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(143, 189, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0) 100%
+  )};
 
   @include respond-to(small) {
     --app-padding-right: #{toRem(24)};

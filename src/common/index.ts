@@ -12,6 +12,7 @@ export { default as Modal } from '@/common/Modal.vue'
 export { default as Certificate } from '@/common/Certificate.vue'
 export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as MainNav } from '@/common/MainNav.vue'
+export { default as NavButton } from '@/common/NavButton.vue'
 
 export { default as HomeItem } from '@/common/HomeItem.vue'
 export * from './modals'

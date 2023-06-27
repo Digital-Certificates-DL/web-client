@@ -2,7 +2,7 @@
   <div class="app-logo">
     <img
       class="app-logo__img"
-      src="@/../static/branding/LOGO.png"
+      src="/branding/logo.png"
       :alt="$config.APP_NAME"
     />
     <router-link class="app-logo__link" :to="{ name: $routes.main }" />
