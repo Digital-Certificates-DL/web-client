@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import { Modal } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   isShown: boolean
 }>()
 

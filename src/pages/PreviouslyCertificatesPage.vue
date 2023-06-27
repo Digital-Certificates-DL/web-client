@@ -84,19 +84,18 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { UserJSONResponse, DropdownItem } from '@/types'
+import { CertificateJSONResponse, DropdownItem } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from '@/router'
 
-import btc from '@/utils/bitcoin.util'
 import {
-  ErrorMessage,
   AppButton,
-  Certificate,
   AppDropdown,
+  Certificate,
   CertificateModal,
+  ErrorMessage,
 } from '@/common'
 import { Signature } from '@/utils'
 import { ErrorHandler } from '@/helpers'
@@ -106,9 +105,9 @@ import { LoaderModal } from '@/common/modals'
 const userState = useUserStore()
 
 const isCertificateModalShown = ref(false)
-const currentUser = ref<UserJSONResponse>({} as UserJSONResponse)
-const selectedItems = ref<UserJSONResponse[]>([])
-const userBuffer = ref<UserJSONResponse[]>([])
+const currentUser = ref<CertificateJSONResponse>({} as CertificateJSONResponse)
+const selectedItems = ref<CertificateJSONResponse[]>([])
+const userBuffer = ref<CertificateJSONResponse[]>([])
 const searchInputValue = ref('')
 const selectedCount = ref(0)
 
@@ -167,12 +166,12 @@ const dropDownStateList = [
   },
 ] as DropdownItem[]
 
-const openCertificateModal = (user: UserJSONResponse) => {
+const openCertificateModal = (user: CertificateJSONResponse) => {
   isCertificateModalShown.value = true
   currentUser.value = user
 }
 
-const prepareUsersImage = (users: UserJSONResponse[]) => {
+const prepareUsersImage = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
     if (!user.certificateImg) {
       user.img = ''
@@ -181,12 +180,10 @@ const prepareUsersImage = (users: UserJSONResponse[]) => {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
-  console.log(users)
-
   return users
 }
 
-const selectItem = (state: boolean, item: UserJSONResponse) => {
+const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
     selectedItems.value.push(item)
     selectedCount.value++
@@ -201,9 +198,8 @@ const selectItem = (state: boolean, item: UserJSONResponse) => {
 }
 
 const refresh = async () => {
-  console.log('userState.setting: ', userState.setting)
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
@@ -221,22 +217,22 @@ const refresh = async () => {
   }
 }
 
-const find = () => {
-  userBuffer.value = userState.students
-
-  if (searchInputValue.value === '' && userBuffer.value) {
-    userBuffer.value = userState.students
-    return
-  }
-
-  const searchQuery = searchInputValue.value.toLowerCase()
-  const filteredUsers = userBuffer.value.filter(user => {
-    const participant = user.participant.toLowerCase()
-    return participant.includes(searchQuery)
-  })
-
-  userState.students = filteredUsers
-}
+// const find = () => {
+//   userBuffer.value = userState.students
+//
+//   if (searchInputValue.value === '' && userBuffer.value) {
+//     userBuffer.value = userState.students
+//     return
+//   }
+//
+//   const searchQuery = searchInputValue.value.toLowerCase()
+//   const filteredUsers = userBuffer.value.filter(user => {
+//     const participant = user.participant.toLowerCase()
+//     return participant.includes(searchQuery)
+//   })
+//
+//   userState.students = filteredUsers
+// }
 
 const findByCourse = (filter: DropdownItem) => {
   const currentCourse = filter.text
@@ -351,7 +347,7 @@ const timestamp = async () => {
   }
 }
 
-const sign = async (users: UserJSONResponse[]) => {
+const sign = async (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
     if (user.signature === undefined || user.signature == '') {
@@ -362,8 +358,8 @@ const sign = async (users: UserJSONResponse[]) => {
   return users
 }
 
-const createPDF = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponse[]>(
+const createPDF = async (users: CertificateJSONResponse[]) => {
+  const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/certificate/',
     {
       body: {
@@ -378,30 +374,29 @@ const createPDF = async (users: UserJSONResponse[]) => {
       },
     },
   )
-  const updatedUsers = prepareUserImg(data)
-  userState.students = updatedUsers
+  userState.students = prepareUserImg(data)
   return data
 }
 
-const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/certificate/bitcoin',
-    {
-      body: {
-        data: {
-          users: users,
-          address: userState.setting.userBitcoinAddress,
-          name: userState.setting.accountName,
-          url: userState.setting.urlGoogleSheet,
-        },
-      },
-    },
-  )
+// const updateUsers = async (users: CertificateJSONResponse[]) => {
+//   const { data } = await api.post<CertificateJSONResponse[]>(
+//     '/integrations/ccp/certificate/bitcoin',
+//     {
+//       body: {
+//         data: {
+//           users: users,
+//           address: userState.setting.userBitcoinAddress,
+//           name: userState.setting.accountName,
+//           url: userState.setting.urlGoogleSheet,
+//         },
+//       },
+//     },
+//   )
+//
+//   userState.students = data
+// }
 
-  userState.students = data
-}
-
-const prepareUserImg = (users: UserJSONResponse[]) => {
+const prepareUserImg = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
     if (user.certificateImg === null) {
       continue

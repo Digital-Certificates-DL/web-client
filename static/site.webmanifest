@@ -1,6 +1,6 @@
 {
-  "name": "vue-vite-template",
-  "short_name": "vue-vite-template",
+  "name": "web-client",
+  "short_name": "web-client",
   "icons": [
     {
       "src": "/branding/android-chrome-192x192.png",

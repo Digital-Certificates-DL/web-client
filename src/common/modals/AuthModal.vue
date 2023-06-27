@@ -5,50 +5,22 @@
   >
     <template #default="{ modal }">
       <div class="auth-modal__pane">
-        <input-field
-          v-model="accessCodeInputValue"
-          :label="$t('auth-modal.input-code-label')"
-          :error-message="
-            accessCodeInputValue.length > 0
-              ? ''
-              : $t('validations.field-error_code')
-          "
+        <auth-modal-form
+          class="auth-modal__form"
+          :token-link="tokenLink"
+          @close-modal="modal.close()"
+          @send-auth-code="sendCode"
         />
-
-        <div class="auth-modal__btns">
-          <app-button
-            class="auth-modal__btn auth-modal__btn-nav"
-            color="info"
-            :text="$t('auth-modal.send-code-btn')"
-            @click="sendCode"
-          />
-          <app-button
-            class="auth-modal__btn auth-modal__btn-link"
-            color="info"
-            size="medium"
-            :text="$t('auth-modal.get-access-btn')"
-            @click="getAccess"
-          />
-          <app-button
-            class="auth-modal__btn auth-modal__btn-nav"
-            color="info"
-            :text="$t('auth-modal.close-btn')"
-            @click="modal.close"
-          />
-        </div>
       </div>
     </template>
   </modal>
 </template>
 
 <script lang="ts" setup>
-import { InputField } from '@/fields'
-import { ref } from 'vue'
-import { Modal, AppButton } from '@/common'
+import { AuthModalForm } from '@/forms'
+import { Modal } from '@/common'
 
-const accessCodeInputValue = ref('')
-
-const props = defineProps<{
+defineProps<{
   isShown: boolean
   tokenLink: string
 }>()
@@ -58,13 +30,8 @@ const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
 }>()
 
-const sendCode = () => {
-  console.log('send from child')
-  emit('send-auth-code', accessCodeInputValue.value)
-}
-
-const getAccess = () => {
-  window.open(props.tokenLink, '_blank')
+const sendCode = (code: string) => {
+  emit('send-auth-code', code)
 }
 </script>
 
@@ -72,25 +39,9 @@ const getAccess = () => {
 .auth-modal__pane {
   display: grid;
   width: toRem(400);
-  height: toRem(300);
+  height: toRem(250);
   background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
 }
-
-.auth-modal__btns {
-  display: flex;
-  height: toRem(58);
-
-  justify-content: space-between;
-}
-
-.auth-modal__btn {
-  width: toRem(100);
-}
-
-//.auth-modal__btn-link {
-//  max-height: toRem(58);
-//  margin: 0 auto;
-//}
 </style>

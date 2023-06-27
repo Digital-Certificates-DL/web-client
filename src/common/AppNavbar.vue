@@ -6,8 +6,11 @@
       <div class="app-navbar__metamask">
         <app-button
           class="app-navbar__btn"
-          :disabled="provider.isConnected"
-          :text="preparedAddress || $t('app-navbar.metamask-connect')"
+          color="info"
+          :text="prepareAddress(
+    provider.isConnected,
+    provider.selectedAddress!,
+  ) || $t('app-navbar.metamask-connect')"
           :icon-left="$icons.metamask"
           @click="connect"
         />
@@ -16,6 +19,7 @@
       <div class="app-navbar__settings">
         <app-button
           class="app-navbar__btn"
+          color="info"
           :icon-left="$icons.settings"
           :route="{
             name: $routes.settings,
@@ -29,36 +33,22 @@
 <script lang="ts" setup>
 import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
+import { prepareAddress } from '@/helpers'
 
 const { provider } = useWeb3ProvidersStore()
 const preparedAddress = ref('')
 
 const connect = async () => {
   await provider.connect()
-  prepareAddress()
+  preparedAddress.value = prepareAddress(
+    provider.isConnected,
+    provider.selectedAddress!,
+  )
 }
-
-const prepareAddress = () => {
-  if (provider.isConnected) {
-    preparedAddress.value =
-      provider.selectedAddress!.slice(0, 6) +
-      '...' +
-      provider.selectedAddress!.slice(-4)
-  }
-}
-
-onBeforeMount(() => {
-  prepareAddress()
-})
 </script>
 
 <style lang="scss" scoped>
-$box-shadow-r: 0;
-$box-shadow-g: 0;
-$box-shadow-b: 0;
-$box-shadow-a: 0.06;
-
 .app-navbar {
   display: flex;
   align-items: center;
@@ -66,8 +56,7 @@ $box-shadow-a: 0.06;
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
-  box-shadow: 0 toRem(4) toRem(16)
-    rgba($box-shadow-r, $box-shadow-g, $box-shadow-b, $box-shadow-a);
+  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black), 0.06);
   margin-bottom: toRem(20);
 
   @include respond-to(xmedium) {
@@ -100,33 +89,15 @@ $box-shadow-a: 0.06;
 }
 
 .app-navbar__configuration {
-  width: 15%;
   display: flex;
-  justify-content: space-between;
 }
 
 .app-navbar__img {
   width: toRem(20);
 }
 
-.app-navbar__metamask {
-  width: toRem(175);
-
-  @include respond-to(xmedium) {
-    width: toRem(150);
-  }
-
-  @include respond-to(medium) {
-    width: toRem(125);
-  }
-}
-
-.app-navbar__btn .app-navbar__settings {
+.app-navbar__btn {
   height: toRem(50);
   border-radius: toRem(8);
-
-  @include respond-to(xmedium) {
-    height: toRem(40);
-  }
 }
 </style>

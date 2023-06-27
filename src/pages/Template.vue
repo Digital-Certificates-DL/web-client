@@ -52,10 +52,14 @@
           @click.stop="selectInput(position)"
         />
 
-        <button @click.stop="removeInput(index)">Remove</button>
+        <button @click.stop="removeInput(index)">
+          {{ $t('template-page.remove-input-btn') }}
+        </button>
       </div>
     </div>
-    <button @click.stop="saveTextPosition">Save Text Position</button>
+    <button @click.stop="saveTextPosition">
+      {{ $t('template-page.save-position') }}
+    </button>
   </div>
 </template>
 
@@ -64,21 +68,27 @@ import { ref } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { Template } from '@/types/template'
 import { api } from '@/api'
-import { UserJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 
 const textValue = ref('')
-const showInput = ref(false)
-const inputPositions = ref([])
+
 const inputField = ref(null)
 const currentInputInfo = ref<Template>({} as Template)
 const textPositionSaved = ref(false)
+
+interface DragData {
+  active: boolean
+  index: number | null
+  startX: number
+  startY: number
+}
+
 const dragData = ref({
   active: false,
   index: null,
   startX: 0,
   startY: 0,
-})
+} as DragData)
 
 const defaultTemplate = ref<Template[]>([
   {
@@ -158,7 +168,7 @@ const defaultTemplate = ref<Template[]>([
 //   }
 // }
 
-const removeInput = index => {
+const removeInput = (index: number) => {
   defaultTemplate.value.splice(index, 1)
   clearInput()
 }
@@ -168,22 +178,22 @@ const clearInput = () => {
 }
 
 const saveTextPosition = () => {
-  console.log('positions:', defaultTemplate.value)
+  // console.log('positions:', defaultTemplate.value)
   textPositionSaved.value = true
 }
 
-const startDrag = (index, event) => {
+const startDrag = (index: number, event: MouseEvent) => {
   dragData.value.active = true
   dragData.value.index = index
   dragData.value.startX = event.clientX
   dragData.value.startY = event.clientY
 }
 
-const drag = event => {
+const drag = (event: MouseEvent) => {
   if (dragData.value.active) {
     const dx = event.clientX - dragData.value.startX
     const dy = event.clientY - dragData.value.startY
-    const position = defaultTemplate.value[dragData.value.index]
+    const position = defaultTemplate.value[dragData.value.index!]
     position.x += dx
     position.y += dy
     dragData.value.startX = event.clientX
@@ -196,16 +206,15 @@ const endDrag = () => {
   dragData.value.index = null
 }
 
-const getImageSize = (
-  image: HTMLImageElement,
-): { width: number; height: number } => {
-  const { naturalWidth, naturalHeight } = image
-  return { width: naturalWidth, height: naturalHeight }
-}
+// const getImageSize = (
+//   image: HTMLImageElement,
+// ): { width: number; height: number } => {
+//   const { naturalWidth, naturalHeight } = image
+//   return { width: naturalWidth, height: naturalHeight }
+// }
 
 const selectInput = (info: Template) => {
   currentInputInfo.value = info
-  console.log(currentInputInfo.value)
 }
 
 const sendTemplate = async () => {
@@ -243,7 +252,7 @@ g
 
 .template-page__back-image {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: toRem(20);
 }
 
 .template-page__input {
@@ -251,12 +260,12 @@ g
 }
 
 .template-page__input input {
-  width: 200px;
+  width: toRem(200);
   background: rgba(0, 0, 0, 0);
   border: none;
 
   &:focus {
-    border: #5cc56e 1px solid;
+    border: #5cc56e toRem(1) solid;
   }
 }
 
