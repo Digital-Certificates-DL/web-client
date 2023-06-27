@@ -11,6 +11,12 @@
         />
       </div>
 
+      <app-button
+        class="previously-certificates-page__btn"
+        color="info"
+        :text="$t('previously-certificates-page.refresh-btn')"
+        @click="refresh"
+      />
       <div class="previously-certificates-page__filters">
         <app-dropdown :items="dropDownCourseList" @select-item="findByCourse" />
         <app-dropdown
@@ -44,12 +50,6 @@
             color="info"
             :text="$t('previously-certificates-page.bitcoin-btn')"
             @click="timestamp"
-          />
-          <app-button
-            class="previously-certificates-page__btn"
-            color="info"
-            :text="$t('previously-certificates-page.refresh-btn')"
-            @click="refresh"
           />
         </div>
       </div>
@@ -407,7 +407,8 @@ onBeforeMount(autoRefresh)
 
 .previously-certificates-page__btn {
   height: toRem(52);
-  width: toRem(100);
+  width: toRem(120);
+  margin-left: toRem(5);
   border-radius: toRem(8);
 
   @include respond-to(large) {

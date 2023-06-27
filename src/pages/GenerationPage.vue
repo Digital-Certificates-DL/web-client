@@ -9,7 +9,8 @@
 
   <div v-else class="generation">
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-
+    <success-modal v-model:is-shown="isSuccessfully" />
+    <error-modal v-model:is-shown="isError" />
     <div class="generation__title">
       <h2>{{ $t('generation-page.title') }}</h2>
     </div>
@@ -137,6 +138,8 @@ import { required } from '@/validators'
 import { ErrorHandler } from '@/helpers'
 import LoaderModal from '@/common/modals/LoaderModal.vue'
 import Icon from '@/common/Icon.vue'
+import SuccessModal from '@/common/modals/SuccessModal.vue'
+import ErrorModal from '@/common/modals/ErrorModal.vue'
 const userState = useUserStore()
 
 const isUnauthorized = ref(false)
@@ -144,6 +147,8 @@ const authLink = ref('')
 
 const isLoading = ref(false)
 const processState = ref('')
+const isSuccessfully = ref(false)
+const isError = ref(false)
 
 // const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
 
@@ -181,19 +186,23 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(
 
 const start = async () => {
   if (!isFormValid) return
-  isLoading.value = true
-  const users = await parsedData(certificatesInfo.link)
-  if (!users) {
+  try {
+    isLoading.value = true
+    const users = await parsedData(certificatesInfo.link)
+    if (!users) {
+      isLoading.value = false
+      return
+    }
+
+    userState.students = users
+
+    await generate(users)
     isLoading.value = false
-    return
+    isSuccessfully.value = false
+  } catch (error) {
+    isError.value = true
+    ErrorHandler.process(error)
   }
-
-  userState.students = users
-
-  await generate(users)
-  await router.push({
-    name: ROUTE_NAMES.timestamp,
-  })
 }
 
 const parsedData = async (sheepUrl?: string) => {
@@ -222,6 +231,7 @@ const parsedData = async (sheepUrl?: string) => {
 
 const generate = async (items: CertificateJSONResponse[]) => {
   isLoading.value = true
+  isSuccessfully.value = false
 
   processState.value = 'Sign data'
 
@@ -230,8 +240,6 @@ const generate = async (items: CertificateJSONResponse[]) => {
 
   const users = await createPDF(signatures)
   processState.value = ''
-
-  isLoading.value = false
 
   userState.bufferCertificateList = users
 }

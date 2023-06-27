@@ -1,6 +1,7 @@
 <template>
   <modal
     :is-shown="isShown"
+    :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <div class="loader-modal">
@@ -28,8 +29,8 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .loader-modal {
-  width: toRem(400);
-  height: toRem(600);
+  width: toRem(350);
+  height: toRem(350);
   background: var(--white);
   border-radius: toRem(15);
   padding: toRem(24);

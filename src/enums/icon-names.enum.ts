@@ -43,6 +43,8 @@ export enum ICON_NAMES {
   chat = 'chat',
   checkCircle = 'check-circle',
   check = 'check',
+  certificateError = 'certificate-error',
+  certificate = 'certificate',
   chevronDoubleDown = 'chevron-double-down',
   chevronDoubleLeft = 'chevron-double-left',
   chevronDoubleRight = 'chevron-double-right',
