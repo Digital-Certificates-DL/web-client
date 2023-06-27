@@ -100,10 +100,7 @@ import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils/signature.utils'
-import {
-  CertificateJSONResponseList,
-  CertificateJSONResponse,
-} from '@/types/user.types'
+import { CertificateJSONResponseList, CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'

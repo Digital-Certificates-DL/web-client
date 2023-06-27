@@ -71,7 +71,7 @@ import { ErrorHandler } from '@/helpers'
 
 const userState = useUserStore()
 
-const isCertificateModalShown = ref(true)
+const isCertificateModalShown = ref(false)
 const currentCertificate = ref<CertificateJSONResponse>(
   {} as CertificateJSONResponse,
 )

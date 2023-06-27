@@ -31,28 +31,19 @@
 <script lang="ts" setup>
 import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
+import { prepareAddress } from '@/helpers'
 
 const { provider } = useWeb3ProvidersStore()
 const preparedAddress = ref('')
 
 const connect = async () => {
   await provider.connect()
-  prepareAddress()
+  preparedAddress.value = prepareAddress(
+    provider.isConnected,
+    provider.selectedAddress!,
+  )
 }
-
-const prepareAddress = () => {
-  if (provider.isConnected) {
-    preparedAddress.value =
-      provider.selectedAddress!.slice(0, 6) +
-      '...' +
-      provider.selectedAddress!.slice(-4)
-  }
-}
-
-onBeforeMount(() => {
-  prepareAddress()
-})
 </script>
 
 <style lang="scss" scoped>

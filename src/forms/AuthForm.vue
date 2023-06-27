@@ -1,10 +1,11 @@
 <template>
   <form class="auth-form">
     <input-field
-      v-model="accessCodeInputData"
+      v-model="form.accessCodeInputData"
       class="auth-modal-form__input"
       :label="$t('auth-modal-form.input-code-label')"
-      :error-message="isInputValid ? '' : $t('validations.field-error_code')"
+      :disabled="isFormDisabled"
+      :error-message="getFieldErrorMessage('code')"
       @input="validateCode"
     />
 
@@ -33,8 +34,12 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { AppButton } from '@/common'
+import { useForm, useFormValidation } from '@/composables'
+import { required } from '@/validators'
+
+const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const isInputValid = ref(false)
 const accessCodeInputData = ref('')
@@ -48,9 +53,21 @@ const emit = defineEmits<{
   (e: 'close-modal'): boolean
 }>()
 
+const form = reactive({
+  accessCodeInputData: '',
+})
+
+const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
+  accessCodeInputData: { required },
+})
+
 const sendCode = () => {
-  if (!isInputValid.value) return
+  if (!isFormValid) return
+  disableForm()
+
   emit('send-auth-code', accessCodeInputData.value)
+
+  enableForm()
 }
 
 const validateCode = () => {
