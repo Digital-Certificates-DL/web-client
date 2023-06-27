@@ -64,13 +64,10 @@
 </template>
 
 <script lang="ts" setup>
-import { UserJSONResponse, IpfsJSONResponse } from '@/types'
-import { InputField } from '@/fields'
+import { Modal } from '@/common'
+import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useErc721 } from '@/composables'
-import { api } from '@/api'
-import { Modal, AppButton } from '@/common'
-import { ErrorHandler } from '@/helpers'
 
 const { safeMint } = useErc721()
 const isFieldDisable = ref(false)
@@ -79,7 +76,7 @@ const isInputAddressValid = ref('')
 
 const props = defineProps<{
   isShown: boolean
-  user: UserJSONResponse
+  user: CertificateJSONResponse
 }>()
 
 const emit = defineEmits<{
@@ -117,7 +114,7 @@ const mint = async () => {
   }
 }
 
-const prepareTokenDescription = (user: UserJSONResponse) => {
+const prepareTokenDescription = (user: CertificateJSONResponse) => {
   return (
     user.date +
     ' ' +
@@ -155,24 +152,5 @@ const prepareTokenDescription = (user: UserJSONResponse) => {
 .certificate-modal__title {
   padding: toRem(10) 0;
   margin: auto;
-}
-
-.auth-modal__btns {
-  display: flex;
-  justify-content: space-between;
-}
-
-.certificate-modal__btn {
-  width: toRem(200);
-}
-
-.certificate-modal__label {
-  font-size: toRem(14);
-  color: var(--text-secondary-light);
-}
-
-.certificate-modal__form-label {
-  font-size: toRem(14);
-  color: var(--text-primary-main);
 }
 </style>

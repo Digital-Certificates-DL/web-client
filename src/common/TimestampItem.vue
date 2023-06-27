@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import CheckboxField from '@/fields/CheckboxField.vue'
 import { ref } from 'vue'
 import AppButton from '@/common/AppButton.vue'
@@ -47,7 +47,7 @@ const props = withDefaults(
     isShow: boolean
     name: string
     date: string
-    user: UserJSONResponse
+    user: CertificateJSONResponse
   }>(),
   {
     isShow: false,
@@ -55,8 +55,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'select', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
+  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const selectItem = () => {

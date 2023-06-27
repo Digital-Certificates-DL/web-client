@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { AppButton } from '@/common'
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
@@ -68,13 +68,13 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', user: UserJSONResponse): boolean
-  (e: 'select', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', user: CertificateJSONResponse): boolean
+  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
   isShow: boolean
-  user: UserJSONResponse
+  user: CertificateJSONResponse
 }>()
 
 const selectItem = () => {

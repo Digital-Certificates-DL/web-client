@@ -1,54 +1,51 @@
 <template>
-  <form action="">
-    <h3 class="setting-form__title">
-      {{ $t('setting-form.general-title') }}
+  <form class="setting-form" action="">
+    <h3 class="setting-form__fields-title">
+      {{ $t('setting-page.general-title') }}
     </h3>
     <input-field
-      class="setting-form__form-input"
       v-model="form.organizationName"
+      class="setting-form__form-input"
       :label="$t('setting-form.organization-name-form-label')"
       :error-message="getFieldErrorMessage('organizationName')"
     />
     <input-field
-      class="setting-form__form-input"
       v-model="form.accountName"
+      class="setting-form__form-input"
       :label="$t('setting-form.account-name-form-label')"
       :error-message="getFieldErrorMessage('accountName')"
     />
-    <h3 class="setting-form__title">
+    <h3 class="setting-form__fields-title">
       {{ $t('setting-form.sign-key-title') }}
     </h3>
     <input-field
-      class="setting-form__form-input"
       v-model="form.bip39MnemonicPhrase"
+      class="setting-form__form-input"
       :label="$t('setting-form.bitcoin-phrase-form-label')"
       :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
     />
     <input-field
-      class="setting-form__form-input"
       v-model="form.urlGoogleSheet"
+      class="setting-form__form-input"
       :label="$t('setting-form.url-form-label')"
       :error-message="getFieldErrorMessage('urlGoogleSheet')"
     />
     <input-field
-      class="setting-form__form-input"
       v-model="form.signKey"
+      class="setting-form__form-input"
       :label="$t('setting-form.wif-form-label')"
       :error-message="getFieldErrorMessage('signKey')"
     />
-
     <div class="setting-form__btns">
       <app-button
         class="setting-form__btn"
         color="info"
-        size="large"
         :text="$t('setting-form.save-btn-title')"
-        @click="saveUserData"
+        @click="save"
       />
       <app-button
         class="setting-form__btn"
         color="info"
-        size="large"
         :text="$t('setting-form.cancel-btn-title')"
         :route="{
           name: $routes.main,
@@ -60,11 +57,20 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
+import { PrivKey } from '@ts-bitcoin/core'
+import { reactive } from 'vue'
+import { CertificateJSONResponseList, UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { reactive } from 'vue'
-import { UserSetting } from '@/types'
+import { api } from '@/api'
+import { ROUTE_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
+import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
+import { useRouter } from 'vue-router'
+
+const userState = useUserStore()
+const router = useRouter()
 
 const form = reactive({
   accountName: '',
@@ -82,51 +88,50 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
   urlGoogleSheet: { required },
 })
 
-const emit = defineEmits<{
-  (e: 'save-user-data', formData: UserSetting): void
-}>()
-
-const saveUserData = () => {
+const save = async () => {
   if (!isFormValid()) return
-  emit('save-user-data', form)
+  userState.setting = form
+  const address = PrivKey.Mainnet.fromWif(form.signKey).toString()
+
+  userState.setting.userBitcoinAddress = address || ''
+
+  try {
+    await api.post<CertificateJSONResponseList>(
+      '/integrations/ccp/users/settings',
+      {
+        body: {
+          data: {
+            code: '',
+            name: userState.setting.accountName,
+          },
+        },
+      },
+    )
+    await router.push(ROUTE_NAMES.main)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 </script>
 
 <style scoped lang="scss">
-.setting-form__fields-title {
-  margin-bottom: toRem(30);
-
-  @include respond-to(large) {
-    margin-bottom: toRem(10);
-  }
-}
-
 .setting-form__form-input {
   margin-bottom: toRem(50);
   width: toRem(458);
-
-  @include respond-to(large) {
-    margin-bottom: toRem(40);
-  }
-
-  @include respond-to(xmedium) {
-    margin-bottom: toRem(30);
-    width: toRem(358);
-  }
-}
-
-.setting-form__title {
-  margin-bottom: toRem(20);
 }
 
 .setting-form__btns {
   display: flex;
-  justify-content: center;
-  gap: toRem(80);
+  justify-content: space-around;
 }
 
 .setting-form__btn {
   width: toRem(100);
   border-radius: toRem(8);
+}
+
+.setting-form__fields-title {
+  margin-bottom: toRem(30);
+  text-align: center;
 }
 </style>

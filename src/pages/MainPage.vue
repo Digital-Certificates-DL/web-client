@@ -3,25 +3,25 @@
     <div class="main__info">
       <app-logo class="main__logo" />
       <h1 class="main__info-name">
-        {{ $t('main.page-info-name') }}
+        {{ $t('main-page.page-info-name') }}
       </h1>
       <p class="main__info-description">
-        {{ $t('main.page-info-description') }}
+        {{ $t('main-page.page-info-description') }}
       </p>
     </div>
     <div class="main__body">
       <div class="main__metamask-block">
         <div v-if="!provider.isConnected" class="main__metamask">
           <p class="main__metamask-title">
-            {{ $t('main.metamask-connect') }}
+            {{ $t('main-page.metamask-connect') }}
           </p>
           <p class="main__metamask-definition">
-            {{ $t('main.metamask-description') }}
+            {{ $t('main-page.metamask-description') }}
           </p>
           <app-button
             class="main__metamask-btn main__btn-connect"
             color="info"
-            :text="$t('main.metamask-connect-btn')"
+            :text="$t('main-page.metamask-connect-btn')"
             :disabled="provider.isConnected"
             @click="connect"
           />
@@ -45,19 +45,19 @@
           class="main__navigation-item"
           color="warning"
           size="large"
-          :body="$t('main.main-nav-settings-body')"
-          :title="$t('main.main-nav-settings-title')"
-          :description="$t('main.main-nav-settings-description')"
+          :body="$t('main-page.main-nav-settings-body')"
+          :title="$t('main-page.main-nav-settings-title')"
+          :description="$t('main-page.main-nav-settings-description')"
           :route="{
             name: $routes.settings,
           }"
         />
 
         <main-nav
-          :title="$t('main.main-nav-home-title')"
+          :title="$t('main-page.main-nav-home-title')"
           color="success"
-          :description="$t('main.main-nav-home-description')"
-          :body="$t('main.main-nav-home-body')"
+          :description="$t('main-page.main-nav-home-description')"
+          :body="$t('main-page.main-nav-home-body')"
           :route="{
             name: $routes.home,
           }"

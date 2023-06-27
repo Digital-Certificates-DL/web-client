@@ -211,13 +211,12 @@ const buttonClasses = computed(() =>
   }
 
   &--success {
-    --app-button-flat-text: var(--text-primary-invert-main);
-    --app-button-flat-text-hover: var(--text-primary-invert-main);
+    --app-button-flat-text: var(--success-main);
+    --app-button-flat-text-hover: var(--success-dark);
     --app-button-flat-border: #{toRem(2)} solid var(--success-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--success-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--success-dark);
 
-    --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-bg: var(--success-main);
     --app-button-filled-bg-hover: var(--success-dark);
     --app-button-filled-bg-active: var(--success-dark);
@@ -230,7 +229,6 @@ const buttonClasses = computed(() =>
     --app-button-flat-border-hover: #{toRem(2)} solid var(--error-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--error-dark);
 
-    --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-bg: var(--error-main);
     --app-button-filled-bg-hover: var(--error-dark);
     --app-button-filled-bg-active: var(--error-dark);
@@ -243,20 +241,18 @@ const buttonClasses = computed(() =>
     --app-button-flat-border-hover: #{toRem(2)} solid var(--warning-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--warning-dark);
 
-    --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-bg: var(--warning-main);
     --app-button-filled-bg-hover: var(--warning-dark);
     --app-button-filled-bg-active: var(--warning-dark);
   }
 
   &--info {
-    --app-button-flat-text: var(--background-secondary-light);
-    --app-button-flat-text-hover: var(--background-secondary-light);
+    --app-button-flat-text: var(--info-main);
+    --app-button-flat-text-hover: var(--info-dark);
     --app-button-flat-border: #{toRem(2)} solid var(--info-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--info-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--info-dark);
 
-    --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-bg: var(--info-main);
     --app-button-filled-bg-hover: var(--info-dark);
     --app-button-filled-bg-active: var(--info-dark);

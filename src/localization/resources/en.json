@@ -9,7 +9,6 @@
     "field-error_name": "Empty name",
     "field-error_settings": "We need fill all fields",
     "field-error_privateKey": "Invalid private key"
-
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -44,23 +43,18 @@
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
-  "login-form": {
-    "login-lbl": "Login",
-    "password-lbl": "Password",
-    "login-success-msg": "Access granted",
-    "submit-btn": "Submit"
-  },
-  "web3-page": {
-    "loading-error-msg": "Oops... Something went wrong"
-  },
-  "main": {
+  "main-page": {
     "metamask-connect": "Connect to MetaMask",
-    "page-info-name": "Service name",
+    "page-info-title": "Service name",
     "metamask-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "metamask-connect-btn": "Connect to MetaMask",
     "metamask-disconnect-btn": "Disconnect",
     "main-nav-certificates-title": "Certificates",
     "main-nav-certificates-description": "Your certificates",
+    "main-nav-generation-title": "Generation",
+    "main-nav-generation-description": "Generate certificates",
+    "page-info-name": "Service name",
+
     "main-nav-home-title": "Home",
     "main-nav-home-description": "Home",
     "main-nav-settings-title": "Settings",
@@ -74,13 +68,12 @@
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
+    "generate-btn": "Generate",
+    "bitcoin-btn": "Timestamp",
     "certificates-subtitle-date": "Date",
     "certificates-bitcoin-btn": "Bitcoin",
-    "generate-btn": "Generate",
     "error-certificate-list": "Empty certificate list",
-    "certificates-find": "find",
-    "bitcoin-btn": "Timestamp"
-
+    "certificates-find": "find"
   },
   "generation-page": {
     "title":"Create new certificate",
@@ -99,10 +92,10 @@
     "choose-template": "Choose from my templates"
   },
   "certificate": {
-    "mint-text": "Make sbt",
-    "bitcoin-btn": "Bitcoin",
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp",
+    "mint-text": "Make sbt issuance",
+    "bitcoin-btn": "Bitcoin",
     "img-alt":  "Certificate"
   },
   "setting-form": {
@@ -176,7 +169,24 @@
   },
   "template_page": {
     "title": "Upload new  template",
-    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.\n"
+    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.\n",
+    "label-participant": "Full name",
+    "label-date": "Issued on",
+    "label-course": "Course name",
+    "certificate-alt": "Certificate",
+    "label-metamask-address": "Student’s MetaMask address"
+  },
+  "auth-modal-form": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
+    "close-btn": "Close",
+    "get-access-btn": "Get access",
+    "send-code-btn": "Send code"
+  },
+  "mint-form": {
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "placeholder-metamask-address": "Student’s MetaMask address"
   }
 
 }
