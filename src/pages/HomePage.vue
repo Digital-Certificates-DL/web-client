@@ -83,7 +83,7 @@ import HomeBodyNav from '@/common/HomeNav.vue'
 import { HomeItem, AppButton } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { UserJSONResponse, UserJSONResponseList } from '@/types'
+import { CertificateJSONResponse, CertificateJSONResponseList } from '@/types'
 import { ref } from 'vue'
 import { api } from '@/api'
 import { useUserStore } from '@/store'
@@ -91,7 +91,7 @@ import AuthModal from '@/common/modals/AuthModal.vue'
 import { ErrorHandler } from '@/helpers'
 
 const templates = ref([] as TemplateRequestData[])
-const certificates = ref([] as UserJSONResponse[])
+const certificates = ref([] as CertificateJSONResponse[])
 
 const isUnauthorized = ref(false)
 const authLink = ref('')
@@ -99,7 +99,7 @@ const userState = useUserStore()
 
 const getUsers = async () => {
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
@@ -159,17 +159,20 @@ const getTemplates = async () => {
 
 const updateCode = async (code: string) => {
   isUnauthorized.value = false
-  await api.post<UserJSONResponseList>('/integrations/ccp/users/settings', {
-    body: {
-      data: {
-        code: code,
-        name: userState.setting.accountName,
+  await api.post<CertificateJSONResponseList>(
+    '/integrations/ccp/users/settings',
+    {
+      body: {
+        data: {
+          code: code,
+          name: userState.setting.accountName,
+        },
       },
     },
-  })
+  )
 }
 
-const prepareUserImg = (users: UserJSONResponse[]) => {
+const prepareUserImg = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
     if (user.certificateImg == null) {
       continue

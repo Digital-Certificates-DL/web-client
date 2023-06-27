@@ -57,7 +57,7 @@
 
     "main-nav-home-title": "Home",
     "main-nav-home-description": "Home",
-    "main-nav-settings-title": "Settings",
+    "main-nav-settings-title": "Setup",
     "main-nav-settings-description": "Your settings",
     "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -70,10 +70,11 @@
     "certificates-subtitle-course": "Course",
     "generate-btn": "Generate",
     "bitcoin-btn": "Timestamp",
+    "refresh-btn": "Load from sheet",
     "certificates-subtitle-date": "Date",
-    "certificates-bitcoin-btn": "Bitcoin",
+    "certificates-bitcoin-btn": "Make timestamp",
     "error-certificate-list": "Empty certificate list",
-    "certificates-find": "find"
+    "certificates-find": "Find"
   },
   "generation-page": {
     "title":"Create new certificate",
@@ -94,8 +95,8 @@
   "certificate": {
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp",
-    "mint-text": "Make sbt issuance",
-    "bitcoin-btn": "Bitcoin",
+    "mint-text": "Іssue SBT",
+    "bitcoin-btn": "Make timestamp",
     "img-alt":  "Certificate"
   },
   "setting-form": {
@@ -136,9 +137,11 @@
   },
   "auth-modal": {
     "title" : "SBT issuance",
-    "input-code-label": "Code",
+    "input-code-label": "Your access code",
+    "step-1-title": "Get the code",
+    "step-1-description": "To complete this step?  you need to follow the  link  to get  the code",
+    "step-2-title": "Enter the code",
     "close-btn": "Close",
-    "get-access-btn": "Get access",
     "send-code-btn": "Send code"
   },
   "app-navbar": {
@@ -146,7 +149,7 @@
     "metamask-connect" : "Connect"
   },
   "home": {
-    "upload-title": "Upload new template",
+    "upload-title": "Create new template",
     "upload-name": "Upload",
     "upload-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
     "create-title": "Generate certificates",
@@ -161,7 +164,7 @@
   },
   "timestamp-page": {
     "page-title": "Previously certificates",
-    "bitcoin-btn": "Bitcoin",
+    "bitcoin-btn": "Make timestamp",
     "input-placeholder": "Find"
   },
   "timestamp-item":{
@@ -174,7 +177,7 @@
     "label-date": "Issued on",
     "label-course": "Course name",
     "certificate-alt": "Certificate",
-    "label-metamask-address": "Student’s MetaMask address"
+    "label-metamask-address": "Type student’s Ethereum address"
   },
   "auth-modal-form": {
     "title" : "SBT issuance",
@@ -186,7 +189,7 @@
   "mint-form": {
     "close-btn": "Close",
     "mint-btn": "Mint",
-    "placeholder-metamask-address": "Student’s MetaMask address"
+    "placeholder-metamask-address": "Type student’s Ethereum address"
   }
 
 }

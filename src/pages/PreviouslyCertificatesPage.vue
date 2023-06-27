@@ -45,6 +45,12 @@
             :text="$t('previously-certificates-page.bitcoin-btn')"
             @click="timestamp"
           />
+          <app-button
+            class="previously-certificates-page__btn"
+            color="info"
+            :text="$t('previously-certificates-page.refresh-btn')"
+            @click="refresh"
+          />
         </div>
       </div>
     </div>
@@ -217,23 +223,6 @@ const refresh = async () => {
   }
 }
 
-// const find = () => {
-//   userBuffer.value = userState.students
-//
-//   if (searchInputValue.value === '' && userBuffer.value) {
-//     userBuffer.value = userState.students
-//     return
-//   }
-//
-//   const searchQuery = searchInputValue.value.toLowerCase()
-//   const filteredUsers = userBuffer.value.filter(user => {
-//     const participant = user.participant.toLowerCase()
-//     return participant.includes(searchQuery)
-//   })
-//
-//   userState.students = filteredUsers
-// }
-
 const findByCourse = (filter: DropdownItem) => {
   const currentCourse = filter.text
   userBuffer.value = userState.students
@@ -250,45 +239,6 @@ const findByCourse = (filter: DropdownItem) => {
 
   userBuffer.value = filteredUsers
 }
-
-// const findByDate = (filter: DropdownItem) => {
-//   const currentDate = filter.text
-//
-//   userBuffer.value = userState.students
-//   //todo add types
-//   if ((currentDate === '' || currentDate === 'All') && userBuffer.value) {
-//     userBuffer.value = userState.students
-//     return
-//   }
-//   let diff: Duration
-//   switch (currentDate) {
-//     case 'Week':
-//       diff = new Duration({ days: 7 })
-//       break
-//     case 'Day':
-//       diff = new Duration({ days: 1 })
-//       break
-//     case 'Month':
-//       diff = new Duration({ months: 1 })
-//       break
-//     case 'Year':
-//       diff = new Duration({ years: 1 })
-//       break
-//   }
-//
-//   const filteredUsers = userBuffer.value.filter(user => {
-//     const timeNow = new Time()
-//     const exTime = new Time(user.date)
-//     const delta = timeNow.diff(exTime)
-//
-//     if (delta < diff.asMilliseconds) {
-//       return true
-//     }
-//     return false
-//   })
-//
-//   userState.students = filteredUsers
-// }
 
 const generate = async () => {
   isLoading.value = true
@@ -378,24 +328,6 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   userState.students = updatedUsers
   return data
 }
-
-// const updateUsers = async (users: UserJSONResponse[]) => {
-//   const { data } = await api.post<UserJSONResponse[]>(
-//     '/integrations/ccp/certificate/bitcoin',
-//     {
-//       body: {
-//         data: {
-//           users: users,
-//           address: userState.setting.userBitcoinAddress,
-//           name: userState.setting.accountName,
-//           url: userState.setting.urlGoogleSheet,
-//         },
-//       },
-//     },
-//   )
-//
-//   userState.students = data
-// }
 
 const prepareUserImg = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
