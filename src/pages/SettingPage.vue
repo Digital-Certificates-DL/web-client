@@ -20,7 +20,7 @@ import { SettingForm } from '@/forms'
 <style scoped lang="scss">
 .setting-page {
   width: var(--page-large);
-  margin: auto;
+  margin: 0 auto;
 }
 
 .setting-page__title {
@@ -35,7 +35,14 @@ import { SettingForm } from '@/forms'
 .setting-page__info {
   display: grid;
   justify-items: center;
-  max-height: toRem(100);
-  margin-bottom: toRem(50);
+  margin-bottom: toRem(30);
+
+  @include respond-to('large') {
+    margin-bottom: toRem(23);
+  }
+
+  @include respond-to('xmedium') {
+    margin-bottom: toRem(15);
+  }
 }
 </style>

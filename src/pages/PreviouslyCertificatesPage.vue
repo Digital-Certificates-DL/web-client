@@ -16,12 +16,12 @@
         <app-dropdown
           :title="'Data'"
           :items="dropDownDataList"
-          :main-image="'@/../static/branding/data-ico.png'"
+          :main-image="'/branding/data-ico.png'"
         />
         <app-dropdown
           :title="'All'"
           :items="dropDownStateList"
-          :main-image="'@/../static/branding/success-ico.png'"
+          :main-image="'/branding/success-ico.png'"
         />
       </div>
 
@@ -124,23 +124,23 @@ const processState = ref('')
 
 const dropDownCourseList = [
   {
-    img: '@/../static/branding/solidity-ico.png',
+    img: '/branding/solidity-ico.png',
     text: 'All',
   },
   {
-    img: '@/../static/branding/solidity-ico.png',
+    img: '/branding/solidity-ico.png',
     text: 'Solidity',
   },
   {
-    img: '@/../static/branding/solidity-ico.png',
+    img: '/branding/solidity-ico.png',
     text: 'Golang',
   },
   {
-    img: '@/../static/branding/solidity-ico.png',
+    img: '/branding/solidity-ico.png',
     text: 'Database',
   },
   {
-    img: '@/../static/branding/solidity-ico.png',
+    img: '/branding/solidity-ico.png',
     text: 'Defi',
   },
 ] as DropdownItem[]

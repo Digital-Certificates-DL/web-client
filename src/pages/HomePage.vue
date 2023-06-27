@@ -3,18 +3,11 @@
     <auth-modal
       :token-link="authLink"
       @send-auth-code="updateCode"
-      :is-shown="isUnauthorized"
+      v-model:is-shown="isUnauthorized"
     />
     <div class="home-page__body">
       <h2>{{ $t('home.title') }}</h2>
       <div class="home-page__body-nav">
-        <home-body-nav
-          class="home-page__body-nav-item"
-          @active="router.push(ROUTE_NAMES.generate)"
-          :title="$t('home.create-title')"
-          :name="$t('home.create-name')"
-          :description="$t('home.create-description')"
-        />
         <home-body-nav
           class="home-page__body-nav-item"
           @active="router.push(ROUTE_NAMES.template)"
@@ -22,12 +15,19 @@
           :name="$t('home.upload-name')"
           :description="$t('home.upload-description')"
         />
+        <home-body-nav
+          class="home-page__body-nav-item"
+          @active="router.push(ROUTE_NAMES.generate)"
+          :title="$t('home.create-title')"
+          :name="$t('home.create-name')"
+          :description="$t('home.create-description')"
+        />
       </div>
       <div class="home__content">
         <div class="home__content-template">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home.template-list-title') }}</h3>
-            <app-button :text="$t('home.get-all-btn')" />
+            <app-button color="info" :text="$t('home.get-all-btn')" />
           </div>
           <div>
             <div v-if="templates.length === 0" class="home-page__items">
@@ -42,7 +42,9 @@
                 :key="item"
               >
                 <home-item
-                  :img="item.background_img"
+                  :img="
+                    item.background_img || '@/../static/branding/template.png'
+                  "
                   :title="item.template_name"
                 />
               </div>
@@ -55,6 +57,7 @@
 
             <app-button
               :text="$t('home.get-all-btn')"
+              color="info"
               :route="{
                 name: $routes.certificates,
               }"
@@ -198,7 +201,6 @@ getTemplates()
 
 <style scoped lang="scss">
 .home-page {
-  max-width: var(--page-large);
   margin: 0 auto;
 }
 

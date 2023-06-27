@@ -136,10 +136,10 @@
     "certificate-alt": "Certificate"
   },
   "auth-modal": {
-    "title" : "SBT issuance",
+    "title" : "Access token",
     "input-code-label": "Your access code",
     "step-1-title": "Get the code",
-    "step-1-description": "To complete this step?  you need to follow the  link  to get  the code",
+    "step-1-description": "To complete this step, you need to follow the  link  to get  the code",
     "step-2-title": "Enter the code",
     "close-btn": "Close",
     "send-code-btn": "Send code"

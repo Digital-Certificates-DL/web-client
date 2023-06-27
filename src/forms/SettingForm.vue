@@ -116,8 +116,16 @@ const save = async () => {
 
 <style scoped lang="scss">
 .setting-form__form-input {
-  margin-bottom: toRem(50);
+  margin-bottom: toRem(40);
   width: toRem(458);
+
+  @include respond-to('xmedium') {
+    margin-bottom: toRem(30);
+  }
+
+  @include respond-to('large') {
+    margin-bottom: toRem(35);
+  }
 }
 
 .setting-form__btns {

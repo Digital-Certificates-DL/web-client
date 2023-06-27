@@ -3,27 +3,23 @@
     <app-logo class="app-navbar__logo" />
 
     <div class="app-navbar__configuration">
-      <div class="app-navbar__metamask">
-        <app-button
-          class="app-navbar__btn"
-          color="info"
-          :disabled="provider.isConnected"
-          :text="preparedAddress || $t('app-navbar.metamask-connect')"
-          :icon-left="$icons.metamask"
-          @click="connect"
-        />
-      </div>
+      <app-button
+        class="app-navbar__btn app-navbar__metamask"
+        color="info"
+        :disabled="provider.isConnected"
+        :text="preparedAddress || $t('app-navbar.metamask-connect')"
+        :icon-left="$icons.metamask"
+        @click="connect"
+      />
 
-      <div class="app-navbar__settings">
-        <app-button
-          class="app-navbar__btn"
-          color="info"
-          :icon-left="$icons.settings"
-          :route="{
-            name: $routes.settings,
-          }"
-        />
-      </div>
+      <app-button
+        class="app-navbar__btn app-navbar__settings"
+        color="info"
+        :icon-left="$icons.settings"
+        :route="{
+          name: $routes.settings,
+        }"
+      />
     </div>
   </div>
 </template>
@@ -80,6 +76,8 @@ onBeforeMount(() => {
 
 .app-navbar__configuration {
   display: flex;
+  justify-content: space-between;
+  width: toRem(200);
 }
 
 .app-navbar__img {

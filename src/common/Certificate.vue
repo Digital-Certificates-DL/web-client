@@ -11,7 +11,7 @@
           <img
             v-if="props.user.signature !== ''"
             class="certificate__img"
-            :src="props.user.img || '@/../static/branding/template.jpg'"
+            :src="props.user.img || '/branding/template.jpg'"
             alt="certificate"
           />
           <div v-else class="certificate__img"></div>

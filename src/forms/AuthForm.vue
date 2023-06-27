@@ -1,5 +1,27 @@
 <template>
   <form class="auth-form">
+    <h3 class="auth-form__title">
+      {{ $t('auth-modal.title') }}
+    </h3>
+    <div>
+      <p class="auth-form__step-title">
+        {{ $t('auth-modal.step-1-title') }}
+      </p>
+
+      <a
+        class="auth-form__link"
+        :href="tokenLink"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ $t('auth-modal.step-1-description') }}
+      </a>
+    </div>
+
+    <p class="auth-form__step-title">
+      {{ $t('auth-modal.step-2-title') }}
+    </p>
+
     <input-field
       v-model="accessCodeInputData"
       class="auth-modal-form__input"
@@ -12,18 +34,14 @@
       <app-button
         class="auth-modal-form__btn"
         color="info"
-        :text="$t('auth-modal-form.get-access-btn')"
-        @click="window.open(props.tokenLink, '_blank')"
-      />
-      <app-button
-        class="auth-modal-form__btn"
-        color="info"
+        size="large"
         :text="$t('auth-modal-form.send-code-btn')"
         @click="sendCode"
       />
       <app-button
         class="auth-modal-form__btn"
         color="info"
+        size="large"
         :text="$t('auth-modal-form.close-btn')"
         @click="emit('close-modal')"
       />
@@ -39,7 +57,7 @@ import { AppButton } from '@/common'
 const isInputValid = ref(false)
 const accessCodeInputData = ref('')
 
-const props = defineProps<{
+defineProps<{
   tokenLink: string
 }>()
 
@@ -65,24 +83,30 @@ const validateCode = () => {
   display: grid;
 }
 
+.auth-form__title {
+  margin-bottom: toRem(20);
+}
+
 .auth-form__btns {
   display: flex;
   height: toRem(58);
   justify-content: space-between;
 }
 
-.auth-modal-form__btn {
-  width: toRem(100);
-}
-
-.auth-modal-form__btn-link {
-  max-height: toRem(58);
-  width: toRem(200);
-  margin: 0 auto;
-}
-
 .auth-modal-form__input {
   margin: 0 auto;
-  width: toRem(350);
+}
+
+.auth-form__step-title {
+  font-size: toRem(21);
+  font-weight: 700;
+}
+
+.auth-modal-form__btn {
+  width: 45%;
+}
+
+.auth-form__link {
+  color: var(--text-primary-light);
 }
 </style>

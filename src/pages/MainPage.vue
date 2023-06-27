@@ -35,7 +35,7 @@
             class="main__metamask-btn"
             color="info"
             size="large"
-            :text="$t('main.metamask-disconnect-btn')"
+            :text="$t('main-page.metamask-disconnect-btn')"
             @click="provider.disconnect"
           />
         </div>
