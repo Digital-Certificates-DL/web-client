@@ -60,7 +60,7 @@ import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
-import btc from '@/utils/bitcoin.util'
+import { Bitcoin } from '@/utils'
 import {
   ErrorMessage,
   AppButton,
@@ -144,7 +144,7 @@ const bitcoinTimestamp = async () => {
 
   const certificates = listForTimestamp
   for (const certificate of certificates.value) {
-    const tx = await btc.Bitcoin.PrepareLegacyTXTestnet(
+    const tx = await Bitcoin.PrepareLegacyTXTestnet(
       userState.setting.bip39MnemonicPhrase,
       userState.setting.keyPathID,
     )
@@ -153,7 +153,7 @@ const bitcoinTimestamp = async () => {
     if (hex === '') {
       return
     }
-    const sendResp = await btc.Bitcoin.SendToTestnet(hex)
+    const sendResp = await Bitcoin.SendToTestnet(hex)
     certificate.txHash = sendResp.data.tx.hash
     userState.setting.lastExAddress = tx?.exAddress || ''
   }

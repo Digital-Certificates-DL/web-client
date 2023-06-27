@@ -7,8 +7,10 @@
         <app-button
           class="app-navbar__btn"
           color="info"
-          :disabled="provider.isConnected"
-          :text="preparedAddress || $t('app-navbar.metamask-connect')"
+          :text="prepareAddress(
+    provider.isConnected,
+    provider.selectedAddress!,
+  ) || $t('app-navbar.metamask-connect')"
           :icon-left="$icons.metamask"
           @click="connect"
         />

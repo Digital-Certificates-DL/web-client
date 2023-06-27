@@ -1,14 +1,10 @@
 <template>
   <form class="mint-form" action="">
     <input-field
-      v-model="inputAddressValue"
+      v-model="form.address"
       :label="$t('mint-form.placeholder-metamask-address')"
-      :error-message="
-        validateAddress(inputAddressValue)
-          ? ''
-          : $t('validations.field-error_address')
-      "
-      :disabled="isFieldDisable"
+      :disabled="isFormDisabled"
+      :error-message="getFieldErrorMessage('address')"
     />
     <div class="mint-form__btns">
       <app-button
@@ -21,7 +17,7 @@
         class="mint-form__btn"
         color="info"
         :text="$t('mint-form.close-btn')"
-        :disabled="isFieldDisable"
+        :disabled="isFormDisabled"
         @click="emit('mint-finished')"
       />
     </div>
@@ -29,20 +25,26 @@
 </template>
 
 <script setup lang="ts">
-import { validateAddress } from '@/validators'
+import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
 
 import { api } from '@/api'
 import { IpfsJSONResponse, CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { ref } from 'vue'
-import { useErc721 } from '@/composables'
+import { useErc721, useForm, useFormValidation } from '@/composables'
+import { reactive } from 'vue'
 
 const { safeMint } = useErc721()
-const isFieldDisable = ref(false)
-const inputAddressValue = ref('')
-const isInputAddressValid = ref('')
+
+const { isFormDisabled, disableForm, enableForm } = useForm()
+
+const form = reactive({
+  address: '',
+})
+const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
+  address: { required, address },
+})
 
 const props = defineProps<{
   certificate: CertificateJSONResponse
@@ -53,10 +55,10 @@ const emit = defineEmits<{
 }>()
 
 const mint = async () => {
-  if (!isInputAddressValid.value) return
+  if (!isFormValid()) return
 
   try {
-    isFieldDisable.value = true
+    disableForm()
     const ipfsLink = await api.post<IpfsJSONResponse>(
       '/integrations/ccp/certificate/ipfs',
       {
@@ -70,13 +72,11 @@ const mint = async () => {
       },
     )
 
-    await safeMint(inputAddressValue.value, ipfsLink.data.attributes.url)
-    isFieldDisable.value = false
+    await safeMint(form.address, ipfsLink.data.attributes.url)
   } catch (error) {
-    isFieldDisable.value = false
-
     ErrorHandler.process(error)
   } finally {
+    enableForm()
     emit('mint-finished')
   }
 }

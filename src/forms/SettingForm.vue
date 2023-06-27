@@ -61,7 +61,7 @@ import { reactive } from 'vue'
 import { CertificateJSONResponseList, UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import btc from '@/utils/bitcoin.util'
+import { Bitcoin } from '@/utils'
 import { api } from '@/api'
 import { ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
@@ -91,7 +91,7 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setting = form
-  const address = btc.Bitcoin.getAddressFromWIF(form.signKey)
+  const address = Bitcoin.getAddressFromWIF(form.signKey)
 
   userState.setting.userBitcoinAddress = address || ''
 

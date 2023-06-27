@@ -17,6 +17,7 @@
 <script lang="ts" setup>
 import { SettingForm } from '@/forms'
 </script>
+
 <style scoped lang="scss">
 .setting-page {
   width: var(--page-large);
