@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="main-page__endpoints-side">
-        <nav-button
+        <main-nav
           class="main-page__navigation-item"
           color="warning"
           size="large"
@@ -50,7 +50,7 @@
           :description="$t('main-page.main-nav-settings-description')"
           @click="router.push(ROUTE_NAMES.settings)"
         />
-        <nav-button
+        <main-nav
           class="main-page__navigation-item"
           color="info"
           size="large"
@@ -59,7 +59,7 @@
           :description="$t('main-page.main-nav-certificates-description')"
           @click="router.push(ROUTE_NAMES.certificates)"
         />
-        <nav-button
+        <main-nav
           class="main-page__navigation-item"
           color="success"
           size="large"
@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton, NavButton, AppLogo } from '@/common'
+import { AppButton, MainNav, AppLogo } from '@/common'
 
 import { useWeb3ProvidersStore } from '@/store'
 

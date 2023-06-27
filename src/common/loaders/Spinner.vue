@@ -7,10 +7,6 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'spinner',
 })
-
-defineProps<{
-  title?: string
-}>()
 </script>
 
 <style lang="scss" scoped>
