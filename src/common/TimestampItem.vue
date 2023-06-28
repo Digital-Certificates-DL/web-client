@@ -1,15 +1,15 @@
 <template>
-  <div class="home-item">
+  <div class="timestamp-item">
     <checkbox-field
       :model-value="isSelected"
       v-show="isShow"
       @click="selectItem"
     />
-    <div class="home-item__body">
-      <div class="home-item__name">
+    <div class="timestamp-item__body">
+      <div class="timestamp-item__name">
         <p>{{ props.name }}</p>
       </div>
-      <div class="home-item__date">
+      <div class="timestamp-item__date">
         <p>{{ props.date }}</p>
       </div>
 
@@ -29,14 +29,14 @@
         class="certificate__btn certificate__btn-download"
         @click="window.open(props.user.certificate, '_blank')"
       >
-        <img src="@/../static/branding/download.png" alt="download img" />
+        <img src="/branding/download.png" alt="download img" />
       </app-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import CheckboxField from '@/fields/CheckboxField.vue'
 import { ref } from 'vue'
 import AppButton from '@/common/AppButton.vue'
@@ -47,7 +47,7 @@ const props = withDefaults(
     isShow: boolean
     name: string
     date: string
-    user: UserJSONResponse
+    user: CertificateJSONResponse
   }>(),
   {
     isShow: false,
@@ -55,8 +55,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'select', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
+  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const selectItem = () => {
@@ -66,28 +66,30 @@ const selectItem = () => {
 </script>
 
 <style scoped lang="scss">
-.home-item {
+.timestamp-item {
   display: flex;
   justify-content: space-between;
   border: var(--border-primary-main), toRem(1), solid;
   border-radius: toRem(8);
   padding: toRem(16);
   align-content: center;
+  align-items: center;
 }
 
-.home-item__body {
+.timestamp-item__body {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
-.home-item__name,
-.home-item__date {
+.timestamp-item__name,
+.timestamp-item__date {
   width: 30%;
   display: flex;
 }
 
-.home-item__download {
+.timestamp-item__download {
   background: var(--app-button-bg);
 }
 </style>

@@ -12,6 +12,7 @@ export const useUserStore = defineStore('users-store', {
     return {
       bufferUserList: [] as CertificateJSONResponse[],
       students: [] as CertificateJSONResponse[],
+      bufferCertificateList: [] as CertificateJSONResponse[],
       setting: {} as UserSetting,
     }
   },

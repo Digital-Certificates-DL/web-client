@@ -6,47 +6,48 @@
       @click="selectItem"
     />
     <div class="certificate__body">
-      <div class="certificate__img-wrp" @click="selectItem">
-        <img
-          v-if="props.user.signature !== ''"
-          class="certificate__img"
-          :src="props.user.img || '@/../static/branding/template.jpg'"
-          alt="certificate"
-        />
-        <div v-else class="certificate__img"></div>
-        <p class="certificate__name">
-          {{ props.user.participant }}
-        </p>
-      </div>
-      <div class="certificate__titles">
-        <p>
-          {{ props.user.courseTitle }}
-        </p>
-        <p>
-          {{ props.user.date }}
-        </p>
+      <div class="certificate__info">
+        <div class="certificate__img-wrp" @click="selectItem">
+          <img
+            v-if="props.user.signature !== ''"
+            class="certificate__img"
+            :src="props.user.img || '/branding/template.jpg'"
+            alt="certificate"
+          />
+          <div v-else class="certificate__img"></div>
+          <p class="certificate__name">
+            {{ props.user.participant }}
+          </p>
+        </div>
+        <div class="certificate__titles">
+          <p>
+            {{ props.user.courseTitle }}
+          </p>
+          <p>
+            {{ props.user.date }}
+          </p>
+        </div>
       </div>
 
       <div class="certificate__btns" v-if="user.signature !== ''">
         <app-button
           class="certificate__btn"
           :text="$t('certificate.mint-text')"
-          @click="emit('open-modal', true, props.user)"
+          @click="emit('open-modal', props.user)"
         />
         <app-button
           class="certificate__btn"
           :text="$t('certificate.timestamp-btn')"
-          @click="emit('open-modal', true, props.user)"
+          @click="selectItem"
         />
 
         <app-button
           class="certificate__btn certificate__btn-download"
-          @click="window.open(props.user.certificate, '_blank')"
-        >
-          <img src="@/../static/branding/download.png" alt="download img" />
-        </app-button>
+          icon-left="download"
+          @click="downloadFile"
+        />
       </div>
-      <div class="certificate__btns" v-else>
+      <div v-else class="certificate__btns">
         <app-button
           class="certificate__btn"
           :text="$t('certificate.generate-btn')"
@@ -59,7 +60,7 @@
 
 <script setup lang="ts">
 import { AppButton } from '@/common'
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
@@ -67,18 +68,22 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: UserJSONResponse): boolean
-  (e: 'select', state: boolean, user: UserJSONResponse): boolean
+  (e: 'open-modal', user: CertificateJSONResponse): boolean
+  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
   isShow: boolean
-  user: UserJSONResponse
+  user: CertificateJSONResponse
 }>()
 
 const selectItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value, props.user)
+}
+
+const downloadFile = () => {
+  window.open(props.user.certificate, '_blank')
 }
 </script>
 
@@ -90,6 +95,14 @@ const selectItem = () => {
   padding-bottom: toRem(10);
   border-bottom: var(--border-primary-main) toRem(1) solid;
   max-width: var(--page-large);
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
 .certificate__body {
@@ -104,21 +117,43 @@ const selectItem = () => {
   align-items: center;
 }
 
+.certificate__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: toRem(950);
+
+  @include respond-to(large) {
+    width: toRem(800);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(650);
+  }
+}
+
 .certificate__img {
   width: toRem(74);
   border-radius: toRem(4);
   margin-right: toRem(10);
 
+  @include respond-to(xmedium) {
+    width: toRem(54);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(50);
+  }
+
   @include respond-to(large) {
-    width: toRem(74);
-    border-radius: toRem(4);
+    width: toRem(64);
   }
 }
 
 .certificate__titles {
   display: flex;
   justify-content: space-between;
-  width: 40%;
+  width: 60%;
 }
 
 .certificate__name {
@@ -126,7 +161,6 @@ const selectItem = () => {
 }
 
 .certificate__btn {
-  width: toRem(140);
   height: toRem(50);
 }
 

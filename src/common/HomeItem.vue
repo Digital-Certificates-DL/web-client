@@ -1,15 +1,19 @@
 <template>
-  <div class="home-item">
+  <div class="timestamp-item">
     <div class="home-item__img-wrp">
       <div v-if="props.img === ''">
         <img
-          :src="props.img || '@/../static/branding/template.jpg'"
+          :src="'/branding/template.jpg'"
           class="home-item__img"
           alt="not found"
         />
       </div>
       <div v-else>
-        <img class="home-item__img" :src="props.img" alt="error" />
+        <img
+          class="home-item__img"
+          :src="props.img || '/branding/template.jpg'"
+          alt="error"
+        />
       </div>
     </div>
     <div class="home-item__title">

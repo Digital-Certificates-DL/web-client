@@ -1,5 +1,5 @@
 <template>
-  <div :class="navButtonClasses">
+  <div :class="mainNavClasses">
     <app-button
       class="main-nav__btn"
       :color="props.color"
@@ -47,8 +47,8 @@ const props = withDefaults(
   },
 )
 
-const navButtonClasses = computed(() =>
-  ['nav-button', `nav-button--${props.size}`].join(' '),
+const mainNavClasses = computed(() =>
+  ['main-nav', `main-nav--${props.size}`].join(' '),
 )
 </script>
 

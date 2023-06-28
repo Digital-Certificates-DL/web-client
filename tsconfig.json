@@ -24,6 +24,7 @@
       "@/*": ["src/*"],
       "@config": ["src/config.ts"],
       "@static": ["static"],
+      "crypto": ["node_modules/crypto-browserify"]
     },
     "lib": [
       "esnext",

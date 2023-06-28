@@ -20,7 +20,7 @@ const routes = [
   {
     path: '/home',
     name: ROUTE_NAMES.home,
-    component: () => import('@/pages/Home.vue'),
+    component: () => import('@/pages/HomePage.vue'),
   },
   {
     path: '/certificates',
@@ -31,11 +31,6 @@ const routes = [
     path: '/settings',
     name: ROUTE_NAMES.settings,
     component: () => import('@/pages/SettingPage.vue'),
-  },
-  {
-    path: '/timestamp',
-    name: ROUTE_NAMES.timestamp,
-    component: () => import('@/pages/Timestamp.vue'),
   },
 ]
 

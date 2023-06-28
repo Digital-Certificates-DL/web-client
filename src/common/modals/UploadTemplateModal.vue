@@ -1,24 +1,16 @@
 <template>
   <modal
     :is-shown="isShown"
-    :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <div class="loader-modal">
-      <loader />
-      <h2 class="loader-modal__title">
-        {{ props.state }}
-      </h2>
-    </div>
+    <div class="upload-template-modal__pane"></div>
   </modal>
 </template>
 
 <script lang="ts" setup>
 import { Modal } from '@/common'
-import Loader from '@/common/Loader.vue'
 
-const props = defineProps<{
-  state: string
+defineProps<{
   isShown: boolean
 }>()
 
@@ -28,9 +20,9 @@ const emit = defineEmits<{
 </script>
 
 <style scoped lang="scss">
-.loader-modal {
-  width: toRem(350);
-  height: toRem(350);
+.upload-template-modal__pane {
+  width: toRem(400);
+  height: toRem(600);
   background: var(--white);
   border-radius: toRem(15);
   padding: toRem(24);

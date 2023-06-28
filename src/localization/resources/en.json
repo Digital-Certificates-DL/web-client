@@ -54,21 +54,30 @@
     "main-nav-certificates-description": "Your certificates",
     "main-nav-generation-title": "Generation",
     "main-nav-generation-description": "Generate certificates",
-    "main-nav-settings-title": "Settings",
+    "page-info-name": "Service name",
+
+    "main-nav-home-title": "Home",
+    "main-nav-home-description": "Home",
+    "main-nav-settings-title": "Setup",
     "main-nav-settings-description": "Your settings",
     "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "main-nav-generation-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
+    "main-nav-home-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
   },
   "previously-certificates-page": {
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
+    "generate-btn": "Generate",
+    "bitcoin-btn": "Timestamp",
+    "refresh-btn": "Load from sheet",
     "certificates-subtitle-date": "Date",
+    "certificates-bitcoin-btn": "Make timestamp",
     "certificates-bitcoin-btn": "Bitcoin",
     "generate-btn": "Generate",
     "error-certificate-list": "Empty certificate list",
+    "certificates-find": "Find"
     "certificates-find": "find",
     "bitcoin-btn": "Timestamp"
 
@@ -87,7 +96,10 @@
     "step-3-placeholder": "Link",
     "step-1-placeholder": "Name",
     "start-btn": "Start",
-    "cancel-btn": "Cancel"
+    "cancel-btn": "Cancel",
+    "upload-new-template-symbol": "+",
+    "upload-new-template": "Upload new template",
+    "choose-template": "Choose from my templates"
   },
   "certificate": {
     "img-alt":  "Certificate",
@@ -96,6 +108,11 @@
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp"
 
+    "generate-btn": "Generate",
+    "timestamp-btn": "Timestamp",
+    "mint-text": "Іssue SBT",
+    "bitcoin-btn": "Make timestamp",
+    "img-alt":  "Certificate"
   },
   "setting-form": {
     "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -128,8 +145,54 @@
     "label-participant": "Full name",
     "label-date": "Issued on",
     "label-course": "Course name",
+    "label-metamask-address": "Student’s MetaMask address",
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "certificate-alt": "Certificate"
+  },
+  "auth-modal": {
+    "title" : "Access token",
+    "input-code-label": "Your access code",
+    "step-1-title": "Get the code",
+    "step-1-description": "To complete this step, you need to follow the  link  to get  the code",
+    "step-2-title": "Enter the code",
+    "close-btn": "Close",
+    "send-code-btn": "Send code"
+  },
+  "app-navbar": {
+    "metamask-ico-alt": "metamask ico",
+    "metamask-connect" : "Connect"
+  },
+  "home": {
+    "upload-title": "Create new template",
+    "upload-name": "Upload",
+    "upload-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
+    "create-title": "Generate certificates",
+    "create-name": "Generate",
+    "create-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
+    "title" : "Create new",
+    "template-list-title": "My templates",
+    "certificate-list-title": "Previously certificates",
+    "get-all-btn": "See more",
+    "error-templates-nil": "templates was not found",
+    "error-certificate-nil": "certificates was not found"
+  },
+  "timestamp-page": {
+    "page-title": "Previously certificates",
+    "bitcoin-btn": "Make timestamp",
+    "input-placeholder": "Find"
+  },
+  "timestamp-item":{
+    "timestamp-btn": "Timestamp"
+  },
+  "template_page": {
+    "title": "Upload new  template",
+    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.\n",
+    "label-participant": "Full name",
+    "label-date": "Issued on",
+    "label-course": "Course name",
     "certificate-alt": "Certificate",
-    "label-metamask-address": "Student’s MetaMask address"
+    "label-metamask-address": "Type student’s Ethereum address"
   },
   "auth-modal-form": {
     "title" : "SBT issuance",
@@ -138,14 +201,10 @@
     "get-access-btn": "Get access",
     "send-code-btn": "Send code"
   },
-  "app-navbar": {
-    "metamask-ico-alt": "metamask ico",
-    "metamask-connect" : "Connect"
-  },
   "mint-form": {
     "close-btn": "Close",
     "mint-btn": "Mint",
-    "placeholder-metamask-address": "Student’s MetaMask address"
+    "placeholder-metamask-address": "Type student’s Ethereum address"
   },
   "home": {
     "upload-title": "Upload new template",

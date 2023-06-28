@@ -57,11 +57,11 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
+import { PrivKey } from '@ts-bitcoin/core'
 import { reactive } from 'vue'
 import { CertificateJSONResponseList, UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { Bitcoin } from '@/utils'
 import { api } from '@/api'
 import { ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
@@ -91,7 +91,7 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setting = form
-  const address = Bitcoin.getAddressFromWIF(form.signKey)
+  const address = PrivKey.Mainnet.fromWif(form.signKey).toString()
 
   userState.setting.userBitcoinAddress = address || ''
 
@@ -116,8 +116,16 @@ const save = async () => {
 
 <style scoped lang="scss">
 .setting-form__form-input {
-  margin-bottom: toRem(50);
+  margin-bottom: toRem(40);
   width: toRem(458);
+
+  @include respond-to('xmedium') {
+    margin-bottom: toRem(30);
+  }
+
+  @include respond-to('large') {
+    margin-bottom: toRem(35);
+  }
 }
 
 .setting-form__btns {

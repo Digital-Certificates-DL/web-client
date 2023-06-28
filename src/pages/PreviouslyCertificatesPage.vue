@@ -1,32 +1,66 @@
 <template>
+  <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   <div class="previously-certificates-page">
     <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
-    <div class="previously-certificates-page__search">
-      <div class="previously-certificates-page__search-input-wrp">
+    <div class="previously-certificates-page__search-wrp">
+      <div class="previously-certificates-page__search">
         <input-field
-          v-model="searchInputValue"
+          class="previously-certificates-page__search-input"
+          :model-value="searchInputValue"
           :placeholder="$t('previously-certificates-page.certificates-find')"
-          @input="find"
         />
       </div>
 
-      <div class="previously-certificates-page__btns">
-        <app-button
-          class="previously-certificates-page__btn"
-          color="info"
-          size="medium"
-          :text="$t('previously-certificates-page.certificates-bitcoin-btn')"
-          @click="bitcoinTimestamp"
+      <app-button
+        class="previously-certificates-page__btn"
+        color="info"
+        :text="$t('previously-certificates-page.refresh-btn')"
+        @click="refresh"
+      />
+      <div class="previously-certificates-page__filters">
+        <app-dropdown :items="dropDownCourseList" @select-item="findByCourse" />
+        <app-dropdown
+          :title="'Data'"
+          :items="dropDownDataList"
+          :main-image="'/branding/data-ico.png'"
         />
+        <app-dropdown
+          :title="'All'"
+          :items="dropDownStateList"
+          :main-image="'/branding/success-ico.png'"
+        />
+      </div>
+
+      <div class="previously-certificates-page__btns-wrp">
+        <div
+          v-if="selectedCount > 0"
+          class="previously-certificates-page__btns"
+        >
+          <p class="previously-certificates__count">
+            {{ selectedCount }}
+          </p>
+          <app-button
+            class="previously-certificates-page__btn"
+            color="info"
+            :text="$t('previously-certificates-page.generate-btn')"
+            @click="generate"
+          />
+          <app-button
+            class="previously-certificates-page__btn"
+            color="info"
+            :text="$t('previously-certificates-page.bitcoin-btn')"
+            @click="timestamp"
+          />
+        </div>
       </div>
     </div>
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
-      :certificate="currentCertificate"
+      :user="currentUser"
     />
 
-    <div class="previously-certificates-page__list">
-      <div class="previously-certificates-page___list-subtitle">
+    <div class="certificates__list">
+      <div class="previously-certificates-page__list-subtitle">
         <p>
           {{ $t('previously-certificates-page.certificates-subtitle-name') }}
         </p>
@@ -36,18 +70,18 @@
         <p>
           {{ $t('previously-certificates-page.certificates-subtitle-date') }}
         </p>
-        <p></p>
       </div>
       <div v-if="!userState.students.length">
         <error-message
-          :message="$t('previously-certificates-page.error-certificate-list')"
+          :message="$t('previously-certificates.error-certificate-list')"
         />
       </div>
-      <div v-for="item in userState.students" :key="item.id">
+      <div v-for="item in userBuffer" :key="item.id">
         <certificate
-          :certificate="item"
+          :user="item"
+          :is-show="selectedItems.length > 0"
           @open-modal="openCertificateModal"
-          @select="selectForTimestamp"
+          @select="selectItem"
         />
       </div>
     </div>
@@ -56,55 +90,117 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { CertificateJSONResponse } from '@/types'
+import { CertificateJSONResponse, DropdownItem } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
-import { Bitcoin } from '@/utils'
+import { useRouter } from '@/router'
+
 import {
   ErrorMessage,
   AppButton,
   Certificate,
+  AppDropdown,
   CertificateModal,
 } from '@/common'
+import { Signature } from '@/utils'
 import { ErrorHandler } from '@/helpers'
+import { ROUTE_NAMES } from '@/enums'
+import { LoaderModal } from '@/common/modals'
 
 const userState = useUserStore()
 
 const isCertificateModalShown = ref(false)
-const currentCertificate = ref<CertificateJSONResponse>(
-  {} as CertificateJSONResponse,
-)
-const listForTimestamp = ref<CertificateJSONResponse[]>([])
-const certificateBuffer = ref<CertificateJSONResponse[]>([])
+const currentUser = ref<CertificateJSONResponse>({} as CertificateJSONResponse)
+const selectedItems = ref<CertificateJSONResponse[]>([])
+const userBuffer = ref<CertificateJSONResponse[]>([])
 const searchInputValue = ref('')
+const selectedCount = ref(0)
 
-const openCertificateModal = (certificate: CertificateJSONResponse) => {
+const router = useRouter()
+
+const isLoading = ref(false)
+const processState = ref('')
+
+const dropDownCourseList = [
+  {
+    img: '/branding/solidity-ico.png',
+    text: 'All',
+  },
+  {
+    img: '/branding/solidity-ico.png',
+    text: 'Solidity',
+  },
+  {
+    img: '/branding/solidity-ico.png',
+    text: 'Golang',
+  },
+  {
+    img: '/branding/solidity-ico.png',
+    text: 'Database',
+  },
+  {
+    img: '/branding/solidity-ico.png',
+    text: 'Defi',
+  },
+] as DropdownItem[]
+
+const dropDownDataList = [
+  {
+    text: 'All',
+  },
+  {
+    text: 'Day',
+  },
+  {
+    text: 'Week',
+  },
+  {
+    text: 'Month',
+  },
+] as DropdownItem[]
+
+const dropDownStateList = [
+  {
+    text: 'All',
+  },
+  {
+    text: 'Generated',
+  },
+  {
+    text: 'Not generated',
+  },
+] as DropdownItem[]
+
+const openCertificateModal = (user: CertificateJSONResponse) => {
   isCertificateModalShown.value = true
-  currentCertificate.value = certificate
+  currentUser.value = user
 }
 
-const prepareCertificatesImage = (certificates: CertificateJSONResponse[]) => {
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
+const prepareUsersImage = (users: CertificateJSONResponse[]) => {
+  for (const user of users) {
+    if (!user.certificateImg) {
+      user.img = ''
       continue
     }
-    certificate.img =
-      'data:image/png;base64,' + certificate.certificateImg.toString()
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
-  return certificates
+  return users
 }
 
-const selectForTimestamp = (
-  state: boolean,
-  certificate: CertificateJSONResponse,
-) => {
+const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
-    listForTimestamp.value.push(certificate)
+    selectedItems.value.push(item)
+    selectedCount.value++
     return
   }
-  listForTimestamp.value.filter(item => item !== certificate)
+
+  const index = selectedItems.value.indexOf(item, 0)
+  if (index > -1) {
+    selectedCount.value--
+    selectedItems.value.splice(index, 1)
+  }
 }
 
 const refresh = async () => {
@@ -120,68 +216,135 @@ const refresh = async () => {
         },
       },
     )
-    userState.students = prepareCertificatesImage(data)
+    userState.students = prepareUsersImage(data)
+    userBuffer.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
-const find = () => {
-  certificateBuffer.value = userState.students
-
-  if (searchInputValue.value === '' && certificateBuffer.value) {
-    userState.students = certificateBuffer.value
+const findByCourse = (filter: DropdownItem) => {
+  const currentCourse = filter.text
+  userBuffer.value = userState.students
+  if (currentCourse === '' || currentCourse === 'All') {
+    userBuffer.value = userState.students
+    return
   }
-  userState.students.filter(item =>
-    item.participant.includes(searchInputValue.value),
-  )
+
+  const searchQuery = currentCourse.toLowerCase()
+  const filteredUsers = userBuffer.value.filter(user => {
+    const courseTitle = user.courseTitle.toLowerCase()
+    return courseTitle.includes(searchQuery)
+  })
+
+  userBuffer.value = filteredUsers
 }
 
-const bitcoinTimestamp = async () => {
-  if (userState.setting.keyPathID === 0 || !userState.setting.keyPathID) {
-    userState.setting.keyPathID = 0
+const generate = async () => {
+  isLoading.value = true
+  processState.value = 'Validate data'
+  if (!validateItemListGenerate()) {
+    isLoading.value = false
+    return
   }
 
-  const certificates = listForTimestamp
-  for (const certificate of certificates.value) {
-    const tx = await Bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.bip39MnemonicPhrase,
-      userState.setting.keyPathID,
-    )
-    const hex = tx?.hex || ''
-    userState.setting.keyPathID = tx?.index || userState.setting.keyPathID++
-    if (hex === '') {
-      return
+  processState.value = 'Sign data'
+
+  const signatures = await sign(selectedItems.value)
+  processState.value = 'Create pdfs'
+
+  const users = await createPDF(signatures)
+  processState.value = ''
+
+  isLoading.value = false
+
+  userState.bufferCertificateList = users
+  await router.push({
+    name: ROUTE_NAMES.timestamp,
+  })
+}
+
+const validateItemListGenerate = () => {
+  for (const item of selectedItems.value) {
+    if (item.certificate !== '' || item.signature !== '') {
+      ErrorHandler.process(
+        'This student already has certificate, ' + item.participant,
+      )
+      return false
     }
-    const sendResp = await Bitcoin.SendToTestnet(hex)
-    certificate.txHash = sendResp.data.tx.hash
-    userState.setting.lastExAddress = tx?.exAddress || ''
   }
-  await updateCertificates(certificates.value)
+  return true
 }
 
-const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
+const validateItemListTimestamp = () => {
+  for (const item of selectedItems.value) {
+    if (item.certificate === '' || item.signature === '') {
+      ErrorHandler.process(
+        'This student does not has certificate,' + item.participant,
+      )
+      return false
+    }
+  }
+  return true
+}
+
+const timestamp = async () => {
+  userState.bufferCertificateList = selectedItems.value
+  if (validateItemListTimestamp()) {
+    await router.push({
+      name: ROUTE_NAMES.timestamp,
+    })
+  }
+}
+
+const sign = async (users: CertificateJSONResponse[]) => {
+  const signature = new Signature(userState.setting.signKey)
+  for (const user of users) {
+    if (user.signature === undefined || user.signature == '') {
+      user.signature = signature.signMsg(user.msg)
+    }
+  }
+
+  return users
+}
+
+const createPDF = async (users: CertificateJSONResponse[]) => {
   const { data } = await api.post<CertificateJSONResponse[]>(
-    '/integrations/ccp/certificate/bitcoin',
+    '/integrations/ccp/certificate/',
     {
       body: {
         data: {
-          users: certificates,
-          address: userState.setting.userBitcoinAddress,
-          name: userState.setting.accountName,
+          users: users, //todo make better
+          address:
+            userState.setting.userBitcoinAddress ||
+            '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
           url: userState.setting.urlGoogleSheet,
+          name: userState.setting.accountName,
         },
       },
     },
   )
+  const updatedUsers = prepareUserImg(data)
+  userState.students = updatedUsers
+  return data
+}
 
-  userState.students = data
+const prepareUserImg = (users: CertificateJSONResponse[]) => {
+  for (const user of users) {
+    if (user.certificateImg === null) {
+      continue
+    }
+    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+  }
+
+  return users
 }
 
 const autoRefresh = () => {
   if (userState.students.length === 0) {
     refresh()
   }
+  userBuffer.value = userState.students
 }
 
 onBeforeMount(autoRefresh)
@@ -190,34 +353,95 @@ onBeforeMount(autoRefresh)
 <style scoped lang="scss">
 .previously-certificates-page {
   margin: 0 auto;
-  width: toRem(1400);
+  width: var(--page-large);
+
+  @include respond-to(large) {
+    width: var(--page-xmedium);
+  }
+
+  @include respond-to(xmedium) {
+    width: var(--page-medium);
+  }
 }
 
-.previously-certificates-page__search {
-  margin: toRem(24) 0;
+.previously-certificates-page__search-wrp {
+  margin-top: toRem(24);
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-radius: toRem(20);
+  margin-bottom: toRem(50);
 }
 
-.previously-certificates-page__search-input-wrp {
+.previously-certificates-page__search-input {
   width: toRem(458);
+
+  @include respond-to(large) {
+    width: toRem(400);
+    height: toRem(50);
+  }
+
+  @include respond-to(xmedium) {
+    height: toRem(30);
+    width: toRem(300);
+  }
+}
+
+.previously-certificates-page__btns-wrp {
+  width: toRem(300);
+
+  @include respond-to(large) {
+    width: toRem(250);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(200);
+  }
 }
 
 .previously-certificates-page__btns {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .previously-certificates-page__btn {
   height: toRem(52);
+  width: toRem(120);
+  margin-left: toRem(5);
   border-radius: toRem(8);
+
+  @include respond-to(large) {
+    width: toRem(80);
+    height: toRem(45);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(60);
+    height: toRem(40);
+  }
 }
 
-.previously-certificates-page___list-subtitle {
+.previously-certificates-page__list-subtitle {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: toRem(810);
   margin-top: toRem(20);
+  margin-left: toRem(120);
+
+  @include respond-to(large) {
+    width: toRem(650);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(500);
+  }
+}
+
+.previously-certificates-page__filters {
+  display: flex;
+  width: toRem(400);
+  justify-content: space-between;
 }
 </style>

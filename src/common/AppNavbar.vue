@@ -90,6 +90,8 @@ const connect = async () => {
 
 .app-navbar__configuration {
   display: flex;
+  justify-content: space-between;
+  width: toRem(200);
 }
 
 .app-navbar__img {
