@@ -50,14 +50,6 @@ const connect = async () => {
 
 <style lang="scss" scoped>
 .app-navbar {
-  //display: flex;
-  //align-items: center;
-  //justify-content: space-between;
-  //padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
-  //background: var(--background-primary-main);
-  //border-bottom: var(--border-primary-main);
-  //box-shadow: 0 toRem(4) toRem(16) rgba(var(--black), 0.06);
-  //margin-bottom: toRem(20);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +57,7 @@ const connect = async () => {
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
 
-  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black), 0.06);
+  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black-rgb), 0.06);
   margin-bottom: toRem(20);
 
   @include respond-to(xmedium) {

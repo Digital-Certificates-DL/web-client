@@ -1,5 +1,6 @@
 import { testnet } from 'ecpair/src/networks'
 import * as bitcoin from '@ts-bitcoin/core'
+
 import BIP32Factory from 'bip32'
 import * as ecc from 'tiny-secp256k1'
 const bip32 = BIP32Factory(ecc)
@@ -16,6 +17,7 @@ import {
   BlockstreamTxList,
   UTXOs,
 } from '@/types/bitcoin.types'
+import { PrivKey } from '@ts-bitcoin/core'
 
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
@@ -29,17 +31,24 @@ export class Bitcoin {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const key = bip.derivePath(path)
-        const keyPair = bitcoin.KeyPair..fromWIF(key.toWIF())
-        const address = bitcoin.Address.Mainnet.fromPubKey(keyPair.publicKey)
-        address.versionByteNum = Constants.Mainnet.Address.pubKeyHash
-
-        if (address === undefined) {
+        const keyPair = bitcoin.KeyPair.fromPrivKey(
+          bitcoin.PrivKey.Mainnet.fromWif(key.toWIF()),
+        )
+        const address = bitcoin.Address.Mainnet.fromPubKey(keyPair.pubKey)
+        address.versionByteNum = bitcoin.Constants.Mainnet.Address.pubKeyHash
+        bitcoin.Address.console.log('path : ', path)
+        console.log('address: ', address.toString())
+        if (!address) {
           continue
         }
 
         const txs = await axios.get<BlockstreamTxList>(
           'https://blockstream.info/api/address/' + address + '/txs',
         )
+
+        console.log('tx: ', txs)
+        console.log('emptyAddreeses: ', emptyAddreeses)
+
         if (txs.data.length === 0) {
           emptyAddreeses++
           continue
@@ -48,12 +57,12 @@ export class Bitcoin {
         const utxos = await axios.get<UTXOs>(
           'https://blockstream.info/api/address/' + address + '/utxo',
         )
-        if (utxos.data.length === 0) {
+        if (!utxos.data) {
           continue
         }
 
         const addressInfo: AddressInfo = {
-          address: address,
+          address: address.toString(),
           path: path,
           utxos: utxos.data,
         }
