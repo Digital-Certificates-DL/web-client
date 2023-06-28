@@ -11,7 +11,7 @@
     </div>
     <div class="main-page__body">
       <div class="main-page__metamask-block">
-        <div v-if="!web3Store.provider.isConnected" class="main-page__metamask">
+        <div v-if="!provider.isConnected" class="main-page__metamask">
           <p class="main-page__metamask-title">
             {{ $t('main-page.metamask-connect') }}
           </p>
@@ -22,21 +22,21 @@
             class="main-page__metamask-btn main-page__btn-connect"
             color="info"
             :text="$t('main-page.metamask-connect-btn')"
-            :disabled="web3Store.provider.isConnected"
+            :disabled="provider.isConnected"
             @click="connect"
           />
         </div>
         <div v-else class="main-page__metamask">
           <p>
-            {{ web3Store.provider.selectedAddress }}
+            {{ provider.selectedAddress }}
           </p>
           <app-button
-            v-if="web3Store.provider.isConnected"
+            v-if="provider.isConnected"
             class="main-page__metamask-btn"
             color="info"
             size="large"
             :text="$t('main-page.metamask-disconnect-btn')"
-            @click="web3Store.provider.disconnect"
+            @click="provider.disconnect"
           />
         </div>
       </div>
@@ -48,7 +48,7 @@
           :body="$t('main-page.main-nav-settings-body')"
           :title="$t('main-page.main-nav-settings-title')"
           :description="$t('main-page.main-nav-settings-description')"
-          @click="router.push(ROUTE_NAMES.settings)"
+          @click="router.push($routes.settings)"
         />
         <nav-button
           class="main-page__navigation-item"
@@ -57,7 +57,7 @@
           :body="$t('main-page.main-nav-certificates-body')"
           :title="$t('main-page.main-nav-certificates-title')"
           :description="$t('main-page.main-nav-certificates-description')"
-          @click="router.push(ROUTE_NAMES.certificates)"
+          @click="router.push($routes.certificates)"
         />
         <nav-button
           class="main-page__navigation-item"
@@ -66,7 +66,7 @@
           :title="$t('main-page.main-nav-generation-title')"
           :description="$t('main-page.main-nav-generation-description')"
           :body="$t('main-page.main-nav-generation-body')"
-          @click="router.push(ROUTE_NAMES.generate)"
+          @click="router.push($routes.generate)"
         />
       </div>
     </div>
@@ -79,14 +79,13 @@ import { AppButton, NavButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 
 import { ErrorHandler } from '@/helpers'
-import { ROUTE_NAMES } from '@/enums'
 import { router } from '@/router'
 
-const web3Store = useWeb3ProvidersStore()
+const { provider } = useWeb3ProvidersStore()
 
 const connect = async () => {
   try {
-    await web3Store.provider.connect()
+    await provider.connect()
   } catch (error) {
     ErrorHandler.process(error)
   }

@@ -1,7 +1,7 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
     <router-view v-slot="{ Component, route }">
-      <app-navbar v-if="route.name !== ROUTE_NAMES.main" />
+      <app-navbar v-if="route.name !== $routes.main" />
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
         <component class="app__main" :is="Component" />
       </transition>
@@ -14,7 +14,7 @@ import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
-import { PROVIDERS, ROUTE_NAMES } from '@/enums'
+import { PROVIDERS } from '@/enums'
 
 import { useWeb3ProvidersStore } from '@/store'
 import AppNavbar from '@/common/AppNavbar.vue'

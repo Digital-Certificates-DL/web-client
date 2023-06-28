@@ -19,6 +19,7 @@ import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
+import { AuthModal } from '@/common/modals'
 
 const authLink = ref('')
 

@@ -11,8 +11,8 @@ import axios from 'axios'
 import { Network } from 'bitcoinjs-lib/src/networks'
 import { PustTxResponce, UTXO } from '@/types/bitcoin.types'
 
-//todo  find utxos in first 100 keys
-
+// the file will be heavily modified in the next request
+// and now you can not watch it
 export class Bitcoin {
   static PrepareLegacyTXTestnet = async (
     mnph: string,

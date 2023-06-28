@@ -1,5 +1,5 @@
 <template>
-  <form class="mint-form" action="">
+  <form class="mint-form">
     <input-field
       v-model="form.address"
       :label="$t('mint-form.placeholder-metamask-address')"
@@ -42,6 +42,7 @@ const { isFormDisabled, disableForm, enableForm } = useForm()
 const form = reactive({
   address: '',
 })
+
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
   address: { required, address },
 })

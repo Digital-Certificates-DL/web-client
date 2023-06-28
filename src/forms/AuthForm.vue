@@ -6,7 +6,6 @@
       :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
       :error-message="getFieldErrorMessage('code')"
-      @input="validateCode"
     />
 
     <div class="auth-form__btns">
@@ -40,8 +39,6 @@ import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const isInputValid = ref(false)
 const accessCodeInputData = ref('')
 
 const props = defineProps<{
@@ -68,12 +65,6 @@ const sendCode = () => {
   emit('send-auth-code', accessCodeInputData.value)
 
   enableForm()
-}
-
-const validateCode = () => {
-  if (accessCodeInputData.value != '') {
-    isInputValid.value = true
-  }
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
-  <form class="setting-form" action="">
+  <form class="setting-form">
     <h3 class="setting-form__fields-title">
-      {{ $t('setting-page.general-title') }}
+      {{ $t('setting-form.general-title') }}
     </h3>
     <input-field
       v-model="form.organizationName"

@@ -68,6 +68,10 @@
     "certificates-find": "find"
   },
   "generation-page": {
+    "title":"Create new certificate"
+  },
+
+  "generation-form": {
     "title":"Create new certificate",
     "step-1-description": "Write a name for your certificate",
     "step-2-description": "Choose or upload template for a new certificate",

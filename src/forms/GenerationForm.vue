@@ -1,22 +1,22 @@
 <template>
-  <form action="">
+  <form class="generation-form">
     <div class="generation-form__body">
-      <div class="mint-page__state-labels">
+      <div class="generation-form__state-labels">
         <div class="generation-form__field-short">
           <p class="generation-form__field-number">
-            {{ $t('generation-page.step-1-number') }}
+            {{ $t('generation-form.step-1-number') }}
           </p>
           <div class="generation-form__field-border"></div>
         </div>
         <div class="generation-form__field">
           <p class="generation-form__field-number">
-            {{ $t('generation-page.step-2-number') }}
+            {{ $t('generation-form.step-2-number') }}
           </p>
           <div class="generation-form__field-border"></div>
         </div>
         <div class="generation-form__field">
           <p class="generation-form__field-number">
-            {{ $t('generation-page.step-3-number') }}
+            {{ $t('generation-form.step-3-number') }}
           </p>
         </div>
       </div>
@@ -25,18 +25,18 @@
         <div class="generation-form__field-short">
           <div class="generation-form__field-info">
             <p class="generation-form__field-title">
-              {{ $t('generation-page.step-1-title') }}
+              {{ $t('generation-form.step-1-title') }}
             </p>
           </div>
           <div>
             <p class="generation-form__field-description">
-              {{ $t('generation-page.step-1-description') }}
+              {{ $t('generation-form.step-1-description') }}
             </p>
 
             <input-field
               v-model="form.name"
-              class="generation-page__text-input"
-              :label="$t('generation-page.step-1-placeholder')"
+              class="generation-form__text-input"
+              :label="$t('generation-form.step-1-placeholder')"
               :disabled="isFormDisabled"
               :error-message="getFieldErrorMessage('name')"
             />
@@ -46,11 +46,11 @@
         <div class="generation-form__field">
           <div class="generation-form__field-info">
             <p class="generation-form__field-title">
-              {{ $t('generation-page.step-2-title') }}
+              {{ $t('generation-form.step-2-title') }}
             </p>
           </div>
           <p class="generation-form__field-description">
-            {{ $t('generation-page.step-2-description') }}
+            {{ $t('generation-form.step-2-description') }}
           </p>
           <div class="generation-form__choose-template-list">
             <div class="generation-form__choose-template"></div>
@@ -62,17 +62,17 @@
         <div class="generation-form__field">
           <div class="generation-form__field-info">
             <p class="generation-form__field-title">
-              {{ $t('generation-page.step-3-title') }}
+              {{ $t('generation-form.step-3-title') }}
             </p>
           </div>
           <p class="generation-form__field-description">
-            {{ $t('generation-page.step-3-description') }}
+            {{ $t('generation-form.step-3-description') }}
           </p>
 
           <input-field
             v-model="form.link"
-            class="generation-page__text-input"
-            :label="$t('generation-page.step-3-placeholder')"
+            class="generation-form__text-input"
+            :label="$t('generation-form.step-3-placeholder')"
             :disabled="isFormDisabled"
           />
 
@@ -81,7 +81,7 @@
               class="generation-form__btn"
               color="info"
               size="large"
-              :text="$t('generation-page.start-btn')"
+              :text="$t('generation-form.start-btn')"
               @click="start"
             />
 
@@ -90,9 +90,9 @@
               size="large"
               color="info"
               :route="{
-                name: ROUTE_NAMES.main,
+                name: $routes.main,
               }"
-              :text="$t('generation-page.cancel-btn')"
+              :text="$t('generation-form.cancel-btn')"
             />
           </div>
         </div>
@@ -220,7 +220,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   display: flex;
 }
 
-.generation-page__title {
+.generation-form__title {
   margin-bottom: toRem(30);
 }
 
@@ -285,7 +285,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   margin-top: toRem(50);
 }
 
-.generation-page__text-input {
+.generation-form__text-input {
   width: toRem(450);
 }
 
