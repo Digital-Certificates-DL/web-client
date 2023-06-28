@@ -2,8 +2,8 @@
   <form class="auth-form">
     <input-field
       v-model="form.accessCodeInputData"
-      class="auth-modal-form__input"
-      :label="$t('auth-modal-form.input-code-label')"
+      class="auth-form__input"
+      :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
       :error-message="getFieldErrorMessage('code')"
       @input="validateCode"
@@ -11,21 +11,21 @@
 
     <div class="auth-form__btns">
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
-        :text="$t('auth-modal-form.get-access-btn')"
+        :text="$t('auth-form.get-access-btn')"
         @click="window.open(props.tokenLink, '_blank')"
       />
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
-        :text="$t('auth-modal-form.send-code-btn')"
+        :text="$t('auth-form.send-code-btn')"
         @click="sendCode"
       />
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
-        :text="$t('auth-modal-form.close-btn')"
+        :text="$t('auth-form.close-btn')"
         @click="emit('close-modal')"
       />
     </div>
@@ -88,17 +88,17 @@ const validateCode = () => {
   justify-content: space-between;
 }
 
-.auth-modal-form__btn {
+.auth-form__btn {
   width: toRem(100);
 }
 
-.auth-modal-form__btn-link {
+.auth-form__btn-link {
   max-height: toRem(58);
   width: toRem(200);
   margin: 0 auto;
 }
 
-.auth-modal-form__input {
+.auth-form__input {
   margin: 0 auto;
   width: toRem(350);
 }

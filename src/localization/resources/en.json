@@ -129,6 +129,13 @@
     "get-access-btn": "Get access",
     "send-code-btn": "Send code"
   },
+  "auth-form": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
+    "close-btn": "Close",
+    "get-access-btn": "Get access",
+    "send-code-btn": "Send code"
+  },
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"

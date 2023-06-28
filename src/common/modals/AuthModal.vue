@@ -5,7 +5,7 @@
   >
     <template #default="{ modal }">
       <div class="auth-modal__pane">
-        <auth-modal-form
+        <auth-form
           class="auth-modal__form"
           :token-link="tokenLink"
           @close-modal="modal.close()"
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AuthModalForm } from '@/forms'
+import { AuthForm } from '@/forms'
 import { Modal } from '@/common'
 
 defineProps<{
