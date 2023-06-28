@@ -73,13 +73,8 @@
     "bitcoin-btn": "Timestamp",
     "refresh-btn": "Load from sheet",
     "certificates-subtitle-date": "Date",
-    "certificates-bitcoin-btn": "Make timestamp",
-    "certificates-bitcoin-btn": "Bitcoin",
-    "generate-btn": "Generate",
     "error-certificate-list": "Empty certificate list",
     "certificates-find": "Find"
-    "certificates-find": "find",
-    "bitcoin-btn": "Timestamp"
 
   },
   "generation-page": {
@@ -102,12 +97,6 @@
     "choose-template": "Choose from my templates"
   },
   "certificate": {
-    "img-alt":  "Certificate",
-    "mint-text": "Make sbt",
-    "bitcoin-btn": "Bitcoin",
-    "generate-btn": "Generate",
-    "timestamp-btn": "Timestamp"
-
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp",
     "mint-text": "Іssue SBT",

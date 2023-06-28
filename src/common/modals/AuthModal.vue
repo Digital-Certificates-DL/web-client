@@ -4,7 +4,7 @@
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <div class="auth-modal__pane">
-      <auth-modal-form
+      <auth-form
         class="auth-modal__form"
         :token-link="tokenLink"
         @close-modal="closeModal"
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AuthModalForm } from '@/forms'
+import { AuthForm } from '@/forms'
 import { Modal } from '@/common'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'

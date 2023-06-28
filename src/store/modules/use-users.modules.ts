@@ -10,7 +10,6 @@ pinia.use(piniaPluginPersistedstate)
 export const useUserStore = defineStore('users-store', {
   state: () => {
     return {
-      bufferUserList: [] as CertificateJSONResponse[],
       students: [] as CertificateJSONResponse[],
       bufferCertificateList: [] as CertificateJSONResponse[],
       setting: {} as UserSetting,
@@ -18,6 +17,5 @@ export const useUserStore = defineStore('users-store', {
   },
   persist: {
     storage: sessionStorage,
-    paths: ['userState'],
   },
 })
