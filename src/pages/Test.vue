@@ -5,7 +5,9 @@ import { useUserStore } from '@/store'
 const userStore = useUserStore()
 
 const btc = new Bitcoin()
-btc.getUTXOBip32MainBlockstream(userStore.setting.bip39MnemonicPhrase)
+btc.getUTXOBip32MainBlockstream(
+  'corn rice govern audit amount ankle always rude prevent convince mention all',
+)
 </script>
 
 <style scoped lang="scss"></style>

@@ -36,6 +36,7 @@
     "@vueuse/core": "^9.9.0",
     "arraybuffer-to-buffer": "^0.0.7",
     "axios": "^1.2.2",
+    "bech32": "^2.0.0",
     "bignumber.js": "^9.1.1",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
