@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { Bitcoin } from '@/utils'
-import { useUserStore } from '@/store'
-
-const userStore = useUserStore()
+// eslint-disable-next-line no-console
+console.log('test')
 
 const btc = new Bitcoin()
-btc.getUTXOBip32MainBlockstream(
+await btc.getUTXOBip32Blockstream(
+  'corn rice govern audit amount ankle always rude prevent convince mention all',
+  'testnet',
+)
+await btc.PrepareLegacyTX(
   'corn rice govern audit amount ankle always rude prevent convince mention all',
 )
 </script>

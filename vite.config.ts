@@ -5,6 +5,8 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -78,20 +80,11 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     build: {
-      target: 'esnext',
+      assetsDir: '.',
       rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              return id
-                .toString()
-                .split('node_modules/')[1]
-                .split('/')[0]
-                .toString()
-            }
-          },
-        },
+        plugins: [rollupNodePolyFill()],
       },
+      sourcemap: true,
     },
     optimizeDeps: {
       exclude: ['@syntect/wasm'],
