@@ -27,12 +27,10 @@ export const useErc721 = () => {
         uri,
       ])
 
-      const receipt = await provider.value.signAndSendTx({
+      return await provider.value.signAndSendTx({
         to: contractAddress.value,
         data,
       })
-
-      return receipt
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }
