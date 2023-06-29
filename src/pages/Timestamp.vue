@@ -35,10 +35,10 @@
 
       <div class="timestamp__body">
         <div class="timestamp__list">
-          <div v-if="userList.length === 0">
+          <div v-if="certificateList.length === 0">
             <error-message message="Empty certificate list" />
           </div>
-          <div v-for="item in userList" :value="item" :key="item.id">
+          <div v-for="item in certificateList" :value="item" :key="item.id">
             <timestamp-item
               :name="item.participant"
               :date="item.date"
@@ -64,7 +64,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { CertificateJSONResponse, UserJSONResponse } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { ref } from 'vue'
@@ -78,7 +78,7 @@ import LoaderModal from '@/common/modals/LoaderModal.vue'
 import { ErrorHandler } from '@/helpers'
 
 const isModalActive = ref(false)
-const currentUser = ref({} as UserJSONResponse)
+const currentUser = ref({} as CertificateJSONResponse)
 const selectedCount = ref(0)
 
 const userState = useUserStore()
@@ -88,8 +88,8 @@ const isShowTimestampCheckbox = ref(false)
 const processState = ref('')
 const isLoading = ref(false)
 
-const userList = ref([] as CertificateJSONResponse[])
-const selectedItems = ref([] as CertificateJSONResponse[])
+const certificateList = ref<CertificateJSONResponse[]>([])
+const selectedItems = ref<CertificateJSONResponse[]>([])
 
 const prepareUserImg = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
@@ -142,7 +142,7 @@ const bitcoinTimestamp = async () => {
       bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
     }
 
-    userList.value = await updateUsers(selectedItems.value)
+    certificateList.value = (await updateUsers(selectedItems.value)) || []
     isLoading.value = false
   } catch (error) {
     isLoading.value = false
@@ -150,9 +150,9 @@ const bitcoinTimestamp = async () => {
   }
 }
 
-const updateUsers = async (users: UserJSONResponse[]) => {
+const updateUsers = async (users: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<UserJSONResponse[]>(
+    const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/certificate/bitcoin',
       {
         body: {
@@ -172,10 +172,10 @@ const updateUsers = async (users: UserJSONResponse[]) => {
 }
 
 const autoRefresh = () => {
-  userList.value = userState.bufferCertificateList
+  certificateList.value = userState.bufferCertificateList
 }
 
-const selectItem = (state: boolean, item: UserJSONResponse) => {
+const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
     selectedItems.value.push(item)
     selectedCount.value = selectedItems.value.length
