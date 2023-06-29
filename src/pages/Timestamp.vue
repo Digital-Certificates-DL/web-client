@@ -53,7 +53,7 @@
         <div class="timestamp__img-wrp">
           <img
             class="timestamp__img"
-            :src="currentUser.img || 'static/branding/template.jpg'"
+            :src="currentUser.img || 'branding/template.jpg'"
             alt="Certificate preview"
           />
         </div>

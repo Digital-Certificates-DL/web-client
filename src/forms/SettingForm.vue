@@ -4,15 +4,10 @@
       {{ $t('setting-page.general-title') }}
     </h3>
     <input-field
-      v-model="form.organizationName"
-      class="setting-form__form-input"
-      :label="$t('setting-form.organization-name-form-label')"
-      :error-message="getFieldErrorMessage('organizationName')"
-    />
-    <input-field
       v-model="form.accountName"
       class="setting-form__form-input"
       :label="$t('setting-form.account-name-form-label')"
+      :placeholder="userState.setting.accountName || ''"
       :error-message="getFieldErrorMessage('accountName')"
     />
     <h3 class="setting-form__fields-title">
@@ -22,18 +17,21 @@
       v-model="form.bip39MnemonicPhrase"
       class="setting-form__form-input"
       :label="$t('setting-form.bitcoin-phrase-form-label')"
+      :placeholder="userState.setting.bip39MnemonicPhrase || ''"
       :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
     />
     <input-field
       v-model="form.urlGoogleSheet"
       class="setting-form__form-input"
       :label="$t('setting-form.url-form-label')"
+      :placeholder="userState.setting.urlGoogleSheet || ''"
       :error-message="getFieldErrorMessage('urlGoogleSheet')"
     />
     <input-field
       v-model="form.signKey"
       class="setting-form__form-input"
       :label="$t('setting-form.wif-form-label')"
+      :placeholder="userState.setting.signKey || ''"
       :error-message="getFieldErrorMessage('signKey')"
     />
     <div class="setting-form__btns">
@@ -83,7 +81,6 @@ const form = reactive({
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
   accountName: { required },
-  organizationName: { required },
   signKey: { required },
   bip39MnemonicPhrase: { required },
   urlGoogleSheet: { required },

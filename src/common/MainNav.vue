@@ -9,7 +9,7 @@
     <p class="main-nav__description">
       {{ props.description }}
     </p>
-    <p class="main-nav__description" :class="navButtonClasses">
+    <p class="main-nav__description" :class="mainNavClasses">
       {{ props.body }}
     </p>
   </div>

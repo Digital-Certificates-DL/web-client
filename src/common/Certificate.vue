@@ -1,59 +1,32 @@
 <template>
   <div class="certificate">
-    <checkbox-field
-      v-show="isShow"
-      :model-value="isSelected"
-      @click="selectItem"
-    />
-    <div class="certificate__body">
-      <div class="certificate__info">
-        <div class="certificate__img-wrp" @click="selectItem">
-          <img
-            v-if="props.user.signature !== ''"
-            class="certificate__img"
-            :src="props.user.img || '/branding/template.jpg'"
-            alt="certificate"
-          />
-          <div v-else class="certificate__img"></div>
-          <p class="certificate__name">
-            {{ props.user.participant }}
-          </p>
-        </div>
-        <div class="certificate__titles">
-          <p>
-            {{ props.user.courseTitle }}
-          </p>
-          <p>
-            {{ props.user.date }}
-          </p>
-        </div>
-      </div>
+    <checkbox-field v-model="isSelected" @click="selectItem" />
+    <div class="certificate__img-wrp">
+      <img
+        class="certificate_img"
+        :src="certificate.img || '/branding/template.jpg'"
+        :alt="$t('certificate.img-alt')"
+      />
+    </div>
 
-      <div class="certificate__btns" v-if="user.signature !== ''">
-        <app-button
-          class="certificate__btn"
-          :text="$t('certificate.mint-text')"
-          @click="emit('open-modal', props.user)"
-        />
-        <app-button
-          class="certificate__btn"
-          :text="$t('certificate.timestamp-btn')"
-          @click="selectItem"
-        />
+    <p class="certificate__name">
+      {{ certificate.participant }}
+    </p>
+    <p>
+      {{ certificate.date }}
+    </p>
+    <div class="certificate__btns">
+      <app-button
+        class="certificate__btn"
+        :text="$t('certificate.mint-text')"
+        @click="emit('open-modal', certificate)"
+      />
 
-        <app-button
-          class="certificate__btn certificate__btn-download"
-          icon-left="download"
-          @click="downloadFile"
-        />
-      </div>
-      <div v-else class="certificate__btns">
-        <app-button
-          class="certificate__btn"
-          :text="$t('certificate.generate-btn')"
-          @click="selectItem"
-        />
-      </div>
+      <app-button
+        class="certificate__btn certificate__btn-download"
+        :icon-left="$icons.download"
+        @click="window.open(certificate.certificate, '_blank', 'noopener')"
+      />
     </div>
   </div>
 </template>
@@ -68,88 +41,41 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
+  (e: 'open-modal', user: CertificateJSONResponse): boolean
   (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
-  isShow: boolean
-  user: CertificateJSONResponse
+  certificate: CertificateJSONResponse
 }>()
 
 const selectItem = () => {
   isSelected.value = !isSelected.value
-  emit('select', isSelected.value, props.user)
+  emit('select', isSelected.value, props.certificate)
 }
 </script>
 
 <style lang="scss" scoped>
 .certificate {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: toRem(35);
+  margin-top: toRem(20);
   padding-bottom: toRem(10);
-  border-bottom: var(--border-primary-main) toRem(1) solid;
-  max-width: var(--page-large);
-
-  @include respond-to(large) {
-    width: var(--page-xmedium);
-  }
-
-  @include respond-to(xmedium) {
-    width: var(--page-medium);
-  }
+  border-bottom: var(--border-primary-dark), toRem(2), solid;
 }
 
-.certificate__body {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-}
-
-.certificate__img-wrp {
-  display: flex;
-  align-items: center;
-}
-
-.certificate__info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: toRem(950);
-
-  @include respond-to(large) {
-    width: toRem(800);
-  }
-
-  @include respond-to(xmedium) {
-    width: toRem(650);
-  }
-}
-
-.certificate__img {
+.certificate_img {
   width: toRem(74);
   border-radius: toRem(4);
-  margin-right: toRem(10);
 
-  @include respond-to(xmedium) {
+  @include respond-to(medium) {
     width: toRem(54);
   }
 
-  @include respond-to(medium) {
-    width: toRem(50);
-  }
-
-  @include respond-to(large) {
+  @include respond-to(xmedium) {
     width: toRem(64);
   }
-}
-
-.certificate__titles {
-  display: flex;
-  justify-content: space-between;
-  width: 40%;
 }
 
 .certificate__name {
@@ -171,6 +97,5 @@ const selectItem = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 20%;
 }
 </style>

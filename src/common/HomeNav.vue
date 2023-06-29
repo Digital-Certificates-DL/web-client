@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import AppButton from '@/common/AppButton.vue'
+import { AppButton } from '@/common'
 
 const props = defineProps<{
   color?: string

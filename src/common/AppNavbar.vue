@@ -7,10 +7,10 @@
         <app-button
           class="app-navbar__btn"
           color="info"
-          :text="prepareAddress(
-    provider.isConnected,
-    provider.selectedAddress!,
-  ) || $t('app-navbar.metamask-connect')"
+          :text="abbrCenter(
+              provider.isConnected,
+              provider.selectedAddress!,
+            ) || $t('app-navbar.metamask-connect')"
           :icon-left="$icons.metamask"
           @click="connect"
         />
@@ -34,14 +34,14 @@
 import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { ref } from 'vue'
-import { prepareAddress } from '@/helpers'
+import { abbrCenter } from '@/helpers'
 
 const { provider } = useWeb3ProvidersStore()
 const preparedAddress = ref('')
 
 const connect = async () => {
   await provider.connect()
-  preparedAddress.value = prepareAddress(
+  preparedAddress.value = abbrCenter(
     provider.isConnected,
     provider.selectedAddress!,
   )
@@ -56,7 +56,7 @@ const connect = async () => {
   padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
   background: var(--background-primary-main);
   border-bottom: var(--border-primary-main);
-  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black), 0.06);
+  box-shadow: 0 toRem(4) toRem(16) rgba(var(--black-rgb), 0.06);
   margin-bottom: toRem(20);
 
   @include respond-to(xmedium) {

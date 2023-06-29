@@ -42,9 +42,7 @@
                 :key="item"
               >
                 <home-item
-                  :img="
-                    item.background_img || '@/../static/branding/template.png'
-                  "
+                  :img="item.background_img || '/branding/template.png'"
                   :title="item.template_name"
                 />
               </div>

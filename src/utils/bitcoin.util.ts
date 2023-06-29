@@ -132,7 +132,6 @@ export class Bitcoin {
     return this.addressInfoList
   }
 
-  ///////////////////////
   public PrepareLegacyTXTestnet = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
       return bytes

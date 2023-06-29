@@ -148,14 +148,6 @@
     "certificate-alt": "Certificate",
     "label-metamask-address": "Student’s MetaMask address"
   },
-  "auth-modal-form": {
-    "title" : "SBT issuance",
-    "input-code-label": "Code",
-    "label-metamask-address": "Student’s MetaMask address",
-    "close-btn": "Close",
-    "mint-btn": "Mint",
-    "certificate-alt": "Certificate"
-  },
   "auth-modal": {
     "title" : "Access token",
     "input-code-label": "Your access code",
@@ -169,25 +161,6 @@
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"
-  },
-  "mint-form": {
-    "close-btn": "Close",
-    "mint-btn": "Mint",
-    "placeholder-metamask-address": "Student’s MetaMask address"
-  },
-  "home": {
-    "upload-title": "Create new template",
-    "upload-name": "Upload",
-    "upload-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
-    "create-title": "Generate certificates",
-    "create-name": "Generate",
-    "create-description": "Purus ullamcorper quisque pellentesque sit malesuada pharetra odio. Massa enim in arcu sagittis dictum sodales.",
-    "title" : "Create new",
-    "template-list-title": "My templates",
-    "certificate-list-title": "Previously certificates",
-    "get-all-btn": "See more",
-    "error-templates-nil": "templates was not found",
-    "error-certificate-nil": "certificates was not found"
   },
   "timestamp-page": {
     "page-title": "Previously certificates",
@@ -234,9 +207,6 @@
   },
   "timestamp": {
     "page-title": "Previously certificates"
-  },
-  "timestamp-item":{
-    "timestamp-btn": "Timestamp"
   },
   "template-page": {
     "save-position": "Save Text Position",
