@@ -68,6 +68,7 @@ import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
+import { testnet } from 'ecpair/src/networks'
 
 const userState = useUserStore()
 const router = useRouter()
@@ -91,7 +92,7 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setting = form
-  const address = Bitcoin.getAddressFromWIF(form.signKey)
+  const address = Bitcoin.getAddressFromWIF(form.signKey, testnet)
 
   userState.setting.userBitcoinAddress = address || ''
 

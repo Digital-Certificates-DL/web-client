@@ -112,6 +112,9 @@ const bitcoinTimestamp = async () => {
     const bitcoin = new Bitcoin()
     isLoading.value = true
 
+    /* eslint-disable no-console */
+    console.log('bitcoinTimestamp')
+
     processState.value = 'Getting UTXO'
     await bitcoin.getUTXOBip32TestnetBlockstream(
       userState.setting.bip39MnemonicPhrase,

@@ -1,14 +1,13 @@
 import { testnet } from 'ecpair/src/networks'
-import * as bitcoin from 'bitcoinjs-lib'
-import BIP32Factory from 'bip32'
-import * as ecc from 'tiny-secp256k1'
-const bip32 = BIP32Factory(ecc)
-import ECPairFactory from 'ecpair'
+import bitcoin from 'bitcoinjs-lib'
+// import * as ecc from 'tiny-secp256k1-browserify'
+import { Bip32, Bip39 } from '@ts-bitcoin/core'
 import { mnemonicToSeedAsync } from 'bip39-web'
 
-const ECPair = ECPairFactory(ecc)
+// const ECPair = ECPairFactory(ecc)
+// import { ECPairFactory } from 'ecpair'
+
 import axios from 'axios'
-import { Network } from 'bitcoinjs-lib/src/networks'
 import {
   AddressInfo,
   PustTxResponce,
@@ -16,25 +15,40 @@ import {
   BlockstreamTxList,
   UTXOs,
 } from '@/types/bitcoin.types'
+// const ECPair = ECPairFactory(ecc)
 
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
+
+  private bip32Derive = (bip: Bip32, path: string) => {
+    /* eslint-disable no-console */
+    console.log('path: ', path)
+    const key = bip.derive(path)
+    /* eslint-disable no-console */
+    console.log('key: ', key)
+    /* eslint-disable no-console */
+    console.log('key: ', key.privKey.toWif())
+    /* eslint-disable no-console */
+    console.log('key: ', key.privKey.toBuffer())
+    return bitcoin.ECPair.fromWIF(key.privKey.toWif())
+  }
 
   public getUTXOBip32MainBlockstream = async (mnph: string) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
     let index = 0
-    const bip = bip32.fromSeed(seed)
+    const bip = Bip32.fromSeed(seed)
     while (emptyAddreeses < 10) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
-        const key = bip.derivePath(path)
-        const keyPair = ECPair.fromWIF(key.toWIF())
+        const keyPair = this.bip32Derive(bip, path)
 
         const { address } = bitcoin.payments.p2wpkh({
           pubkey: keyPair.publicKey,
         })
 
+        /* eslint-disable no-console */
+        console.log('address: ', address)
         if (address === undefined) {
           continue
         }
@@ -68,15 +82,20 @@ export class Bitcoin {
   }
 
   public getUTXOBip32TestnetBlockstream = async (mnph: string) => {
-    const seed = await mnemonicToSeedAsync(mnph)
+    const seed = Bip39.fromString(mnph).toSeed()
     let emptyAddreeses = 0
     let index = 0
-    const bip = bip32.fromSeed(seed)
+
+    /* eslint-disable no-console */
+    console.log('seed: ', seed)
+
+    const bip = Bip32.fromSeed(seed)
+    console.log('bip: ', bip)
+
     while (emptyAddreeses < 10) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
-        const key = bip.derivePath(path)
-        const keyPair = ECPair.fromWIF(key.toWIF())
+        const keyPair = this.bip32Derive(bip, path)
 
         const { address } = bitcoin.payments.p2pkh({
           pubkey: keyPair.publicKey,
@@ -120,6 +139,7 @@ export class Bitcoin {
     })
 
     const psbt = new bitcoin.Psbt({ network: testnet })
+
     let fee = 0
     let butxoAmount = 0
     let utxo: UTXO[] = []
@@ -149,12 +169,13 @@ export class Bitcoin {
       }
     }
 
-    const bip = bip32.fromSeed(seed, testnet)
-    const key = bip.derivePath(betterUTXO.addressInfo.path)
-    const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
+    const bip = Bip32.Testnet.fromSeed(seed)
+
+    const keyPair = this.bip32Derive(bip, betterUTXO.addressInfo.path)
+
     const exPath = this.prepareExPath(betterUTXO.addressInfo.path)
-    const exchangeKey = bip.derivePath(exPath)
-    const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
+
+    const keyPairex = this.bip32Derive(bip, exPath)
     const ex = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
       network: testnet,
@@ -212,17 +233,17 @@ export class Bitcoin {
   public async calculateFeeTestnet(outs: number, ins: number) {
     const size = ins * 148 + outs * 34 + 10 - ins
     // const size = ins * 180 + outs * 34 + 10 - ins
-    let fee = 10
-    fee = await axios
-      .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
-      .then(response => {
-        return response.data.hourFee
-      })
-      .catch(err => {
-        return err
-      })
+    // const fee = 10
+    // fee = await axios
+    //   .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
+    //   .then(response => {
+    //     return response.data.hourFee
+    //   })
+    //   .catch(err => {
+    //     return err
+    //   })
 
-    return size * Number(fee)
+    return size * Number(2)
   }
 
   private async getTxTestnet(hash: string) {
@@ -300,8 +321,17 @@ export class Bitcoin {
     }
   }
 
-  static getAddressFromWIF(wif: string, network?: Network) {
-    const keyPairex = ECPair.fromWIF(wif, network)
+  static getAddressFromWIF(wif: string, network?: bitcoin.Network) {
+    /* eslint-disable no-console */
+    console.log('getAddressFromWIF')
+
+    /* eslint-disable no-console */
+    console.log('wif: ', wif)
+
+    /* eslint-disable no-console */
+    console.log('bitcoin.ECPair.fromWIF: ', bitcoin.ECPair.fromWIF)
+
+    const keyPairex = bitcoin.ECPair.fromWIF(wif)
     const key = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
       network: network,

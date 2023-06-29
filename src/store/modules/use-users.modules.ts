@@ -15,8 +15,4 @@ export const useUserStore = defineStore('users-store', {
       setting: {} as UserSetting,
     }
   },
-  persist: {
-    storage: sessionStorage,
-    paths: ['userState'],
-  },
 })

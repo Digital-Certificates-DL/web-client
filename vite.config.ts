@@ -7,6 +7,7 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import * as fs from 'fs'
 import * as path from 'path'
+import inject from '@rollup/plugin-inject'
 
 const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = (relative: string) => path.resolve(appDirectory, relative)
@@ -73,13 +74,16 @@ export default defineConfig(({ command, mode }) => {
         '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
-        events: 'events-polyfill',
+        // events: 'events-polyfill',
         buffer: 'buffer/index.js',
+        // crypto: 'crypto-browserify/index.js',
+        'bitcoinjs-lib': 'bitcoinjs-lib-browser/bitcoinjs.js',
       },
     },
     build: {
       target: 'esnext',
       rollupOptions: {
+        plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
