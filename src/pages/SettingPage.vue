@@ -21,7 +21,7 @@ import { SettingForm } from '@/forms'
 <style scoped lang="scss">
 .setting-page {
   width: var(--page-large);
-  margin: 0 auto;
+  margin: auto;
 }
 
 .setting-page__title {

@@ -1,9 +1,9 @@
 <template>
-  <div class="timestamp-item">
+  <div class="home-item">
     <div class="home-item__img-wrp">
       <div v-if="props.img === ''">
         <img
-          :src="'/branding/template.jpg'"
+          :src="props.img || '/branding/template.jpg'"
           class="home-item__img"
           alt="not found"
         />

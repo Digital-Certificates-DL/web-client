@@ -32,6 +32,11 @@ const routes = [
     name: ROUTE_NAMES.settings,
     component: () => import('@/pages/SettingPage.vue'),
   },
+  {
+    path: '/timestamp',
+    name: ROUTE_NAMES.timestamp,
+    component: () => import('@/pages/Timestamp.vue'),
+  },
 ]
 
 const router = createRouter({

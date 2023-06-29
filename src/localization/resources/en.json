@@ -63,6 +63,7 @@
     "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
+    "main-nav-generation-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
     "main-nav-home-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
   },
   "previously-certificates-page": {
@@ -101,7 +102,17 @@
     "timestamp-btn": "Timestamp",
     "mint-text": "Іssue SBT",
     "bitcoin-btn": "Make timestamp",
-    "img-alt":  "Certificate"
+    "img-alt":  "Certificate",
+    "step-1-title": "Write a name for your certificate",
+    "step-2-title": "Choose or upload template for a new certificate",
+    "step-3-title": "Write a link to  google sheet",
+    "step-1-number": "1",
+    "step-2-number": "2",
+    "step-3-number": "3",
+    "step-3-placeholder": "Link",
+    "step-1-placeholder": "Name",
+    "start-btn": "Start",
+    "cancel-btn": "Cancel"
   },
   "setting-form": {
     "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -134,6 +145,12 @@
     "label-participant": "Full name",
     "label-date": "Issued on",
     "label-course": "Course name",
+    "certificate-alt": "Certificate",
+    "label-metamask-address": "Student’s MetaMask address"
+  },
+  "auth-modal-form": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
     "label-metamask-address": "Student’s MetaMask address",
     "close-btn": "Close",
     "mint-btn": "Mint",
@@ -146,11 +163,17 @@
     "step-1-description": "To complete this step, you need to follow the  link  to get  the code",
     "step-2-title": "Enter the code",
     "close-btn": "Close",
+    "get-access-btn": "Get access",
     "send-code-btn": "Send code"
   },
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"
+  },
+  "mint-form": {
+    "close-btn": "Close",
+    "mint-btn": "Mint",
+    "placeholder-metamask-address": "Student’s MetaMask address"
   },
   "home": {
     "upload-title": "Create new template",
@@ -214,6 +237,10 @@
   },
   "timestamp-item":{
     "timestamp-btn": "Timestamp"
+  },
+  "template-page": {
+    "save-position": "Save Text Position",
+    "remove-input-btn": "Remove"
   }
 
 }

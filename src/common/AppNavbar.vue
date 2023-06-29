@@ -89,9 +89,9 @@ const connect = async () => {
 }
 
 .app-navbar__configuration {
+  width: 15%;
   display: flex;
   justify-content: space-between;
-  width: toRem(200);
 }
 
 .app-navbar__img {

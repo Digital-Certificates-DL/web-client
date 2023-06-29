@@ -23,7 +23,7 @@
     </p>
 
     <input-field
-      v-model="form.accessCodeInputData"
+      v-model="form.code"
       class="auth-modal-form__input"
       :label="$t('auth-modal-form.input-code-label')"
       :disabled="isFormDisabled"
@@ -72,18 +72,18 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive({
-  accessCodeInputData: '',
+  code: '',
 })
 
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  accessCodeInputData: { required },
+  code: { required },
 })
 
 const sendCode = () => {
   if (!isFormValid) return
   disableForm()
 
-  emit('send-auth-code', accessCodeInputData.value)
+  emit('send-auth-code', form.code)
 
   enableForm()
 }

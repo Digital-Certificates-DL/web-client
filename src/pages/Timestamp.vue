@@ -2,19 +2,26 @@
   <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
 
   <div class="timestamp">
-    <h2>{{ $t('timestamp.page-title') }}</h2>
-    <div class="certificates__search">
-      <input-field class="timestamp__search-input" placeholder="find" />
+    <h2>{{ $t('timestamp-page.page-title') }}</h2>
+    <div class="timestamp-page__body">
+      <div class="timestamp__search">
+        <div class="timestamp__search-input-wrp">
+          <input-field
+            class="timestamp__search-input"
+            :placeholder="$t('timestamp-page.input-placeholder')"
+            :model-value="findInputData"
+            @update:model-value="Search"
+          />
+        </div>
 
-      <div class="timestamp__btns">
-        <div v-if="selectedCount > 0" class="certificates__btns">
+        <div v-if="selectedCount > 0" class="timestamp__btns">
           <p>{{ selectedCount }}</p>
 
           <app-button
             class="timestamp__btn"
+            color="info"
+            :text="$t('timestamp-page.bitcoin-btn')"
             @click="bitcoinTimestamp"
-            :color="'success'"
-            text="Bitcoin"
           />
         </div>
       </div>
@@ -31,7 +38,7 @@
           <div v-if="userList.length === 0">
             <error-message message="Empty certificate list" />
           </div>
-          <div v-for="(item, key) in userList" :value="key" :key="item">
+          <div v-for="item in userList" :value="item" :key="item.id">
             <timestamp-item
               :name="item.participant"
               :date="item.date"
@@ -57,7 +64,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { UserJSONResponse } from '@/types'
+import { CertificateJSONResponse, UserJSONResponse } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { ref } from 'vue'
@@ -76,14 +83,15 @@ const selectedCount = ref(0)
 
 const userState = useUserStore()
 
+const findInputData = ref('')
 const isShowTimestampCheckbox = ref(false)
 const processState = ref('')
 const isLoading = ref(false)
 
-const userList = ref([] as UserJSONResponse[])
-const selectedItems = ref([] as UserJSONResponse[])
+const userList = ref([] as CertificateJSONResponse[])
+const selectedItems = ref([] as CertificateJSONResponse[])
 
-const prepareUserImg = (users: UserJSONResponse[]) => {
+const prepareUserImg = (users: CertificateJSONResponse[]) => {
   for (const user of users) {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
@@ -91,7 +99,11 @@ const prepareUserImg = (users: UserJSONResponse[]) => {
   return users
 }
 
-const openModal = (state: boolean, user: UserJSONResponse) => {
+const Search = () => {
+  findInputData.value = ''
+}
+
+const openModal = (state: boolean, user: CertificateJSONResponse) => {
   isModalActive.value = state
   currentUser.value = user
 }
@@ -100,15 +112,18 @@ const bitcoinTimestamp = async () => {
     const bitcoin = new Bitcoin()
     isLoading.value = true
 
+    /* eslint-disable no-console */
+    console.log('bitcoinTimestamp')
+
     processState.value = 'Getting UTXO'
     await bitcoin.getUTXOBip32TestnetBlockstream(
-      userState.setting.sendMnemonicPhrase,
+      userState.setting.bip39MnemonicPhrase,
     )
     processState.value = 'Prepare transaction'
 
     for (const user of selectedItems.value) {
       const tx = await bitcoin.PrepareLegacyTXTestnet(
-        userState.setting.sendMnemonicPhrase,
+        userState.setting.bip39MnemonicPhrase,
       )
       const hex = tx?.hex || ''
       const exAddress = tx?.exAddress || ''
@@ -136,26 +151,30 @@ const bitcoinTimestamp = async () => {
 }
 
 const updateUsers = async (users: UserJSONResponse[]) => {
-  const { data } = await api.post<UserJSONResponse[]>(
-    '/integrations/ccp/certificate/bitcoin',
-    {
-      body: {
-        data: {
-          users: users,
-          address: userState.setting.address,
-          name: userState.setting.name,
-          url: userState.setting.url,
+  try {
+    const { data } = await api.post<UserJSONResponse[]>(
+      '/integrations/ccp/certificate/bitcoin',
+      {
+        body: {
+          data: {
+            users: users,
+            address: userState.setting.userBitcoinAddress,
+            name: userState.setting.accountName,
+            url: userState.setting.urlGoogleSheet,
+          },
         },
       },
-    },
-  )
-
-  return prepareUserImg(data)
+    )
+    return prepareUserImg(data)
+  } catch (err) {
+    ErrorHandler.process(err)
+  }
 }
 
 const autoRefresh = () => {
-  userList.value = userState.bufferUserList
+  userList.value = userState.bufferCertificateList
 }
+
 const selectItem = (state: boolean, item: UserJSONResponse) => {
   if (state) {
     selectedItems.value.push(item)
@@ -192,23 +211,21 @@ tryOnBeforeMount(autoRefresh)
   }
 }
 
-.timestamp__img-wrp {
-  max-width: 40%;
+.timestamp__info {
+  display: flex;
+  justify-content: space-between;
 }
 
 .timestamp__img {
-  width: toRem(400);
+  width: toRem(600);
+  border-radius: toRem(16);
 
   @include respond-to(large) {
-    width: toRem(400);
+    width: toRem(500);
   }
 
   @include respond-to(xmedium) {
-    width: toRem(300);
-  }
-
-  @include respond-to(medium) {
-    width: toRem(200);
+    width: toRem(400);
   }
 }
 
@@ -221,8 +238,36 @@ tryOnBeforeMount(autoRefresh)
   display: flex;
 }
 
+.timestamp__search {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+  margin-bottom: toRem(50);
+}
+
+.timestamp__btns {
+  width: toRem(200);
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+}
+
 .timestamp__search-input {
-  padding-top: toRem(20);
-  width: 40%;
+  display: block;
+  width: toRem(700);
+
+  @include respond-to(large) {
+    width: toRem(600);
+  }
+
+  @include respond-to(xmedium) {
+    width: toRem(500);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(400);
+  }
 }
 </style>

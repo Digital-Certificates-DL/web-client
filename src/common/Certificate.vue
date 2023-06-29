@@ -68,7 +68,7 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', user: CertificateJSONResponse): boolean
+  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
   (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
@@ -80,10 +80,6 @@ const props = defineProps<{
 const selectItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value, props.user)
-}
-
-const downloadFile = () => {
-  window.open(props.user.certificate, '_blank')
 }
 </script>
 
@@ -153,7 +149,7 @@ const downloadFile = () => {
 .certificate__titles {
   display: flex;
   justify-content: space-between;
-  width: 60%;
+  width: 40%;
 }
 
 .certificate__name {
@@ -161,6 +157,7 @@ const downloadFile = () => {
 }
 
 .certificate__btn {
+  width: toRem(140);
   height: toRem(50);
 }
 

@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
-import { PrivKey } from '@ts-bitcoin/core'
 import { reactive } from 'vue'
 import { CertificateJSONResponseList, UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
@@ -68,6 +67,8 @@ import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
+import { testnet } from 'ecpair/src/networks'
+import { Bitcoin } from '@/utils'
 
 const userState = useUserStore()
 const router = useRouter()
@@ -91,7 +92,7 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setting = form
-  const address = PrivKey.Mainnet.fromWif(form.signKey).toString()
+  const address = Bitcoin.getAddressFromWIF(form.signKey, testnet)
 
   userState.setting.userBitcoinAddress = address || ''
 
