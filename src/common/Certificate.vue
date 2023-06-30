@@ -1,32 +1,58 @@
 <template>
   <div class="certificate">
-    <checkbox-field v-model="isSelected" @click="selectItem" />
-    <div class="certificate__img-wrp">
-      <img
-        class="certificate_img"
-        :src="certificate.img || '/branding/template.jpg'"
-        :alt="$t('certificate.img-alt')"
-      />
-    </div>
+    <checkbox-field
+      v-show="isShow"
+      :model-value="isSelected"
+      @click="selectItem"
+    />
+    <div class="certificate__body">
+      <div class="certificate__img-wrp" @click="selectItem">
+        <img
+          v-if="certificate.signature"
+          class="certificate__img"
+          :src="certificate.img || '/branding/template.jpg'"
+          alt="certificate"
+        />
+        <div v-else class="certificate__img"></div>
+        <p class="certificate__name">
+          {{ certificate.participant }}
+        </p>
+      </div>
+      <div class="certificate__titles">
+        <p>
+          {{ certificate.courseTitle }}
+        </p>
+        <p>
+          {{ certificate.date }}
+        </p>
+      </div>
 
-    <p class="certificate__name">
-      {{ certificate.participant }}
-    </p>
-    <p>
-      {{ certificate.date }}
-    </p>
-    <div class="certificate__btns">
-      <app-button
-        class="certificate__btn"
-        :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', certificate)"
-      />
+      <div class="certificate__btns" v-if="certificate.signature !== ''">
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.mint-text')"
+          @click="isSelected = true"
+        />
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.timestamp-btn')"
+          @click="emit('open-modal', true, props.certificate)"
+        />
 
-      <app-button
-        class="certificate__btn certificate__btn-download"
-        :icon-left="$icons.download"
-        @click="window.open(certificate.certificate, '_blank', 'noopener')"
-      />
+        <app-button
+          class="certificate__btn certificate__btn-download"
+          @click="window.open(props.certificate.certificate, '_blank')"
+        >
+          <img src="@/../static/branding/download.png" alt="download img" />
+        </app-button>
+      </div>
+      <div class="certificate__btns" v-else>
+        <app-button
+          class="certificate__btn"
+          :text="$t('certificate.generate-btn')"
+          @click="selectItem"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -41,11 +67,12 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', user: CertificateJSONResponse): boolean
+  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
   (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
+  isShow: boolean
   certificate: CertificateJSONResponse
 }>()
 
@@ -58,24 +85,40 @@ const selectItem = () => {
 <style lang="scss" scoped>
 .certificate {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: toRem(20);
+  margin-top: toRem(35);
   padding-bottom: toRem(10);
-  border-bottom: var(--border-primary-dark), toRem(2), solid;
+  border-bottom: var(--border-primary-main) toRem(1) solid;
+  max-width: var(--page-large);
 }
 
-.certificate_img {
+.certificate__body {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.certificate__img-wrp {
+  display: flex;
+  align-items: center;
+}
+
+.certificate__img {
   width: toRem(74);
   border-radius: toRem(4);
+  margin-right: toRem(10);
 
-  @include respond-to(medium) {
-    width: toRem(54);
+  @include respond-to(large) {
+    width: toRem(74);
+    border-radius: toRem(4);
   }
+}
 
-  @include respond-to(xmedium) {
-    width: toRem(64);
-  }
+.certificate__titles {
+  display: flex;
+  justify-content: space-between;
+  width: 40%;
 }
 
 .certificate__name {
@@ -97,5 +140,6 @@ const selectItem = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 20%;
 }
 </style>

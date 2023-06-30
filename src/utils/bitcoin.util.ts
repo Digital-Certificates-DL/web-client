@@ -90,6 +90,7 @@ export class Bitcoin {
     console.log('seed: ', seed)
 
     const bip = Bip32.fromSeed(seed)
+    /* eslint-disable no-console */
     console.log('bip: ', bip)
 
     while (emptyAddreeses < 10) {
@@ -102,6 +103,8 @@ export class Bitcoin {
           network: testnet,
         })
 
+        /* eslint-disable no-console */
+        console.log('address: ', address)
         if (address === undefined) {
           continue
         }
@@ -143,10 +146,12 @@ export class Bitcoin {
     let butxoAmount = 0
     let utxo: UTXO[] = []
 
-    const betterUTXO = await this.betterUtxoTestnet(3, 556 + 557 + 558)
+    const betterUTXO = await this.betterUtxoTestnet(4, 556 + 557 + 558)
     if (!betterUTXO) {
       return
     }
+    /* eslint-disable no-console */
+    console.log('betterUTXO: ', betterUTXO)
     fee = betterUTXO.value
     utxo = betterUTXO.txs
     butxoAmount = betterUTXO.utxoAmount
@@ -165,6 +170,8 @@ export class Bitcoin {
           index: utxo[i].vout,
           nonWitnessUtxo: txHex,
         })
+        /* eslint-disable no-console */
+        console.log('add input')
       }
     }
 
@@ -179,6 +186,9 @@ export class Bitcoin {
       pubkey: keyPairex.publicKey,
       network: testnet,
     })
+
+    /* eslint-disable no-console */
+    console.log('ex: ', ex)
 
     let balance = butxoAmount
     psbt.addOutput({
@@ -195,13 +205,21 @@ export class Bitcoin {
     })
     balance -= 556 + 557 + 558
     balance -= fee
+
+    /* eslint-disable no-console */
+    console.log('balance: ', balance)
     psbt.addOutput({
-      address: ex.address || '',
+      address: ex.address!,
       value: balance,
     })
     psbt.signInput(0, keyPair)
+    /* eslint-disable no-console */
+    console.log('sign ')
     psbt.finalizeAllInputs()
+
     const hex = psbt.extractTransaction().toHex()
+    /* eslint-disable no-console */
+    console.log('hex ', hex)
     const exAddress = ex.address
 
     this.addressInfoList = this.addressInfoList.filter(
@@ -242,7 +260,7 @@ export class Bitcoin {
     //     return err
     //   })
 
-    return size * Number(2)
+    return size * Number(1)
   }
 
   private async getTxTestnet(hash: string) {

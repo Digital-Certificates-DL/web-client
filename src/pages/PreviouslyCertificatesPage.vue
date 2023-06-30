@@ -56,7 +56,7 @@
     </div>
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
-      :user="currentUser"
+      :certificate="currentUser"
     />
 
     <div class="certificates__list">
@@ -78,10 +78,10 @@
       </div>
       <div v-for="item in userBuffer" :key="item.id">
         <certificate
-          :user="item"
           :is-show="selectedItems.length > 0"
           @open-modal="openCertificateModal"
           @select="selectItem"
+          :certificate="item"
         />
       </div>
     </div>
