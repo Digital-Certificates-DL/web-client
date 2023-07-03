@@ -42,6 +42,7 @@ const updateCode = async (code: string) => {
     )
   } catch (error) {
     ErrorHandler.process(error)
+    return
   }
 }
 

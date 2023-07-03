@@ -1,10 +1,13 @@
 <template>
   <div class="home-page">
+    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+
     <auth-modal
       :token-link="authLink"
       @send-auth-code="updateCode"
       v-model:is-shown="isUnauthorized"
     />
+
     <div class="home-page__body">
       <h2>{{ $t('home.title') }}</h2>
       <div class="home-page__body-nav">
@@ -81,7 +84,7 @@
 <script lang="ts" setup>
 import HomeBodyNav from '@/common/HomeNav.vue'
 
-import { HomeItem, AppButton } from '@/common'
+import { HomeItem, AppButton, LoaderModal } from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { CertificateJSONResponse, CertificateJSONResponseList } from '@/types'
@@ -98,8 +101,12 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const userState = useUserStore()
 
-const getUsers = async () => {
+const isLoading = ref(false)
+const processState = ref('')
+const getCertificates = async () => {
   try {
+    isLoading.value = true
+    processState.value = 'Getting certificates'
     const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
@@ -139,9 +146,11 @@ const getUsers = async () => {
         }
         break
       default:
-        router.push(ROUTE_NAMES.settings)
+        await router.push(ROUTE_NAMES.settings)
         break
     }
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -193,7 +202,7 @@ const prepareTemplateImg = (templates: TemplateRequestData[]) => {
   return templates
 }
 
-getUsers()
+getCertificates()
 getTemplates()
 </script>
 

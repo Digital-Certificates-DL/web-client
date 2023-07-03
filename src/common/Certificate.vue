@@ -31,20 +31,19 @@
         <app-button
           class="certificate__btn"
           :text="$t('certificate.mint-text')"
-          @click="isSelected = true"
+          @click="emit('open-modal', certificate)"
         />
         <app-button
           class="certificate__btn"
           :text="$t('certificate.timestamp-btn')"
-          @click="emit('open-modal', true, props.certificate)"
+          @click="isSelected = true"
         />
 
         <app-button
           class="certificate__btn certificate__btn-download"
-          @click="window.open(props.certificate.certificate, '_blank')"
-        >
-          <img src="@/../static/branding/download.png" alt="download img" />
-        </app-button>
+          icon-right="download"
+          @click="window.open(certificate.certificate, '_blank')"
+        />
       </div>
       <div class="certificate__btns" v-else>
         <app-button
@@ -67,7 +66,7 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
+  (e: 'open-modal', user: CertificateJSONResponse): boolean
   (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
 }>()
 

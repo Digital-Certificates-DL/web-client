@@ -102,18 +102,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { api } from '@/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils'
-import { CertificateJSONResponse } from '@/types'
+import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { useUserStore } from '@/store/modules/use-users.modules'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, sleep } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
+import { Container } from '@/types/container.types'
 const userState = useUserStore()
 
 const DEFAULT_KEY = '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW'
@@ -144,6 +145,7 @@ const start = async () => {
     }
     const signatures = sign(users)
     await createPDF(signatures)
+    await router.push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
@@ -173,6 +175,14 @@ const parsedData = async (sheepUrl?: string) => {
   }
 }
 
+const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
+  const certificateList = ref<CertificateJSONResponse[]>([])
+  for (const certificate of certificates) {
+    certificateList.value.push(certificate.attributes)
+  }
+  return certificateList.value
+}
+
 const sign = (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
@@ -183,7 +193,7 @@ const sign = (users: CertificateJSONResponse[]) => {
   return users
 }
 
-const prepareUserImg = (users: CertificateJSONResponse[]) => {
+const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
   const list: CertificateJSONResponse[] = users
   for (const user of list) {
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
@@ -191,14 +201,38 @@ const prepareUserImg = (users: CertificateJSONResponse[]) => {
 
   return users
 }
+
+const validateContainerState = async (containerID: string) => {
+  await sleep(5000)
+  const containerStatus = true
+  while (containerStatus) {
+    try {
+      const { data } = await api.get<Container>(
+        '/integrations/ccp/certificate/' + containerID,
+      )
+      if (!data.status) {
+        await sleep(5000)
+        continue
+      }
+
+      data.clear_certificate = prepareCertificate(data.certificates)
+
+      return data
+    } catch (error) {
+      await sleep(5000)
+      // ErrorHandler.process(error)
+    }
+  }
+}
+
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<CertificateJSONResponse[]>(
+    const { data } = await api.post<Container>(
       '/integrations/ccp/certificate/',
       {
         body: {
           data: {
-            data: users,
+            users: users, //todo make better
             address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
             url: userState.setting.urlGoogleSheet,
             name: userState.setting.accountName,
@@ -206,9 +240,11 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
         },
       },
     )
-    users = prepareUserImg(data)
-    userState.students = users
-    await router.push(ROUTE_NAMES.certificates)
+    const container = await validateContainerState(data.container_id)
+    const updatedUsers = prepareCertificateImg(container!.clear_certificate)
+    userState.students = updatedUsers
+
+    return updatedUsers
   } catch (error) {
     ErrorHandler.process(error)
   }

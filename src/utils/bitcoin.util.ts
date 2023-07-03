@@ -146,7 +146,8 @@ export class Bitcoin {
     let butxoAmount = 0
     let utxo: UTXO[] = []
 
-    const betterUTXO = await this.betterUtxoTestnet(4, 556 + 557 + 558)
+    //todo make better
+    const betterUTXO = await this.betterUtxoTestnet(4, 556 + 557 + 558 + 2000)
     if (!betterUTXO) {
       return
     }
@@ -249,16 +250,6 @@ export class Bitcoin {
   }
   public async calculateFeeTestnet(outs: number, ins: number) {
     const size = ins * 148 + outs * 34 + 10 - ins
-    // const size = ins * 180 + outs * 34 + 10 - ins
-    // const fee = 10
-    // fee = await axios
-    //   .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
-    //   .then(response => {
-    //     return response.data.hourFee
-    //   })
-    //   .catch(err => {
-    //     return err
-    //   })
 
     return size * Number(1)
   }

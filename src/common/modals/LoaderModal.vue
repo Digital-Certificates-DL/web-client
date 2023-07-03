@@ -39,5 +39,6 @@ const emit = defineEmits<{
 
 .loader-modal__title {
   margin: auto;
+  text-align: center;
 }
 </style>

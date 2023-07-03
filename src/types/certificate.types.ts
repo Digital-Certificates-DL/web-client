@@ -16,6 +16,12 @@ export type CertificateJSONResponse = {
   img: string
 }
 
+export type PottyCertificateRequest = {
+  id: string
+  type: string
+  attributes: CertificateJSONResponse
+}
+
 export type CertificateJSONResponseList = {
   data: CertificateJSONResponse[]
   included: object[]

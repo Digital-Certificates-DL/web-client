@@ -28,7 +28,7 @@
 
       <div v-if="isModalActive">
         <certificate-modal
-          :user="currentUser"
+          :certificate="currentCertificate"
           v-model:is-shown="isModalActive"
         />
       </div>
@@ -38,7 +38,7 @@
           <div v-if="certificateList.length === 0">
             <error-message message="Empty certificate list" />
           </div>
-          <div v-for="item in certificateList" :value="item" :key="item.id">
+          <div v-for="item in certificateList" :key="item.id">
             <timestamp-item
               :name="item.participant"
               :date="item.date"
@@ -53,7 +53,7 @@
         <div class="timestamp__img-wrp">
           <img
             class="timestamp__img"
-            :src="currentUser.img || 'branding/template.jpg'"
+            :src="currentCertificate.img || 'branding/template.jpg'"
             alt="Certificate preview"
           />
         </div>
@@ -64,7 +64,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { CertificateJSONResponse } from '@/types'
+import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { api } from '@/api'
 import InputField from '@/fields/InputField.vue'
 import { ref } from 'vue'
@@ -75,10 +75,11 @@ import ErrorMessage from '@/common/ErrorMessage.vue'
 import AppButton from '@/common/AppButton.vue'
 import { tryOnBeforeMount } from '@vueuse/core'
 import LoaderModal from '@/common/modals/LoaderModal.vue'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, sleep } from '@/helpers'
+import { Container } from '@/types/container.types'
 
 const isModalActive = ref(false)
-const currentUser = ref({} as CertificateJSONResponse)
+const currentCertificate = ref({} as CertificateJSONResponse)
 const selectedCount = ref(0)
 
 const userState = useUserStore()
@@ -91,21 +92,22 @@ const isLoading = ref(false)
 const certificateList = ref<CertificateJSONResponse[]>([])
 const selectedItems = ref<CertificateJSONResponse[]>([])
 
-const prepareUserImg = (users: CertificateJSONResponse[]) => {
-  for (const user of users) {
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
+  for (const certificate of certificates) {
+    certificate.img =
+      'data:image/png;base64,' + certificate.certificateImg.toString()
   }
 
-  return users
+  return certificates
 }
 
 const Search = () => {
   findInputData.value = ''
 }
 
-const openModal = (state: boolean, user: CertificateJSONResponse) => {
+const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
   isModalActive.value = state
-  currentUser.value = user
+  currentCertificate.value = certificate
 }
 const bitcoinTimestamp = async () => {
   try {
@@ -121,7 +123,7 @@ const bitcoinTimestamp = async () => {
     )
     processState.value = 'Prepare transaction'
 
-    for (const user of selectedItems.value) {
+    for (const certificate of selectedItems.value) {
       const tx = await bitcoin.PrepareLegacyTXTestnet(
         userState.setting.bip39MnemonicPhrase,
       )
@@ -137,12 +139,13 @@ const bitcoinTimestamp = async () => {
       }
       const { data } = await bitcoin.SendToTestnet(hex)
 
-      user.txHash = data.tx.hash.toString()
+      certificate.txHash = data.tx.hash.toString()
 
       bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
     }
 
-    certificateList.value = (await updateUsers(selectedItems.value)) || []
+    certificateList.value =
+      (await updateCertificates(selectedItems.value)) || []
     isLoading.value = false
   } catch (error) {
     isLoading.value = false
@@ -150,14 +153,14 @@ const bitcoinTimestamp = async () => {
   }
 }
 
-const updateUsers = async (users: CertificateJSONResponse[]) => {
+const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<CertificateJSONResponse[]>(
+    const { data } = await api.post<Container>(
       '/integrations/ccp/certificate/bitcoin',
       {
         body: {
           data: {
-            users: users,
+            users: certificates,
             address: userState.setting.userBitcoinAddress,
             name: userState.setting.accountName,
             url: userState.setting.urlGoogleSheet,
@@ -165,18 +168,50 @@ const updateUsers = async (users: CertificateJSONResponse[]) => {
         },
       },
     )
-    return prepareUserImg(data)
+    const container = await validateContainerState(data.container_id)
+    return prepareCertificateImg(container!.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
   }
 }
 
+const validateContainerState = async (containerID: string) => {
+  await sleep(5000)
+  const containerStatus = true
+  while (containerStatus) {
+    try {
+      const { data } = await api.get<Container>(
+        '/integrations/ccp/certificate/' + containerID,
+      )
+      if (!data.status) {
+        await sleep(5000)
+        continue
+      }
+
+      data.clear_certificate = prepareCertificate(data.certificates)
+
+      return data
+    } catch (error) {
+      await sleep(5000)
+      // ErrorHandler.process(error)
+    }
+  }
+}
+
+const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
+  const certificateList = ref<CertificateJSONResponse[]>([])
+  for (const certificate of certificates) {
+    certificateList.value.push(certificate.attributes)
+  }
+  return certificateList.value
+}
 const autoRefresh = () => {
   certificateList.value = userState.bufferCertificateList
 }
 
 const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
+    currentCertificate.value = item
     selectedItems.value.push(item)
     selectedCount.value = selectedItems.value.length
     isShowTimestampCheckbox.value = true

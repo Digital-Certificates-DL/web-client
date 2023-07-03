@@ -6,8 +6,9 @@
       <div class="previously-certificates-page__search">
         <input-field
           class="previously-certificates-page__search-input"
-          :model-value="searchInputValue"
+          v-model="searchData"
           :placeholder="$t('previously-certificates-page.certificates-find')"
+          @update:model-value="search"
         />
       </div>
 
@@ -28,6 +29,7 @@
           :title="'All'"
           :items="dropDownStateList"
           :main-image="'/branding/success-ico.png'"
+          @select-item="findByState"
         />
       </div>
 
@@ -76,7 +78,7 @@
           :message="$t('previously-certificates.error-certificate-list')"
         />
       </div>
-      <div v-for="item in userBuffer" :key="item.id">
+      <div v-for="item in certificatesListBuffer" :key="item.id">
         <certificate
           :is-show="selectedItems.length > 0"
           @open-modal="openCertificateModal"
@@ -90,31 +92,36 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store/modules/use-users.modules'
-import { CertificateJSONResponse, DropdownItem } from '@/types'
+import {
+  CertificateJSONResponse,
+  DropdownItem,
+  PottyCertificateRequest,
+} from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from '@/router'
 
 import {
-  ErrorMessage,
   AppButton,
-  Certificate,
   AppDropdown,
+  Certificate,
   CertificateModal,
+  ErrorMessage,
 } from '@/common'
 import { Signature } from '@/utils'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, sleep } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { LoaderModal } from '@/common/modals'
+import { Container } from '@/types/container.types'
 
 const userState = useUserStore()
 
 const isCertificateModalShown = ref(false)
 const currentUser = ref<CertificateJSONResponse>({} as CertificateJSONResponse)
 const selectedItems = ref<CertificateJSONResponse[]>([])
-const userBuffer = ref<CertificateJSONResponse[]>([])
-const searchInputValue = ref('')
+const certificatesListBuffer = ref<CertificateJSONResponse[]>([])
+const searchData = ref('')
 const selectedCount = ref(0)
 
 const router = useRouter()
@@ -205,6 +212,8 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
 
 const refresh = async () => {
   try {
+    isLoading.value = true
+    processState.value = 'Updating data' //todo localization
     const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
@@ -217,27 +226,59 @@ const refresh = async () => {
       },
     )
     userState.students = prepareUsersImage(data)
-    userBuffer.value = userState.students
+    certificatesListBuffer.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
+  } finally {
+    isLoading.value = false
   }
 }
 
 const findByCourse = (filter: DropdownItem) => {
   const currentCourse = filter.text
-  userBuffer.value = userState.students
-  if (currentCourse === '' || currentCourse === 'All') {
-    userBuffer.value = userState.students
+  certificatesListBuffer.value = userState.students
+  if (!currentCourse.length || currentCourse === 'All') {
+    certificatesListBuffer.value = userState.students
     return
   }
 
   const searchQuery = currentCourse.toLowerCase()
-  const filteredUsers = userBuffer.value.filter(user => {
+  const filteredUsers = certificatesListBuffer.value.filter(user => {
     const courseTitle = user.courseTitle.toLowerCase()
     return courseTitle.includes(searchQuery)
   })
 
-  userBuffer.value = filteredUsers
+  certificatesListBuffer.value = filteredUsers
+}
+
+const findByState = (filter: DropdownItem) => {
+  const state = filter.text
+
+  certificatesListBuffer.value = userState.students
+  if (!state.length || state === 'All') {
+    /* eslint-disable no-console */
+    console.log('All')
+    certificatesListBuffer.value = userState.students
+    return
+  }
+
+  // const searchQuery = state.toLowerCase()
+  if (state == 'Generated') {
+    certificatesListBuffer.value = certificatesListBuffer.value.filter(
+      certificate => {
+        return certificate.certificate || certificate.digitalCertificate
+      },
+    )
+  } else if (state == 'Not generated') {
+    certificatesListBuffer.value = certificatesListBuffer.value.filter(
+      certificate => {
+        /* eslint-disable no-console */
+
+        console.log('not ', certificate)
+        return !certificate.signature!.length
+      },
+    )
+  }
 }
 
 const generate = async () => {
@@ -258,7 +299,7 @@ const generate = async () => {
 
   isLoading.value = false
 
-  userState.bufferCertificateList = users
+  userState.bufferCertificateList = users!
   await router.push({
     name: ROUTE_NAMES.timestamp,
   })
@@ -267,6 +308,7 @@ const generate = async () => {
 const validateItemListGenerate = () => {
   for (const item of selectedItems.value) {
     if (item.certificate !== '' || item.signature !== '') {
+      //todo localization
       ErrorHandler.process(
         'This student already has certificate, ' + item.participant,
       )
@@ -279,6 +321,7 @@ const validateItemListGenerate = () => {
 const validateItemListTimestamp = () => {
   for (const item of selectedItems.value) {
     if (item.certificate === '' || item.signature === '') {
+      //todo localization
       ErrorHandler.process(
         'This student does not has certificate,' + item.participant,
       )
@@ -309,42 +352,95 @@ const sign = async (users: CertificateJSONResponse[]) => {
 }
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
-  const { data } = await api.post<CertificateJSONResponse[]>(
-    '/integrations/ccp/certificate/',
-    {
-      body: {
-        data: {
-          users: users, //todo make better
-          address:
-            userState.setting.userBitcoinAddress ||
-            '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-          url: userState.setting.urlGoogleSheet,
-          name: userState.setting.accountName,
+  try {
+    const { data } = await api.post<Container>(
+      '/integrations/ccp/certificate/',
+      {
+        body: {
+          data: {
+            users: users, //todo make better
+            address:
+              userState.setting.userBitcoinAddress ||
+              '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+            url: userState.setting.urlGoogleSheet,
+            name: userState.setting.accountName,
+          },
         },
       },
-    },
-  )
-  const updatedUsers = prepareUserImg(data)
-  userState.students = updatedUsers
-  return data
+    )
+    const container = await validateContainerState(data.container_id)
+    const updatedUsers = prepareCertificateImg(container!.clear_certificate)
+
+    userState.students = updatedUsers
+    return updatedUsers
+  } catch (error) {
+    ErrorHandler.process(error)
+    return
+  }
 }
 
-const prepareUserImg = (users: CertificateJSONResponse[]) => {
-  for (const user of users) {
-    if (user.certificateImg === null) {
+const validateContainerState = async (containerID: string) => {
+  await sleep(5000)
+  const containerStatus = true
+  while (containerStatus) {
+    try {
+      const { data } = await api.get<Container>(
+        '/integrations/ccp/certificate/' + containerID,
+      )
+      if (!data.status) {
+        await sleep(5000)
+        continue
+      }
+
+      data.clear_certificate = prepareCertificate(data.certificates)
+
+      return data
+    } catch (error) {
+      await sleep(5000)
+      // ErrorHandler.process(error)
+    }
+  }
+}
+
+const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
+  for (const certificate of certificates) {
+    if (!certificate.certificateImg) {
       continue
     }
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+    certificate.img =
+      'data:image/png;base64,' + certificate.certificateImg.toString()
   }
 
-  return users
+  return certificates
 }
 
+const search = () => {
+  if (searchData.value === '' && certificatesListBuffer.value) {
+    certificatesListBuffer.value = userState.students!
+    return
+  }
+  const searchQuery = searchData.value.toLowerCase()
+  certificatesListBuffer.value = certificatesListBuffer.value.filter(
+    certificate => {
+      const title = certificate.participant.toLowerCase()
+
+      return title.includes(searchQuery)
+    },
+  )
+}
+
+const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
+  const certificateList = ref<CertificateJSONResponse[]>([])
+  for (const certificate of certificates) {
+    certificateList.value.push(certificate.attributes)
+  }
+  return certificateList.value
+}
 const autoRefresh = () => {
   if (userState.students.length === 0) {
     refresh()
   }
-  userBuffer.value = userState.students
+  certificatesListBuffer.value = userState.students
 }
 
 onBeforeMount(autoRefresh)
