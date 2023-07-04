@@ -150,8 +150,16 @@ const bitcoinTimestamp = async () => {
   }
 }
 
+const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
+  for (const certificate of certificates) {
+    certificate.certificateImg = new Uint8Array()
+    certificate.img = ''
+  }
+  return certificates
+}
 const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
+    certificates = removeImgCertificates(certificates)
     const { data } = await api.post<Container>(
       '/integrations/ccp/certificate/bitcoin',
       {
