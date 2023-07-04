@@ -58,7 +58,7 @@
     </div>
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
-      :certificate="currentUser"
+      :certificate="currentCertificate"
     />
 
     <div class="certificates__list">
@@ -118,7 +118,9 @@ import { Container } from '@/types/container.types'
 const userState = useUserStore()
 
 const isCertificateModalShown = ref(false)
-const currentUser = ref<CertificateJSONResponse>({} as CertificateJSONResponse)
+const currentCertificate = ref<CertificateJSONResponse>(
+  {} as CertificateJSONResponse,
+)
 const selectedItems = ref<CertificateJSONResponse[]>([])
 const certificatesListBuffer = ref<CertificateJSONResponse[]>([])
 const searchData = ref('')
@@ -179,23 +181,67 @@ const dropDownStateList = [
   },
 ] as DropdownItem[]
 
-const openCertificateModal = (user: CertificateJSONResponse) => {
+const openCertificateModal = async (certificate: CertificateJSONResponse) => {
+  if (!certificate.certificateImg) {
+    const certificateWithImg = ref<CertificateJSONResponse[]>([])
+    certificateWithImg.value = (await getCertificateImage(
+      certificate,
+    )) as CertificateJSONResponse[]
+
+    certificateWithImg.value = prepareCertificateImage(
+      certificateWithImg.value!,
+    )
+
+    isCertificateModalShown.value = true
+    currentCertificate.value = certificateWithImg.value[0]
+    return
+  }
   isCertificateModalShown.value = true
-  currentUser.value = user
+  currentCertificate.value = certificate
 }
 
-const prepareUsersImage = (users: CertificateJSONResponse[]) => {
-  for (const user of users) {
-    if (!user.certificateImg) {
-      user.img = ''
+const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
+  for (const certificate of certificates) {
+    if (!certificate.certificateImg) {
+      certificate.img = ''
       continue
     }
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+    certificate.img =
+      'data:image/png;base64,' + certificate.certificateImg.toString()
   }
 
-  return users
+  return certificates
 }
 
+const getCertificateImage = async (certificate: CertificateJSONResponse) => {
+  try {
+    isLoading.value = true
+    processState.value = 'Upload certificate image'
+    const { data } = await api.post<CertificateJSONResponse[]>(
+      '/integrations/ccp/certificate/image',
+      {
+        body: {
+          data: {
+            attributes: {
+              certificates_data: [certificate],
+              address: userState.setting.userBitcoinAddress,
+              url: userState.setting.urlGoogleSheet,
+              name: userState.setting.accountName,
+            },
+          },
+        },
+      },
+    )
+    /* eslint-disable no-console */
+    console.log('data: ', data)
+
+    return data
+  } catch (error) {
+    ErrorHandler.process(error)
+  } finally {
+    isLoading.value = false
+  }
+}
 const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
     selectedItems.value.push(item)
@@ -225,7 +271,7 @@ const refresh = async () => {
         },
       },
     )
-    userState.students = prepareUsersImage(data)
+    userState.students = prepareCertificateImage(data)
     certificatesListBuffer.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
@@ -358,12 +404,14 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
       {
         body: {
           data: {
-            users: users, //todo make better
-            address:
-              userState.setting.userBitcoinAddress ||
-              '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-            url: userState.setting.urlGoogleSheet,
-            name: userState.setting.accountName,
+            attributes: {
+              certificates_data: users, //todo make better
+              address:
+                userState.setting.userBitcoinAddress ||
+                '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
+              url: userState.setting.urlGoogleSheet,
+              name: userState.setting.accountName,
+            },
           },
         },
       },

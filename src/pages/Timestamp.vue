@@ -9,8 +9,8 @@
           <input-field
             class="timestamp__search-input"
             :placeholder="$t('timestamp-page.input-placeholder')"
-            :model-value="findInputData"
-            @update:model-value="Search"
+            v-model="searchData"
+            @update:model-value="search"
           />
         </div>
 
@@ -35,10 +35,10 @@
 
       <div class="timestamp__body">
         <div class="timestamp__list">
-          <div v-if="certificateList.length === 0">
+          <div v-if="certificatesListBuffer.length === 0">
             <error-message message="Empty certificate list" />
           </div>
-          <div v-for="item in certificateList" :key="item.id">
+          <div v-for="item in certificatesListBuffer" :key="item.id">
             <timestamp-item
               :name="item.participant"
               :date="item.date"
@@ -84,11 +84,12 @@ const selectedCount = ref(0)
 
 const userState = useUserStore()
 
-const findInputData = ref('')
+const searchData = ref('')
 const isShowTimestampCheckbox = ref(false)
 const processState = ref('')
 const isLoading = ref(false)
 
+const certificatesListBuffer = ref<CertificateJSONResponse[]>([])
 const certificateList = ref<CertificateJSONResponse[]>([])
 const selectedItems = ref<CertificateJSONResponse[]>([])
 
@@ -99,10 +100,6 @@ const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   }
 
   return certificates
-}
-
-const Search = () => {
-  findInputData.value = ''
 }
 
 const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
@@ -160,10 +157,12 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       {
         body: {
           data: {
-            users: certificates,
-            address: userState.setting.userBitcoinAddress,
-            name: userState.setting.accountName,
-            url: userState.setting.urlGoogleSheet,
+            attributes: {
+              users: certificates,
+              address: userState.setting.userBitcoinAddress,
+              name: userState.setting.accountName,
+              url: userState.setting.urlGoogleSheet,
+            },
           },
         },
       },
@@ -207,6 +206,7 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
 }
 const autoRefresh = () => {
   certificateList.value = userState.bufferCertificateList
+  certificatesListBuffer.value = certificateList.value
 }
 
 const selectItem = (state: boolean, item: CertificateJSONResponse) => {
@@ -229,6 +229,21 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   }
   isShowTimestampCheckbox.value = true
 }
+
+const search = () => {
+  if (!searchData.value.length && certificatesListBuffer.value) {
+    certificatesListBuffer.value = certificateList.value!
+    return
+  }
+  const searchQuery = searchData.value.toLowerCase()
+  certificatesListBuffer.value = certificatesListBuffer.value.filter(
+    certificate => {
+      const title = certificate.participant.toLowerCase()
+      return title.includes(searchQuery)
+    },
+  )
+}
+
 tryOnBeforeMount(autoRefresh)
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="certificate">
     <checkbox-field
-      v-show="isShow"
+      v-show="true"
       :model-value="isSelected"
       @click="selectItem"
     />
@@ -36,13 +36,13 @@
         <app-button
           class="certificate__btn"
           :text="$t('certificate.timestamp-btn')"
-          @click="isSelected = true"
+          @click="selectItem"
         />
 
         <app-button
           class="certificate__btn certificate__btn-download"
           icon-right="download"
-          @click="window.open(certificate.certificate, '_blank')"
+          @click="openLink(certificate)"
         />
       </div>
       <div class="certificate__btns" v-else>
@@ -78,6 +78,14 @@ const props = defineProps<{
 const selectItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value, props.certificate)
+}
+
+const openLink = (certificate: CertificateJSONResponse) => {
+  window.open(
+    'https://' + certificate.certificate,
+    '_blank',
+    'noopener, noreferrer',
+  )
 }
 </script>
 

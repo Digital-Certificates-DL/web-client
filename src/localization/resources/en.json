@@ -97,6 +97,25 @@
     "upload-new-template": "Upload new template",
     "choose-template": "Choose from my templates"
   },
+  "generation-form": {
+    "title":"Create new certificate",
+    "step-1-description": "Write a name for your certificate",
+    "step-2-description": "Choose or upload template for a new certificate",
+    "step-3-description": "Write a link to  google sheet",
+    "step-1-title": "Write a name for your certificate",
+    "step-2-title": "Choose or upload template for a new certificate",
+    "step-3-title": "Write a link to  google sheet",
+    "step-1-number": "1",
+    "step-2-number": "2",
+    "step-3-number": "3",
+    "step-3-placeholder": "Link",
+    "step-1-placeholder": "Name",
+    "start-btn": "Start",
+    "cancel-btn": "Cancel",
+    "upload-new-template-symbol": "+",
+    "upload-new-template": "Upload new template",
+    "choose-template": "Choose from my templates"
+  },
   "certificate": {
     "generate-btn": "Generate",
     "timestamp-btn": "Timestamp",

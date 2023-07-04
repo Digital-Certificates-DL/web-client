@@ -119,12 +119,13 @@ const getCertificates = async () => {
       },
     )
     if (data) {
-      certificates.value = prepareUserImg(data)
+      const certificatesWithImg = await getCertificateImage(data.slice(-3))
+      certificates.value = prepareUserImg(certificatesWithImg!)
     }
-  } catch (err) {
-    switch (err.name) {
+  } catch (error) {
+    switch (error.name) {
       case 'ForbiddenError':
-        authLink.value = err.meta.auth_link
+        authLink.value = error.meta.auth_link
         isUnauthorized.value = true
         break
       case 'UnauthorizedError':
@@ -149,6 +150,37 @@ const getCertificates = async () => {
         await router.push(ROUTE_NAMES.settings)
         break
     }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const getCertificateImage = async (certificates: CertificateJSONResponse[]) => {
+  try {
+    isLoading.value = true
+    processState.value = 'Upload certificate image'
+    /* eslint-disable no-console */
+    console.log('userState.setting: ', userState.setting)
+    const { data } = await api.post<CertificateJSONResponse[]>(
+      '/integrations/ccp/certificate/image',
+      {
+        body: {
+          data: {
+            attributes: {
+              certificates_data: certificates,
+              address: userState.setting.userBitcoinAddress,
+              url: userState.setting.urlGoogleSheet,
+              name: userState.setting.accountName,
+            },
+          },
+        },
+      },
+    )
+    if (data) {
+      return data
+    }
+  } catch (error) {
+    ErrorHandler.process(error)
   } finally {
     isLoading.value = false
   }

@@ -101,6 +101,7 @@ const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
 .mint-form__btns {
   display: flex;
   justify-content: space-between;
+  margin-top: toRem(15);
 }
 
 .mint-form__btn {
