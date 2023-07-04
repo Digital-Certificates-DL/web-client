@@ -166,7 +166,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
         body: {
           data: {
             attributes: {
-              users: certificates,
+              certificates_data: certificates,
               address: userState.setting.userBitcoinAddress,
               name: userState.setting.accountName,
               url: userState.setting.urlGoogleSheet,
