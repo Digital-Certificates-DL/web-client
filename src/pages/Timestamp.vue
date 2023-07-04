@@ -152,7 +152,7 @@ const bitcoinTimestamp = async () => {
 
 const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
   for (const certificate of certificates) {
-    certificate.certificateImg = new Uint8Array()
+    delete certificate.certificateImg
     certificate.img = ''
   }
   return certificates
