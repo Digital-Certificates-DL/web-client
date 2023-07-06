@@ -121,6 +121,8 @@ const bitcoinTimestamp = async () => {
     processState.value = 'Prepare transaction'
 
     for (const certificate of selectedItems.value) {
+      /* eslint-disable no-console */
+      console.log('certificate on  start : ', certificate)
       const tx = await bitcoin.PrepareLegacyTXTestnet(
         userState.setting.bip39MnemonicPhrase,
       )
@@ -139,10 +141,14 @@ const bitcoinTimestamp = async () => {
       certificate.txHash = data.tx.hash.toString()
 
       bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
+      /* eslint-disable no-console */
+      console.log('certificate: ', certificate)
     }
 
     certificateList.value =
       (await updateCertificates(selectedItems.value)) || []
+
+    certificateList.value = prepareCertificateImg(certificateList.value)
     isLoading.value = false
   } catch (error) {
     isLoading.value = false

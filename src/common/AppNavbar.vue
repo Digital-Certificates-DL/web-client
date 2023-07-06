@@ -1,6 +1,8 @@
 <template>
   <div class="app-navbar">
-    <app-logo class="app-navbar__logo" />
+    <div class="app-navbar__logo-wrp">
+      <app-logo class="app-navbar__logo" />
+    </div>
 
     <div class="app-navbar__configuration">
       <div class="app-navbar__metamask">
@@ -81,6 +83,10 @@ const connect = async () => {
   width: 100%;
 }
 
+.app-navbar__logo-wrp {
+  width: toRem(50);
+}
+
 .app-navbar__logo {
   @include respond-to(xsmall) {
     width: 100%;
@@ -89,9 +95,9 @@ const connect = async () => {
 }
 
 .app-navbar__configuration {
-  width: 15%;
+  width: toRem(200);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .app-navbar__img {

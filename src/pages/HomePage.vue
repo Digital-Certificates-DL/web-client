@@ -119,9 +119,9 @@ const getCertificates = async () => {
       },
     )
     if (data) {
-      const certificatesWithImg = await getCertificateImage(data.slice(-3))
-      certificates.value = prepareUserImg(certificatesWithImg!)
+      certificates.value = data
     }
+    certificates.value
   } catch (error) {
     switch (error.name) {
       case 'ForbiddenError':
@@ -147,44 +147,47 @@ const getCertificates = async () => {
         }
         break
       default:
-        await router.push(ROUTE_NAMES.settings)
+        if (!userState.setting.urlGoogleSheet) {
+          await router.push(ROUTE_NAMES.settings)
+        }
         break
     }
   } finally {
     isLoading.value = false
   }
 }
-
-const getCertificateImage = async (certificates: CertificateJSONResponse[]) => {
-  try {
-    isLoading.value = true
-    processState.value = 'Upload certificate image'
-    /* eslint-disable no-console */
-    console.log('userState.setting: ', userState.setting)
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/certificate/image',
-      {
-        body: {
-          data: {
-            attributes: {
-              certificates_data: certificates,
-              address: userState.setting.userBitcoinAddress,
-              url: userState.setting.urlGoogleSheet,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
-    if (data) {
-      return data
-    }
-  } catch (error) {
-    ErrorHandler.process(error)
-  } finally {
-    isLoading.value = false
-  }
-}
+//
+// const getCertificateImage = async (certificates:
+// CertificateJSONResponse[]) => {
+//   try {
+//     isLoading.value = true
+//     processState.value = 'Upload certificate image'
+//     /* eslint-disable no-console */
+//     console.log('userState.setting: ', userState.setting)
+//     const { data } = await api.post<CertificateJSONResponse[]>(
+//       '/integrations/ccp/certificate/image',
+//       {
+//         body: {
+//           data: {
+//             attributes: {
+//               certificates_data: certificates,
+//               address: userState.setting.userBitcoinAddress,
+//               url: userState.setting.urlGoogleSheet,
+//               name: userState.setting.accountName,
+//             },
+//           },
+//         },
+//       },
+//     )
+//     if (data) {
+//       return data
+//     }
+//   } catch (error) {
+//     ErrorHandler.process(error)
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
 const getTemplates = async () => {
   if (!userState.setting.accountName) {
@@ -212,16 +215,6 @@ const updateCode = async (code: string) => {
       },
     },
   )
-}
-
-const prepareUserImg = (users: CertificateJSONResponse[]) => {
-  for (const user of users) {
-    if (user.certificateImg == null) {
-      continue
-    }
-    user.img = 'data:image/png;base64,' + user.certificateImg
-  }
-  return users
 }
 
 const prepareTemplateImg = (templates: TemplateRequestData[]) => {

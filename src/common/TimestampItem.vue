@@ -7,10 +7,10 @@
     />
     <div class="timestamp-item__body">
       <div class="timestamp-item__name">
-        <p>{{ props.name }}</p>
+        <p>{{ name }}</p>
       </div>
       <div class="timestamp-item__date">
-        <p>{{ props.date }}</p>
+        <p>{{ date }}</p>
       </div>
 
       <app-button

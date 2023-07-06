@@ -345,6 +345,8 @@ const generate = async () => {
 
   isLoading.value = false
 
+  /* eslint-disable no-console */
+  console.log('users: ', users)
   userState.bufferCertificateList = users!
   await router.push({
     name: ROUTE_NAMES.timestamp,
@@ -417,6 +419,9 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
       },
     )
     const container = await validateContainerState(data.container_id)
+
+    /* eslint-disable no-console */
+    console.log('container: ', container)
     const updatedUsers = prepareCertificateImg(container!.clear_certificate)
 
     userState.students = updatedUsers
@@ -478,8 +483,11 @@ const search = () => {
 }
 
 const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
+  /* eslint-disable no-console */
+  console.log('prepareCertificate: ', certificates)
   const certificateList = ref<CertificateJSONResponse[]>([])
   for (const certificate of certificates) {
+    certificate.attributes.id = Number(certificate.id)
     certificateList.value.push(certificate.attributes)
   }
   return certificateList.value

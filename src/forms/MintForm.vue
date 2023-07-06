@@ -30,7 +30,7 @@ import { AppButton } from '@/common'
 import { InputField } from '@/fields'
 
 import { api } from '@/api'
-import { IpfsJSONResponse, CertificateJSONResponse } from '@/types'
+import { CertificateJSONResponse, IpfsAttributes } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
 import { reactive } from 'vue'
@@ -60,7 +60,7 @@ const mint = async () => {
 
   try {
     disableForm()
-    const ipfsLink = await api.post<IpfsJSONResponse>(
+    const { data } = await api.post<IpfsAttributes>(
       '/integrations/ccp/certificate/ipfs',
       {
         body: {
@@ -72,8 +72,9 @@ const mint = async () => {
         },
       },
     )
-
-    await safeMint(form.address, ipfsLink.data.attributes.url)
+    /* eslint-disable no-console */
+    console.log(data)
+    await safeMint(form.address, data.url)
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
