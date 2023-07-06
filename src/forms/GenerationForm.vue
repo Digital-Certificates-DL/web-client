@@ -232,10 +232,12 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
       {
         body: {
           data: {
-            users: users, //todo make better
-            address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
-            url: userState.setting.urlGoogleSheet,
-            name: userState.setting.accountName,
+            attributes: {
+              users: users, //todo make better
+              address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
+              url: userState.setting.urlGoogleSheet,
+              name: userState.setting.accountName,
+            },
           },
         },
       },

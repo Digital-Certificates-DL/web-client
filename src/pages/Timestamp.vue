@@ -200,7 +200,6 @@ const validateContainerState = async (containerID: string) => {
       return data
     } catch (error) {
       await sleep(5000)
-      // ErrorHandler.process(error)
     }
   }
 }
