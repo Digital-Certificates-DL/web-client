@@ -1,5 +1,5 @@
 <template>
-  <form class="mint-form">
+  <form class="mint-form" autocomplete="off">
     <input-field
       v-model="form.address"
       :label="$t('mint-form.placeholder-metamask-address')"

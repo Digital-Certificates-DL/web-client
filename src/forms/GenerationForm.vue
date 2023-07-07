@@ -1,5 +1,5 @@
 <template>
-  <form class="generation-form">
+  <form class="generation-form" autocomplete="off">
     <div class="generation-form__body">
       <div class="generation-form__state-labels">
         <div class="generation-form__field-short">

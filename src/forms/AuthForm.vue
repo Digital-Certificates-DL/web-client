@@ -1,5 +1,5 @@
 <template>
-  <form class="auth-form">
+  <form class="auth-form" autocomplete="off">
     <h3 class="auth-form__title">
       {{ $t('auth-modal.title') }}
     </h3>

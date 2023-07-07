@@ -1,5 +1,5 @@
 <template>
-  <form class="setting-form" action="">
+  <form class="setting-form" autocomplete="off">
     <h3 class="setting-form__fields-title">
       {{ $t('setting-page.general-title') }}
     </h3>
