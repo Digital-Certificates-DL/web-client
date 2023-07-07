@@ -1,49 +1,48 @@
 <template>
   <modal
-    :is-shown="props.isShown"
+    :is-shown="isShown"
+    :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <div class="success-modal__pane">
-      <div class="success-modal__payload">
-        <icon class="success-modal__icon" :name="ICON_NAMES.certificate" />
-        <div class="success-modal__info">
-          <h3 class="success-modal__title">
-            {{ $t('success-modal.title') }}
-          </h3>
-          <p class="success-modal__description">
-            {{ $t('success-modal.description') }}
-          </p>
+    <template #default="{ modal }">
+      <div class="success-modal__pane">
+        <div class="success-modal__payload">
+          <icon class="success-modal__icon" :name="$icons.certificate" />
+          <div class="success-modal__info">
+            <h3 class="success-modal__title">
+              {{ $t('success-modal.title') }}
+            </h3>
+            <p class="success-modal__description">
+              {{ $t('success-modal.description') }}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <app-button
-        class="success-modal__btn"
-        :text="$t('success-modal.btn')"
-        color="success"
-        @click="closeModal"
-      />
-    </div>
+        <p class="success-modal__tx">
+          {{ transaction }}
+        </p>
+        <app-button
+          class="success-modal__btn"
+          color="success"
+          :text="$t('success-modal.btn-title')"
+          @click="modal.close"
+        />
+      </div>
+    </template>
   </modal>
 </template>
 
 <script lang="ts" setup>
-import { Icon, AppButton } from '@/common'
-import { ICON_NAMES } from '@/enums'
-import modal from '@/common/Modal.vue'
+import { Icon, AppButton, Modal } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   isShown: boolean
+  transaction: string
 }>()
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
-  (e: 'success'): void
 }>()
-
-const closeModal = () => {
-  emit('update:is-shown', false)
-  emit('success')
-}
 </script>
 
 <style lang="scss" scoped>
@@ -51,7 +50,7 @@ const closeModal = () => {
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
-  width: toRem(652);
+  width: toRem(720);
   height: toRem(256);
 }
 

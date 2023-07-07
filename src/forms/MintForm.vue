@@ -18,7 +18,7 @@
         color="info"
         :text="$t('mint-form.close-btn')"
         :disabled="isFormDisabled"
-        @click="emit('mint-finished')"
+        @click="emit('modal-close')"
       />
     </div>
   </form>
@@ -33,10 +33,10 @@ import { api } from '@/api'
 import { CertificateJSONResponse, IpfsAttributes } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 const { safeMint } = useErc721()
-
+const tx = ref('')
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const form = reactive({
@@ -52,7 +52,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'mint-finished'): void
+  (event: 'mint-finished', tx: string): void
+  (event: 'modal-close'): void
 }>()
 
 const mint = async () => {
@@ -74,12 +75,13 @@ const mint = async () => {
     )
     /* eslint-disable no-console */
     console.log(data)
-    await safeMint(form.address, data.url)
+    const mintTx = await safeMint(form.address, data.url)
+    tx.value = mintTx!
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
     enableForm()
-    emit('mint-finished')
+    emit('mint-finished', tx.value)
   }
 }
 

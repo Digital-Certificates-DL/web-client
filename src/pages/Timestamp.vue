@@ -77,8 +77,6 @@ import { tryOnBeforeMount } from '@vueuse/core'
 import LoaderModal from '@/common/modals/LoaderModal.vue'
 import { ErrorHandler, sleep } from '@/helpers'
 import { Container } from '@/types/container.types'
-import { useRouter } from 'vue-router'
-import { ROUTE_NAMES } from '@/enums'
 
 const isModalActive = ref(false)
 const currentCertificate = ref({} as CertificateJSONResponse)
@@ -149,7 +147,6 @@ const bitcoinTimestamp = async () => {
 
     certificateList.value = prepareCertificateImg(certificateList.value)
     isLoading.value = false
-    await useRouter().push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
     isLoading.value = false
     ErrorHandler.process(error)

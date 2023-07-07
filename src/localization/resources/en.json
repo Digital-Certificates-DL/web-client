@@ -50,7 +50,6 @@
     "metamask-description": "Connect Metamask wallet if you going to issue SBT",
     "metamask-connect-btn": "Connect to MetaMask",
     "metamask-disconnect-btn": "Disconnect",
-
     "page-info-name": "Digital Certificate",
 
     "main-nav-home-title": "Home",
@@ -225,6 +224,10 @@
   "template-page": {
     "save-position": "Save Text Position",
     "remove-input-btn": "Remove"
+  },
+  "success-modal":{
+    "title": "Success",
+    "description ": "Certificate is minted successfully",
+    "btn-title": "Close"
   }
-
 }

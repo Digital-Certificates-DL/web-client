@@ -1,5 +1,6 @@
 <template>
   <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+  <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
   <div class="previously-certificates-page">
     <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
     <div class="previously-certificates-page__search-wrp">
@@ -59,6 +60,7 @@
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
       :certificate="currentCertificate"
+      @success="successMint"
     />
 
     <div class="certificates__list">
@@ -81,9 +83,9 @@
       <div v-for="item in certificatesListBuffer" :key="item.id">
         <certificate
           :is-show="selectedItems.length > 0"
+          :certificate="item"
           @open-modal="openCertificateModal"
           @select="selectItem"
-          :certificate="item"
         />
       </div>
     </div>
@@ -114,6 +116,7 @@ import { ErrorHandler, sleep } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { LoaderModal } from '@/common/modals'
 import { Container } from '@/types/container.types'
+import SuccessModal from '@/common/modals/SuccessModal.vue'
 
 const userState = useUserStore()
 
@@ -130,6 +133,8 @@ const router = useRouter()
 
 const isLoading = ref(false)
 const processState = ref('')
+const isMintSuccess = ref(false)
+const mintTx = ref('')
 
 const dropDownCourseList = [
   {
@@ -497,6 +502,11 @@ const autoRefresh = () => {
     refresh()
   }
   certificatesListBuffer.value = userState.students
+}
+
+const successMint = (tx: string) => {
+  mintTx.value = tx
+  isMintSuccess.value = true
 }
 
 onBeforeMount(autoRefresh)

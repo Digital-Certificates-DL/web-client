@@ -1,6 +1,7 @@
 <template>
   <modal
     :is-shown="isShown"
+    :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <template #default="{ modal }">
@@ -36,7 +37,11 @@
           {{ $t('certificate-modal.label-metamask-address') }}
         </p>
 
-        <mint-form :certificate="certificate" @mint-finished="modal.close" />
+        <mint-form
+          :certificate="certificate"
+          @mint-finished="success"
+          @modal-close="modal.close"
+        />
       </div>
     </template>
   </modal>
@@ -54,8 +59,14 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'update:is-shown', value: boolean): void
+  (e: 'success', tx: string): boolean
+  (e: 'update:is-shown', value: boolean): void
 }>()
+
+const success = (tx: string) => {
+  emit('success', tx)
+  emit('update:is-shown', false)
+}
 </script>
 
 <style scoped lang="scss">
