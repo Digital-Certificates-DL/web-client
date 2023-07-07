@@ -1,29 +1,29 @@
 <template>
   <div class="home-item">
     <div class="home-item__img-wrp">
-      <div v-if="props.img === ''">
-        <img
-          :src="props.img || '/branding/template.jpg'"
-          class="home-item__img"
-          alt="not found"
-        />
-      </div>
-      <div v-else>
-        <img
-          class="home-item__img"
-          :src="props.img || '/branding/template.jpg'"
-          alt="error"
-        />
-      </div>
+      <!--      <div v-if="props.img === ''">-->
+      <!--        <img-->
+      <!--          :src="props.img || '/branding/template.jpg'"-->
+      <!--          class="home-item__img"-->
+      <!--          alt="not found"-->
+      <!--        />-->
+      <!--      </div>-->
+      <!--      <div v-else>-->
+      <img
+        class="home-item__img"
+        :src="img || '/branding/template.jpg'"
+        alt="error"
+      />
+      <!--      </div>-->
     </div>
     <div class="home-item__title">
-      <p>{{ props.title }}</p>
+      <p>{{ title }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   img?: string
   title?: string
 }>()

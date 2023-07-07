@@ -77,6 +77,8 @@ import { tryOnBeforeMount } from '@vueuse/core'
 import LoaderModal from '@/common/modals/LoaderModal.vue'
 import { ErrorHandler, sleep } from '@/helpers'
 import { Container } from '@/types/container.types'
+import { useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '@/enums'
 
 const isModalActive = ref(false)
 const currentCertificate = ref({} as CertificateJSONResponse)
@@ -111,9 +113,6 @@ const bitcoinTimestamp = async () => {
     const bitcoin = new Bitcoin()
     isLoading.value = true
 
-    /* eslint-disable no-console */
-    console.log('bitcoinTimestamp')
-
     processState.value = 'Getting UTXO'
     await bitcoin.getUTXOBip32TestnetBlockstream(
       userState.setting.bip39MnemonicPhrase,
@@ -141,15 +140,16 @@ const bitcoinTimestamp = async () => {
       certificate.txHash = data.tx.hash.toString()
 
       bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
-      /* eslint-disable no-console */
-      console.log('certificate: ', certificate)
     }
+
+    processState.value = 'Update Certificate'
 
     certificateList.value =
       (await updateCertificates(selectedItems.value)) || []
 
     certificateList.value = prepareCertificateImg(certificateList.value)
     isLoading.value = false
+    await useRouter().push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
     isLoading.value = false
     ErrorHandler.process(error)

@@ -2,17 +2,17 @@
   <div class="home-nav">
     <div class="home-nav__info">
       <h3 class="home-nav__title">
-        {{ props.title }}
+        {{ title }}
       </h3>
       <p class="home-nav__description">
-        {{ props.description }}
+        {{ description }}
       </p>
     </div>
     <div class="home-nav__btns">
       <app-button
         class="home-nav__btn"
         :color="'info'"
-        :text="props.name"
+        :text="name"
         @click="emit('active')"
       />
     </div>
@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   color?: string
   title?: string
   name?: string
@@ -51,7 +51,7 @@ const emit = defineEmits<{
 
 .home-nav__description {
   color: var(--border-primary-dark);
-  font-size: toRem(12);
+  font-size: toRem(14);
 }
 
 .home-nav__info {

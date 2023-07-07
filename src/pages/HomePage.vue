@@ -34,21 +34,25 @@
           </div>
           <div>
             <div v-if="templates.length === 0" class="home-page__items">
-              <div class="home__item home-page__item-mock"></div>
-              <div class="home__item home-page__item-mock"></div>
-              <div class="home__item home-page__item-mock"></div>
+              <!-- <div class="home__item home-page__item-mock"></div>-->
+              <!-- <div class="home__item home-page__item-mock"></div>-->
+              <!-- <div class="home__item home-page__item-mock"></div>-->
+
+              <home-item :img="'/branding/goland.png'" :title="'Golang'" />
+              <home-item
+                :img="'/branding/blockchain.png'"
+                :title="'Blockchain'"
+              />
+              <home-item :img="'/branding/template.jpg'" :title="'Solidity'" />
             </div>
             <div v-else class="home-page__items">
-              <div
-                v-for="(item, key) in templates.slice(0, 3)"
-                :value="key"
-                :key="item"
-              >
-                <home-item
-                  :img="item.background_img || '/branding/template.png'"
-                  :title="item.template_name"
-                />
-              </div>
+              <!--              <div-->
+              <!-- v-for="(item, key) in templates.slice(0, 3)"-->
+              <!--                :value="key"-->
+              <!--                :key="item"-->
+              <!--              >-->
+
+              <!--              </div>-->
             </div>
           </div>
         </div>
@@ -71,9 +75,21 @@
             <div class="home-page__item-mock"></div>
           </div>
           <div v-else class="home-page__items">
-            <div v-for="item in certificates.slice(0, 3)" :key="item">
-              <home-item :img="item.img" :title="item.participant" />
-            </div>
+            <!--<div v-for="item in certificates.slice(0, 3)" :key="item">-->
+            <!-- <home-item :img="item.img" :title="item.participant" />-->
+            <home-item
+              :img="'/branding/certificate_Mark_Cherepovskyi_defi-1.png'"
+              :title="'Mark Cherepovskyi'"
+            />
+            <home-item
+              :img="'/branding/certificate_Ruslan.png'"
+              :title="'Ruslan Ovsienko'"
+            />
+            <home-item
+              :img="'/branding/certificate_Olha_Sidenko_defi-1.png'"
+              :title="'Olha Sidenko'"
+            />
+            <!--            </div>-->
           </div>
         </div>
       </div>
