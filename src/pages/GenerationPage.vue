@@ -34,8 +34,10 @@ const updateCode = async (code: string) => {
       {
         body: {
           data: {
-            code: code,
-            name: userState.setting.accountName,
+            attributes: {
+              code: code,
+              name: userState.setting.accountName,
+            },
           },
         },
       },

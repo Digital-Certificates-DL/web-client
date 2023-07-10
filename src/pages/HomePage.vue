@@ -46,13 +46,11 @@
               <home-item :img="'/branding/template.jpg'" :title="'Solidity'" />
             </div>
             <div v-else class="home-page__items">
-              <!--              <div-->
-              <!-- v-for="(item, key) in templates.slice(0, 3)"-->
-              <!--                :value="key"-->
-              <!--                :key="item"-->
-              <!--              >-->
-
-              <!--              </div>-->
+              <div
+                v-for="(item, key) in templates.slice(0, 3)"
+                :value="key"
+                :key="item"
+              ></div>
             </div>
           </div>
         </div>
@@ -75,21 +73,9 @@
             <div class="home-page__item-mock"></div>
           </div>
           <div v-else class="home-page__items">
-            <!--<div v-for="item in certificates.slice(0, 3)" :key="item">-->
-            <!-- <home-item :img="item.img" :title="item.participant" />-->
-            <home-item
-              :img="'/branding/certificate_Mark_Cherepovskyi_defi-1.png'"
-              :title="'Mark Cherepovskyi'"
-            />
-            <home-item
-              :img="'/branding/certificate_Ruslan.png'"
-              :title="'Ruslan Ovsienko'"
-            />
-            <home-item
-              :img="'/branding/certificate_Olha_Sidenko_defi-1.png'"
-              :title="'Olha Sidenko'"
-            />
-            <!--            </div>-->
+            <div v-for="item in certificates.slice(0, 3)" :key="item">
+              <home-item :img="item.img" :title="item.participant" />
+            </div>
           </div>
         </div>
       </div>
@@ -128,8 +114,10 @@ const getCertificates = async () => {
       {
         body: {
           data: {
-            name: userState.setting.accountName,
-            url: userState.setting.urlGoogleSheet,
+            attributes: {
+              name: userState.setting.accountName,
+              url: userState.setting.urlGoogleSheet,
+            },
           },
         },
       },
@@ -149,7 +137,9 @@ const getCertificates = async () => {
           const { data } = await api.post('/integrations/ccp/users/token', {
             body: {
               data: {
-                name: userState.setting.accountName,
+                attributes: {
+                  name: userState.setting.accountName,
+                },
               },
             },
           })
@@ -172,38 +162,6 @@ const getCertificates = async () => {
     isLoading.value = false
   }
 }
-//
-// const getCertificateImage = async (certificates:
-// CertificateJSONResponse[]) => {
-//   try {
-//     isLoading.value = true
-//     processState.value = 'Upload certificate image'
-//     /* eslint-disable no-console */
-//     console.log('userState.setting: ', userState.setting)
-//     const { data } = await api.post<CertificateJSONResponse[]>(
-//       '/integrations/ccp/certificate/image',
-//       {
-//         body: {
-//           data: {
-//             attributes: {
-//               certificates_data: certificates,
-//               address: userState.setting.userBitcoinAddress,
-//               url: userState.setting.urlGoogleSheet,
-//               name: userState.setting.accountName,
-//             },
-//           },
-//         },
-//       },
-//     )
-//     if (data) {
-//       return data
-//     }
-//   } catch (error) {
-//     ErrorHandler.process(error)
-//   } finally {
-//     isLoading.value = false
-//   }
-// }
 
 const getTemplates = async () => {
   if (!userState.setting.accountName) {
@@ -225,8 +183,10 @@ const updateCode = async (code: string) => {
     {
       body: {
         data: {
-          code: code,
-          name: userState.setting.accountName,
+          attributes: {
+            code: code,
+            name: userState.setting.accountName,
+          },
         },
       },
     },

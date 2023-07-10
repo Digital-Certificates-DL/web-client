@@ -99,8 +99,10 @@ const save = async () => {
       {
         body: {
           data: {
-            code: '',
-            name: userState.setting.accountName,
+            attributes: {
+              code: '',
+              name: userState.setting.accountName,
+            },
           },
         },
       },

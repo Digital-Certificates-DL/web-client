@@ -159,8 +159,10 @@ const parsedData = async (sheepUrl?: string) => {
       {
         body: {
           data: {
-            name: userState.setting.accountName,
-            url: sheepUrl || userState.setting.urlGoogleSheet,
+            attributes: {
+              name: userState.setting.accountName,
+              url: sheepUrl || userState.setting.urlGoogleSheet,
+            },
           },
         },
       },

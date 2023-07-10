@@ -270,8 +270,10 @@ const refresh = async () => {
       {
         body: {
           data: {
-            url: userState.setting.urlGoogleSheet,
-            name: userState.setting.accountName,
+            attributes: {
+              url: userState.setting.urlGoogleSheet,
+              name: userState.setting.accountName,
+            },
           },
         },
       },

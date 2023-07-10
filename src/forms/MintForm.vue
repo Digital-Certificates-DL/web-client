@@ -66,9 +66,11 @@ const mint = async () => {
       {
         body: {
           data: {
-            description: prepareTokenDescription(props.certificate),
-            img: props.certificate.certificateImg,
-            name: 'certificate - ' + props.certificate.participant,
+            attributes: {
+              description: prepareTokenDescription(props.certificate),
+              img: props.certificate.certificateImg,
+              name: 'certificate - ' + props.certificate.participant,
+            },
           },
         },
       },

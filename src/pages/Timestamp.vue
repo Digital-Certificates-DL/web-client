@@ -96,7 +96,7 @@ const selectedItems = ref<CertificateJSONResponse[]>([])
 const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   for (const certificate of certificates) {
     certificate.img =
-      'data:image/png;base64,' + certificate.certificateImg.toString()
+      'data:image/png;base64,' + certificate.certificateImg!.toString()
   }
 
   return certificates
