@@ -339,7 +339,7 @@ export class Bitcoin {
     /* eslint-disable no-console */
     console.log('bitcoin.ECPair.fromWIF: ', bitcoin.ECPair.fromWIF)
 
-    const keyPairex = bitcoin.ECPair.fromWIF(wif)
+    const keyPairex = bitcoin.ECPair.fromWIF(wif, network)
     const key = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
       network: network,

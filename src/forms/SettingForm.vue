@@ -66,7 +66,7 @@ import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
-import { bitcoin } from 'ecpair/src/networks'
+import bitcoin from 'bitcoinjs-lib'
 
 const userState = useUserStore()
 const router = useRouter()
@@ -89,7 +89,10 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setting = form
-  const address = Bitcoin.getAddressFromWIF(form.signKey, bitcoin)
+  const address = Bitcoin.getAddressFromWIF(
+    form.signKey,
+    bitcoin.networks.bitcoin,
+  )
 
   userState.setting.userBitcoinAddress = address || ''
 
