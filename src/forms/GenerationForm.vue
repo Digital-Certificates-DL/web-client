@@ -33,13 +33,15 @@
               {{ $t('generation-form.step-1-description') }}
             </p>
 
-            <input-field
-              v-model="form.name"
-              class="generation-form__text-input"
-              :label="$t('generation-form.step-1-placeholder')"
-              :disabled="isFormDisabled"
-              :error-message="getFieldErrorMessage('name')"
-            />
+            <div class="generation-form__input-wrp">
+              <input-field
+                v-model="form.name"
+                class="generation-form__text-input"
+                :label="$t('generation-form.step-1-placeholder')"
+                :disabled="isFormDisabled"
+                :error-message="getFieldErrorMessage('name')"
+              />
+            </div>
           </div>
         </div>
 
@@ -68,13 +70,14 @@
           <p class="generation-form__field-description">
             {{ $t('generation-form.step-3-description') }}
           </p>
-
-          <input-field
-            v-model="form.link"
-            class="generation-form__text-input"
-            :label="$t('generation-form.step-3-placeholder')"
-            :disabled="isFormDisabled"
-          />
+          <div class="generation-form__input-wrp">
+            <input-field
+              v-model="form.link"
+              class="generation-form__text-input"
+              :label="$t('generation-form.step-3-placeholder')"
+              :disabled="isFormDisabled"
+            />
+          </div>
 
           <div class="generation-form__btns-wrp">
             <app-button
@@ -82,6 +85,7 @@
               color="info"
               size="large"
               :text="$t('generation-form.start-btn')"
+              :disabled="!isFormValid"
               @click="start"
             />
 
@@ -176,7 +180,7 @@ const parsedData = async (sheepUrl?: string) => {
 const sign = (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
-    if (!user.signature || user.signature == '') {
+    if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
     }
   }
@@ -252,6 +256,10 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   background: var(--info-dark);
 }
 
+.generation-form__input-wrp {
+  max-width: toRem(450);
+}
+
 .generation-form__field-border {
   width: toRem(1);
   height: 65%;
@@ -285,12 +293,9 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   margin-top: toRem(50);
 }
 
-.generation-form__text-input {
-  width: toRem(450);
-}
-
 .generation-form__btn {
-  width: toRem(200);
+  max-width: toRem(200);
+  width: 100%;
   border-radius: toRem(8);
   margin-right: toRem(10);
 }
@@ -306,18 +311,16 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 
 .generation-form__choose-template-list {
   display: flex;
+  max-height: toRem(222);
+  height: 100%;
 }
 
 .generation-form__choose-template {
-  width: toRem(314);
-  height: toRem(222);
+  max-width: toRem(314);
+  width: 100%;
   background: var(--background-primary-dark);
   border-radius: toRem(12);
   margin-right: toRem(15);
-}
-
-.generation-form__field-input {
-  width: toRem(427);
 }
 
 .generation-form__field-images {

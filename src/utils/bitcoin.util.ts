@@ -5,11 +5,11 @@ import * as ecc from 'tiny-secp256k1'
 const bip32 = BIP32Factory(ecc)
 import ECPairFactory from 'ecpair'
 import { mnemonicToSeedAsync } from 'bip39-web'
+import axios from 'axios'
+import { Network } from 'bitcoinjs-lib'
+import { PustTxResponce, UTXO } from '@/types/bitcoin.types'
 
 const ECPair = ECPairFactory(ecc)
-import axios from 'axios'
-import { Network } from 'bitcoinjs-lib/src/networks'
-import { PustTxResponce, UTXO } from '@/types/bitcoin.types'
 
 // the file will be heavily modified in the next request
 // and now you can not watch it

@@ -9,7 +9,7 @@
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
-      <setting-form />
+      <setting-form class="setting-page__form" />
     </div>
   </div>
 </template>
@@ -20,8 +20,8 @@ import { SettingForm } from '@/forms'
 
 <style scoped lang="scss">
 .setting-page {
-  width: var(--page-large);
-  margin: auto;
+  max-width: var(--page-large);
+  margin: 0 auto;
 }
 
 .setting-page__title {
@@ -38,5 +38,10 @@ import { SettingForm } from '@/forms'
   justify-items: center;
   max-height: toRem(100);
   margin-bottom: toRem(50);
+}
+
+.setting-page__form {
+  max-width: toRem(458);
+  width: 100%;
 }
 </style>

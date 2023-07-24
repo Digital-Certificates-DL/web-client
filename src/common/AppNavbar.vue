@@ -3,29 +3,25 @@
     <app-logo class="app-navbar__logo" />
 
     <div class="app-navbar__configuration">
-      <div class="app-navbar__metamask">
-        <app-button
-          class="app-navbar__btn"
-          color="info"
-          :text="abbrCenter(
+      <app-button
+        class="app-navbar__btn"
+        color="info"
+        :text="abbrCenter(
                     provider.isConnected,
                     provider.selectedAddress!,
                   ) || $t('app-navbar.metamask-connect')"
-          :icon-left="$icons.metamask"
-          @click="connect"
-        />
-      </div>
+        :icon-left="$icons.metamask"
+        @click="connect"
+      />
 
-      <div class="app-navbar__settings">
-        <app-button
-          class="app-navbar__btn"
-          color="info"
-          :icon-left="$icons.settings"
-          :route="{
-            name: $routes.settings,
-          }"
-        />
-      </div>
+      <app-button
+        class="app-navbar__btn"
+        color="info"
+        :icon-left="$icons.settings"
+        :route="{
+          name: $routes.settings,
+        }"
+      />
     </div>
   </div>
 </template>
@@ -67,14 +63,18 @@ const connect = async () => {
 
 .app-navbar__configuration {
   display: flex;
+  align-items: center;
+  max-height: toRem(50);
 }
 
 .app-navbar__img {
   width: toRem(20);
+  height: 100%;
 }
 
 .app-navbar__btn {
-  height: toRem(50);
   border-radius: toRem(8);
+  height: 100%;
+  margin: toRem(10);
 }
 </style>
