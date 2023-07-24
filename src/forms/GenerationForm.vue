@@ -212,7 +212,7 @@ const validateContainerState = async (containerID: string) => {
       const { data } = await api.get<Container>(
         '/integrations/ccp/certificate/' + containerID,
       )
-      if (!data.status) {
+      if (data.status != 'ready_status') {
         await sleep(5000)
         continue
       }

@@ -426,9 +426,6 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
       },
     )
     const container = await validateContainerState(data.container_id)
-
-    /* eslint-disable no-console */
-    console.log('container: ', container)
     const updatedUsers = prepareCertificateImg(container!.clear_certificate)
 
     userState.students = updatedUsers
@@ -447,7 +444,7 @@ const validateContainerState = async (containerID: string) => {
       const { data } = await api.get<Container>(
         '/integrations/ccp/certificate/' + containerID,
       )
-      if (!data.status) {
+      if (data.status != 'ready_status') {
         await sleep(5000)
         continue
       }

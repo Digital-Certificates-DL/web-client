@@ -6,6 +6,6 @@ import {
 export type Container = {
   certificates: PottyCertificateRequest[]
   clear_certificate: CertificateJSONResponse[]
-  status: boolean
+  status: string
   container_id: string
 }
