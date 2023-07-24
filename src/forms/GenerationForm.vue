@@ -117,6 +117,7 @@ import { required } from '@/validators'
 import { Container } from '@/types/container.types'
 const userState = useUserStore()
 
+const SLEEP_TIME = 5000
 const DEFAULT_KEY = '1BooKnbm48Eabw3FdPgTSudt9u4YTWKBvf'
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
@@ -167,7 +168,7 @@ const parsedData = async (sheepUrl?: string) => {
         },
       },
     )
-    return (data as CertificateJSONResponse[]) || undefined
+    return data
   } catch (error) {
     if (error.metadata.link) {
       emit('auth', error.metadata.link)
@@ -188,7 +189,7 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
 const sign = (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
-    if (!user.signature || user.signature == '') {
+    if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
     }
   }
@@ -196,8 +197,10 @@ const sign = (users: CertificateJSONResponse[]) => {
 }
 
 const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
-  const list: CertificateJSONResponse[] = users
-  for (const user of list) {
+  for (const user of users) {
+    if (!user.certificateImg) {
+      continue
+    }
     user.img = 'data:image/png;base64,' + user.certificateImg.toString()
   }
 
@@ -205,7 +208,7 @@ const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
 }
 
 const validateContainerState = async (containerID: string) => {
-  await sleep(5000)
+  await sleep(SLEEP_TIME)
   const containerStatus = true
   while (containerStatus) {
     try {
@@ -213,7 +216,7 @@ const validateContainerState = async (containerID: string) => {
         '/integrations/ccp/certificate/' + containerID,
       )
       if (data.status != 'ready_status') {
-        await sleep(5000)
+        await sleep(SLEEP_TIME)
         continue
       }
 
@@ -221,7 +224,7 @@ const validateContainerState = async (containerID: string) => {
 
       return data
     } catch (error) {
-      await sleep(5000)
+      await sleep(SLEEP_TIME)
       // ErrorHandler.process(error)
     }
   }
@@ -235,7 +238,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
         body: {
           data: {
             attributes: {
-              users: users, //todo make better
+              users: users,
               address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
               url: userState.setting.urlGoogleSheet,
               name: userState.setting.accountName,

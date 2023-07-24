@@ -1,11 +1,7 @@
 import { testnet } from 'ecpair/src/networks'
 import bitcoin from 'bitcoinjs-lib'
-// import * as ecc from 'tiny-secp256k1-browserify'
 import { Bip32, Bip39 } from '@ts-bitcoin/core'
 import { mnemonicToSeedAsync } from 'bip39-web'
-
-// const ECPair = ECPairFactory(ecc)
-// import { ECPairFactory } from 'ecpair'
 
 import axios from 'axios'
 import {
@@ -15,22 +11,12 @@ import {
   BlockstreamTxList,
   UTXOs,
 } from '@/types/bitcoin.types'
-// const ECPair = ECPairFactory(ecc)
 
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
 
   private bip32Derive = (bip: Bip32, path: string) => {
-    /* eslint-disable no-console */
-    console.log('path: ', path)
-    const key = bip.derive(path)
-    /* eslint-disable no-console */
-    console.log('key: ', key)
-    /* eslint-disable no-console */
-    console.log('key: ', key.privKey.toWif())
-    /* eslint-disable no-console */
-    console.log('key: ', key.privKey.toBuffer())
-    return bitcoin.ECPair.fromWIF(key.privKey.toWif())
+    return bitcoin.ECPair.fromWIF(bip.derive(path).privKey.toWif())
   }
 
   public getUTXOBip32MainBlockstream = async (mnph: string) => {
@@ -49,7 +35,7 @@ export class Bitcoin {
 
         /* eslint-disable no-console */
         console.log('address: ', address)
-        if (address === undefined) {
+        if (!address) {
           continue
         }
 
@@ -105,7 +91,7 @@ export class Bitcoin {
 
         /* eslint-disable no-console */
         console.log('address: ', address)
-        if (address === undefined) {
+        if (!address) {
           continue
         }
         const txs = await axios.get<BlockstreamTxList>(
@@ -236,7 +222,6 @@ export class Bitcoin {
   }
 
   public async SendToTestnet(tx: string) {
-    // todo add token
     const res = await axios
       .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
       .then(function (response) {
@@ -255,7 +240,7 @@ export class Bitcoin {
   }
 
   private async getTxTestnet(hash: string) {
-    const tx = await axios
+    return await axios
       .get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
           hash +
@@ -267,7 +252,6 @@ export class Bitcoin {
       .catch(err => {
         return err
       })
-    return tx
   }
 
   private async betterUtxoTestnet(outs: number, txsValue: number) {
@@ -330,15 +314,6 @@ export class Bitcoin {
   }
 
   static getAddressFromWIF(wif: string, network?: bitcoin.Network) {
-    /* eslint-disable no-console */
-    console.log('getAddressFromWIF')
-
-    /* eslint-disable no-console */
-    console.log('wif: ', wif)
-
-    /* eslint-disable no-console */
-    console.log('bitcoin.ECPair.fromWIF: ', bitcoin.ECPair.fromWIF)
-
     const keyPairex = bitcoin.ECPair.fromWIF(wif, network)
     const key = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,

@@ -20,15 +20,18 @@
         @click="refresh"
       />
       <div class="previously-certificates-page__filters">
-        <app-dropdown :items="dropDownCourseList" @select-item="findByCourse" />
+        <app-dropdown
+          :items="DROP_DOWN_COURSE_LIST"
+          @select-item="findByCourse"
+        />
         <app-dropdown
           :title="'Data'"
-          :items="dropDownDataList"
+          :items="DROP_DOWN_DATA_LIST"
           :main-image="'/branding/data-ico.png'"
         />
         <app-dropdown
           :title="'All'"
-          :items="dropDownStateList"
+          :items="DROP_DOWN_STATE_LIST"
           :main-image="'/branding/success-ico.png'"
           @select-item="findByState"
         />
@@ -99,7 +102,6 @@ import {
   DropdownItem,
   PottyCertificateRequest,
 } from '@/types'
-import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from '@/router'
@@ -112,11 +114,18 @@ import {
   ErrorMessage,
 } from '@/common'
 import { Signature } from '@/utils'
-import { ErrorHandler, sleep } from '@/helpers'
-import { ROUTE_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
+import { FILES_BASE, ROUTE_NAMES } from '@/enums'
 import { LoaderModal } from '@/common/modals'
-import { Container } from '@/types/container.types'
 import SuccessModal from '@/common/modals/SuccessModal.vue'
+import {
+  useCreatePdf,
+  useDownloadImage,
+  useUploadCertificates,
+  useValidateContainerState,
+} from '@/api/api'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const userState = useUserStore()
 
@@ -136,7 +145,7 @@ const processState = ref('')
 const isMintSuccess = ref(false)
 const mintTx = ref('')
 
-const dropDownCourseList = [
+const DROP_DOWN_COURSE_LIST = [
   {
     img: '/branding/solidity-ico.png',
     text: 'All',
@@ -159,7 +168,7 @@ const dropDownCourseList = [
   },
 ] as DropdownItem[]
 
-const dropDownDataList = [
+const DROP_DOWN_DATA_LIST = [
   {
     text: 'All',
   },
@@ -174,7 +183,7 @@ const dropDownDataList = [
   },
 ] as DropdownItem[]
 
-const dropDownStateList = [
+const DROP_DOWN_STATE_LIST = [
   {
     text: 'All',
   },
@@ -221,31 +230,13 @@ const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
-    processState.value = 'Upload certificate image'
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/certificate/image',
-      {
-        body: {
-          data: {
-            attributes: {
-              certificates_data: [certificate],
-              address: userState.setting.userBitcoinAddress,
-              url: userState.setting.urlGoogleSheet,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
-    /* eslint-disable no-console */
-    console.log('data: ', data)
-
-    return data
+    processState.value = 'Upload certificate image' //todo  loc
+    return await useDownloadImage(certificate)
   } catch (error) {
     ErrorHandler.process(error)
-  } finally {
-    isLoading.value = false
   }
+
+  isLoading.value = false
 }
 const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
@@ -264,20 +255,11 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
 const refresh = async () => {
   try {
     isLoading.value = true
-    processState.value = 'Updating data' //todo localization
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/users/',
-      {
-        body: {
-          data: {
-            attributes: {
-              url: userState.setting.urlGoogleSheet,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
+    processState.value = t(
+      'previously-certificates-page.process-state-update-date',
     )
+    const data = await useUploadCertificates()
+
     userState.students = prepareCertificateImage(data)
     certificatesListBuffer.value = userState.students
   } catch (error) {
@@ -296,12 +278,10 @@ const findByCourse = (filter: DropdownItem) => {
   }
 
   const searchQuery = currentCourse.toLowerCase()
-  const filteredUsers = certificatesListBuffer.value.filter(user => {
+  certificatesListBuffer.value = certificatesListBuffer.value.filter(user => {
     const courseTitle = user.courseTitle.toLowerCase()
     return courseTitle.includes(searchQuery)
   })
-
-  certificatesListBuffer.value = filteredUsers
 }
 
 const findByState = (filter: DropdownItem) => {
@@ -309,25 +289,19 @@ const findByState = (filter: DropdownItem) => {
 
   certificatesListBuffer.value = userState.students
   if (!state.length || state === 'All') {
-    /* eslint-disable no-console */
-    console.log('All')
     certificatesListBuffer.value = userState.students
     return
   }
 
-  // const searchQuery = state.toLowerCase()
-  if (state == 'Generated') {
+  if (state === 'Generated') {
     certificatesListBuffer.value = certificatesListBuffer.value.filter(
       certificate => {
         return certificate.certificate || certificate.digitalCertificate
       },
     )
-  } else if (state == 'Not generated') {
+  } else if (state === 'Not generated') {
     certificatesListBuffer.value = certificatesListBuffer.value.filter(
       certificate => {
-        /* eslint-disable no-console */
-
-        console.log('not ', certificate)
         return !certificate.signature!.length
       },
     )
@@ -336,25 +310,23 @@ const findByState = (filter: DropdownItem) => {
 
 const generate = async () => {
   isLoading.value = true
-  processState.value = 'Validate data'
+  processState.value = 'Validate data' //todo   local
   if (!validateItemListGenerate()) {
     isLoading.value = false
     return
   }
 
-  processState.value = 'Sign data'
+  processState.value = 'Sign data' //todo   local
 
   const signatures = await sign(selectedItems.value)
-  processState.value = 'Create pdfs'
+  processState.value = 'Create pdfs' //todo   local
 
   const users = await createPDF(signatures)
   processState.value = ''
 
   isLoading.value = false
-
-  /* eslint-disable no-console */
-  console.log('users: ', users)
   userState.bufferCertificateList = users!
+
   await router.push({
     name: ROUTE_NAMES.timestamp,
   })
@@ -398,7 +370,7 @@ const timestamp = async () => {
 const sign = async (users: CertificateJSONResponse[]) => {
   const signature = new Signature(userState.setting.signKey)
   for (const user of users) {
-    if (user.signature === undefined || user.signature == '') {
+    if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
     }
   }
@@ -406,30 +378,17 @@ const sign = async (users: CertificateJSONResponse[]) => {
   return users
 }
 
-const createPDF = async (users: CertificateJSONResponse[]) => {
+const createPDF = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<Container>(
-      '/integrations/ccp/certificate/',
-      {
-        body: {
-          data: {
-            attributes: {
-              certificates_data: users, //todo make better
-              address:
-                userState.setting.userBitcoinAddress ||
-                '1JgcGJanc99gdzrdXZZVGXLqRuDHik1SrW',
-              url: userState.setting.urlGoogleSheet,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
+    const data = await useCreatePdf(certificates)
     const container = await validateContainerState(data.container_id)
-    const updatedUsers = prepareCertificateImg(container!.clear_certificate)
+    if (!container) {
+      ErrorHandler.process(t('errors.empty-container'))
+      return
+    }
 
-    userState.students = updatedUsers
-    return updatedUsers
+    userState.students = prepareCertificateImg(container.clear_certificate)
+    return userState.students
   } catch (error) {
     ErrorHandler.process(error)
     return
@@ -437,26 +396,13 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 }
 
 const validateContainerState = async (containerID: string) => {
-  await sleep(5000)
-  const containerStatus = true
-  while (containerStatus) {
-    try {
-      const { data } = await api.get<Container>(
-        '/integrations/ccp/certificate/' + containerID,
-      )
-      if (data.status != 'ready_status') {
-        await sleep(5000)
-        continue
-      }
-
-      data.clear_certificate = prepareCertificate(data.certificates)
-
-      return data
-    } catch (error) {
-      await sleep(5000)
-      // ErrorHandler.process(error)
-    }
+  const data = await useValidateContainerState(containerID)
+  if (!data) {
+    ErrorHandler.process(t('errors.empty-container'))
+    return
   }
+  data.clear_certificate = prepareCertificate(data.certificates)
+  return data
 }
 
 const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
@@ -465,7 +411,7 @@ const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
       continue
     }
     certificate.img =
-      'data:image/png;base64,' + certificate.certificateImg.toString()
+      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
   }
 
   return certificates
@@ -514,15 +460,8 @@ onBeforeMount(autoRefresh)
 <style scoped lang="scss">
 .previously-certificates-page {
   margin: 0 auto;
-  width: var(--page-large);
-
-  @include respond-to(large) {
-    width: var(--page-xmedium);
-  }
-
-  @include respond-to(xmedium) {
-    width: var(--page-medium);
-  }
+  max-width: var(--page-large);
+  width: 100%;
 }
 
 .previously-certificates-page__search-wrp {

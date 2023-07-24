@@ -44,8 +44,10 @@ const closeModal = () => {
 <style scoped lang="scss">
 .auth-modal__pane {
   display: grid;
-  width: toRem(600);
-  height: toRem(400);
+  max-width: toRem(600);
+  max-height: toRem(400);
+  width: 100%;
+  height: 100%;
   background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);

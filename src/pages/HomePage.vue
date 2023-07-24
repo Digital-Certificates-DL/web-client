@@ -3,9 +3,9 @@
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
 
     <auth-modal
+      v-model:is-shown="isUnauthorized"
       :token-link="authLink"
       @send-auth-code="updateCode"
-      v-model:is-shown="isUnauthorized"
     />
 
     <div class="home-page__body">
@@ -13,17 +13,17 @@
       <div class="home-page__body-nav">
         <home-body-nav
           class="home-page__body-nav-item"
-          @active="router.push(ROUTE_NAMES.template)"
           :title="$t('home.upload-title')"
           :name="$t('home.upload-name')"
           :description="$t('home.upload-description')"
+          @active="router.push(ROUTE_NAMES.template)"
         />
         <home-body-nav
           class="home-page__body-nav-item"
-          @active="router.push(ROUTE_NAMES.generate)"
           :title="$t('home.create-title')"
           :name="$t('home.create-name')"
           :description="$t('home.create-description')"
+          @active="router.push(ROUTE_NAMES.generate)"
         />
       </div>
       <div class="home__content">
@@ -33,24 +33,10 @@
             <app-button color="info" :text="$t('home.get-all-btn')" />
           </div>
           <div>
-            <div v-if="templates.length === 0" class="home-page__items">
-              <!-- <div class="home__item home-page__item-mock"></div>-->
-              <!-- <div class="home__item home-page__item-mock"></div>-->
-              <!-- <div class="home__item home-page__item-mock"></div>-->
-
-              <home-item :img="'/branding/goland.png'" :title="'Golang'" />
-              <home-item
-                :img="'/branding/blockchain.png'"
-                :title="'Blockchain'"
-              />
-              <home-item :img="'/branding/template.jpg'" :title="'Solidity'" />
-            </div>
-            <div v-else class="home-page__items">
-              <div
-                v-for="(item, key) in templates.slice(0, 3)"
-                :value="key"
-                :key="item"
-              ></div>
+            <div class="home-page__items">
+              <div class="home__item home-page__item-mock"></div>
+              <div class="home__item home-page__item-mock"></div>
+              <div class="home__item home-page__item-mock"></div>
             </div>
           </div>
         </div>
@@ -59,8 +45,8 @@
             <h3>{{ $t('home.certificate-list-title') }}</h3>
 
             <app-button
-              :text="$t('home.get-all-btn')"
               color="info"
+              :text="$t('home.get-all-btn')"
               :route="{
                 name: $routes.certificates,
               }"
@@ -84,19 +70,25 @@
 </template>
 
 <script lang="ts" setup>
-import HomeBodyNav from '@/common/HomeNav.vue'
-
-import { HomeItem, AppButton, LoaderModal } from '@/common'
+import {
+  HomeItem,
+  AppButton,
+  LoaderModal,
+  AuthModal,
+  HomeBodyNav,
+} from '@/common'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { CertificateJSONResponse, CertificateJSONResponseList } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
-import { api } from '@/api'
 import { useUserStore } from '@/store'
-import AuthModal from '@/common/modals/AuthModal.vue'
 import { ErrorHandler } from '@/helpers'
+import {
+  useGetUpdateLink,
+  useUpdateCode,
+  useUploadCertificates,
+} from '@/api/api'
 
-const templates = ref([] as TemplateRequestData[])
 const certificates = ref([] as CertificateJSONResponse[])
 
 const isUnauthorized = ref(false)
@@ -105,27 +97,17 @@ const userState = useUserStore()
 
 const isLoading = ref(false)
 const processState = ref('')
+
 const getCertificates = async () => {
   try {
     isLoading.value = true
     processState.value = 'Getting certificates'
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/users/',
-      {
-        body: {
-          data: {
-            attributes: {
-              name: userState.setting.accountName,
-              url: userState.setting.urlGoogleSheet,
-            },
-          },
-        },
-      },
-    )
-    if (data) {
-      certificates.value = data
+
+    const data = await useUploadCertificates()
+    if (!data) {
+      return
     }
-    certificates.value
+    certificates.value = data
   } catch (error) {
     switch (error.name) {
       case 'ForbiddenError':
@@ -134,24 +116,19 @@ const getCertificates = async () => {
         break
       case 'UnauthorizedError':
         try {
-          const { data } = await api.post('/integrations/ccp/users/token', {
-            body: {
-              data: {
-                attributes: {
-                  name: userState.setting.accountName,
-                },
-              },
-            },
-          })
-
+          const data = await useGetUpdateLink()
+          if (!data) {
+            //todo  localization
+            return
+          }
+          //todo  impleemnt types for it
           authLink.value = data.link
           isUnauthorized.value = true
-
           return
         } catch (err) {
           ErrorHandler.process(err)
+          return
         }
-        break
       default:
         if (!userState.setting.urlGoogleSheet) {
           await router.push(ROUTE_NAMES.settings)
@@ -163,48 +140,12 @@ const getCertificates = async () => {
   }
 }
 
-const getTemplates = async () => {
-  if (!userState.setting.accountName) {
-    templates.value = []
-    return
-  }
-  const { data } = await api.get<TemplateRequestData[]>(
-    '/integrations/ccp/certificate/template/' + userState.setting.accountName,
-  )
-  if (data) {
-    templates.value = prepareTemplateImg(data)
-  }
-}
-
 const updateCode = async (code: string) => {
+  await useUpdateCode(code)
   isUnauthorized.value = false
-  await api.post<CertificateJSONResponseList>(
-    '/integrations/ccp/users/settings',
-    {
-      body: {
-        data: {
-          attributes: {
-            code: code,
-            name: userState.setting.accountName,
-          },
-        },
-      },
-    },
-  )
-}
-
-const prepareTemplateImg = (templates: TemplateRequestData[]) => {
-  for (const template of templates) {
-    if (template.background_img == null) {
-      continue
-    }
-    template.background_img = 'data:image/png;base64,' + template.background_img
-  }
-  return templates
 }
 
 getCertificates()
-getTemplates()
 </script>
 
 <style scoped lang="scss">

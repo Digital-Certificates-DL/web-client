@@ -2,20 +2,20 @@
   <div class="app-dropdown">
     <div class="app-dropdown__label">
       <img
-        v-if="props.mainImage !== undefined || currentItem.img !== undefined"
+        v-if="Boolean(mainImage) || Boolean(currentItem.img)"
         class="app-dropdown__label-img"
-        :src="currentItem.img || props.mainImage"
+        :src="currentItem.img || mainImage"
         alt="course icon"
       />
       <p class="dropdown__item-title">
-        {{ currentItem.text || props.title || 'Select' }}
+        {{ currentItem.text || title || 'Select' }}
       </p>
     </div>
     <div class="app-dropdown__content">
-      <div v-for="(item, key) in props.items" :value="key" :key="item">
+      <div v-for="(item, key) in items" :value="key" :key="item">
         <div class="app-dropdown__item" @click="selectItem(item)">
           <img
-            v-if="item.img !== undefined"
+            v-if="Boolean(item.img)"
             class="app-dropdown__item-img"
             :src="item.img"
             alt="course icon"
@@ -39,7 +39,7 @@ const emit = defineEmits<{
   (event: 'select-item', value: DropdownItem): void
 }>()
 
-const props = defineProps<{
+defineProps<{
   title?: string
   items?: DropdownItem[]
   mainImage?: string

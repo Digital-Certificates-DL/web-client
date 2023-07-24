@@ -30,7 +30,8 @@
     "provider-method-not-supported": "Method is not implemented non-standard",
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
-    "provider-wrapper-method-not-found": "provider not exist or hasn't this method"
+    "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
+    "empty-container": "Container is empty"
   },
   "notification": {
     "default-title-success": "Success",
@@ -69,8 +70,8 @@
     "refresh-btn": "Load from sheet",
     "certificates-subtitle-date": "Date",
     "error-certificate-list": "Empty certificate list",
-    "certificates-find": "Find"
-
+    "certificates-find": "Find",
+    "process-state-update-date": "Update data"
   },
   "generation-page": {
     "title":"Create new certificate",
@@ -219,7 +220,10 @@
     "error-certificate-nil": "certificates was not found"
   },
   "timestamp": {
-    "page-title": "Previously certificates"
+    "page-title": "Previously certificates",
+    "process-state-getting-utxo": "Getting UTXO",
+    "process-state-prepare-tx": "Prepare transaction",
+    "process-state-update-certificates": "Update Certificate"
   },
   "template-page": {
     "save-position": "Save Text Position",
