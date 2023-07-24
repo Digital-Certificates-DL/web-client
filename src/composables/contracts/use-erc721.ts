@@ -1,9 +1,5 @@
 import { ref, computed } from 'vue'
-import {
-  Erc721__factory,
-  EthProviderRpcError,
-  EthTransactionResponse,
-} from '@/types'
+import { Erc721__factory, EthProviderRpcError } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
 import { handleEthError } from '@/helpers'
 import { config } from '@config'
@@ -31,12 +27,12 @@ export const useErc721 = () => {
         uri,
       ])
 
-      const tx = (await provider.value.signAndSendTx({
-        to: contractAddress.value,
-        data,
-      })) as EthTransactionResponse
-
-      return tx.transactionHash
+      return provider.value.getHashFromTxResponse(
+        await provider.value.signAndSendTx({
+          to: contractAddress.value,
+          data,
+        }),
+      )
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }

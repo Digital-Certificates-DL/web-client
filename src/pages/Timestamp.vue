@@ -34,7 +34,7 @@
 
       <div class="timestamp__body">
         <div class="timestamp__list">
-          <div v-if="certificatesListBuffer.length === 0">
+          <div v-if="!certificatesListBuffer.length">
             <error-message message="Empty certificate list" />
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
@@ -176,6 +176,9 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
     const data = await useUpdateCertificates(
       removeImgCertificates(certificates),
+      userState.setting.userBitcoinAddress,
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
     )
     if (!data) {
       ErrorHandler.process('') //todo local
@@ -301,22 +304,20 @@ tryOnBeforeMount(autoRefresh)
   align-items: center;
 }
 
-.timestamp__search-input {
+.timestamp__search-input-wrp {
   max-width: toRem(700);
+  width: 100%;
 
   @include respond-to(large) {
     max-width: toRem(600);
-    width: 100%;
   }
 
   @include respond-to(xmedium) {
     max-width: toRem(500);
-    width: 100%;
   }
 
   @include respond-to(medium) {
     max-width: toRem(400);
-    width: 100%;
   }
 }
 </style>

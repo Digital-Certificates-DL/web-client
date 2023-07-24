@@ -9,14 +9,14 @@
           class="previously-certificates-page__search-input"
           v-model="searchData"
           :placeholder="$t('previously-certificates-page.certificates-find')"
-          @update:model-value="search"
         />
       </div>
 
       <app-button
         class="previously-certificates-page__btn"
+        size="large"
         color="info"
-        :text="$t('previously-certificates-page.refresh-btn')"
+        :icon-right="$icons.refresh"
         @click="refresh"
       />
       <div class="previously-certificates-page__filters">
@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store'
 import {
   CertificateJSONResponse,
   DropdownItem,
@@ -220,8 +220,7 @@ const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
       certificate.img = ''
       continue
     }
-    certificate.img =
-      'data:image/png;base64,' + certificate.certificateImg.toString()
+    certificate.img = FILES_BASE + certificate.certificateImg.toString()
   }
 
   return certificates
@@ -231,13 +230,19 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
     processState.value = 'Upload certificate image' //todo  loc
-    return await useDownloadImage(certificate)
+    return await useDownloadImage(
+      certificate,
+      userState.setting.userBitcoinAddress,
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
+    )
   } catch (error) {
     ErrorHandler.process(error)
   }
 
   isLoading.value = false
 }
+
 const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
     selectedItems.value.push(item)
@@ -258,18 +263,21 @@ const refresh = async () => {
     processState.value = t(
       'previously-certificates-page.process-state-update-date',
     )
-    const data = await useUploadCertificates()
+    const data = await useUploadCertificates(
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
+    )
 
     userState.students = prepareCertificateImage(data)
     certificatesListBuffer.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
-  } finally {
-    isLoading.value = false
   }
+  isLoading.value = false
 }
 
 const findByCourse = (filter: DropdownItem) => {
+  //todo make using computed
   const currentCourse = filter.text
   certificatesListBuffer.value = userState.students
   if (!currentCourse.length || currentCourse === 'All') {
@@ -380,7 +388,12 @@ const sign = async (users: CertificateJSONResponse[]) => {
 
 const createPDF = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await useCreatePdf(certificates)
+    const data = await useCreatePdf(
+      certificates,
+      userState.setting.userBitcoinAddress,
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
+    )
     const container = await validateContainerState(data.container_id)
     if (!container) {
       ErrorHandler.process(t('errors.empty-container'))
@@ -415,21 +428,6 @@ const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   }
 
   return certificates
-}
-
-const search = () => {
-  if (searchData.value === '' && certificatesListBuffer.value) {
-    certificatesListBuffer.value = userState.students!
-    return
-  }
-  const searchQuery = searchData.value.toLowerCase()
-  certificatesListBuffer.value = certificatesListBuffer.value.filter(
-    certificate => {
-      const title = certificate.participant.toLowerCase()
-
-      return title.includes(searchQuery)
-    },
-  )
 }
 
 const prepareCertificate = (certificates: PottyCertificateRequest[]) => {

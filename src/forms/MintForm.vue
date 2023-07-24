@@ -29,14 +29,14 @@ import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
 
-import { api } from '@/api'
-import { CertificateJSONResponse, IpfsAttributes } from '@/types'
+import { useSendToIPFS } from '@/api/api'
+import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 
 const { safeMint } = useErc721()
-const tx = ref('')
+
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const form = reactive({
@@ -61,30 +61,24 @@ const mint = async () => {
 
   try {
     disableForm()
-    const { data } = await api.post<IpfsAttributes>(
-      '/integrations/ccp/certificate/ipfs',
-      {
-        body: {
-          data: {
-            attributes: {
-              description: prepareTokenDescription(props.certificate),
-              img: props.certificate.certificateImg,
-              name: 'certificate - ' + props.certificate.participant,
-            },
-          },
-        },
-      },
+
+    if (!props.certificate.certificateImg) {
+      ErrorHandler.process('') //todo local
+      return
+    }
+
+    const data = await useSendToIPFS(
+      prepareTokenDescription(props.certificate),
+      props.certificate.certificateImg,
+      props.certificate.participant,
     )
-    /* eslint-disable no-console */
-    console.log(data)
+
     const mintTx = await safeMint(form.address, data.url)
-    tx.value = mintTx!
+    emit('mint-finished', mintTx!)
   } catch (error) {
     ErrorHandler.process(error)
-  } finally {
-    enableForm()
-    emit('mint-finished', tx.value)
   }
+  enableForm()
 }
 
 const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
@@ -110,7 +104,8 @@ const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
 }
 
 .mint-form__btn {
-  width: toRem(200);
+  max-width: toRem(200);
+  width: 100%;
 }
 
 .mint-form__label {

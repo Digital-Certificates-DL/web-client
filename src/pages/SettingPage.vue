@@ -9,7 +9,7 @@
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
-      <setting-form />
+      <setting-form class="setting-page__form" />
     </div>
   </div>
 </template>
@@ -45,5 +45,10 @@ import { SettingForm } from '@/forms'
   @include respond-to('xmedium') {
     margin-bottom: toRem(15);
   }
+}
+
+.setting-page__form {
+  max-width: toRem(458);
+  width: 100%;
 }
 </style>

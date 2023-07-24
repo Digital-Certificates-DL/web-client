@@ -7,7 +7,6 @@
       v-model="form.accountName"
       class="setting-form__form-input"
       :label="$t('setting-form.account-name-form-label')"
-      :placeholder="userState.setting.accountName || ''"
       :error-message="getFieldErrorMessage('accountName')"
     />
     <h3 class="setting-form__fields-title">
@@ -17,21 +16,18 @@
       v-model="form.bip39MnemonicPhrase"
       class="setting-form__form-input"
       :label="$t('setting-form.bitcoin-phrase-form-label')"
-      :placeholder="userState.setting.bip39MnemonicPhrase || ''"
       :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
     />
     <input-field
       v-model="form.urlGoogleSheet"
       class="setting-form__form-input"
       :label="$t('setting-form.url-form-label')"
-      :placeholder="userState.setting.urlGoogleSheet || ''"
       :error-message="getFieldErrorMessage('urlGoogleSheet')"
     />
     <input-field
       v-model="form.signKey"
       class="setting-form__form-input"
       :label="$t('setting-form.wif-form-label')"
-      :placeholder="userState.setting.signKey || ''"
       :error-message="getFieldErrorMessage('signKey')"
     />
     <div class="setting-form__btns">
@@ -56,10 +52,9 @@
 <script setup lang="ts">
 import { InputField } from '@/fields'
 import { reactive } from 'vue'
-import { CertificateJSONResponseList, UserSetting } from '@/types'
+import { UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { api } from '@/api'
 import { ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
@@ -67,16 +62,16 @@ import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
 import bitcoin from 'bitcoinjs-lib'
+import { useSaveUserSetting } from '@/api/api'
 
 const userState = useUserStore()
 const router = useRouter()
 
 const form = reactive({
-  accountName: '',
-  organizationName: '',
-  signKey: '',
-  bip39MnemonicPhrase: '',
-  urlGoogleSheet: '',
+  accountName: userState.setting.accountName || '',
+  signKey: userState.setting.signKey || '',
+  bip39MnemonicPhrase: userState.setting.bip39MnemonicPhrase || '',
+  urlGoogleSheet: userState.setting.urlGoogleSheet || '',
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
@@ -97,19 +92,7 @@ const save = async () => {
   userState.setting.userBitcoinAddress = address || ''
 
   try {
-    await api.post<CertificateJSONResponseList>(
-      '/integrations/ccp/users/settings',
-      {
-        body: {
-          data: {
-            attributes: {
-              code: '',
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
+    await useSaveUserSetting(userState.setting.accountName)
     await router.push(ROUTE_NAMES.main)
   } catch (error) {
     ErrorHandler.process(error)
@@ -120,7 +103,6 @@ const save = async () => {
 <style scoped lang="scss">
 .setting-form__form-input {
   margin-bottom: toRem(40);
-  width: toRem(458);
 
   @include respond-to('xmedium') {
     margin-bottom: toRem(30);

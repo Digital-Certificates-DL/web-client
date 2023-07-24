@@ -104,21 +104,21 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { InputField } from '@/fields'
-import { api } from '@/api'
+import {
+  useValidateContainerState,
+  useCreatePdf,
+  useUploadCertificates,
+} from '@/api/api'
 import { AppButton } from '@/common'
 import { Signature } from '@/utils'
 import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
-import { useUserStore } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store'
 import { router } from '@/router'
-import { ROUTE_NAMES } from '@/enums'
-import { ErrorHandler, sleep } from '@/helpers'
+import { FILES_BASE, ROUTE_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { Container } from '@/types/container.types'
 const userState = useUserStore()
-
-const SLEEP_TIME = 5000
-const DEFAULT_KEY = '1BooKnbm48Eabw3FdPgTSudt9u4YTWKBvf'
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
@@ -155,20 +155,10 @@ const start = async () => {
 }
 const parsedData = async (sheepUrl?: string) => {
   try {
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/users/empty',
-      {
-        body: {
-          data: {
-            attributes: {
-              name: userState.setting.accountName,
-              url: sheepUrl || userState.setting.urlGoogleSheet,
-            },
-          },
-        },
-      },
+    return await useUploadCertificates(
+      userState.setting.accountName,
+      sheepUrl || userState.setting.urlGoogleSheet,
     )
-    return data
   } catch (error) {
     if (error.metadata.link) {
       emit('auth', error.metadata.link)
@@ -201,54 +191,36 @@ const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
     if (!user.certificateImg) {
       continue
     }
-    user.img = 'data:image/png;base64,' + user.certificateImg.toString()
+    user.img = FILES_BASE + user.certificateImg.toString()
   }
 
   return users
 }
 
 const validateContainerState = async (containerID: string) => {
-  await sleep(SLEEP_TIME)
-  const containerStatus = true
-  while (containerStatus) {
-    try {
-      const { data } = await api.get<Container>(
-        '/integrations/ccp/certificate/' + containerID,
-      )
-      if (data.status != 'ready_status') {
-        await sleep(SLEEP_TIME)
-        continue
-      }
-
-      data.clear_certificate = prepareCertificate(data.certificates)
-
-      return data
-    } catch (error) {
-      await sleep(SLEEP_TIME)
-      // ErrorHandler.process(error)
-    }
+  const data = await useValidateContainerState(containerID)
+  if (!data) {
+    ErrorHandler.process('') //todo  local
+    return
   }
+  data.clear_certificate = prepareCertificate(data.certificates)
+  return data
 }
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const { data } = await api.post<Container>(
-      '/integrations/ccp/certificate/',
-      {
-        body: {
-          data: {
-            attributes: {
-              users: users,
-              address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
-              url: userState.setting.urlGoogleSheet,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
+    const data = await useCreatePdf(
+      users,
+      userState.setting.userBitcoinAddress,
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
     )
     const container = await validateContainerState(data.container_id)
-    const updatedUsers = prepareCertificateImg(container!.clear_certificate)
+    if (!container) {
+      ErrorHandler.process('') //todo local
+      return
+    }
+    const updatedUsers = prepareCertificateImg(container.clear_certificate)
     userState.students = updatedUsers
 
     return updatedUsers

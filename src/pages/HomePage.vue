@@ -53,7 +53,7 @@
             />
           </div>
 
-          <div v-if="certificates.length === 0" class="home-page__items">
+          <div v-if="!certificates.length" class="home-page__items">
             <div class="= home-page__item-mock"></div>
             <div class="home-page__item-mock"></div>
             <div class="home-page__item-mock"></div>
@@ -103,7 +103,10 @@ const getCertificates = async () => {
     isLoading.value = true
     processState.value = 'Getting certificates'
 
-    const data = await useUploadCertificates()
+    const data = await useUploadCertificates(
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
+    )
     if (!data) {
       return
     }
@@ -116,7 +119,7 @@ const getCertificates = async () => {
         break
       case 'UnauthorizedError':
         try {
-          const data = await useGetUpdateLink()
+          const data = await useGetUpdateLink(userState.setting.accountName)
           if (!data) {
             //todo  localization
             return
@@ -150,19 +153,9 @@ getCertificates()
 
 <style scoped lang="scss">
 .home-page {
+  max-width: var(--page-large);
+  width: 100%;
   margin: 0 auto;
-}
-
-.home-page__body {
-  width: var(--page-large);
-
-  @include respond-to(large) {
-    width: var(--page-xmedium);
-  }
-
-  @include respond-to(xmedium) {
-    width: var(--page-medium);
-  }
 }
 
 .home-page__body-nav {
@@ -183,12 +176,16 @@ getCertificates()
 
 .home-page__items {
   display: flex;
+  max-height: toRem(222);
+  height: 100%;
   justify-content: space-between;
 }
 
 .home-page__item-mock {
-  width: toRem(300);
-  height: toRem(222);
+  max-width: toRem(300);
+  width: 100%;
+  max-height: toRem(222);
+  height: 100%;
   border-radius: toRem(8);
   background: var(--background-primary-dark);
 
