@@ -142,7 +142,7 @@ const getCertificates = async () => {
 }
 
 const updateCode = async (code: string) => {
-  await useUpdateCode(code)
+  await useUpdateCode(code, userState.setting.accountName)
   isUnauthorized.value = false
 }
 
