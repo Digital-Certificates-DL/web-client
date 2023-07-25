@@ -32,12 +32,10 @@
             <h3>{{ $t('home.template-list-title') }}</h3>
             <app-button color="info" :text="$t('home.get-all-btn')" />
           </div>
-          <div>
-            <div class="home-page__items">
-              <div class="home__item home-page__item-mock"></div>
-              <div class="home__item home-page__item-mock"></div>
-              <div class="home__item home-page__item-mock"></div>
-            </div>
+          <div class="home-page__items">
+            <div class="home__item home-page__item-mock"></div>
+            <div class="home__item home-page__item-mock"></div>
+            <div class="home__item home-page__item-mock"></div>
           </div>
         </div>
         <div class="home__content-certificates">
@@ -177,6 +175,7 @@ getCertificates()
 .home-page__items {
   display: flex;
   max-height: toRem(222);
+  min-height: toRem(200);
   height: 100%;
   justify-content: space-between;
 }

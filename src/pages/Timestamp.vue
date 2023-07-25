@@ -27,8 +27,8 @@
 
       <div v-if="isModalActive">
         <certificate-modal
-          :certificate="currentCertificate"
           v-model:is-shown="isModalActive"
+          :certificate="currentCertificate"
         />
       </div>
 
@@ -107,10 +107,15 @@ const certificateFilter = computed(() =>
 
 const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   for (const certificate of certificates) {
+    /* eslint-disable no-console */
+    console.log(certificate.certificateImg)
     if (!certificate.certificateImg) {
+      /* eslint-disable no-console */
+      console.log('skip')
       continue
     }
-    certificate.img = FILES_BASE + certificate.certificateImg.toString()
+    certificate.img =
+      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
   }
 
   return certificates

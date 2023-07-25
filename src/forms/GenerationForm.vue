@@ -191,7 +191,7 @@ const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
     if (!user.certificateImg) {
       continue
     }
-    user.img = FILES_BASE + user.certificateImg.toString()
+    user.img = FILES_BASE.PNG_BASE + user.certificateImg.toString()
   }
 
   return users

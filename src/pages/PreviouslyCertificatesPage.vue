@@ -83,7 +83,7 @@
           :message="$t('previously-certificates.error-certificate-list')"
         />
       </div>
-      <div v-for="item in certificatesListBuffer" :key="item.id">
+      <div v-for="item in certificateFilter" :key="item.id">
         <certificate
           :is-show="selectedItems.length > 0"
           :certificate="item"
@@ -103,7 +103,7 @@ import {
   PottyCertificateRequest,
 } from '@/types'
 import { InputField } from '@/fields'
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, computed } from 'vue'
 import { useRouter } from '@/router'
 
 import {
@@ -112,12 +112,12 @@ import {
   Certificate,
   CertificateModal,
   ErrorMessage,
+  SuccessModal,
+  LoaderModal,
 } from '@/common'
 import { Signature } from '@/utils'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, useSearchInTheList } from '@/helpers'
 import { FILES_BASE, ROUTE_NAMES } from '@/enums'
-import { LoaderModal } from '@/common/modals'
-import SuccessModal from '@/common/modals/SuccessModal.vue'
 import {
   useCreatePdf,
   useDownloadImage,
@@ -134,7 +134,7 @@ const currentCertificate = ref<CertificateJSONResponse>(
   {} as CertificateJSONResponse,
 )
 const selectedItems = ref<CertificateJSONResponse[]>([])
-const certificatesListBuffer = ref<CertificateJSONResponse[]>([])
+const certificatesList = ref<CertificateJSONResponse[]>([])
 const searchData = ref('')
 const selectedCount = ref(0)
 
@@ -195,18 +195,26 @@ const DROP_DOWN_STATE_LIST = [
   },
 ] as DropdownItem[]
 
+const certificateFilter = computed(() =>
+  useSearchInTheList(certificatesList.value, searchData.value),
+)
+
 const openCertificateModal = async (certificate: CertificateJSONResponse) => {
   if (!certificate.certificateImg) {
     const certificateWithImg = ref<CertificateJSONResponse[]>([])
     certificateWithImg.value = (await getCertificateImage(
       certificate,
     )) as CertificateJSONResponse[]
-
+    /* eslint-disable no-console */
+    console.log(certificateWithImg.value)
     certificateWithImg.value = prepareCertificateImage(
       certificateWithImg.value!,
     )
+    /* eslint-disable no-console */
+    console.log(certificateWithImg.value)
 
     isCertificateModalShown.value = true
+    isLoading.value = false
     currentCertificate.value = certificateWithImg.value[0]
     return
   }
@@ -218,9 +226,10 @@ const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
   for (const certificate of certificates) {
     if (!certificate.certificateImg) {
       certificate.img = ''
-      continue
+      continue //todo move to helpers
     }
-    certificate.img = FILES_BASE + certificate.certificateImg.toString()
+    certificate.img =
+      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
   }
 
   return certificates
@@ -229,7 +238,7 @@ const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
-    processState.value = 'Upload certificate image' //todo  loc
+    processState.value = 'Upload certificate image' //todo  local
     return await useDownloadImage(
       certificate,
       userState.setting.userBitcoinAddress,
@@ -269,7 +278,7 @@ const refresh = async () => {
     )
 
     userState.students = prepareCertificateImage(data)
-    certificatesListBuffer.value = userState.students
+    certificatesList.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -279,14 +288,16 @@ const refresh = async () => {
 const findByCourse = (filter: DropdownItem) => {
   //todo make using computed
   const currentCourse = filter.text
-  certificatesListBuffer.value = userState.students
+  certificatesList.value = userState.students
   if (!currentCourse.length || currentCourse === 'All') {
-    certificatesListBuffer.value = userState.students
+    //todo  move to  enums
+
+    certificatesList.value = userState.students
     return
   }
 
   const searchQuery = currentCourse.toLowerCase()
-  certificatesListBuffer.value = certificatesListBuffer.value.filter(user => {
+  certificatesList.value = certificatesList.value.filter(user => {
     const courseTitle = user.courseTitle.toLowerCase()
     return courseTitle.includes(searchQuery)
   })
@@ -295,24 +306,25 @@ const findByCourse = (filter: DropdownItem) => {
 const findByState = (filter: DropdownItem) => {
   const state = filter.text
 
-  certificatesListBuffer.value = userState.students
+  certificatesList.value = userState.students
   if (!state.length || state === 'All') {
-    certificatesListBuffer.value = userState.students
+    //todo  move to  enums
+
+    certificatesList.value = userState.students
     return
   }
 
   if (state === 'Generated') {
-    certificatesListBuffer.value = certificatesListBuffer.value.filter(
-      certificate => {
-        return certificate.certificate || certificate.digitalCertificate
-      },
-    )
+    //todo  move to  enums
+
+    certificatesList.value = certificatesList.value.filter(certificate => {
+      return certificate.certificate || certificate.digitalCertificate
+    })
   } else if (state === 'Not generated') {
-    certificatesListBuffer.value = certificatesListBuffer.value.filter(
-      certificate => {
-        return !certificate.signature!.length
-      },
-    )
+    //todo  move to  enums
+    certificatesList.value = certificatesList.value.filter(certificate => {
+      return !certificate.signature!.length
+    })
   }
 }
 
@@ -342,7 +354,7 @@ const generate = async () => {
 
 const validateItemListGenerate = () => {
   for (const item of selectedItems.value) {
-    if (item.certificate !== '' || item.signature !== '') {
+    if (Boolean(item.certificate) || Boolean(item.signature)) {
       //todo localization
       ErrorHandler.process(
         'This student already has certificate, ' + item.participant,
@@ -355,7 +367,7 @@ const validateItemListGenerate = () => {
 
 const validateItemListTimestamp = () => {
   for (const item of selectedItems.value) {
-    if (item.certificate === '' || item.signature === '') {
+    if (!item.certificate || !item.signature) {
       //todo localization
       ErrorHandler.process(
         'This student does not has certificate,' + item.participant,
@@ -444,7 +456,7 @@ const autoRefresh = () => {
   if (userState.students.length === 0) {
     refresh()
   }
-  certificatesListBuffer.value = userState.students
+  certificatesList.value = userState.students
 }
 
 const successMint = (tx: string) => {
@@ -472,28 +484,28 @@ onBeforeMount(autoRefresh)
 }
 
 .previously-certificates-page__search-input {
-  width: toRem(458);
+  max-width: toRem(458);
+  width: 100%;
 
   @include respond-to(large) {
-    width: toRem(400);
     height: toRem(50);
   }
 
   @include respond-to(xmedium) {
     height: toRem(30);
-    width: toRem(300);
   }
 }
 
 .previously-certificates-page__btns-wrp {
-  width: toRem(300);
+  max-width: toRem(300);
+  width: 100%;
 
   @include respond-to(large) {
-    width: toRem(250);
+    max-width: toRem(250);
   }
 
   @include respond-to(xmedium) {
-    width: toRem(200);
+    max-width: toRem(200);
   }
 }
 
@@ -524,22 +536,24 @@ onBeforeMount(autoRefresh)
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: toRem(810);
+  max-width: toRem(810);
   margin-top: toRem(20);
   margin-left: toRem(120);
+  width: 100%;
 
   @include respond-to(large) {
-    width: toRem(650);
+    max-width: toRem(650);
   }
 
   @include respond-to(xmedium) {
-    width: toRem(500);
+    max-width: toRem(500);
   }
 }
 
 .previously-certificates-page__filters {
   display: flex;
-  width: toRem(400);
+  max-width: toRem(400);
+  width: 100%;
   justify-content: space-between;
 }
 </style>

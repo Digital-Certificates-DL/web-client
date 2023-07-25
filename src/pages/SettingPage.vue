@@ -20,7 +20,8 @@ import { SettingForm } from '@/forms'
 
 <style scoped lang="scss">
 .setting-page {
-  width: var(--page-large);
+  max-width: var(--page-large);
+  width: 100%;
   margin: 0 auto;
 }
 
