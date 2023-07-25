@@ -107,11 +107,7 @@ const certificateFilter = computed(() =>
 
 const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   for (const certificate of certificates) {
-    /* eslint-disable no-console */
-    console.log(certificate.certificateImg)
     if (!certificate.certificateImg) {
-      /* eslint-disable no-console */
-      console.log('skip')
       continue
     }
     certificate.img =
@@ -191,7 +187,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
     }
     const container = await validateContainerState(data.container_id)
     if (!container) {
-      ErrorHandler.process('empty-container')
+      ErrorHandler.process(t('errors.empty-container'))
       return
     }
     return prepareCertificateImg(container.clear_certificate)
@@ -254,18 +250,11 @@ tryOnBeforeMount(autoRefresh)
   max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
-
-  @include respond-to(large) {
-    width: var(--page-xmedium);
-  }
-
-  @include respond-to(xmedium) {
-    width: var(--page-medium);
-  }
 }
 
 .timestamp__info {
   display: flex;
+  width: 100%;
   justify-content: space-between;
 }
 

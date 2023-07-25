@@ -6,16 +6,15 @@
     <div class="previously-certificates-page__search-wrp">
       <div class="previously-certificates-page__search">
         <input-field
-          class="previously-certificates-page__search-input"
           v-model="searchData"
           :placeholder="$t('previously-certificates-page.certificates-find')"
         />
       </div>
 
       <app-button
-        class="previously-certificates-page__btn"
-        size="large"
+        class="previously-certificates-page__btn-ref"
         color="info"
+        size="default"
         :icon-right="$icons.refresh"
         @click="refresh"
       />
@@ -483,17 +482,11 @@ onBeforeMount(autoRefresh)
   margin-bottom: toRem(50);
 }
 
-.previously-certificates-page__search-input {
+.previously-certificates-page__search {
   max-width: toRem(458);
   width: 100%;
-
-  @include respond-to(large) {
-    height: toRem(50);
-  }
-
-  @include respond-to(xmedium) {
-    height: toRem(30);
-  }
+  max-height: toRem(50);
+  height: 100%;
 }
 
 .previously-certificates-page__btns-wrp {
@@ -530,6 +523,13 @@ onBeforeMount(autoRefresh)
     width: toRem(60);
     height: toRem(40);
   }
+}
+
+.previously-certificates-page__btn-ref {
+  height: toRem(52);
+  width: toRem(52);
+  margin-left: toRem(5);
+  border-radius: toRem(8);
 }
 
 .previously-certificates-page__list-subtitle {
