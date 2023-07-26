@@ -68,6 +68,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import {
   HomeItem,
   AppButton,
@@ -87,12 +88,12 @@ import {
   useUploadCertificates,
 } from '@/api/api'
 
-const certificates = ref([] as CertificateJSONResponse[])
-
-const isUnauthorized = ref(false)
-const authLink = ref('')
+const { t } = useI18n()
 const userState = useUserStore()
 
+const certificates = ref([] as CertificateJSONResponse[])
+const isUnauthorized = ref(false)
+const authLink = ref('')
 const isLoading = ref(false)
 const processState = ref('')
 
@@ -119,7 +120,7 @@ const getCertificates = async () => {
         try {
           const data = await useGetUpdateLink(userState.setting.accountName)
           if (!data) {
-            //todo  localization
+            ErrorHandler.process(t('errors.empty-google-link'))
             return
           }
           //todo  impleemnt types for it

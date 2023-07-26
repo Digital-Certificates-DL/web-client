@@ -137,8 +137,7 @@ export class Bitcoin {
     if (!betterUTXO) {
       return
     }
-    /* eslint-disable no-console */
-    console.log('betterUTXO: ', betterUTXO)
+
     fee = betterUTXO.value
     utxo = betterUTXO.txs
     butxoAmount = betterUTXO.utxoAmount

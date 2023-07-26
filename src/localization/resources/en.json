@@ -9,7 +9,6 @@
     "field-error_name": "Empty name",
     "field-error_settings": "We need fill all fields",
     "field-error_privateKey": "Invalid private key"
-
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -31,7 +30,11 @@
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
-    "empty-container": "Container is empty"
+    "empty-container": "Container is empty",
+    "empty-container-id": "Container id is empty",
+    "empty-google-link": "Google link is empty",
+    "empty-img": "Empty  image",
+    "empty-cert-list": "Empty certificate list"
   },
   "notification": {
     "default-title-success": "Success",
@@ -68,10 +71,14 @@
     "generate-btn": "Generate",
     "bitcoin-btn": "Timestamp",
     "refresh-btn": "Load from sheet",
-    "certificates-subtitle-date": "Date",
+    "certificates-subtitle-data": "Date",
     "error-certificate-list": "Empty certificate list",
     "certificates-find": "Find",
-    "process-state-update-date": "Update data"
+    "process-state-update-data": "Update data",
+    "process-state-validate-data": "Validate data",
+    "process-state-sign-data": "Sign data",
+    "process-state-create-pdf": "Create PDF",
+    "process-state-upload-img": "Upload certificate image"
   },
   "generation-page": {
     "title":"Create new certificate",
@@ -179,7 +186,8 @@
   "timestamp-page": {
     "page-title": "Previously certificates",
     "bitcoin-btn": "Make timestamp",
-    "input-placeholder": "Find"
+    "input-placeholder": "Find",
+    "certificate-image-alt": "Certificate preview"
   },
   "timestamp-item":{
     "timestamp-btn": "Timestamp"
@@ -217,7 +225,7 @@
     "certificate-list-title": "Previously certificates",
     "get-all-btn": "See more",
     "error-templates-nil": "templates was not found",
-    "error-certificate-nil": "certificates was not found"
+    "error-certificate-nil": "certificates was not found",
   },
   "timestamp": {
     "page-title": "Previously certificates",

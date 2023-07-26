@@ -7,9 +7,9 @@
       <div class="timestamp__search">
         <div class="timestamp__search-input-wrp">
           <input-field
+            v-model="searchData"
             class="timestamp__search-input"
             :placeholder="$t('timestamp-page.input-placeholder')"
-            v-model="searchData"
           />
         </div>
 
@@ -35,10 +35,9 @@
       <div class="timestamp__body">
         <div class="timestamp__list">
           <div v-if="!certificatesListBuffer.length">
-            <error-message message="Empty certificate list" />
+            <error-message :message="t('errors.empty-cert-list')" />
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
-            <!--todo need discuss-->
             <timestamp-item
               :name="item.participant"
               :date="item.date"
@@ -53,11 +52,9 @@
         <div class="timestamp__img-wrp">
           <img
             class="timestamp__img"
-            alt="Certificate preview"
+            :alt="t('timestamp-page.certificate-image-alt')"
             :src="currentCertificate.img || 'branding/template.jpg'"
           />
-
-          <!--          todo  local-->
         </div>
       </div>
     </div>
@@ -78,11 +75,10 @@ import {
   CertificateModal,
   ErrorMessage,
 } from '@/common'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, useSearchInTheList } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
 import { FILES_BASE } from '@/enums'
-import { useSearchInTheList } from '@/helpers' //todo  remove it
 
 const { t } = useI18n()
 
@@ -182,7 +178,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       userState.setting.urlGoogleSheet,
     )
     if (!data) {
-      ErrorHandler.process('') //todo local
+      ErrorHandler.process(t('errors.empty-container-id'))
       return
     }
     const container = await validateContainerState(data.container_id)
@@ -200,7 +196,7 @@ const validateContainerState = async (containerID: string) => {
   const data = await useValidateContainerState(containerID)
 
   if (!data) {
-    ErrorHandler.process('') //todo local
+    ErrorHandler.process('errors.empty-container')
     return
   }
 

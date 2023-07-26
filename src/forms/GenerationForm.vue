@@ -118,8 +118,10 @@ import { FILES_BASE, ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
-const userState = useUserStore()
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
+const userState = useUserStore()
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const emit = defineEmits<{
@@ -200,7 +202,7 @@ const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
 const validateContainerState = async (containerID: string) => {
   const data = await useValidateContainerState(containerID)
   if (!data) {
-    ErrorHandler.process('') //todo  local
+    ErrorHandler.process(t('errors.empty-container'))
     return
   }
   data.clear_certificate = prepareCertificate(data.certificates)
@@ -217,7 +219,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
     )
     const container = await validateContainerState(data.container_id)
     if (!container) {
-      ErrorHandler.process('') //todo local
+      ErrorHandler.process(t('errors.empty-container'))
       return
     }
     const updatedUsers = prepareCertificateImg(container.clear_certificate)

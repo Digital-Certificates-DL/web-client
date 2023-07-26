@@ -28,13 +28,13 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-
 import { useSendToIPFS } from '@/api/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
 import { reactive } from 'vue'
-
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const { safeMint } = useErc721()
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
@@ -63,7 +63,7 @@ const mint = async () => {
     disableForm()
 
     if (!props.certificate.certificateImg) {
-      ErrorHandler.process('') //todo local
+      ErrorHandler.process(t('errors.empty-img'))
       return
     }
 

@@ -74,7 +74,7 @@
           {{ $t('previously-certificates-page.certificates-subtitle-course') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-date') }}
+          {{ $t('previously-certificates-page.certificates-subtitle-data') }}
         </p>
       </div>
       <div v-if="!userState.students.length">
@@ -237,7 +237,9 @@ const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
-    processState.value = 'Upload certificate image' //todo  local
+    processState.value = t(
+      'previously-certificates-page.process-state-upload-img',
+    )
     return await useDownloadImage(
       certificate,
       userState.setting.userBitcoinAddress,
@@ -329,16 +331,20 @@ const findByState = (filter: DropdownItem) => {
 
 const generate = async () => {
   isLoading.value = true
-  processState.value = 'Validate data' //todo   local
+  processState.value = t(
+    'previously-certificates-page.process-state-validate-data',
+  )
   if (!validateItemListGenerate()) {
     isLoading.value = false
     return
   }
 
-  processState.value = 'Sign data' //todo   local
+  processState.value = t('previously-certificates-page.process-state-sign-data')
 
   const signatures = await sign(selectedItems.value)
-  processState.value = 'Create pdfs' //todo   local
+  processState.value = t(
+    'previously-certificates-page.process-state-create-pdf',
+  )
 
   const users = await createPDF(signatures)
   processState.value = ''
@@ -354,7 +360,6 @@ const generate = async () => {
 const validateItemListGenerate = () => {
   for (const item of selectedItems.value) {
     if (Boolean(item.certificate) || Boolean(item.signature)) {
-      //todo localization
       ErrorHandler.process(
         'This student already has certificate, ' + item.participant,
       )
@@ -367,7 +372,6 @@ const validateItemListGenerate = () => {
 const validateItemListTimestamp = () => {
   for (const item of selectedItems.value) {
     if (!item.certificate || !item.signature) {
-      //todo localization
       ErrorHandler.process(
         'This student does not has certificate,' + item.participant,
       )
