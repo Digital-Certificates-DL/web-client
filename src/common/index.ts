@@ -10,6 +10,7 @@ export { default as Notification } from '@/common/Notification.vue'
 export { default as Modal } from '@/common/Modal.vue'
 export { default as Certificate } from '@/common/Certificate.vue'
 export { default as AppDropdown } from '@/common/AppDropdown.vue'
+export { default as FileDropArea } from '@/common/FileDropArea.vue'
 export { default as HomeBodyNav } from '@/common/HomeNav.vue'
 export { default as TimestampItem } from '@/common/TimestampItem.vue'
 

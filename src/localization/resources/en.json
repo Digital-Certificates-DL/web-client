@@ -23,7 +23,7 @@
     "provider-invalid-params": "Invalid method parameters standard",
     "provider-internal-error": "Internal JSON-RPC error standard",
     "provider-invalid-input": "Missing or invalid parameters non-standard",
-    "provider-resource-not-found": "equested resource not found non-standard",
+    "provider-resource-not-found": "requested resource not found non-standard",
     "provider-resource-unavailable": "Requested resource not available non-standard",
     "provider-transaction-rejected": "Transaction creation failed non-standard",
     "provider-method-not-supported": "Method is not implemented non-standard",
@@ -242,5 +242,13 @@
     "title": "Success",
     "description ": "Certificate is minted successfully",
     "btn-title": "Close"
+  },
+  "upload-template-modal": {
+    "close-btn-text": "CLose",
+    "title": "Upload modal",
+    "description": "Some description "
+  },
+  "file-drop-area": {
+    "description": "Some description. We can  upload some file here"
   }
 }

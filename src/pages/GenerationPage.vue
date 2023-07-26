@@ -22,7 +22,6 @@ import { GenerationForm } from '@/forms'
 import { AuthModal } from '@/common/modals'
 
 const authLink = ref('')
-
 const isUnauthorized = ref(false)
 const userState = useUserStore()
 

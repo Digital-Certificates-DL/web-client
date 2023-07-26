@@ -80,7 +80,7 @@
       </div>
       <div v-if="!userState.students.length">
         <error-message
-          :message="$t('previously-certificates.error-certificate-list')"
+          :message="$t('previously-certificates-page.error-certificate-list')"
         />
       </div>
       <div v-for="item in certificateFilter" :key="item.id">
@@ -121,7 +121,13 @@ import {
   usePrepareCertificateImage,
   useSearchInTheList,
 } from '@/helpers'
-import { FILES_BASE, ROUTE_NAMES } from '@/enums'
+import {
+  FILES_BASE,
+  ROUTE_NAMES,
+  DROP_DOWN_STATE_LIST,
+  DROP_DOWN_COURSE_LIST,
+  DROP_DOWN_DATA_LIST,
+} from '@/enums'
 import {
   useCreatePdf,
   useDownloadImage,
@@ -154,56 +160,6 @@ const isLoading = ref(false)
 const processState = ref('')
 const isMintSuccess = ref(false)
 const mintTx = ref('')
-
-const DROP_DOWN_COURSE_LIST = [
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.ALL,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.SOLIDITY,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.GOLANG,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.DATABASE,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.DEFI,
-  },
-] as DropdownItem[]
-
-const DROP_DOWN_DATA_LIST = [
-  {
-    text: DATA_FILTERS.ALL,
-  },
-  {
-    text: DATA_FILTERS.DAY,
-  },
-  {
-    text: DATA_FILTERS.WEEK,
-  },
-  {
-    text: DATA_FILTERS.MONTH,
-  },
-] as DropdownItem[]
-
-const DROP_DOWN_STATE_LIST = [
-  {
-    text: STATE_FILTERS.ALL,
-  },
-  {
-    text: STATE_FILTERS.GENERATED,
-  },
-  {
-    text: STATE_FILTERS.NOTGENERATED,
-  },
-] as DropdownItem[]
 
 const certificateFilter = computed(() =>
   useSearchInTheList(certificatesList.value, searchData.value),
@@ -403,7 +359,7 @@ const createPDF = async (certificates: CertificateJSONResponse[]) => {
       return
     }
 
-    userState.students = prepareCertificateImg(container.clear_certificate)
+    userState.students = usePrepareCertificateImage(container.clear_certificate)
     return userState.students
   } catch (error) {
     ErrorHandler.process(error)

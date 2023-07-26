@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-
+    <upload-template-modal v-model:is-shown="isUploadTemplateModalShown" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -16,14 +16,14 @@
           :title="$t('home.upload-title')"
           :name="$t('home.upload-name')"
           :description="$t('home.upload-description')"
-          @active="router.push(ROUTE_NAMES.template)"
+          @active="isUploadTemplateModalShown = true"
         />
         <home-body-nav
           class="home-page__body-nav-item"
           :title="$t('home.create-title')"
           :name="$t('home.create-name')"
           :description="$t('home.create-description')"
-          @active="router.push(ROUTE_NAMES.generate)"
+          @active="router.push({ name: ROUTE_NAMES.generate })"
         />
       </div>
       <div class="home__content">
@@ -81,12 +81,12 @@ import { ROUTE_NAMES } from '@/enums'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { ErrorHandler } from '@/helpers'
 import {
   useGetUpdateLink,
   useUpdateCode,
   useUploadCertificates,
 } from '@/api/api'
+import UploadTemplateModal from '@/common/modals/UploadTemplateModal.vue'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -95,51 +95,56 @@ const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
+const isUploadTemplateModalShown = ref(false)
 const processState = ref('')
+//
+// const getCertificates = async () => {
+//   try {
+//     isLoading.value = true
+//     processState.value = t('home.process-state-getting-cert')
+//
+//     const data = await useUploadCertificates(
+//       userState.setting.accountName,
+//       userState.setting.urlGoogleSheet,
+//     )
+//     if (!data) {
+//       return
+//     }
+//     certificates.value = data
+//   } catch (error) {
+//     switch (error.name) {
+//       case 'ForbiddenError':
+//         authLink.value = error.meta.auth_link
+//         isUnauthorized.value = true
+//         break
+//       case 'UnauthorizedError':
+//         try {
+//           const data = await useGetUpdateLink(userState.setting.accountName)
+//           if (!data) {
+//             ErrorHandler.process(t('errors.empty-google-link'))
+//             return
+//           }
+//           //todo  implement types for it
+//           authLink.value = data.link
+//           isUnauthorized.value = true
+//           return
+//         } catch (err) {
+//           ErrorHandler.process(err)
+//           return
+//         }
+//       default:
+//         if (!userState.setting.urlGoogleSheet) {
+//           await router.push(ROUTE_NAMES.settings)
+//         }
+//         break
+//     }
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
-const getCertificates = async () => {
-  try {
-    isLoading.value = true
-    processState.value = t('home.process-state-getting-cert')
-
-    const data = await useUploadCertificates(
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
-    )
-    if (!data) {
-      return
-    }
-    certificates.value = data
-  } catch (error) {
-    switch (error.name) {
-      case 'ForbiddenError':
-        authLink.value = error.meta.auth_link
-        isUnauthorized.value = true
-        break
-      case 'UnauthorizedError':
-        try {
-          const data = await useGetUpdateLink(userState.setting.accountName)
-          if (!data) {
-            ErrorHandler.process(t('errors.empty-google-link'))
-            return
-          }
-          //todo  implement types for it
-          authLink.value = data.link
-          isUnauthorized.value = true
-          return
-        } catch (err) {
-          ErrorHandler.process(err)
-          return
-        }
-      default:
-        if (!userState.setting.urlGoogleSheet) {
-          await router.push(ROUTE_NAMES.settings)
-        }
-        break
-    }
-  } finally {
-    isLoading.value = false
-  }
+const uploadTemplate = () => {
+  console.log('upload')
 }
 
 const updateCode = async (code: string) => {
@@ -147,7 +152,7 @@ const updateCode = async (code: string) => {
   isUnauthorized.value = false
 }
 
-getCertificates()
+// getCertificates()
 </script>
 
 <style scoped lang="scss">

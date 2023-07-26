@@ -176,7 +176,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       ErrorHandler.process(t('errors.empty-container'))
       return
     }
-    return prepareCertificateImg(container.clear_certificate)
+    return usePrepareCertificateImage(container.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
   }
