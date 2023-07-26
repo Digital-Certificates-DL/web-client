@@ -20,16 +20,17 @@
       />
       <div class="previously-certificates-page__filters">
         <app-dropdown
+          :title="COURSE_FILTERS.ALL"
           :items="DROP_DOWN_COURSE_LIST"
           @select-item="findByCourse"
         />
         <app-dropdown
-          :title="'Data'"
+          :title="DATA_FILTERS.ALL"
           :items="DROP_DOWN_DATA_LIST"
           :main-image="'/branding/data-ico.png'"
         />
         <app-dropdown
-          :title="'All'"
+          :title="STATE_FILTERS.ALL"
           :items="DROP_DOWN_STATE_LIST"
           :main-image="'/branding/success-ico.png'"
           @select-item="findByState"
@@ -102,7 +103,7 @@ import {
   PottyCertificateRequest,
 } from '@/types'
 import { InputField } from '@/fields'
-import { onBeforeMount, ref, computed } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { useRouter } from '@/router'
 
 import {
@@ -111,11 +112,15 @@ import {
   Certificate,
   CertificateModal,
   ErrorMessage,
-  SuccessModal,
   LoaderModal,
+  SuccessModal,
 } from '@/common'
 import { Signature } from '@/utils'
-import { ErrorHandler, useSearchInTheList } from '@/helpers'
+import {
+  ErrorHandler,
+  usePrepareCertificateImage,
+  useSearchInTheList,
+} from '@/helpers'
 import { FILES_BASE, ROUTE_NAMES } from '@/enums'
 import {
   useCreatePdf,
@@ -124,6 +129,12 @@ import {
   useValidateContainerState,
 } from '@/api/api'
 import { useI18n } from 'vue-i18n'
+import {
+  COURSE_FILTERS,
+  DATA_FILTERS,
+  STATE_FILTERS,
+} from '@/enums/filter.enum'
+
 const { t } = useI18n()
 
 const userState = useUserStore()
@@ -147,50 +158,50 @@ const mintTx = ref('')
 const DROP_DOWN_COURSE_LIST = [
   {
     img: '/branding/solidity-ico.png',
-    text: 'All',
+    text: COURSE_FILTERS.ALL,
   },
   {
     img: '/branding/solidity-ico.png',
-    text: 'Solidity',
+    text: COURSE_FILTERS.SOLIDITY,
   },
   {
     img: '/branding/solidity-ico.png',
-    text: 'Golang',
+    text: COURSE_FILTERS.GOLANG,
   },
   {
     img: '/branding/solidity-ico.png',
-    text: 'Database',
+    text: COURSE_FILTERS.DATABASE,
   },
   {
     img: '/branding/solidity-ico.png',
-    text: 'Defi',
+    text: COURSE_FILTERS.DEFI,
   },
 ] as DropdownItem[]
 
 const DROP_DOWN_DATA_LIST = [
   {
-    text: 'All',
+    text: DATA_FILTERS.ALL,
   },
   {
-    text: 'Day',
+    text: DATA_FILTERS.DAY,
   },
   {
-    text: 'Week',
+    text: DATA_FILTERS.WEEK,
   },
   {
-    text: 'Month',
+    text: DATA_FILTERS.MONTH,
   },
 ] as DropdownItem[]
 
 const DROP_DOWN_STATE_LIST = [
   {
-    text: 'All',
+    text: STATE_FILTERS.ALL,
   },
   {
-    text: 'Generated',
+    text: STATE_FILTERS.GENERATED,
   },
   {
-    text: 'Not generated',
+    text: STATE_FILTERS.NOTGENERATED,
   },
 ] as DropdownItem[]
 
@@ -204,13 +215,10 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
     certificateWithImg.value = (await getCertificateImage(
       certificate,
     )) as CertificateJSONResponse[]
-    /* eslint-disable no-console */
-    console.log(certificateWithImg.value)
-    certificateWithImg.value = prepareCertificateImage(
+
+    certificateWithImg.value = usePrepareCertificateImage(
       certificateWithImg.value!,
     )
-    /* eslint-disable no-console */
-    console.log(certificateWithImg.value)
 
     isCertificateModalShown.value = true
     isLoading.value = false
@@ -219,19 +227,6 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
   }
   isCertificateModalShown.value = true
   currentCertificate.value = certificate
-}
-
-const prepareCertificateImage = (certificates: CertificateJSONResponse[]) => {
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
-      certificate.img = ''
-      continue //todo move to helpers
-    }
-    certificate.img =
-      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
-  }
-
-  return certificates
 }
 
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
@@ -278,7 +273,7 @@ const refresh = async () => {
       userState.setting.urlGoogleSheet,
     )
 
-    userState.students = prepareCertificateImage(data)
+    userState.students = usePrepareCertificateImage(data)
     certificatesList.value = userState.students
   } catch (error) {
     ErrorHandler.process(error)
@@ -290,9 +285,7 @@ const findByCourse = (filter: DropdownItem) => {
   //todo make using computed
   const currentCourse = filter.text
   certificatesList.value = userState.students
-  if (!currentCourse.length || currentCourse === 'All') {
-    //todo  move to  enums
-
+  if (!currentCourse.length || currentCourse === COURSE_FILTERS.ALL) {
     certificatesList.value = userState.students
     return
   }
@@ -308,21 +301,16 @@ const findByState = (filter: DropdownItem) => {
   const state = filter.text
 
   certificatesList.value = userState.students
-  if (!state.length || state === 'All') {
-    //todo  move to  enums
-
+  if (!state.length || state === STATE_FILTERS.ALL) {
     certificatesList.value = userState.students
     return
   }
 
-  if (state === 'Generated') {
-    //todo  move to  enums
-
+  if (state === STATE_FILTERS.GENERATED) {
     certificatesList.value = certificatesList.value.filter(certificate => {
       return certificate.certificate || certificate.digitalCertificate
     })
-  } else if (state === 'Not generated') {
-    //todo  move to  enums
+  } else if (state === STATE_FILTERS.NOTGENERATED) {
     certificatesList.value = certificatesList.value.filter(certificate => {
       return !certificate.signature!.length
     })

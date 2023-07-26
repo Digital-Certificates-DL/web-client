@@ -109,13 +109,14 @@ import {
   useCreatePdf,
   useUploadCertificates,
 } from '@/api/api'
+
 import { AppButton } from '@/common'
 import { Signature } from '@/utils'
 import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
-import { FILES_BASE, ROUTE_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
+import { ROUTE_NAMES } from '@/enums'
+import { ErrorHandler, usePrepareCertificateImage } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useI18n } from 'vue-i18n'
@@ -188,17 +189,6 @@ const sign = (users: CertificateJSONResponse[]) => {
   return users
 }
 
-const prepareCertificateImg = (users: CertificateJSONResponse[]) => {
-  for (const user of users) {
-    if (!user.certificateImg) {
-      continue
-    }
-    user.img = FILES_BASE.PNG_BASE + user.certificateImg.toString()
-  }
-
-  return users
-}
-
 const validateContainerState = async (containerID: string) => {
   const data = await useValidateContainerState(containerID)
   if (!data) {
@@ -222,7 +212,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
       ErrorHandler.process(t('errors.empty-container'))
       return
     }
-    const updatedUsers = prepareCertificateImg(container.clear_certificate)
+    const updatedUsers = usePrepareCertificateImage(container.clear_certificate)
     userState.students = updatedUsers
 
     return updatedUsers

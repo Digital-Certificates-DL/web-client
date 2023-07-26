@@ -226,6 +226,7 @@
     "get-all-btn": "See more",
     "error-templates-nil": "templates was not found",
     "error-certificate-nil": "certificates was not found",
+    "process-state-getting-cert": "Getting certificates"
   },
   "timestamp": {
     "page-title": "Previously certificates",

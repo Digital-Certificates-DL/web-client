@@ -100,7 +100,7 @@ const processState = ref('')
 const getCertificates = async () => {
   try {
     isLoading.value = true
-    processState.value = 'Getting certificates'
+    processState.value = t('home.process-state-getting-cert')
 
     const data = await useUploadCertificates(
       userState.setting.accountName,
@@ -123,7 +123,7 @@ const getCertificates = async () => {
             ErrorHandler.process(t('errors.empty-google-link'))
             return
           }
-          //todo  impleemnt types for it
+          //todo  implement types for it
           authLink.value = data.link
           isUnauthorized.value = true
           return

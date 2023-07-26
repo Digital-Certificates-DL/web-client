@@ -75,11 +75,13 @@ import {
   CertificateModal,
   ErrorMessage,
 } from '@/common'
-import { ErrorHandler, useSearchInTheList } from '@/helpers'
+import {
+  ErrorHandler,
+  useSearchInTheList,
+  usePrepareCertificateImage,
+} from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
-import { FILES_BASE } from '@/enums'
-
 const { t } = useI18n()
 
 const isModalActive = ref(false)
@@ -100,18 +102,6 @@ const selectedItems = ref<CertificateJSONResponse[]>([])
 const certificateFilter = computed(() =>
   useSearchInTheList(certificateList.value, searchData.value),
 )
-
-const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
-      continue
-    }
-    certificate.img =
-      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
-  }
-
-  return certificates
-}
 
 const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
   isModalActive.value = state
@@ -154,7 +144,7 @@ const bitcoinTimestamp = async () => {
     certificateList.value =
       (await updateCertificates(selectedItems.value)) || []
 
-    certificateList.value = prepareCertificateImg(certificateList.value)
+    certificateList.value = usePrepareCertificateImage(certificateList.value)
     isLoading.value = false
   } catch (error) {
     isLoading.value = false
