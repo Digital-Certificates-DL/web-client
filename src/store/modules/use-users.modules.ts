@@ -13,6 +13,7 @@ export const useUserStore = defineStore('users-store', {
       students: [] as CertificateJSONResponse[],
       bufferCertificateList: [] as CertificateJSONResponse[],
       setting: {} as UserSetting,
+      bufferImg: '',
     }
   },
   persist: {

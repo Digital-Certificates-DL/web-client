@@ -27,6 +27,7 @@ import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from '@/router'
+import { useUserStore } from '@/store'
 
 const router = useRouter()
 const { disableForm, enableForm } = useForm()
@@ -59,9 +60,14 @@ const sendTemplate = () => {
   emit('close-modal')
   console.log('test')
   console.log(uploadedImg.value)
+  useUserStore().$state.bufferImg = uploadedImg.value
+  console.log('test')
+
+  console.log(useUserStore().$state.bufferImg)
+
   router.push({
     name: ROUTE_NAMES.template,
-    params: { name: form.name, img: uploadedImg.value },
+    params: { name: form.name },
     // state: { name: form.name, img: uploadedImg.value },
   })
   enableForm()

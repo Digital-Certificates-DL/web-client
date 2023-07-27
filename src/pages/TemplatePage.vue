@@ -5,7 +5,7 @@
       <p class="template-page__description">
         {{ $t('template_page.description') }}
       </p>
-      <app-button @click="sendTemplate" />
+      <app-button text="send" @click="sendTemplate" />
     </div>
     <div class="template-page__nav">
       <app-button><img src="/static/branding/cursor.png" alt="" /></app-button>
@@ -22,7 +22,12 @@
       class="template-page__back-image"
       @click="currentInputInfo = {} as Template"
     >
-      <img src="/static/branding/blockchain.png" alt="Uploaded Image" />
+      <img
+        class="template-page__template-background"
+        id="testID"
+        src="/static/branding/blockchain.png"
+        alt="Uploaded Image"
+      />
       <div
         v-for="(position, index) in defaultTemplate"
         :key="index"
@@ -57,9 +62,9 @@
         </button>
       </div>
     </div>
-    <button @click.stop="saveTextPosition">
+    <app-button @click.stop="saveTextPosition">
       {{ $t('template-page.save-position') }}
-    </button>
+    </app-button>
   </div>
 </template>
 
@@ -69,18 +74,20 @@ import AppButton from '@/common/AppButton.vue'
 import { Template } from '@/types/template'
 import { api } from '@/api'
 import { ErrorHandler } from '@/helpers'
-import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { defineProps } from 'vue/dist/vue'
+import { createReadStream } from 'fs'
+import { createCanvas, loadImage } from 'canvas'
+import { useUserStore } from '@/store'
 
-const route = useRoute()
 const textValue = ref('')
 
 const inputField = ref(null)
 const currentInputInfo = ref<Template>({} as Template)
 const textPositionSaved = ref(false)
+const imgWidth = ref(0)
+const imgHeight = ref(0)
 
 const props = defineProps<{
-  img: string
   name: string
 }>()
 
@@ -157,25 +164,6 @@ const defaultTemplate = ref<Template[]>([
   } as Template,
 ])
 
-// const setPosition = event => {
-//   if (!textPositionSaved.value) {
-//     showInput.value = true
-//     const rect = event.target.getBoundingClientRect()
-//     const newPosition = {
-//       x: event.clientX - rect.left - 100,
-//       y: event.clientY - rect.top,
-//       text: textValue.value,
-//     }
-//     inputPositions.value.push(newPosition)
-//     nextTick(() => {
-//       inputField.value = document.querySelector(
-//         '.input-container:last-child input',
-//       )
-//       inputField.value.focus()
-//     })
-//   }
-// }
-
 const removeInput = (index: number) => {
   defaultTemplate.value.splice(index, 1)
   clearInput()
@@ -214,13 +202,6 @@ const endDrag = () => {
   dragData.value.index = null
 }
 
-// const getImageSize = (
-//   image: HTMLImageElement,
-// ): { width: number; height: number } => {
-//   const { naturalWidth, naturalHeight } = image
-//   return { width: naturalWidth, height: naturalHeight }
-// }
-
 const selectInput = (info: Template) => {
   currentInputInfo.value = info
 }
@@ -231,10 +212,10 @@ const sendTemplate = async () => {
       body: {
         data: {
           attributes: {
-            // background_img: selectedImage,
+            background_img: useUserStore().$state.bufferImg,
             is_compiled: true,
-            Template: prepareTemplates,
-            // template_name:
+            template: await prepareTemplates(),
+            template_name: props.name,
           },
         },
       },
@@ -245,13 +226,63 @@ const sendTemplate = async () => {
   }
 }
 
-const prepareTemplates = () => {
-  // const tempalte = defaultTemplate
+const getDeltes = async () => {
+  await getImageSize()
+  const size = getCurrentImageSize()
+  const deltaHeight = size.height / imgHeight.value
+  const deltaWidth = size.width / imgWidth.value
+  return { deltaHeight, deltaWidth }
 }
 
-onBeforeRouteUpdate(() => {
-  console.log(props.img)
-})
+const prepareTemplates = async () => {
+  const { deltaHeight, deltaWidth } = await getDeltes()
+  console.log({ deltaHeight, deltaWidth })
+  for (const field of defaultTemplate.value) {
+    field.x *= deltaWidth
+    field.y *= deltaHeight
+    field.fontSize = deltaHeight
+  }
+  clearFieldsMockData()
+  return defaultTemplate.value
+}
+
+const clearFieldsMockData = () => {
+  for (const field of defaultTemplate.value) {
+    if (field.name != 'Credits') {
+      field.text = ''
+    }
+  }
+}
+
+const getCurrentImageSize = () => {
+  return { height: 600, width: 800 }
+}
+
+const getImageSize = async () => {
+  console.log(useUserStore().$state.bufferImg)
+  try {
+    // Remove the data URL prefix (e.g., "data:image/png;base64,")
+    const base64Data = useUserStore().$state.bufferImg.replace(
+      /^data:image\/\w+;base64,/,
+      '',
+    )
+
+    // Create a buffer from the base64 data
+    const buffer = Buffer.from(base64Data, 'base64')
+    console.log(buffer)
+    // Load the image using the canvas library
+    const image = await loadImage(buffer)
+
+    // Get the image size
+    imgWidth.value = image.width
+    imgHeight.value = image.height
+
+    console.log(imgWidth.value, imgHeight.value)
+  } catch (error) {
+    console.error(`Error: ${error}`)
+    return null
+  }
+}
 </script>
 
 <style scoped lang="scss">
