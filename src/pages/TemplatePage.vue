@@ -75,8 +75,6 @@ import { Template } from '@/types/template'
 import { api } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { defineProps } from 'vue/dist/vue'
-import { createReadStream } from 'fs'
-import { createCanvas, loadImage } from 'canvas'
 import { useUserStore } from '@/store'
 
 const textValue = ref('')
@@ -84,8 +82,7 @@ const textValue = ref('')
 const inputField = ref(null)
 const currentInputInfo = ref<Template>({} as Template)
 const textPositionSaved = ref(false)
-const imgWidth = ref(0)
-const imgHeight = ref(0)
+const imgInfo = ref<HTMLImageElement>()
 
 const props = defineProps<{
   name: string
@@ -228,15 +225,14 @@ const sendTemplate = async () => {
 
 const getDeltes = async () => {
   await getImageSize()
-  const size = getCurrentImageSize()
-  const deltaHeight = size.height / imgHeight.value
-  const deltaWidth = size.width / imgWidth.value
+  await getCurrentImageSize()
+  const deltaHeight = imgInfo.value!.naturalHeight! / imgInfo.value!.height!
+  const deltaWidth = imgInfo.value!.naturalWidth! / imgInfo.value!.width!
   return { deltaHeight, deltaWidth }
 }
 
 const prepareTemplates = async () => {
   const { deltaHeight, deltaWidth } = await getDeltes()
-  console.log({ deltaHeight, deltaWidth })
   for (const field of defaultTemplate.value) {
     field.x *= deltaWidth
     field.y *= deltaHeight
@@ -255,33 +251,31 @@ const clearFieldsMockData = () => {
 }
 
 const getCurrentImageSize = () => {
-  return { height: 600, width: 800 }
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = function () {
+      imgInfo.value = img
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.onerror = function () {
+      reject(new Error('Failed to load the image.'))
+    }
+    img.src = useUserStore().$state.bufferImg
+  })
 }
 
 const getImageSize = async () => {
-  console.log(useUserStore().$state.bufferImg)
-  try {
-    // Remove the data URL prefix (e.g., "data:image/png;base64,")
-    const base64Data = useUserStore().$state.bufferImg.replace(
-      /^data:image\/\w+;base64,/,
-      '',
-    )
-
-    // Create a buffer from the base64 data
-    const buffer = Buffer.from(base64Data, 'base64')
-    console.log(buffer)
-    // Load the image using the canvas library
-    const image = await loadImage(buffer)
-
-    // Get the image size
-    imgWidth.value = image.width
-    imgHeight.value = image.height
-
-    console.log(imgWidth.value, imgHeight.value)
-  } catch (error) {
-    console.error(`Error: ${error}`)
-    return null
-  }
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = function () {
+      imgInfo.value = img
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.onerror = function () {
+      reject(new Error('Failed to load the image.'))
+    }
+    img.src = useUserStore().$state.bufferImg
+  })
 }
 </script>
 

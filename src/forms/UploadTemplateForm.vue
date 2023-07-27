@@ -28,13 +28,14 @@ import { required } from '@/validators'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from '@/router'
 import { useUserStore } from '@/store'
+import { ErrorHandler } from '@/helpers'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const { disableForm, enableForm } = useForm()
 
 const IMAGE_FORMAT = 'image/*'
-
-const uploadedImg = ref('')
 
 const emit = defineEmits<{
   (e: 'close-modal'): boolean
@@ -48,8 +49,8 @@ const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
   name: { required },
 })
 
-const onFileUpload = async (files: File[]) => {
-  await parseImages(files)
+const onFileUpload = (files: File[]) => {
+  parseImages(files)
   if (isFormValid()) {
     sendTemplate()
   }
@@ -58,13 +59,6 @@ const onFileUpload = async (files: File[]) => {
 const sendTemplate = () => {
   disableForm()
   emit('close-modal')
-  console.log('test')
-  console.log(uploadedImg.value)
-  useUserStore().$state.bufferImg = uploadedImg.value
-  console.log('test')
-
-  console.log(useUserStore().$state.bufferImg)
-
   router.push({
     name: ROUTE_NAMES.template,
     params: { name: form.name },
@@ -75,24 +69,24 @@ const sendTemplate = () => {
 
 const parseImages = async (fileList: File[]) => {
   if (!fileList) {
-    // ErrorHandler.process(t('errors.error-empty-list'))
+    ErrorHandler.process(t('errors.error-empty-list'))
     return
   }
   const file = fileList[0]
 
   if (!file) {
-    // ErrorHandler.process(t('errors.error-empty-file'))
+    ErrorHandler.process(t('errors.error-empty-file'))
     return
   }
 
   const reader = new FileReader()
   reader.readAsDataURL(file)
-  reader.onload = function () {
-    uploadedImg.value = reader.result as string
-    console.log(uploadedImg.value)
+  reader.onload = function async() {
+    useUserStore().bufferImg = reader.result as string
   }
   reader.onerror = function (error) {
-    // ErrorHandler.process(error)
+    ErrorHandler.process(error)
+    return
   }
 }
 </script>
