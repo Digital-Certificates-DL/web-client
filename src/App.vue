@@ -21,18 +21,8 @@ import AppNavbar from '@/common/AppNavbar.vue'
 
 const web3Store = useWeb3ProvidersStore()
 const isAppInitialized = ref(false)
-const init = async () => {
-  try {
-    useNotifications()
-    document.title = config.APP_NAME
-  } catch (error) {
-    isAppInitialized.value = false
-    ErrorHandler.process(error)
-  }
-  isAppInitialized.value = true
-}
 
-const initProvider = async () => {
+const init = async () => {
   try {
     useNotifications()
     await web3Store.detectProviders()
@@ -49,7 +39,6 @@ const initProvider = async () => {
 }
 
 init()
-initProvider()
 </script>
 
 <style lang="scss" scoped>

@@ -14,14 +14,25 @@ const ECPair = ECPairFactory(ecc)
 // the file will be heavily modified in the next request
 // and now you can not watch it
 export class Bitcoin {
+  static readonly TX_FEE_COEFS = {
+    numberOfInputs: 148,
+    numberOfOutputs: 34,
+    overhead: 10,
+  }
+
+  static readonly TX_OUTPUTS_INFO = {
+    numberOfOutputs: 3,
+    firstOutput: 555,
+    secondOutput: 556,
+    thirdOutput: 557,
+  }
+
   static PrepareLegacyTXTestnet = async (
-    mnph: string,
+    mnemonicPhrase: string,
     index: number,
     txID?: string,
   ) => {
-    const seed = await mnemonicToSeedAsync(mnph).then(bytes => {
-      return bytes
-    })
+    const seed = await mnemonicToSeedAsync(mnemonicPhrase)
 
     const bip = bip32.fromSeed(seed, testnet)
     const key = bip.derive(index)
@@ -69,8 +80,10 @@ export class Bitcoin {
       }
       const { txs, utxoAmount, value } = await this.betterUtxoTestnet(
         utxos,
-        3,
-        556 + 557 + 558,
+        this.TX_OUTPUTS_INFO.numberOfOutputs,
+        this.TX_OUTPUTS_INFO.firstOutput +
+          this.TX_OUTPUTS_INFO.secondOutput +
+          this.TX_OUTPUTS_INFO.thirdOutput,
       )
       fee = value
       utxo = txs
@@ -91,22 +104,28 @@ export class Bitcoin {
     let balance = butxoAmount
     psbt.addOutput({
       address: '2N1fWEgZG7tYDQvdyHcs3LQMJtqrvf6vTW2',
-      value: 556,
+      value: this.TX_OUTPUTS_INFO.firstOutput,
     })
     psbt.addOutput({
       address: 'n1NffJM6mDvv27nPzxY8UdozxWbkQpjHS2',
-      value: 557,
+      value: this.TX_OUTPUTS_INFO.secondOutput,
     })
     psbt.addOutput({
       address: 'n2AgWQWzkQoKFbw8p8RkM5uEV2ZdKwDUTi',
-      value: 558,
+      value: this.TX_OUTPUTS_INFO.thirdOutput,
     })
-    balance -= 556 + 557 + 558
+
+    balance -=
+      this.TX_OUTPUTS_INFO.firstOutput +
+      this.TX_OUTPUTS_INFO.secondOutput +
+      this.TX_OUTPUTS_INFO.thirdOutput
     balance -= fee
+
     psbt.addOutput({
       address: ex.address || '',
       value: balance,
     })
+
     psbt.signInput(0, keyPair)
     psbt.finalizeAllInputs()
     const hex = psbt.extractTransaction().toHex()
@@ -116,55 +135,6 @@ export class Bitcoin {
       exAddress,
       index,
     }
-  }
-
-  static async PrepareLegacyTXMainnet(
-    key: string,
-    txID?: string,
-    address?: string,
-  ) {
-    const keyPair = ECPair.fromWIF(key)
-    const psbt = new bitcoin.Psbt()
-    let amount = 0
-    let butxoAmount = 0
-    let utxo: UTXO[] = []
-    if (!txID) {
-      const utxos = await axios
-        .get(
-          'https://api.blockcypher.com/v1/btc/test3/addrs/' +
-            address +
-            '?unspentOnly=true',
-        )
-        .then(function (response) {
-          return response.data.txrefs
-        })
-
-      const { txs, utxoAmount, value } = await this.betterUtxoMainnet(utxos, 4)
-      amount = value
-      utxo = txs
-      butxoAmount = utxoAmount || 0
-    }
-
-    for (let i = 0; i < utxo.length; i++) {
-      const hex = await this.getTxMainnet(utxo[i].txHash)
-
-      psbt.addInput({
-        hash: utxo[i].txHash || '',
-        index: i,
-        nonWitnessUtxo: new Buffer(hex, 'hex'),
-      })
-    }
-    psbt.addOutput({
-      address: '2N1fWEgZG7tYDQvdyHcs3LQMJtqrvf6vTW2',
-      value: amount || 0 - butxoAmount || 0,
-    })
-    psbt.addOutput({
-      address: 'n2gFaiBfqAqnfDExzXRh6sFtGzYjHxQP9K',
-      value: 10,
-    })
-    psbt.signInput(0, keyPair)
-    psbt.finalizeAllInputs()
-    return psbt.extractTransaction().toHex()
   }
 
   static async SendToTestnet(tx: string) {
@@ -179,36 +149,13 @@ export class Bitcoin {
 
     return res as PustTxResponce
   }
-  static async SendToMainnet(tx: string) {
-    await axios
-      .post(
-        'api.blockcypher.com/v1/btc/main/main/txs/push?token=f3940bcec5bb4f1b9edfca8f6cabce65',
-        { tx: tx },
-      )
-      .then(function (response) {
-        return response
-      })
-      .catch(function (response) {
-        return response
-      })
-  }
 
-  static async calculateFeeMainnet(outs: number, ins: number) {
-    const size = ins * 180 + outs * 34 + 10 - ins
-
-    const fee = await axios
-      .get('api.blockcypher.com/v1/btc/main')
-      .then(response => {
-        return response.data.medium_fee_per_kb
-      })
-      .catch(err => {
-        return err
-      })
-    return size * fee
-  }
   static async calculateFeeTestnet(outs: number, ins: number) {
-    const size = ins * 148 + outs * 34 + 10 - ins
-    // const size = ins * 180 + outs * 34 + 10 - ins
+    const size =
+      ins * this.TX_FEE_COEFS.numberOfInputs +
+      outs * this.TX_FEE_COEFS.numberOfOutputs +
+      this.TX_FEE_COEFS.overhead -
+      ins
     let fee = 10
     fee = await axios
       .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
@@ -222,64 +169,10 @@ export class Bitcoin {
     return size * Number(fee)
   }
 
-  private static async betterUtxoMainnet(txs: UTXO[], outs: number) {
-    const largeTxs: UTXO[] = []
-    const smaller: UTXO[] = []
-    let value = await this.calculateFeeMainnet(outs, 1)
-    for (const tx of txs) {
-      if (tx.value > value) {
-        largeTxs.push(tx)
-      } else {
-        smaller.push(tx)
-      }
-    }
-    smaller.sort(this.reverseSort)
-    largeTxs.sort(this.sort)
-    if (smaller.length > 1) {
-      let bufferValue = 0
-      const utxos: UTXO[] = []
-      for (let i = 0; i < smaller.length; i++) {
-        value = await this.calculateFeeMainnet(outs, i)
-        if (bufferValue < value) {
-          bufferValue += smaller[i].value
-          utxos.push(smaller[i])
-        }
-        return {
-          txs: utxos,
-          utxoAmount: bufferValue,
-          value: value,
-        }
-      }
-    }
-    const utxoRes: UTXO[] = []
-    utxoRes.push(largeTxs[0])
-    //todo make better
-    return {
-      txs: utxoRes,
-      utxoAmoutn: largeTxs[0].value,
-      value: value,
-    }
-  }
-
   private static async getTxTestnet(hash: string) {
     const tx = await axios
       .get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
-          hash +
-          '?includeHex=true',
-      )
-      .then(response => {
-        return response.data.hex
-      })
-      .catch(err => {
-        return err
-      })
-    return tx
-  }
-  private static async getTxMainnet(hash: string) {
-    const tx = await axios
-      .get(
-        'https://api.blockcypher.com/v1/btc/main/txs/' +
           hash +
           '?includeHex=true',
       )
@@ -308,8 +201,8 @@ export class Bitcoin {
         smaller.push(tx)
       }
     }
-    smaller.sort(this.reverseSort)
-    largeTxs.sort(this.sort)
+    smaller.reverse()
+    largeTxs.sort()
     if (smaller.length > 1) {
       let bufferValue = 0
       const utxos = []
@@ -345,14 +238,6 @@ export class Bitcoin {
     })
 
     return key.address
-  }
-
-  private static sort = (a: UTXO, b: UTXO) => {
-    return a.value - b.value
-  }
-
-  private static reverseSort = (a: UTXO, b: UTXO) => {
-    return b.value - a.value
   }
 }
 

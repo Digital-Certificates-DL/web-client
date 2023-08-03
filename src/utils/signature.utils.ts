@@ -6,11 +6,8 @@ export class Signature {
   private address: Address
 
   constructor(privKey: string) {
-    const key = PrivKey.Mainnet.fromWif(privKey)
-    const keyPair = KeyPair.Mainnet.fromPrivKey(key)
-    const address = Address.Mainnet.fromPubKey(keyPair.pubKey)
-    this.keyPair = keyPair
-    this.address = address
+    this.keyPair = KeyPair.Mainnet.fromPrivKey(PrivKey.Mainnet.fromWif(privKey))
+    this.address = Address.Mainnet.fromPubKey(this.keyPair.pubKey)
   }
 
   public signMsg = (message: string | Buffer) => {
@@ -22,6 +19,7 @@ export class Signature {
       }
     }
   }
+
   public verifySign = (
     message: string | Buffer,
     address: string,
