@@ -85,10 +85,10 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 
 const save = async () => {
   if (!isFormValid()) return
-  userState.setting = form
+  userState.userSetting = form
   const address = Bitcoin.getAddressFromWIF(form.signKey)
 
-  userState.setting.userBitcoinAddress = address || ''
+  userState.userSetting.userBitcoinAddress = address || ''
 
   try {
     await api.post<CertificateJSONResponseList>(
@@ -97,7 +97,7 @@ const save = async () => {
         body: {
           data: {
             code: '',
-            name: userState.setting.accountName,
+            name: userState.userSetting.accountName,
           },
         },
       },

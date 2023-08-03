@@ -1,14 +1,14 @@
 import { testnet } from 'ecpair/src/networks'
 import * as bitcoin from 'bitcoinjs-lib'
-import BIP32Factory from 'bip32'
+import { BIP32Factory } from 'bip32'
 import * as ecc from 'tiny-secp256k1'
-const bip32 = BIP32Factory(ecc)
-import ECPairFactory from 'ecpair'
+import { ECPairFactory, ECPairInterface } from 'ecpair'
 import { mnemonicToSeedAsync } from 'bip39-web'
 import axios from 'axios'
-import { Network } from 'bitcoinjs-lib'
-import { PustTxResponce, UTXO } from '@/types/bitcoin.types'
+import { BIP32Interface, Network } from 'bitcoinjs-lib'
+import { PustTxResponce, UTXO } from '@/types'
 
+const bip32 = BIP32Factory(ecc)
 const ECPair = ECPairFactory(ecc)
 
 // the file will be heavily modified in the next request
@@ -35,73 +35,98 @@ export class Bitcoin {
     const seed = await mnemonicToSeedAsync(mnemonicPhrase)
 
     const bip = bip32.fromSeed(seed, testnet)
-    const key = bip.derive(index)
-    const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
-
-    const { address } = bitcoin.payments.p2pkh({
-      pubkey: keyPair.publicKey,
-      network: testnet,
-    })
+    const { address, keyPair } = this.keyByIndex(bip, index)
+    if (!address) {
+      throw new Error('') //todo handle error
+    }
 
     index++
-    const exchangeKey = bip.derive(index)
-    const keyPairex = ECPair.fromWIF(exchangeKey.toWIF(), testnet)
-    const ex = bitcoin.payments.p2pkh({
-      pubkey: keyPairex.publicKey,
-      network: testnet,
-    })
 
+    const ex = this.keyByIndex(bip, index)
+    if (!ex.address) {
+      throw new Error('')
+    }
+
+    const exAddress = ex.address
     const psbt = new bitcoin.Psbt({ network: testnet })
+    const hex = await this.createTx(psbt, address, exAddress, keyPair, txID)
+
+    return {
+      hex,
+      exAddress,
+      index,
+    }
+  }
+
+  static async createTx(
+    psbt: bitcoin.Psbt,
+    address: string,
+    exAddress: string,
+    keyPair: ECPairInterface,
+    txID?: string,
+  ): Promise<string> {
     let fee = 0
-    let butxoAmount = 0
+    let bestUTXOAmount = 0
     let utxo: UTXO[] = []
     if (!txID) {
-      const utxos = await axios
-        .get(
-          'https://api.blockcypher.com/v1/btc/test3/addrs/' +
-            address +
-            '?unspentOnly=true',
-        )
-        .then(function (response) {
-          let txs = []
-          if (response.data.txrefs) {
-            txs = response.data.txrefs
-          }
-
-          if (response.data.unconfirmed_txrefs) {
-            txs = txs.concat(response.data.unconfirmed_txrefs)
-          }
-
-          return txs
-        })
-
-      if (!utxos) {
-        return
+      const txInputInfo = await this.prepareUTXO(address)
+      if (!txInputInfo.fee || !txInputInfo.txs) {
+        throw new Error('')
       }
-      const { txs, utxoAmount, value } = await this.betterUtxoTestnet(
-        utxos,
-        this.TX_OUTPUTS_INFO.numberOfOutputs,
-        this.TX_OUTPUTS_INFO.firstOutput +
-          this.TX_OUTPUTS_INFO.secondOutput +
-          this.TX_OUTPUTS_INFO.thirdOutput,
-      )
-      fee = value
-      utxo = txs
-      butxoAmount = utxoAmount || 0
+
+      fee = txInputInfo.fee
+      utxo = txInputInfo.txs
+      bestUTXOAmount = txInputInfo.amount
     }
     if (utxo.length) {
-      for (let i = 0; i < utxo.length; i++) {
-        const hex = await this.getTxTestnet(utxo[i].txHash)
-        const txHex = new Buffer(hex, 'hex')
-        psbt.addInput({
-          hash: utxo[i].txHash,
-          index: utxo[i].txOutputN,
-          nonWitnessUtxo: txHex,
-        })
-      }
+      psbt = await this.setInputs(psbt, utxo)
     }
 
-    let balance = butxoAmount
+    psbt = await this.setOutput(psbt, bestUTXOAmount, fee, exAddress)
+
+    psbt.signInput(0, keyPair)
+    psbt.finalizeAllInputs()
+
+    return psbt.extractTransaction().toHex()
+  }
+
+  static async prepareUTXO(address: string) {
+    const utxos = await this.getUTXO(address)
+    if (!utxos) {
+      throw new Error() //todo handle error
+    }
+    return this.betterUtxoTestnet(
+      utxos,
+      this.TX_OUTPUTS_INFO.numberOfOutputs,
+      this.TX_OUTPUTS_INFO.firstOutput +
+        this.TX_OUTPUTS_INFO.secondOutput +
+        this.TX_OUTPUTS_INFO.thirdOutput,
+    )
+  }
+
+  static async setInputs(
+    psbt: bitcoin.Psbt,
+    utxo: UTXO[],
+  ): Promise<bitcoin.Psbt> {
+    for (let i = 0; i < utxo.length; i++) {
+      const hex = await this.getTxTestnet(utxo[i].txHash)
+      const txHex = new Buffer(hex, 'hex')
+      psbt.addInput({
+        hash: utxo[i].txHash,
+        index: utxo[i].txOutputN,
+        nonWitnessUtxo: txHex,
+      })
+    }
+
+    return psbt
+  }
+
+  static async setOutput(
+    psbt: bitcoin.Psbt,
+    balance: number,
+    fee: number,
+    exAddress: string,
+  ): Promise<bitcoin.Psbt> {
     psbt.addOutput({
       address: '2N1fWEgZG7tYDQvdyHcs3LQMJtqrvf6vTW2',
       value: this.TX_OUTPUTS_INFO.firstOutput,
@@ -122,32 +147,46 @@ export class Bitcoin {
     balance -= fee
 
     psbt.addOutput({
-      address: ex.address || '',
+      address: exAddress,
       value: balance,
     })
 
-    psbt.signInput(0, keyPair)
-    psbt.finalizeAllInputs()
-    const hex = psbt.extractTransaction().toHex()
-    const exAddress = ex.address
-    return {
-      hex,
-      exAddress,
-      index,
+    return psbt
+  }
+
+  static async getUTXO(address: string): Promise<UTXO[]> {
+    try {
+      const { data } = await axios.get(
+        'https://api.blockcypher.com/v1/btc/test3/addrs/' +
+          address +
+          '?unspentOnly=true',
+      )
+
+      let txs = [] as UTXO[]
+      if (data.txrefs) {
+        txs = data.txrefs
+      }
+
+      if (data.unconfirmed_txrefs) {
+        txs = txs.concat(data.unconfirmed_txrefs)
+      }
+
+      return txs //todo add types
+    } catch (error) {
+      throw new Error('') //todo handle error
     }
   }
 
-  static async SendToTestnet(tx: string) {
-    const res = await axios
-      .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
-      .then(function (response) {
-        return response
-      })
-      .catch(function (err) {
-        return err
-      })
-
-    return res as PustTxResponce
+  static async SendToTestnet(tx: string): Promise<PustTxResponce> {
+    try {
+      const { data } = await axios.post<PustTxResponce>(
+        'https://api.blockcypher.com/v1/btc/test3/txs/push',
+        { tx: tx },
+      )
+      return data
+    } catch (error) {
+      throw new Error('') //todo handle error
+    }
   }
 
   static async calculateFeeTestnet(outs: number, ins: number) {
@@ -156,33 +195,29 @@ export class Bitcoin {
       outs * this.TX_FEE_COEFS.numberOfOutputs +
       this.TX_FEE_COEFS.overhead -
       ins
-    let fee = 10
-    fee = await axios
-      .get('https://bitcoinfees.earn.com/api/v1/fees/recommended')
-      .then(response => {
-        return response.data.hourFee
-      })
-      .catch(err => {
-        return err
-      })
 
-    return size * Number(fee)
+    try {
+      const { data } = await axios.get(
+        'https://bitcoinfees.earn.com/api/v1/fees/recommended',
+      )
+      return size * Number(data.hourFee)
+    } catch (error) {
+      throw new Error('') //todo handle error
+    }
   }
 
   private static async getTxTestnet(hash: string) {
-    const tx = await axios
-      .get(
+    try {
+      const { data } = await axios.get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
           hash +
           '?includeHex=true',
       )
-      .then(response => {
-        return response.data.hex
-      })
-      .catch(err => {
-        return err
-      })
-    return tx
+
+      return data.hex
+    } catch (error) {
+      throw new Error('') //todo handle error
+    }
   }
 
   private static async betterUtxoTestnet(
@@ -192,10 +227,10 @@ export class Bitcoin {
   ) {
     const largeTxs: UTXO[] = []
     const smaller: UTXO[] = []
-    let value = await this.calculateFeeTestnet(outs, 1)
-    value += txsValue
+    let fee = await this.calculateFeeTestnet(outs, 1)
+    fee += txsValue
     for (const tx of txs) {
-      if (tx.value > value) {
+      if (tx.value > fee) {
         largeTxs.push(tx)
       } else {
         smaller.push(tx)
@@ -207,16 +242,16 @@ export class Bitcoin {
       let bufferValue = 0
       const utxos = []
       for (let i = 0; i < smaller.length; i++) {
-        value = await this.calculateFeeTestnet(outs, i)
-        value += txsValue
-        if (bufferValue < value) {
+        fee = await this.calculateFeeTestnet(outs, i)
+        fee += txsValue
+        if (bufferValue < fee) {
           bufferValue += smaller[i].value
           utxos.push(smaller[i])
         } else {
           return {
             txs: utxos,
-            utxoAmount: bufferValue,
-            value: value,
+            amount: bufferValue,
+            fee: fee,
           }
         }
       }
@@ -225,8 +260,8 @@ export class Bitcoin {
     utxoRes.push(largeTxs[0])
     return {
       txs: utxoRes,
-      utxoAmount: largeTxs[0].value,
-      value: value,
+      amount: largeTxs[0].value,
+      fee: fee,
     }
   }
 
@@ -238,6 +273,23 @@ export class Bitcoin {
     })
 
     return key.address
+  }
+
+  static keyByIndex(
+    bip: BIP32Interface,
+    index: number,
+  ): { address: string | undefined; keyPair: ECPairInterface } {
+    const key = bip.derive(index)
+    const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
+
+    const { address } = bitcoin.payments.p2pkh({
+      pubkey: keyPair.publicKey,
+      network: testnet,
+    })
+    return {
+      address: address,
+      keyPair: keyPair,
+    }
   }
 }
 

@@ -10,13 +10,15 @@
         />
       </div>
 
-      <div class="previously-certificates-page__btns">
+      <div class="previously-certificates-page__action-btns">
         <app-button
           class="previously-certificates-page__btn"
           color="info"
           size="medium"
-          :text="$t('previously-certificates-page.certificates-bitcoin-btn')"
-          @click="bitcoinTimestamp"
+          :text="
+            $t('previously-certificates-page.certificates-bitcoin-btn-text')
+          "
+          @click="makeBitcoinTimestamp"
         />
       </div>
     </div>
@@ -26,28 +28,29 @@
     />
 
     <div class="previously-certificates-page__list">
-      <div class="previously-certificates-page___list-subtitle">
+      <div class="previously-certificates-page___list-titles">
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-name') }}
+          {{ $t('previously-certificates-page.certificates-item-name') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-course') }}
+          {{ $t('previously-certificates-page.certificates-item-course') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-date') }}
+          {{ $t('previously-certificates-page.certificates-item-date') }}
         </p>
         <p></p>
       </div>
-      <div v-if="!userState.students.length">
-        <error-message
-          :message="$t('previously-certificates-page.error-certificate-list')"
+      <div v-if="!userState.certificates.length">
+        <no-data-message
+          class="previously-certificates-page__no-data"
+          :message="$t('previously-certificates-page.no-certificate-list')"
         />
       </div>
-      <div v-for="item in userState.students" :key="item.id">
+      <div v-for="item in userState.certificates" :key="item.id">
         <certificate
           :certificate="item"
           @open-modal="openCertificateModal"
-          @select="selectForTimestamp"
+          @on-select="selectItems"
         />
       </div>
     </div>
@@ -55,17 +58,17 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/store/modules/use-users.modules'
+import { useUserStore } from '@/store'
 import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
 import { onBeforeMount, ref } from 'vue'
 import { Bitcoin } from '@/utils'
 import {
-  ErrorMessage,
   AppButton,
   Certificate,
   CertificateModal,
+  NoDataMessage,
 } from '@/common'
 import { ErrorHandler } from '@/helpers'
 
@@ -80,11 +83,12 @@ const certificateBuffer = ref<CertificateJSONResponse[]>([])
 const searchInputValue = ref('')
 
 const openCertificateModal = (certificate: CertificateJSONResponse) => {
-  isCertificateModalShown.value = true
   currentCertificate.value = certificate
+  isCertificateModalShown.value = true
 }
 
 const prepareCertificatesImage = (certificates: CertificateJSONResponse[]) => {
+  //todo  move to helpers
   for (const certificate of certificates) {
     if (!certificate.certificateImg) {
       continue
@@ -96,66 +100,76 @@ const prepareCertificatesImage = (certificates: CertificateJSONResponse[]) => {
   return certificates
 }
 
-const selectForTimestamp = (
-  state: boolean,
+const selectItems = (
+  isSelected: boolean,
   certificate: CertificateJSONResponse,
 ) => {
-  if (state) {
+  if (isSelected) {
     listForTimestamp.value.push(certificate)
     return
   }
-  listForTimestamp.value.filter(item => item !== certificate)
+
+  const index = listForTimestamp.value.indexOf(certificate, 0)
+  if (index > -1) {
+    listForTimestamp.value.splice(index, 1)
+  }
 }
 
-const refresh = async () => {
+const refreshCertificates = async () => {
   try {
     const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
       {
         body: {
           data: {
-            url: userState.setting.urlGoogleSheet,
-            name: userState.setting.accountName,
+            url: userState.userSetting.urlGoogleSheet,
+            name: userState.userSetting.accountName,
           },
         },
       },
     )
-    userState.students = prepareCertificatesImage(data)
+    userState.setCertificates(prepareCertificatesImage(data))
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
 const find = () => {
-  certificateBuffer.value = userState.students
+  certificateBuffer.value = userState.certificates
 
   if (searchInputValue.value === '' && certificateBuffer.value) {
-    userState.students = certificateBuffer.value
+    userState.setCertificates(certificateBuffer.value)
   }
-  userState.students.filter(item =>
+  userState.certificates.filter(item =>
     item.participant.includes(searchInputValue.value),
   )
 }
 
-const bitcoinTimestamp = async () => {
-  if (userState.setting.keyPathID === 0 || !userState.setting.keyPathID) {
-    userState.setting.keyPathID = 0
+const makeBitcoinTimestamp = async () => {
+  if (!userState.userSetting.keyPathID) {
+    userState.userSetting.keyPathID = 0
   }
 
   const certificates = listForTimestamp
   for (const certificate of certificates.value) {
     const tx = await Bitcoin.PrepareLegacyTXTestnet(
-      userState.setting.bip39MnemonicPhrase,
-      userState.setting.keyPathID,
+      userState.userSetting.bip39MnemonicPhrase,
+      userState.userSetting.keyPathID,
     )
-    const hex = tx?.hex || ''
-    userState.setting.keyPathID = tx?.index || userState.setting.keyPathID++
-    if (hex === '') {
+    if (!tx?.hex) {
       return
     }
-    const sendResp = await Bitcoin.SendToTestnet(hex)
+
+    userState.userSetting.keyPathID =
+      tx?.index || userState.userSetting.keyPathID++
+
+    const sendResp = await Bitcoin.SendToTestnet(tx?.hex)
     certificate.txHash = sendResp.data.tx.hash
-    userState.setting.lastExAddress = tx?.exAddress || ''
+    if (!tx?.exAddress) {
+      throw new Error() //todo  discuss it
+    }
+
+    userState.userSetting.lastExAddress = tx?.exAddress
   }
   await updateCertificates(certificates.value)
 }
@@ -167,20 +181,20 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       body: {
         data: {
           users: certificates,
-          address: userState.setting.userBitcoinAddress,
-          name: userState.setting.accountName,
-          url: userState.setting.urlGoogleSheet,
+          address: userState.userSetting.userBitcoinAddress,
+          name: userState.userSetting.accountName,
+          url: userState.userSetting.urlGoogleSheet,
         },
       },
     },
   )
 
-  userState.students = data
+  userState.setCertificates(data)
 }
 
 const autoRefresh = () => {
-  if (userState.students.length === 0) {
-    refresh()
+  if (!userState.certificates.length) {
+    refreshCertificates()
   }
 }
 
@@ -189,8 +203,8 @@ onBeforeMount(autoRefresh)
 
 <style scoped lang="scss">
 .previously-certificates-page {
+  width: 100%;
   margin: 0 auto;
-  width: toRem(1400);
 }
 
 .previously-certificates-page__search {
@@ -201,12 +215,17 @@ onBeforeMount(autoRefresh)
 }
 
 .previously-certificates-page__search-input-wrp {
-  width: toRem(458);
+  max-width: toRem(458);
+  width: 100%;
 }
 
-.previously-certificates-page__btns {
+.previously-certificates-page__action-btns {
   display: flex;
   justify-content: space-between;
+}
+
+.previously-certificates-page__no-data {
+  margin: 20%;
 }
 
 .previously-certificates-page__btn {
@@ -214,7 +233,7 @@ onBeforeMount(autoRefresh)
   border-radius: toRem(8);
 }
 
-.previously-certificates-page___list-subtitle {
+.previously-certificates-page___list-titles {
   display: flex;
   justify-content: space-between;
   align-items: center;

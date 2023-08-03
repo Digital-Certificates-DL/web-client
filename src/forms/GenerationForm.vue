@@ -161,8 +161,8 @@ const parsedData = async (sheepUrl?: string) => {
       {
         body: {
           data: {
-            name: userState.setting.accountName,
-            url: sheepUrl || userState.setting.urlGoogleSheet,
+            name: userState.userSetting.accountName,
+            url: sheepUrl || userState.userSetting.urlGoogleSheet,
           },
         },
       },
@@ -178,7 +178,7 @@ const parsedData = async (sheepUrl?: string) => {
 }
 
 const sign = (users: CertificateJSONResponse[]) => {
-  const signature = new Signature(userState.setting.signKey)
+  const signature = new Signature(userState.userSetting.signKey)
   for (const user of users) {
     if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
@@ -203,15 +203,15 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
         body: {
           data: {
             data: users,
-            address: userState.setting.userBitcoinAddress || DEFAULT_KEY,
-            url: userState.setting.urlGoogleSheet,
-            name: userState.setting.accountName,
+            address: userState.userSetting.userBitcoinAddress || DEFAULT_KEY,
+            url: userState.userSetting.urlGoogleSheet,
+            name: userState.userSetting.accountName,
           },
         },
       },
     )
     users = prepareUserImg(data)
-    userState.students = users
+    userState.setCertificates(users)
     await router.push(ROUTE_NAMES.certificates)
   } catch (error) {
     ErrorHandler.process(error)

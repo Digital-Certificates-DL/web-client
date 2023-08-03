@@ -94,7 +94,6 @@ const connect = async () => {
 
 <style lang="scss" scoped>
 .main-page {
-  max-width: var(--page-large);
   margin: auto;
 }
 
@@ -129,13 +128,18 @@ const connect = async () => {
   text-align: center;
 }
 
+.main-page__metamask-block {
+  max-width: toRem(652);
+  width: 100%;
+}
+
 .main-page__metamask {
   display: grid;
   place-content: center;
   border-radius: toRem(8);
+  max-height: toRem(346);
+  height: 100%;
   padding: toRem(12);
-  width: toRem(652);
-  height: toRem(346);
 }
 
 .main-page__endpoints-side {

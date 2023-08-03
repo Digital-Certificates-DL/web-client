@@ -55,6 +55,8 @@ init()
 }
 
 .app__main {
+  max-width: var(--page-large);
+  margin: auto;
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
 }
 

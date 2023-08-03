@@ -60,11 +60,11 @@
   },
   "previously-certificates-page": {
     "certificates-title": "Previously certificates",
-    "certificates-subtitle-name": "Name",
-    "certificates-subtitle-course": "Course",
-    "certificates-subtitle-date": "Date",
-    "certificates-bitcoin-btn": "Bitcoin",
-    "error-certificate-list": "Empty certificate list",
+    "certificates-item-name": "Name",
+    "certificates-item-course": "Course",
+    "certificates-item-date": "Date",
+    "certificates-bitcoin-btn-text": "Bitcoin",
+    "no-certificate-list": "Empty certificate list",
     "certificates-find": "find"
   },
   "generation-page": {
