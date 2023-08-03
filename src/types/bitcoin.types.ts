@@ -56,3 +56,9 @@ export type UTXO = {
   confirmed: string
   doubleSpend: boolean
 }
+
+export type PreparedTX = {
+  hex: string
+  exAddress: string
+  derivePath: number
+}

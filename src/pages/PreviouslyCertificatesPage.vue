@@ -4,9 +4,8 @@
     <div class="previously-certificates-page__search">
       <div class="previously-certificates-page__search-input-wrp">
         <input-field
-          v-model="searchInputValue"
+          v-model="searchData"
           :placeholder="$t('previously-certificates-page.certificates-find')"
-          @input="find"
         />
       </div>
 
@@ -46,7 +45,7 @@
           :message="$t('previously-certificates-page.no-certificate-list')"
         />
       </div>
-      <div v-for="item in userState.certificates" :key="item.id">
+      <div v-for="item in filteredCertificateList" :key="item.id">
         <certificate
           :certificate="item"
           @open-modal="openCertificateModal"
@@ -62,7 +61,7 @@ import { useUserStore } from '@/store'
 import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, computed } from 'vue'
 import { Bitcoin } from '@/utils'
 import {
   AppButton,
@@ -70,7 +69,11 @@ import {
   CertificateModal,
   NoDataMessage,
 } from '@/common'
-import { ErrorHandler } from '@/helpers'
+import {
+  ErrorHandler,
+  useSearchInTheList,
+  usePrepareCertificateImage,
+} from '@/helpers'
 
 const userState = useUserStore()
 
@@ -79,25 +82,15 @@ const currentCertificate = ref<CertificateJSONResponse>(
   {} as CertificateJSONResponse,
 )
 const listForTimestamp = ref<CertificateJSONResponse[]>([])
-const certificateBuffer = ref<CertificateJSONResponse[]>([])
-const searchInputValue = ref('')
+const searchData = ref('')
+
+const filteredCertificateList = computed(() =>
+  useSearchInTheList(userState.certificates, searchData.value),
+)
 
 const openCertificateModal = (certificate: CertificateJSONResponse) => {
   currentCertificate.value = certificate
   isCertificateModalShown.value = true
-}
-
-const prepareCertificatesImage = (certificates: CertificateJSONResponse[]) => {
-  //todo  move to helpers
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
-      continue
-    }
-    certificate.img =
-      'data:image/png;base64,' + certificate.certificateImg.toString()
-  }
-
-  return certificates
 }
 
 const selectItems = (
@@ -128,21 +121,10 @@ const refreshCertificates = async () => {
         },
       },
     )
-    userState.setCertificates(prepareCertificatesImage(data))
+    userState.setCertificates(usePrepareCertificateImage(data))
   } catch (error) {
     ErrorHandler.process(error)
   }
-}
-
-const find = () => {
-  certificateBuffer.value = userState.certificates
-
-  if (searchInputValue.value === '' && certificateBuffer.value) {
-    userState.setCertificates(certificateBuffer.value)
-  }
-  userState.certificates.filter(item =>
-    item.participant.includes(searchInputValue.value),
-  )
 }
 
 const makeBitcoinTimestamp = async () => {
@@ -157,11 +139,10 @@ const makeBitcoinTimestamp = async () => {
       userState.userSetting.keyPathID,
     )
     if (!tx?.hex) {
-      return
+      throw new Error() //todo  discuss it
     }
 
-    userState.userSetting.keyPathID =
-      tx?.index || userState.userSetting.keyPathID++
+    // todo  there is react for keyPathID
 
     const sendResp = await Bitcoin.SendToTestnet(tx?.hex)
     certificate.txHash = sendResp.data.tx.hash

@@ -6,7 +6,7 @@ import { ECPairFactory, ECPairInterface } from 'ecpair'
 import { mnemonicToSeedAsync } from 'bip39-web'
 import axios from 'axios'
 import { BIP32Interface, Network } from 'bitcoinjs-lib'
-import { PustTxResponce, UTXO } from '@/types'
+import { PreparedTX, PustTxResponce, UTXO } from '@/types'
 
 const bip32 = BIP32Factory(ecc)
 const ECPair = ECPairFactory(ecc)
@@ -29,20 +29,20 @@ export class Bitcoin {
 
   static PrepareLegacyTXTestnet = async (
     mnemonicPhrase: string,
-    index: number,
+    derivePath: number,
     txID?: string,
-  ) => {
+  ): Promise<PreparedTX> => {
     const seed = await mnemonicToSeedAsync(mnemonicPhrase)
 
     const bip = bip32.fromSeed(seed, testnet)
-    const { address, keyPair } = this.keyByIndex(bip, index)
+    const { address, keyPair } = this.keyByIndex(bip, derivePath)
     if (!address) {
       throw new Error('') //todo handle error
     }
 
-    index++
+    derivePath++
 
-    const ex = this.keyByIndex(bip, index)
+    const ex = this.keyByIndex(bip, derivePath)
     if (!ex.address) {
       throw new Error('')
     }
@@ -54,7 +54,7 @@ export class Bitcoin {
     return {
       hex,
       exAddress,
-      index,
+      derivePath,
     }
   }
 
@@ -277,9 +277,9 @@ export class Bitcoin {
 
   static keyByIndex(
     bip: BIP32Interface,
-    index: number,
+    derivePath: number,
   ): { address: string | undefined; keyPair: ECPairInterface } {
-    const key = bip.derive(index)
+    const key = bip.derive(derivePath)
     const keyPair = ECPair.fromWIF(key.toWIF(), testnet)
 
     const { address } = bitcoin.payments.p2pkh({
