@@ -122,7 +122,6 @@ import {
   useSearchInTheList,
 } from '@/helpers'
 import {
-  FILES_BASE,
   ROUTE_NAMES,
   DROP_DOWN_STATE_LIST,
   DROP_DOWN_COURSE_LIST,
@@ -375,18 +374,6 @@ const validateContainerState = async (containerID: string) => {
   }
   data.clear_certificate = prepareCertificate(data.certificates)
   return data
-}
-
-const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
-      continue
-    }
-    certificate.img =
-      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
-  }
-
-  return certificates
 }
 
 const prepareCertificate = (certificates: PottyCertificateRequest[]) => {

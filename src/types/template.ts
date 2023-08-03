@@ -3,8 +3,8 @@ export type Template = {
   text: string
   x: number
   y: number
-  xCenter: boolean
-  yCenter: boolean
+  x_center: boolean
+  y_center: boolean
   color: string
-  fontSize: number
+  font_size: number
 }

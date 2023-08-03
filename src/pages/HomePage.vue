@@ -68,25 +68,26 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import {
   HomeItem,
   AppButton,
   LoaderModal,
   AuthModal,
   HomeBodyNav,
+  UploadTemplateModal,
 } from '@/common'
+import { useI18n } from 'vue-i18n'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import {
-  useGetUpdateLink,
   useUpdateCode,
   useUploadCertificates,
+  useGetUpdateLink,
 } from '@/api/api'
-import UploadTemplateModal from '@/common/modals/UploadTemplateModal.vue'
+import { ErrorHandler } from '@/helpers'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -97,54 +98,50 @@ const authLink = ref('')
 const isLoading = ref(false)
 const isUploadTemplateModalShown = ref(false)
 const processState = ref('')
-//
-// const getCertificates = async () => {
-//   try {
-//     isLoading.value = true
-//     processState.value = t('home.process-state-getting-cert')
-//
-//     const data = await useUploadCertificates(
-//       userState.setting.accountName,
-//       userState.setting.urlGoogleSheet,
-//     )
-//     if (!data) {
-//       return
-//     }
-//     certificates.value = data
-//   } catch (error) {
-//     switch (error.name) {
-//       case 'ForbiddenError':
-//         authLink.value = error.meta.auth_link
-//         isUnauthorized.value = true
-//         break
-//       case 'UnauthorizedError':
-//         try {
-//           const data = await useGetUpdateLink(userState.setting.accountName)
-//           if (!data) {
-//             ErrorHandler.process(t('errors.empty-google-link'))
-//             return
-//           }
-//           //todo  implement types for it
-//           authLink.value = data.link
-//           isUnauthorized.value = true
-//           return
-//         } catch (err) {
-//           ErrorHandler.process(err)
-//           return
-//         }
-//       default:
-//         if (!userState.setting.urlGoogleSheet) {
-//           await router.push(ROUTE_NAMES.settings)
-//         }
-//         break
-//     }
-//   } finally {
-//     isLoading.value = false
-//   }
-// }
 
-const uploadTemplate = () => {
-  console.log('upload')
+const getCertificates = async () => {
+  try {
+    isLoading.value = true
+    processState.value = t('home.process-state-getting-cert')
+
+    const data = await useUploadCertificates(
+      userState.setting.accountName,
+      userState.setting.urlGoogleSheet,
+    )
+    if (!data) {
+      return
+    }
+    certificates.value = data
+  } catch (error) {
+    switch (error.name) {
+      case 'ForbiddenError':
+        authLink.value = error.meta.auth_link
+        isUnauthorized.value = true
+        break
+      case 'UnauthorizedError':
+        try {
+          const data = await useGetUpdateLink(userState.setting.accountName)
+          if (!data) {
+            ErrorHandler.process(t('errors.empty-google-link'))
+            return
+          }
+          //todo  implement types for it
+          authLink.value = data.link
+          isUnauthorized.value = true
+          return
+        } catch (err) {
+          ErrorHandler.process(err)
+          return
+        }
+      default:
+        if (!userState.setting.urlGoogleSheet) {
+          await router.push(ROUTE_NAMES.settings)
+        }
+        break
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const updateCode = async (code: string) => {
@@ -152,7 +149,7 @@ const updateCode = async (code: string) => {
   isUnauthorized.value = false
 }
 
-// getCertificates()
+getCertificates()
 </script>
 
 <style scoped lang="scss">

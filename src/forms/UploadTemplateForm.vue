@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { FileDropArea } from '@/common'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
@@ -62,7 +62,6 @@ const sendTemplate = () => {
   router.push({
     name: ROUTE_NAMES.template,
     params: { name: form.name },
-    // state: { name: form.name, img: uploadedImg.value },
   })
   enableForm()
 }

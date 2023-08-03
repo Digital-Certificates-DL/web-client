@@ -1,4 +1,3 @@
-import { testnet } from 'ecpair/src/networks'
 import bitcoin from 'bitcoinjs-lib'
 import { Bip32, Bip39 } from '@ts-bitcoin/core'
 import { mnemonicToSeedAsync } from 'bip39-web'
@@ -67,6 +66,26 @@ export class Bitcoin {
     return this.addressInfoList
   }
 
+  public getBip39 = (mnph: string) => {
+    /* eslint-disable no-console */
+    console.log('mnph: ', mnph)
+
+    const seed = Bip39.fromString(mnph).toSeed()
+    const bip = Bip32.fromSeed(seed)
+
+    for (let i = 0; i < 6; i++) {
+      const path = 'm/' + 0 + '/' + i
+      const keyPair = this.bip32Derive(bip, path)
+
+      const { address } = bitcoin.payments.p2wpkh({
+        pubkey: keyPair.publicKey,
+      })
+
+      /* eslint-disable no-console */
+      console.log('address: ', address)
+    }
+  }
+
   public getUTXOBip32TestnetBlockstream = async (mnph: string) => {
     const seed = Bip39.fromString(mnph).toSeed()
     let emptyAddreeses = 0
@@ -86,7 +105,6 @@ export class Bitcoin {
 
         const { address } = bitcoin.payments.p2pkh({
           pubkey: keyPair.publicKey,
-          network: testnet,
         })
 
         /* eslint-disable no-console */
@@ -126,7 +144,7 @@ export class Bitcoin {
       return bytes
     })
 
-    const psbt = new bitcoin.Psbt({ network: testnet })
+    const psbt = new bitcoin.Psbt()
 
     let fee = 0
     let butxoAmount = 0
@@ -170,7 +188,6 @@ export class Bitcoin {
     const keyPairex = this.bip32Derive(bip, exPath)
     const ex = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
-      network: testnet,
     })
 
     /* eslint-disable no-console */

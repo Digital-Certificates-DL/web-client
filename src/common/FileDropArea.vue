@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { defineEmits, ref } from 'vue'
 import { ICON_NAMES } from '@/enums'
-import { FileDropArea, Icon } from '@/common'
+import { Icon } from '@/common'
 
 const files = ref<File[]>([])
 const active = ref(false)
