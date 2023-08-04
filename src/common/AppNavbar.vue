@@ -7,7 +7,7 @@
         class="app-navbar__btn"
         color="info"
         :text="
-          abbrCenter(provider.selectedAddress) ||
+          abbrCenter(web3Store.provider.selectedAddress) ||
           $t('app-navbar.metamask-connect')
         "
         :icon-left="$icons.metamask"
@@ -31,10 +31,10 @@ import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { abbrCenter } from '@/helpers'
 
-const { provider } = useWeb3ProvidersStore()
+const web3Store = useWeb3ProvidersStore()
 
 const connect = async () => {
-  await provider.connect()
+  await web3Store.provider.connect()
 }
 </script>
 

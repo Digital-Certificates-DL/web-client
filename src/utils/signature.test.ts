@@ -1,7 +1,7 @@
 import { Signature } from './signature.utils'
 
 describe('Performs bitcoin signature class unit test', () => {
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )
@@ -13,7 +13,7 @@ describe('Performs bitcoin signature class unit test', () => {
     )
   })
 
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )
@@ -25,7 +25,7 @@ describe('Performs bitcoin signature class unit test', () => {
     )
   })
   ////////////
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )
@@ -36,7 +36,7 @@ describe('Performs bitcoin signature class unit test', () => {
     )
   })
 
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )
@@ -47,7 +47,7 @@ describe('Performs bitcoin signature class unit test', () => {
     )
   })
 
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )
@@ -59,7 +59,7 @@ describe('Performs bitcoin signature class unit test', () => {
     )
   })
 
-  test('signature should return correct value', () => {
+  test('signature should return  correct signature', () => {
     const sign = new Signature(
       '5HtbQzoofDVmEvzAMd89iq5nRpFUm8xudgkSNZ4rPN9z5AWcGEJ',
     )

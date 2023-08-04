@@ -1,11 +1,12 @@
 import { testnet } from 'ecpair/src/networks'
 import * as bitcoin from 'bitcoinjs-lib'
-import { BIP32Factory } from 'bip32'
+import { BIP32Factory, BIP32Interface } from 'bip32'
 import * as ecc from 'tiny-secp256k1'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
 import { mnemonicToSeedAsync } from 'bip39-web'
 import axios from 'axios'
-import { BIP32Interface, Network } from 'bitcoinjs-lib'
+import { BN } from '@distributedlab/tools'
+import { Network } from 'bitcoinjs-lib'
 import { PreparedTX, PustTxResponce, UTXO } from '@/types'
 
 const bip32 = BIP32Factory(ecc)
@@ -27,7 +28,7 @@ export class Bitcoin {
     thirdOutput: 557,
   }
 
-  static PrepareLegacyTXTestnet = async (
+  static prepareLegacyTXTestnet = async (
     mnemonicPhrase: string,
     derivePath: number,
     txID?: string,
@@ -37,14 +38,14 @@ export class Bitcoin {
     const bip = bip32.fromSeed(seed, testnet)
     const { address, keyPair } = this.keyByIndex(bip, derivePath)
     if (!address) {
-      throw new Error('') //todo handle error
+      throw new Error()
     }
 
     derivePath++
 
     const ex = this.keyByIndex(bip, derivePath)
     if (!ex.address) {
-      throw new Error('')
+      throw new Error()
     }
 
     const exAddress = ex.address
@@ -65,8 +66,8 @@ export class Bitcoin {
     keyPair: ECPairInterface,
     txID?: string,
   ): Promise<string> {
-    let fee = 0
-    let bestUTXOAmount = 0
+    let fee = BN.fromRaw(0)
+    let bestUTXOAmount = BN.fromRaw(0)
     let utxo: UTXO[] = []
     if (!txID) {
       const txInputInfo = await this.prepareUTXO(address)
@@ -93,14 +94,17 @@ export class Bitcoin {
   static async prepareUTXO(address: string) {
     const utxos = await this.getUTXO(address)
     if (!utxos) {
-      throw new Error() //todo handle error
+      throw new Error()
     }
+
+    const txValue = BN.fromRaw(this.TX_OUTPUTS_INFO.firstOutput)
+      .add(BN.fromRaw(this.TX_OUTPUTS_INFO.secondOutput))
+      .add(BN.fromRaw(this.TX_OUTPUTS_INFO.thirdOutput))
+
     return this.betterUtxoTestnet(
       utxos,
       this.TX_OUTPUTS_INFO.numberOfOutputs,
-      this.TX_OUTPUTS_INFO.firstOutput +
-        this.TX_OUTPUTS_INFO.secondOutput +
-        this.TX_OUTPUTS_INFO.thirdOutput,
+      txValue,
     )
   }
 
@@ -108,23 +112,41 @@ export class Bitcoin {
     psbt: bitcoin.Psbt,
     utxo: UTXO[],
   ): Promise<bitcoin.Psbt> {
+    const promises = [] as Promise<bitcoin.Psbt>[]
     for (let i = 0; i < utxo.length; i++) {
-      const hex = await this.getTxTestnet(utxo[i].txHash)
-      const txHex = new Buffer(hex, 'hex')
-      psbt.addInput({
-        hash: utxo[i].txHash,
-        index: utxo[i].txOutputN,
-        nonWitnessUtxo: txHex,
+      const promise = new Promise<bitcoin.Psbt>((resolve, reject) => {
+        try {
+          resolve(this.setInput(psbt, utxo[i]))
+        } catch (error) {
+          reject(error)
+        }
       })
+      promises.push(promise)
     }
 
+    await Promise.all(promises)
     return psbt
+  }
+
+  static async setInput(psbt: bitcoin.Psbt, utxo: UTXO) {
+    try {
+      const hex = await this.getTxTestnet(utxo.txHash)
+      const txHex = new Buffer(hex, 'hex')
+      psbt.addInput({
+        hash: utxo.txHash,
+        index: utxo.txOutputN,
+        nonWitnessUtxo: txHex,
+      })
+      return psbt
+    } catch (error) {
+      throw new Error()
+    }
   }
 
   static async setOutput(
     psbt: bitcoin.Psbt,
-    balance: number,
-    fee: number,
+    balance: BN,
+    fee: BN,
     exAddress: string,
   ): Promise<bitcoin.Psbt> {
     psbt.addOutput({
@@ -140,15 +162,17 @@ export class Bitcoin {
       value: this.TX_OUTPUTS_INFO.thirdOutput,
     })
 
-    balance -=
-      this.TX_OUTPUTS_INFO.firstOutput +
-      this.TX_OUTPUTS_INFO.secondOutput +
-      this.TX_OUTPUTS_INFO.thirdOutput
-    balance -= fee
+    balance = balance.div(
+      BN.fromRaw(this.TX_OUTPUTS_INFO.firstOutput)
+        .add(BN.fromRaw(this.TX_OUTPUTS_INFO.secondOutput))
+        .add(BN.fromRaw(this.TX_OUTPUTS_INFO.thirdOutput)),
+    )
+
+    balance = balance.div(fee)
 
     psbt.addOutput({
       address: exAddress,
-      value: balance,
+      value: Number(balance.value),
     })
 
     return psbt
@@ -171,13 +195,13 @@ export class Bitcoin {
         txs = txs.concat(data.unconfirmed_txrefs)
       }
 
-      return txs //todo add types
+      return txs
     } catch (error) {
-      throw new Error('') //todo handle error
+      throw new Error()
     }
   }
 
-  static async SendToTestnet(tx: string): Promise<PustTxResponce> {
+  static async sendToTestnet(tx: string): Promise<PustTxResponce> {
     try {
       const { data } = await axios.post<PustTxResponce>(
         'https://api.blockcypher.com/v1/btc/test3/txs/push',
@@ -185,24 +209,33 @@ export class Bitcoin {
       )
       return data
     } catch (error) {
-      throw new Error('') //todo handle error
+      throw new Error()
     }
   }
 
   static async calculateFeeTestnet(outs: number, ins: number) {
-    const size =
-      ins * this.TX_FEE_COEFS.numberOfInputs +
-      outs * this.TX_FEE_COEFS.numberOfOutputs +
-      this.TX_FEE_COEFS.overhead -
-      ins
+    const inputs = BN.fromRaw(ins, 10)
+    const outputs = BN.fromRaw(outs, 10)
+    const coefNumberOfInputs = BN.fromRaw(this.TX_FEE_COEFS.numberOfInputs, 10)
+    const coefNumberOfOutputs = BN.fromRaw(
+      this.TX_FEE_COEFS.numberOfOutputs,
+      10,
+    )
+    const coefOverhead = BN.fromRaw(this.TX_FEE_COEFS.overhead, 10)
+
+    const size = inputs
+      .mul(coefNumberOfInputs)
+      .add(outputs.mul(coefNumberOfOutputs))
+      .add(coefOverhead)
+      .div(inputs)
 
     try {
       const { data } = await axios.get(
         'https://bitcoinfees.earn.com/api/v1/fees/recommended',
       )
-      return size * Number(data.hourFee)
+      return size.mul(BN.fromRaw(data.hourFee, 10))
     } catch (error) {
-      throw new Error('') //todo handle error
+      throw new Error()
     }
   }
 
@@ -216,21 +249,21 @@ export class Bitcoin {
 
       return data.hex
     } catch (error) {
-      throw new Error('') //todo handle error
+      throw new Error()
     }
   }
 
   private static async betterUtxoTestnet(
     txs: UTXO[],
     outs: number,
-    txsValue: number,
+    txsValue: BN,
   ) {
     const largeTxs: UTXO[] = []
     const smaller: UTXO[] = []
     let fee = await this.calculateFeeTestnet(outs, 1)
-    fee += txsValue
+    fee = fee.add(txsValue)
     for (const tx of txs) {
-      if (tx.value > fee) {
+      if (BN.fromRaw(tx.value) > fee) {
         largeTxs.push(tx)
       } else {
         smaller.push(tx)
@@ -239,13 +272,13 @@ export class Bitcoin {
     smaller.reverse()
     largeTxs.sort()
     if (smaller.length > 1) {
-      let bufferValue = 0
+      let bufferValue = BN.fromRaw(0)
       const utxos = []
       for (let i = 0; i < smaller.length; i++) {
         fee = await this.calculateFeeTestnet(outs, i)
-        fee += txsValue
+        fee = fee.add(txsValue)
         if (bufferValue < fee) {
-          bufferValue += smaller[i].value
+          bufferValue = bufferValue.add(BN.fromRaw(smaller[i].value))
           utxos.push(smaller[i])
         } else {
           return {
@@ -260,7 +293,7 @@ export class Bitcoin {
     utxoRes.push(largeTxs[0])
     return {
       txs: utxoRes,
-      amount: largeTxs[0].value,
+      amount: BN.fromRaw(largeTxs[0].value),
       fee: fee,
     }
   }

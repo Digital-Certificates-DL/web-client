@@ -11,7 +11,10 @@
     </div>
     <div class="main-page__body">
       <div class="main-page__metamask-block">
-        <div v-if="!provider.isConnected" class="main-page__metamask">
+        <div
+          v-if="!web3Store.provider.isConnected"
+          class="main-page__metamask-banner"
+        >
           <p class="main-page__metamask-title">
             {{ $t('main-page.metamask-connect') }}
           </p>
@@ -22,21 +25,21 @@
             class="main-page__metamask-btn main-page__btn-connect"
             color="info"
             :text="$t('main-page.metamask-connect-btn')"
-            :disabled="provider.isConnected"
+            :disabled="web3Store.provider.isConnected"
             @click="connect"
           />
         </div>
-        <div v-else class="main-page__metamask">
+        <div v-else class="main-page__metamask-banner">
           <p>
-            {{ provider.selectedAddress }}
+            {{ web3Store.provider.selectedAddress }}
           </p>
           <app-button
-            v-if="provider.isConnected"
+            v-if="web3Store.provider.isConnected"
             class="main-page__metamask-btn"
             color="info"
             size="large"
             :text="$t('main-page.metamask-disconnect-btn')"
-            @click="provider.disconnect"
+            @click="web3Store.provider.disconnect"
           />
         </div>
       </div>
@@ -81,11 +84,11 @@ import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
 import { router } from '@/router'
 
-const { provider } = useWeb3ProvidersStore()
+const web3Store = useWeb3ProvidersStore()
 
 const connect = async () => {
   try {
-    await provider.connect()
+    await web3Store.provider.connect()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -133,7 +136,7 @@ const connect = async () => {
   width: 100%;
 }
 
-.main-page__metamask {
+.main-page__metamask-banner {
   display: grid;
   place-content: center;
   border-radius: toRem(8);

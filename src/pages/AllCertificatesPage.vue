@@ -1,22 +1,20 @@
 <template>
-  <div class="previously-certificates-page">
-    <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
-    <div class="previously-certificates-page__search">
-      <div class="previously-certificates-page__search-input-wrp">
+  <div class="all-certificates-page">
+    <h2>{{ $t('all-certificates-page.certificates-title') }}</h2>
+    <div class="all-certificates-page__search">
+      <div class="all-certificates-page__search-input-wrp">
         <input-field
           v-model="searchData"
-          :placeholder="$t('previously-certificates-page.certificates-find')"
+          :placeholder="$t('all-certificates-page.certificates-find')"
         />
       </div>
 
-      <div class="previously-certificates-page__action-btns">
+      <div class="all-certificates-page__action-btns">
         <app-button
-          class="previously-certificates-page__btn"
+          class="all-certificates-page__btn"
           color="info"
           size="medium"
-          :text="
-            $t('previously-certificates-page.certificates-bitcoin-btn-text')
-          "
+          :text="$t('all-certificates-page.certificates-bitcoin-btn-text')"
           @click="makeBitcoinTimestamp"
         />
       </div>
@@ -26,23 +24,23 @@
       :certificate="currentCertificate"
     />
 
-    <div class="previously-certificates-page__list">
-      <div class="previously-certificates-page___list-titles">
+    <div class="all-certificates-page__list">
+      <div class="all-certificates-page___list-titles">
         <p>
-          {{ $t('previously-certificates-page.certificates-item-name') }}
+          {{ $t('all-certificates-page.certificates-item-name') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-item-course') }}
+          {{ $t('all-certificates-page.certificates-item-course') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-item-date') }}
+          {{ $t('all-certificates-page.certificates-item-date') }}
         </p>
         <p></p>
       </div>
       <div v-if="!userState.certificates.length">
         <no-data-message
-          class="previously-certificates-page__no-data"
-          :message="$t('previously-certificates-page.no-certificate-list')"
+          class="all-certificates-page__no-data"
+          :message="$t('all-certificates-page.no-certificate-list')"
         />
       </div>
       <div v-for="item in filteredCertificateList" :key="item.id">
@@ -61,7 +59,7 @@ import { useUserStore } from '@/store'
 import { CertificateJSONResponse } from '@/types'
 import { api } from '@/api'
 import { InputField } from '@/fields'
-import { onBeforeMount, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Bitcoin } from '@/utils'
 import {
   AppButton,
@@ -108,7 +106,7 @@ const selectItems = (
   }
 }
 
-const refreshCertificates = async () => {
+const getCertificates = async () => {
   try {
     const { data } = await api.post<CertificateJSONResponse[]>(
       '/integrations/ccp/users/',
@@ -134,20 +132,20 @@ const makeBitcoinTimestamp = async () => {
 
   const certificates = listForTimestamp
   for (const certificate of certificates.value) {
-    const tx = await Bitcoin.PrepareLegacyTXTestnet(
+    const tx = await Bitcoin.prepareLegacyTXTestnet(
       userState.userSetting.bip39MnemonicPhrase,
       userState.userSetting.keyPathID,
     )
     if (!tx?.hex) {
-      throw new Error() //todo  discuss it
+      throw new Error()
     }
 
     // todo  there is react for keyPathID
 
-    const sendResp = await Bitcoin.SendToTestnet(tx?.hex)
+    const sendResp = await Bitcoin.sendToTestnet(tx?.hex)
     certificate.txHash = sendResp.data.tx.hash
     if (!tx?.exAddress) {
-      throw new Error() //todo  discuss it
+      throw new Error()
     }
 
     userState.userSetting.lastExAddress = tx?.exAddress
@@ -173,48 +171,48 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   userState.setCertificates(data)
 }
 
-const autoRefresh = () => {
+const init = () => {
   if (!userState.certificates.length) {
-    refreshCertificates()
+    getCertificates()
   }
 }
 
-onBeforeMount(autoRefresh)
+init()
 </script>
 
 <style scoped lang="scss">
-.previously-certificates-page {
+.all-certificates-page {
   width: 100%;
   margin: 0 auto;
 }
 
-.previously-certificates-page__search {
+.all-certificates-page__search {
   margin: toRem(24) 0;
   display: flex;
   justify-content: space-between;
   border-radius: toRem(20);
 }
 
-.previously-certificates-page__search-input-wrp {
+.all-certificates-page__search-input-wrp {
   max-width: toRem(458);
   width: 100%;
 }
 
-.previously-certificates-page__action-btns {
+.all-certificates-page__action-btns {
   display: flex;
   justify-content: space-between;
 }
 
-.previously-certificates-page__no-data {
+.all-certificates-page__no-data {
   margin: 20%;
 }
 
-.previously-certificates-page__btn {
+.all-certificates-page__btn {
   height: toRem(52);
   border-radius: toRem(8);
 }
 
-.previously-certificates-page___list-titles {
+.all-certificates-page___list-titles {
   display: flex;
   justify-content: space-between;
   align-items: center;

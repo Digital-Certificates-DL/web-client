@@ -45,5 +45,9 @@ const sendCode = (code: string) => {
   background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 </style>
