@@ -152,7 +152,6 @@ getCertificates()
 
 <style scoped lang="scss">
 .home-page {
-  max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
 }

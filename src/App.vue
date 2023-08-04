@@ -2,7 +2,9 @@
   <div v-if="isAppInitialized" class="app__container">
     <router-view v-slot="{ Component, route }">
       <app-navbar v-if="route.fullPath !== '/main'" />
-      <component class="app__main" :is="Component" />
+      <transition :name="route.meta.transition">
+        <component class="app__main" :is="Component" />
+      </transition>
     </router-view>
   </div>
 </template>
@@ -85,6 +87,8 @@ initUser()
 }
 
 .app__main {
+  max-width: var(--page-large);
+  width: 100%;
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
 }
 
