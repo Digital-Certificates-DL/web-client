@@ -318,7 +318,6 @@ export class Bitcoin {
       pubkey: keyPairex.publicKey,
       network: network,
     })
-
     return key.address
   }
 

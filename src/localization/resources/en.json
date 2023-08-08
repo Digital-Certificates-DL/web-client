@@ -8,7 +8,10 @@
     "field-error_address": "Invalid address",
     "field-error_name": "Empty name",
     "field-error_settings": "We need fill all fields",
-    "field-error_privateKey": "Invalid private key"
+    "field-error_privateKey": "Invalid private key",
+    "field-error_signKey": "Invalid sign private key",
+    "field-error_mnemonic": "Invalid bip 39 ..."s,
+    "field-error_link": "Invalid link  to sheet"
   },
   "errors": {
     "default": "Oops... Something went wrong",

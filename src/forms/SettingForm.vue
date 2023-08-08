@@ -55,7 +55,7 @@ import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import { UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
-import { required, maxLength } from '@/validators'
+import { required, maxLength, mnemonic, link } from '@/validators'
 import { ROUTE_NAMES } from '@/enums'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
@@ -85,8 +85,11 @@ const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
   {
     accountName: { required, maxLength: maxLength(100) },
     signKey: { required },
-    bip39MnemonicPhrase: { required },
-    urlGoogleSheet: { required },
+    bip39MnemonicPhrase: {
+      required,
+      mnemonic,
+    },
+    urlGoogleSheet: { required, link },
   },
 )
 
