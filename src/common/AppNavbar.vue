@@ -60,18 +60,6 @@ const connect = async () => {
   border-bottom: var(--border-primary-main);
   box-shadow: 0 toRem(4) toRem(16) rgba(var(--black-rgb), 0.06);
   margin-bottom: toRem(20);
-
-  @include respond-to(xmedium) {
-    width: toRem(1280);
-  }
-
-  @include respond-to(medium) {
-    width: toRem(1024);
-  }
-
-  @include respond-to(tablet) {
-    flex-wrap: wrap;
-  }
 }
 
 .app-navbar__container {
@@ -84,7 +72,8 @@ const connect = async () => {
 }
 
 .app-navbar__logo-wrp {
-  width: toRem(50);
+  max-width: toRem(50);
+  width: 100%;
 }
 
 .app-navbar__logo {
@@ -95,7 +84,8 @@ const connect = async () => {
 }
 
 .app-navbar__configuration {
-  width: toRem(200);
+  max-width: toRem(200);
+  width: 100%;
   display: flex;
   justify-content: space-around;
 }
@@ -105,7 +95,8 @@ const connect = async () => {
 }
 
 .app-navbar__btn {
-  height: toRem(50);
+  max-height: toRem(50);
+  height: 100%;
   border-radius: toRem(8);
 }
 </style>

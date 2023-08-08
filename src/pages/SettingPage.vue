@@ -9,18 +9,30 @@
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
-      <setting-form class="setting-page__form" />
+      <setting-form class="setting-page__form" @on-error="onError" />
     </div>
+
+    <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { SettingForm } from '@/forms'
+import { ErrorModal } from '@/common'
+
+import { ref } from 'vue'
+
+const isErrorModalShown = ref(false)
+const errorMsg = ref('')
+
+const onError = (msg: string) => {
+  errorMsg.value = msg
+  isErrorModalShown.value = true
+}
 </script>
 
 <style scoped lang="scss">
 .setting-page {
-  max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
 }

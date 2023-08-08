@@ -1,13 +1,5 @@
 <template>
   <div class="home-page">
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-
-    <auth-modal
-      v-model:is-shown="isUnauthorized"
-      :token-link="authLink"
-      @send-auth-code="updateCode"
-    />
-
     <div class="home-page__body">
       <h2>{{ $t('home.title') }}</h2>
       <div class="home-page__body-nav">
@@ -33,9 +25,9 @@
             <app-button color="info" :text="$t('home.get-all-btn')" />
           </div>
           <div class="home-page__items">
-            <div class="home__item home-page__item-mock"></div>
-            <div class="home__item home-page__item-mock"></div>
-            <div class="home__item home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
           </div>
         </div>
         <div class="home__content-certificates">
@@ -64,6 +56,13 @@
         </div>
       </div>
     </div>
+
+    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+    <auth-modal
+      v-model:is-shown="isUnauthorized"
+      :token-link="authLink"
+      @send-auth-code="updateCode"
+    />
   </div>
 </template>
 
@@ -177,14 +176,20 @@ getCertificates()
   max-height: toRem(222);
   min-height: toRem(200);
   height: 100%;
+  width: 100%;
   justify-content: space-between;
 }
 
+.home-page__item {
+  width: toRem(300);
+  height: toRem(222);
+  border-radius: toRem(8);
+  background: var(--background-primary-dark);
+}
+
 .home-page__item-mock {
-  max-width: toRem(300);
-  width: 100%;
-  max-height: toRem(222);
-  height: 100%;
+  width: toRem(300);
+  height: toRem(222);
   border-radius: toRem(8);
   background: var(--background-primary-dark);
 

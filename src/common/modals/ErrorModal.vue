@@ -51,7 +51,8 @@ const tryAgain = () => {
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
-  width: toRem(652);
+  max-width: toRem(652);
+  width: 100%;
   height: toRem(164);
 }
 

@@ -56,7 +56,6 @@ const auth = (code: string) => {
 
 <style lang="scss" scoped>
 .generation-page {
-  max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
 }

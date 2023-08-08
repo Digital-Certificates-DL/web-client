@@ -248,7 +248,8 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   display: flow;
   text-align: center;
   row-gap: toRem(8);
-  height: toRem(300);
+  max-height: toRem(300);
+  height: 100%;
 }
 
 .generation-form__field-number {
@@ -293,11 +294,13 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 }
 
 .generation-form__text-input {
-  width: toRem(450);
+  max-width: toRem(450);
+  width: 100%;
 }
 
 .generation-form__btn {
-  width: toRem(200);
+  max-width: toRem(200);
+  width: 100%;
   border-radius: toRem(8);
   margin-right: toRem(10);
 }
@@ -313,18 +316,21 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 
 .generation-form__choose-template-list {
   display: flex;
+  max-height: toRem(222);
+  height: 10vw;
 }
 
 .generation-form__choose-template {
-  width: toRem(314);
-  height: toRem(222);
+  max-width: toRem(314);
+  width: 100%;
   background: var(--background-primary-dark);
   border-radius: toRem(12);
   margin-right: toRem(15);
 }
 
 .generation-form__field-input {
-  width: toRem(427);
+  max-width: toRem(427);
+  width: 100%;
 }
 
 .generation-form__field-images {

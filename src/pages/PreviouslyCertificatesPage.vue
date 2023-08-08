@@ -1,6 +1,4 @@
 <template>
-  <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-  <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
   <div class="previously-certificates-page">
     <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
     <div class="previously-certificates-page__search-wrp">
@@ -10,14 +8,17 @@
           :placeholder="$t('previously-certificates-page.certificates-find')"
         />
       </div>
+      <!-- todo move to  external  component-->
+      <div class="previously-certificates-page__btn-ref-wrp">
+        <app-button
+          class="previously-certificates-page__btn-ref"
+          color="info"
+          size="default"
+          :icon-right="$icons.refresh"
+          @click="refresh"
+        />
+      </div>
 
-      <app-button
-        class="previously-certificates-page__btn-ref"
-        color="info"
-        size="default"
-        :icon-right="$icons.refresh"
-        @click="refresh"
-      />
       <div class="previously-certificates-page__filters">
         <app-dropdown
           :title="COURSE_FILTERS.ALL"
@@ -36,6 +37,7 @@
           @select-item="findByState"
         />
       </div>
+      <!--      navigation ... -->
 
       <div class="previously-certificates-page__btns-wrp">
         <div
@@ -60,12 +62,6 @@
         </div>
       </div>
     </div>
-    <certificate-modal
-      v-model:is-shown="isCertificateModalShown"
-      :certificate="currentCertificate"
-      @success="successMint"
-    />
-
     <div class="certificates__list">
       <div class="previously-certificates-page__list-subtitle">
         <p>
@@ -79,7 +75,7 @@
         </p>
       </div>
       <div v-if="!userState.students.length">
-        <error-message
+        <no-data-message
           :message="$t('previously-certificates.error-certificate-list')"
         />
       </div>
@@ -92,6 +88,14 @@
         />
       </div>
     </div>
+
+    <certificate-modal
+      v-model:is-shown="isCertificateModalShown"
+      :certificate="currentCertificate"
+      @success="successMint"
+    />
+    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+    <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
   </div>
 </template>
 
@@ -111,7 +115,7 @@ import {
   AppDropdown,
   Certificate,
   CertificateModal,
-  ErrorMessage,
+  NoDataMessage,
   LoaderModal,
   SuccessModal,
 } from '@/common'
@@ -461,7 +465,6 @@ onBeforeMount(autoRefresh)
 <style scoped lang="scss">
 .previously-certificates-page {
   margin: 0 auto;
-  max-width: var(--page-large);
   width: 100%;
 }
 
@@ -476,8 +479,8 @@ onBeforeMount(autoRefresh)
 
 .previously-certificates-page__search {
   max-width: toRem(458);
-  width: 100%;
   max-height: toRem(50);
+  width: 100%;
   height: 100%;
 }
 
@@ -501,8 +504,10 @@ onBeforeMount(autoRefresh)
 }
 
 .previously-certificates-page__btn {
-  height: toRem(52);
-  width: toRem(120);
+  max-height: toRem(52);
+  max-width: toRem(120);
+  height: 100%;
+  width: 100%;
   margin-left: toRem(5);
   border-radius: toRem(8);
 
@@ -517,13 +522,6 @@ onBeforeMount(autoRefresh)
   }
 }
 
-.previously-certificates-page__btn-ref {
-  height: toRem(52);
-  width: toRem(52);
-  margin-left: toRem(5);
-  border-radius: toRem(8);
-}
-
 .previously-certificates-page__list-subtitle {
   display: flex;
   justify-content: space-between;
@@ -533,6 +531,8 @@ onBeforeMount(autoRefresh)
   margin-left: toRem(120);
   width: 100%;
 
+  // todo make better
+
   @include respond-to(large) {
     max-width: toRem(650);
   }
@@ -540,6 +540,17 @@ onBeforeMount(autoRefresh)
   @include respond-to(xmedium) {
     max-width: toRem(500);
   }
+}
+
+.previously-certificates-page__btn-ref-wrp {
+  margin: 0 toRem(10);
+}
+
+.previously-certificates-page__btn-ref {
+  height: toRem(40);
+  width: toRem(40);
+  margin-left: toRem(5);
+  border-radius: toRem(8);
 }
 
 .previously-certificates-page__filters {

@@ -1,6 +1,4 @@
 <template>
-  <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-
   <div class="timestamp">
     <h2>{{ $t('timestamp-page.page-title') }}</h2>
     <div class="timestamp-page__body">
@@ -35,7 +33,7 @@
       <div class="timestamp__body">
         <div class="timestamp__list">
           <div v-if="!certificatesListBuffer.length">
-            <error-message :message="t('errors.empty-cert-list')" />
+            <no-data-message :message="t('errors.empty-cert-list')" />
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
             <timestamp-item
@@ -58,6 +56,7 @@
         </div>
       </div>
     </div>
+    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   </div>
 </template>
 
@@ -73,7 +72,7 @@ import {
   TimestampItem,
   AppButton,
   CertificateModal,
-  ErrorMessage,
+  NoDataMessage,
 } from '@/common'
 import {
   ErrorHandler,
@@ -82,6 +81,7 @@ import {
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
+
 const { t } = useI18n()
 
 const isModalActive = ref(false)
@@ -176,7 +176,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       ErrorHandler.process(t('errors.empty-container'))
       return
     }
-    return prepareCertificateImg(container.clear_certificate)
+    return usePrepareCertificateImage(container.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
   }
@@ -233,7 +233,6 @@ tryOnBeforeMount(autoRefresh)
 
 <style lang="scss" scoped>
 .timestamp {
-  max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
 }
@@ -285,19 +284,8 @@ tryOnBeforeMount(autoRefresh)
 }
 
 .timestamp__search-input-wrp {
-  max-width: toRem(700);
-  width: 100%;
-
-  @include respond-to(large) {
-    max-width: toRem(600);
-  }
-
-  @include respond-to(xmedium) {
-    max-width: toRem(500);
-  }
-
-  @include respond-to(medium) {
-    max-width: toRem(400);
-  }
+  max-width: toRem(450);
+  width: 35vw;
+  margin-top: toRem(15);
 }
 </style>
