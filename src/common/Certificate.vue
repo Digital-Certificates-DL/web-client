@@ -35,7 +35,7 @@
         />
         <app-button
           class="certificate__btn"
-          :text="$t('certificate.timestamp-btn')"
+          :text="$t('certificate.select-certificate-btn')"
           @click="selectItem"
         />
 
@@ -48,7 +48,7 @@
       <div class="certificate__btns" v-else>
         <app-button
           class="certificate__btn"
-          :text="$t('certificate.generate-btn')"
+          :text="$t('certificate.select-certificate-btn')"
           @click="selectItem"
         />
       </div>

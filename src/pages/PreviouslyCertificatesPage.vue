@@ -107,7 +107,7 @@ import {
   PottyCertificateRequest,
 } from '@/types'
 import { InputField } from '@/fields'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from '@/router'
 
 import {
@@ -447,19 +447,13 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
   }
   return certificateList.value
 }
-const autoRefresh = () => {
-  if (userState.students.length === 0) {
-    refresh()
-  }
-  certificatesList.value = userState.students
-}
 
 const successMint = (tx: string) => {
   mintTx.value = tx
   isMintSuccess.value = true
 }
 
-onBeforeMount(autoRefresh)
+refresh()
 </script>
 
 <style scoped lang="scss">

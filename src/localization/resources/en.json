@@ -80,7 +80,7 @@
     "process-state-update-data": "Update data",
     "process-state-validate-data": "Validate data",
     "process-state-sign-data": "Sign data",
-    "process-state-create-pdf": "Create PDF",
+    "process-state-create-pdf": "Issuing certificates",
     "process-state-upload-img": "Upload certificate image"
   },
   "generation-page": {
@@ -127,8 +127,7 @@
     "process-state-upload-img": "Upload certificate image"
   },
   "certificate": {
-    "generate-btn": "Generate",
-    "timestamp-btn": "Timestamp",
+    "select-certificate-btn": "Select him",
     "mint-text": "Іssue SBT",
     "bitcoin-btn": "Make timestamp",
     "img-alt":  "Certificate",

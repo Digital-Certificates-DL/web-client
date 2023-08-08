@@ -8,14 +8,14 @@
           :title="$t('home.upload-title')"
           :name="$t('home.upload-name')"
           :description="$t('home.upload-description')"
-          @active="router.push(ROUTE_NAMES.template)"
+          @active="router.push($routes.template)"
         />
         <home-body-nav
           class="home-page__body-nav-item"
           :title="$t('home.create-title')"
           :name="$t('home.create-name')"
           :description="$t('home.create-description')"
-          @active="router.push(ROUTE_NAMES.generate)"
+          @active="router.push($routes.generate)"
         />
       </div>
       <div class="home__content">
