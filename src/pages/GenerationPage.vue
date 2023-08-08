@@ -27,6 +27,7 @@ const isUnauthorized = ref(false)
 const userState = useUserStore()
 
 const updateCode = async (code: string) => {
+  //TODO move it to  api
   try {
     isUnauthorized.value = false
     await api.post<CertificateJSONResponseList>(

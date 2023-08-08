@@ -46,6 +46,7 @@ const emit = defineEmits<{
 }
 
 .home-nav__title {
+  white-space: nowrap;
   margin-bottom: toRem(10);
 }
 
