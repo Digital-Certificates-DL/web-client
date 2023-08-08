@@ -125,8 +125,14 @@ const { t } = useI18n()
 const userState = useUserStore()
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
+defineProps<{
+  isLoaderShown: boolean
+}>()
+
 const emit = defineEmits<{
   (event: 'auth', code: string): void
+  (event: 'update:is-loader-shown', isShown: boolean): void
+  (event: 'update-loader-state', state: string): void
 }>()
 
 const form = reactive({
@@ -143,17 +149,26 @@ const start = async () => {
   if (!isFormValid) return
   try {
     disableForm()
+    emit('update:is-loader-shown', true)
+    emit('update-loader-state', t('generation-form.process-state-update-data'))
     const users = await parsedData(form.link)
     if (!users) {
       return
     }
+    emit('update-loader-state', t('generation-form.process-state-sign-data'))
+
     const signatures = sign(users)
+    emit('update-loader-state', t('generation-form.process-state-create-pdf'))
     await createPDF(signatures)
+
+    enableForm()
+
+    emit('update:is-loader-shown', false)
     await router.push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
-    ErrorHandler.process(error)
-  } finally {
     enableForm()
+    emit('update:is-loader-shown', false)
+    ErrorHandler.process(error)
   }
 }
 const parsedData = async (sheepUrl?: string) => {

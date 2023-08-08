@@ -10,7 +10,7 @@
     "field-error_settings": "We need fill all fields",
     "field-error_privateKey": "Invalid private key",
     "field-error_signKey": "Invalid sign private key",
-    "field-error_mnemonic": "Invalid bip 39 ..."s,
+    "field-error_mnemonic": "Invalid bip 39 ...",
     "field-error_link": "Invalid link  to sheet"
   },
   "errors": {
@@ -119,7 +119,12 @@
     "cancel-btn": "Cancel",
     "upload-new-template-symbol": "+",
     "upload-new-template": "Upload new template",
-    "choose-template": "Choose from my templates"
+    "choose-template": "Choose from my templates",
+    "process-state-update-data": "Update data",
+    "process-state-validate-data": "Validate data",
+    "process-state-sign-data": "Sign data",
+    "process-state-create-pdf": "Create PDF",
+    "process-state-upload-img": "Upload certificate image"
   },
   "certificate": {
     "generate-btn": "Generate",

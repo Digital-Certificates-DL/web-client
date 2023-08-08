@@ -1,14 +1,21 @@
 <template>
   <div class="generation-page">
+    <div class="generation-page__title">
+      <h2>{{ $t('generation-page.title') }}</h2>
+    </div>
+    <generation-form
+      v-model:is-loader-shown="isLoaderModalShown"
+      @update-loader-state="updateLoaderState"
+      @auth="auth"
+    />
+
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
-    <div class="generation-page__title">
-      <h2>{{ $t('generation-page.title') }}</h2>
-    </div>
-    <generation-form @auth="auth" />
+
+    <loader-modal :is-shown="isLoaderModalShown" :state="loaderState" />
   </div>
 </template>
 
@@ -19,12 +26,15 @@ import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
-import { AuthModal } from '@/common/modals'
+import { AuthModal, LoaderModal } from '@/common'
+
+const userState = useUserStore()
 
 const authLink = ref('')
+const loaderState = ref('')
 
 const isUnauthorized = ref(false)
-const userState = useUserStore()
+const isLoaderModalShown = ref(false)
 
 const updateCode = async (code: string) => {
   //TODO move it to  api
@@ -47,6 +57,10 @@ const updateCode = async (code: string) => {
     ErrorHandler.process(error)
     return
   }
+}
+
+const updateLoaderState = (state: string) => {
+  loaderState.value = state
 }
 
 const auth = (code: string) => {
