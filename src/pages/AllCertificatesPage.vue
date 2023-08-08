@@ -47,7 +47,7 @@
         <certificate
           :certificate="item"
           @open-modal="openCertificateModal"
-          @on-select="selectItems"
+          @select="selectItems"
         />
       </div>
     </div>
@@ -69,8 +69,8 @@ import {
 } from '@/common'
 import {
   ErrorHandler,
-  useSearchInTheList,
-  usePrepareCertificateImage,
+  searchInTheList,
+  prepareCertificateImage,
 } from '@/helpers'
 
 const userState = useUserStore()
@@ -83,7 +83,7 @@ const listForTimestamp = ref<CertificateJSONResponse[]>([])
 const searchData = ref('')
 
 const filteredCertificateList = computed(() =>
-  useSearchInTheList(userState.certificates, searchData.value),
+  searchInTheList(userState.certificates, searchData.value),
 )
 
 const openCertificateModal = (certificate: CertificateJSONResponse) => {
@@ -119,7 +119,7 @@ const getCertificates = async () => {
         },
       },
     )
-    userState.setCertificates(usePrepareCertificateImage(data))
+    userState.setCertificates(prepareCertificateImage(data))
   } catch (error) {
     ErrorHandler.process(error)
   }

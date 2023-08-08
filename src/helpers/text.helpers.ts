@@ -1,6 +1,6 @@
-export const abbrCenter = (fullAddrss: string | undefined): string => {
-  if (!fullAddrss) {
-    return ''
+export const abbrCenter = (text = '', reduceValue = 4): string => {
+  if (text.length <= reduceValue * 2) {
+    return text
   }
-  return fullAddrss.slice(0, 6) + '...' + fullAddrss.slice(-4)
+  return `${text.slice(0, reduceValue)}...${text.slice(-reduceValue)}`
 }

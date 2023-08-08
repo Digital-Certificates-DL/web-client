@@ -7,7 +7,7 @@
         class="app-navbar__btn"
         color="info"
         :text="
-          abbrCenter(web3Store.provider.selectedAddress) ||
+          abbrCenter(web3Store.provider.selectedAddress, 6) ||
           $t('app-navbar.metamask-connect')
         "
         :icon-left="$icons.metamask"
