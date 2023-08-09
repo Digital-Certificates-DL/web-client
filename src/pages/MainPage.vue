@@ -11,7 +11,10 @@
     </div>
     <div class="main-page__body">
       <div class="main-page__metamask-block">
-        <div v-if="!provider.isConnected" class="main-page__metamask">
+        <div
+          v-if="!web3Store.provider.isConnected"
+          class="main-page__metamask-banner"
+        >
           <p class="main-page__metamask-title">
             {{ $t('main-page.metamask-connect') }}
           </p>
@@ -22,21 +25,21 @@
             class="main-page__metamask-btn main-page__btn-connect"
             color="info"
             :text="$t('main-page.metamask-connect-btn')"
-            :disabled="provider.isConnected"
+            :disabled="web3Store.provider.isConnected"
             @click="connect"
           />
         </div>
-        <div v-else class="main-page__metamask">
+        <div v-else class="main-page__metamask-banner">
           <p>
-            {{ provider.selectedAddress }}
+            {{ web3Store.provider.selectedAddress }}
           </p>
           <app-button
-            v-if="provider.isConnected"
+            v-if="web3Store.provider.isConnected"
             class="main-page__metamask-btn"
             color="info"
             size="large"
             :text="$t('main-page.metamask-disconnect-btn')"
-            @click="provider.disconnect"
+            @click="web3Store.provider.disconnect"
           />
         </div>
       </div>
@@ -76,11 +79,11 @@ import { ErrorHandler } from '@/helpers'
 
 import { AppLogo, MainNav } from '@/common'
 
-const { provider } = useWeb3ProvidersStore()
+const web3Store = useWeb3ProvidersStore()
 
 const connect = async () => {
   try {
-    await provider.connect()
+    await web3Store.provider.connect()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -139,25 +142,18 @@ $opacity: 0.6;
   align-items: center;
 }
 
+.main-page__metamask-block {
+  max-width: toRem(652);
+  width: 100%;
+}
+
 .main-page__metamask {
   display: grid;
   place-content: center;
   border-radius: toRem(8);
-  padding: toRem(12);
-  max-width: toRem(652);
   max-height: toRem(346);
-
-  @include respond-to(medium) {
-    padding: toRem(12);
-    max-width: toRem(452);
-    max-height: toRem(246);
-  }
-
-  @include respond-to(xmedium) {
-    padding: toRem(12);
-    max-width: toRem(502);
-    max-height: toRem(300);
-  }
+  height: 100%;
+  padding: toRem(12);
 }
 
 .main-page__endpoints-side {
@@ -166,11 +162,6 @@ $opacity: 0.6;
   grid-template-columns: repeat(2, 1fr);
   gap: toRem(80);
   grid-auto-rows: toRem(150);
-}
-
-.main-page__metamask-block {
-  min-width: toRem(300);
-  width: 100%;
 }
 
 .main-page__metamask-title {
@@ -186,19 +177,11 @@ $opacity: 0.6;
   text-align: center;
   color: var(--text-secondary-light);
   font-size: toRem(20);
-
-  @include respond-to(xmedium) {
-    font-size: toRem(14);
-  }
 }
 
 .main-page__navigation-item {
   max-width: toRem(304);
   width: 100%;
-
-  @include respond-to(xmedium) {
-    width: toRem(250);
-  }
 }
 
 .main-page__card-indicator {
@@ -207,7 +190,7 @@ $opacity: 0.6;
   right: toRem(12);
   width: toRem(12);
   height: toRem(12);
-  border-radius: 50%;
+  border-radius: toRem(8);
   background: var(--error-main);
 
   &--active {

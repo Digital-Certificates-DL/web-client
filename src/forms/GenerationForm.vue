@@ -82,6 +82,7 @@
               color="info"
               size="large"
               :text="$t('generation-form.start-btn')"
+              :disabled="!isFormValid"
               @click="start"
             />
 
@@ -116,7 +117,7 @@ import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { ErrorHandler, usePrepareCertificateImage } from '@/helpers'
+import { ErrorHandler, prepareCertificateImage } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useI18n } from 'vue-i18n'
@@ -174,8 +175,8 @@ const start = async () => {
 const parsedData = async (sheepUrl?: string) => {
   try {
     return await useUploadCertificates(
-      userState.setting.accountName,
-      sheepUrl || userState.setting.urlGoogleSheet,
+      userState.userSetting.accountName,
+      sheepUrl || userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
     if (error.metadata.link) {
@@ -195,7 +196,7 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
 }
 
 const sign = (users: CertificateJSONResponse[]) => {
-  const signature = new Signature(userState.setting.signKey)
+  const signature = new Signature(userState.userSetting.signKey)
   for (const user of users) {
     if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
@@ -218,17 +219,17 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
     const data = await useCreatePdf(
       users,
-      userState.setting.userBitcoinAddress,
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+      userState.userSetting.userBitcoinAddress,
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
     const container = await validateContainerState(data.container_id)
     if (!container) {
       ErrorHandler.process(t('errors.empty-container'))
       return
     }
-    const updatedUsers = usePrepareCertificateImage(container.clear_certificate)
-    userState.students = updatedUsers
+    const updatedUsers = prepareCertificateImage(container.clear_certificate)
+    userState.setCertificates(updatedUsers)
 
     return updatedUsers
   } catch (error) {
@@ -273,6 +274,10 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   color: var(--text-primary-invert-light);
   border-radius: toRem(20);
   background: var(--info-dark);
+}
+
+.generation-form__input-wrp {
+  max-width: toRem(450);
 }
 
 .generation-form__field-border {

@@ -67,7 +67,7 @@ const isSelected = ref(false)
 
 const emit = defineEmits<{
   (e: 'open-modal', user: CertificateJSONResponse): boolean
-  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
+  (e: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{

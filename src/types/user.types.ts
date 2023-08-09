@@ -1,6 +1,5 @@
 export type UserSetting = {
   accountName: string
-  organizationName: string
   signKey: string
   userBitcoinAddress: string
   keyPathID: number

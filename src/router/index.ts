@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/PreviouslyCertificatesPage.vue'),
+    component: () => import('@/pages/AllCertificatesPage.vue'),
   },
   {
     path: '/settings',

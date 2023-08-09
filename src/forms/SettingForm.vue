@@ -1,7 +1,7 @@
 <template>
   <form class="setting-form" autocomplete="off">
     <h3 class="setting-form__fields-title">
-      {{ $t('setting-page.general-title') }}
+      {{ $t('setting-form.general-title') }}
     </h3>
     <input-field
       v-model="form.accountName"
@@ -35,12 +35,15 @@
       <app-button
         class="setting-form__btn"
         color="info"
+        size="large"
         :text="$t('setting-form.save-btn-title')"
+        :disabled="!isFormValid"
         @click="save"
       />
       <app-button
         class="setting-form__btn"
         color="info"
+        size="large"
         :text="$t('setting-form.cancel-btn-title')"
         :route="{
           name: $routes.main,
@@ -74,28 +77,25 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive({
-  accountName: userState.setting.accountName,
-  signKey: userState.setting.signKey,
-  bip39MnemonicPhrase: userState.setting.bip39MnemonicPhrase,
-  urlGoogleSheet: userState.setting.urlGoogleSheet,
+  accountName: '',
+  signKey: '',
+  bip39MnemonicPhrase: '',
+  urlGoogleSheet: '',
 } as UserSetting)
 
-const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
-  form,
-  {
-    accountName: { required, maxLength: maxLength(100) },
-    signKey: { required },
-    bip39MnemonicPhrase: {
-      required,
-      mnemonic,
-    },
-    urlGoogleSheet: { required, link },
-  },
-)
+const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
+  accountName: { required, maxLength: maxLength(100) },
+  signKey: { required },
+  bip39MnemonicPhrase: { required, mnemonic },
+  urlGoogleSheet: { required, link },
+})
 
 const save = async () => {
   if (!isFormValid()) return
-  userState.setting = form
+  userState.setUserSetting(form)
+  const address = Bitcoin.getAddressFromWIF(form.signKey)
+
+  userState.userSetting.userBitcoinAddress = address || ''
 
   try {
     const address = generateAddress(form.signKey)
@@ -104,9 +104,9 @@ const save = async () => {
       throw new Error()
     }
 
-    userState.setting.userBitcoinAddress = address
+    userState.userSetting.userBitcoinAddress = address // TODO implement actions
 
-    await useSaveUserSetting(userState.setting.accountName)
+    await useSaveUserSetting(userState.userSetting.accountName)
     await router.push(ROUTE_NAMES.main)
   } catch (error) {
     emit('on-error', t('setting-form.failed-save-setting'))
@@ -149,7 +149,8 @@ const generateAddress = (key: string): string => {
 }
 
 .setting-form__btn {
-  width: toRem(100);
+  max-width: toRem(150);
+  width: 100%;
   border-radius: toRem(8);
 }
 

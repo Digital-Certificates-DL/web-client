@@ -1,24 +1,17 @@
 <template>
-  <div class="previously-certificates-page">
-    <h2>{{ $t('previously-certificates-page.certificates-title') }}</h2>
-    <div class="previously-certificates-page__search-wrp">
-      <div class="previously-certificates-page__search">
+  <div class="all-certificates-page">
+    <h2>{{ $t('all-certificates-page.certificates-title') }}</h2>
+    <div class="all-certificates-page__search">
+      <div class="all-certificates-page__search-input-wrp">
         <input-field
           v-model="searchData"
-          :placeholder="$t('previously-certificates-page.certificates-find')"
-        />
-      </div>
-      <div class="previously-certificates-page__btn-ref-wrp">
-        <app-button
-          class="previously-certificates-page__btn-ref"
-          color="info"
-          size="default"
-          :icon-right="$icons.refresh"
-          @click="refresh"
+          :placeholder="$t('all-certificates-page.certificates-find')"
         />
       </div>
 
       <div class="previously-certificates-page__filters">
+        <!-- todo move to  external  component-->
+
         <app-dropdown
           :title="COURSE_FILTERS.ALL"
           :items="DROP_DOWN_COURSE_LIST"
@@ -36,7 +29,6 @@
           @select-item="findByState"
         />
       </div>
-      <!--      navigation ... -->
 
       <div class="previously-certificates-page__btns-wrp">
         <div
@@ -61,29 +53,32 @@
         </div>
       </div>
     </div>
-    <div class="certificates__list">
-      <div class="previously-certificates-page__list-subtitle">
+
+    <div class="all-certificates-page__list">
+      <div class="all-certificates-page___list-titles">
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-name') }}
+          {{ $t('all-certificates-page.certificates-item-name') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-course') }}
+          {{ $t('all-certificates-page.certificates-item-course') }}
         </p>
         <p>
-          {{ $t('previously-certificates-page.certificates-subtitle-data') }}
+          {{ $t('all-certificates-page.certificates-item-date') }}
         </p>
+        <p></p>
       </div>
-      <div v-if="!userState.students.length">
+      <div v-if="!userState.certificates.length">
         <no-data-message
-          :message="$t('previously-certificates.error-certificate-list')"
+          class="all-certificates-page__no-data"
+          :message="$t('all-certificates-page.no-certificate-list')"
         />
       </div>
-      <div v-for="item in certificateFilter" :key="item.id">
+      <div v-for="item in filteredCertificateList" :key="item.id">
         <certificate
           :is-show="selectedItems.length > 0"
           :certificate="item"
           @open-modal="openCertificateModal"
-          @select="selectItem"
+          @select="selectItems"
         />
       </div>
     </div>
@@ -93,8 +88,6 @@
       :certificate="currentCertificate"
       @success="successMint"
     />
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-    <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
   </div>
 </template>
 
@@ -105,53 +98,52 @@ import {
   DropdownItem,
   PottyCertificateRequest,
 } from '@/types'
+import { api } from '@/api'
 import { InputField } from '@/fields'
-import { computed, ref } from 'vue'
-import { useRouter } from '@/router'
-
+import { ref, computed } from 'vue'
+import { Signature } from '@/utils'
 import {
   AppButton,
   AppDropdown,
   Certificate,
   CertificateModal,
   NoDataMessage,
-  LoaderModal,
-  SuccessModal,
 } from '@/common'
-import { Signature } from '@/utils'
 import {
   ErrorHandler,
-  usePrepareCertificateImage,
-  useSearchInTheList,
+  searchInTheList,
+  prepareCertificateImage,
 } from '@/helpers'
-import { FILES_BASE, ROUTE_NAMES } from '@/enums'
-import {
-  useCreatePdf,
-  useDownloadImage,
-  useUploadCertificates,
-  useValidateContainerState,
-} from '@/api/api'
-import { useI18n } from 'vue-i18n'
 import {
   COURSE_FILTERS,
   DATA_FILTERS,
   STATE_FILTERS,
 } from '@/enums/filter.enum'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from '@/router'
+import {
+  useCreatePdf,
+  useDownloadImage,
+  useValidateContainerState,
+} from '@/api/api'
+import { FILES_BASE, ROUTE_NAMES } from '@/enums'
+
+const userState = useUserStore()
 
 const { t } = useI18n()
 
-const userState = useUserStore()
+const selectedItems = ref<CertificateJSONResponse[]>([])
+const certificatesList = ref<CertificateJSONResponse[]>([])
+const selectedCount = ref(0)
+
+const router = useRouter()
 
 const isCertificateModalShown = ref(false)
 const currentCertificate = ref<CertificateJSONResponse>(
   {} as CertificateJSONResponse,
 )
-const selectedItems = ref<CertificateJSONResponse[]>([])
-const certificatesList = ref<CertificateJSONResponse[]>([])
+const listForTimestamp = ref<CertificateJSONResponse[]>([])
 const searchData = ref('')
-const selectedCount = ref(0)
-
-const router = useRouter()
 
 const isLoading = ref(false)
 const processState = ref('')
@@ -208,8 +200,8 @@ const DROP_DOWN_STATE_LIST = [
   },
 ] as DropdownItem[]
 
-const certificateFilter = computed(() =>
-  useSearchInTheList(certificatesList.value, searchData.value),
+const filteredCertificateList = computed(() =>
+  searchInTheList(userState.certificates, searchData.value),
 )
 
 const openCertificateModal = async (certificate: CertificateJSONResponse) => {
@@ -219,7 +211,7 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
       certificate,
     )) as CertificateJSONResponse[]
 
-    certificateWithImg.value = usePrepareCertificateImage(
+    certificateWithImg.value = prepareCertificateImage(
       certificateWithImg.value!,
     )
 
@@ -240,9 +232,9 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
     )
     return await useDownloadImage(
       certificate,
-      userState.setting.userBitcoinAddress,
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+      userState.userSetting.userBitcoinAddress,
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
     ErrorHandler.process(error)
@@ -251,45 +243,46 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   isLoading.value = false
 }
 
-const selectItem = (state: boolean, item: CertificateJSONResponse) => {
-  if (state) {
-    selectedItems.value.push(item)
-    selectedCount.value++
+const selectItems = (
+  isSelected: boolean,
+  certificate: CertificateJSONResponse,
+) => {
+  if (isSelected) {
+    listForTimestamp.value.push(certificate)
     return
   }
 
-  const index = selectedItems.value.indexOf(item, 0)
+  const index = listForTimestamp.value.indexOf(certificate, 0)
   if (index > -1) {
-    selectedCount.value--
-    selectedItems.value.splice(index, 1)
+    listForTimestamp.value.splice(index, 1)
   }
 }
 
-const refresh = async () => {
+const getCertificates = async () => {
   try {
-    isLoading.value = true
-    processState.value = t(
-      'previously-certificates-page.process-state-update-date',
+    const { data } = await api.post<CertificateJSONResponse[]>(
+      '/integrations/ccp/users/',
+      {
+        body: {
+          data: {
+            url: userState.userSetting.urlGoogleSheet,
+            name: userState.userSetting.accountName,
+          },
+        },
+      },
     )
-    const data = await useUploadCertificates(
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
-    )
-
-    userState.students = usePrepareCertificateImage(data)
-    certificatesList.value = userState.students
+    userState.setCertificates(prepareCertificateImage(data))
   } catch (error) {
     ErrorHandler.process(error)
   }
-  isLoading.value = false
 }
 
 const findByCourse = (filter: DropdownItem) => {
   //todo make using computed
   const currentCourse = filter.text
-  certificatesList.value = userState.students
+  certificatesList.value = userState.certificates
   if (!currentCourse.length || currentCourse === COURSE_FILTERS.ALL) {
-    certificatesList.value = userState.students
+    certificatesList.value = userState.certificates
     return
   }
 
@@ -303,9 +296,9 @@ const findByCourse = (filter: DropdownItem) => {
 const findByState = (filter: DropdownItem) => {
   const state = filter.text
 
-  certificatesList.value = userState.students
+  certificatesList.value = userState.certificates
   if (!state.length || state === STATE_FILTERS.ALL) {
-    certificatesList.value = userState.students
+    certificatesList.value = userState.certificates
     return
   }
 
@@ -321,37 +314,44 @@ const findByState = (filter: DropdownItem) => {
 }
 
 const generate = async () => {
-  isLoading.value = true
-  processState.value = t(
-    'previously-certificates-page.process-state-validate-data',
-  )
-  if (!validateItemListGenerate()) {
+  try {
+    isLoading.value = true
+    processState.value = t(
+      'previously-certificates-page.process-state-validate-data',
+    )
+    if (!validateItemListGenerate()) {
+      isLoading.value = false
+      return
+    }
+
+    processState.value = t(
+      'previously-certificates-page.process-state-sign-data',
+    )
+
+    const signatures = await sign(selectedItems.value)
+    processState.value = t(
+      'previously-certificates-page.process-state-create-pdf',
+    )
+
+    const users = await createPDF(signatures)
+    processState.value = ''
+
     isLoading.value = false
-    return
+    userState.setBufferCertificates(users)
+
+    await router.push({
+      name: ROUTE_NAMES.timestamp,
+    })
+  } catch (error) {
+    ErrorHandler.process(t('errors.default'))
   }
-
-  processState.value = t('previously-certificates-page.process-state-sign-data')
-
-  const signatures = await sign(selectedItems.value)
-  processState.value = t(
-    'previously-certificates-page.process-state-create-pdf',
-  )
-
-  const users = await createPDF(signatures)
-  processState.value = ''
-
-  isLoading.value = false
-  userState.bufferCertificateList = users!
-
-  await router.push({
-    name: ROUTE_NAMES.timestamp,
-  })
 }
 
 const validateItemListGenerate = () => {
   for (const item of selectedItems.value) {
     if (Boolean(item.certificate) || Boolean(item.signature)) {
       ErrorHandler.process(
+        //todo  localization
         'This student already has certificate, ' + item.participant,
       )
       return false
@@ -372,6 +372,16 @@ const validateItemListTimestamp = () => {
   return true
 }
 
+const validateContainerState = async (containerID: string) => {
+  const data = await useValidateContainerState(containerID)
+  if (!data) {
+    ErrorHandler.process(t('errors.empty-container'))
+    return
+  }
+  data.clear_certificate = prepareCertificate(data.certificates)
+  return data
+}
+
 const timestamp = async () => {
   userState.bufferCertificateList = selectedItems.value
   if (validateItemListTimestamp()) {
@@ -382,7 +392,7 @@ const timestamp = async () => {
 }
 
 const sign = async (users: CertificateJSONResponse[]) => {
-  const signature = new Signature(userState.setting.signKey)
+  const signature = new Signature(userState.userSetting.signKey)
   for (const user of users) {
     if (!user.signature) {
       user.signature = signature.signMsg(user.msg)
@@ -392,36 +402,41 @@ const sign = async (users: CertificateJSONResponse[]) => {
   return users
 }
 
-const createPDF = async (certificates: CertificateJSONResponse[]) => {
+const createPDF = async (
+  certificates: CertificateJSONResponse[],
+): Promise<CertificateJSONResponse[]> => {
   try {
     const data = await useCreatePdf(
       certificates,
-      userState.setting.userBitcoinAddress,
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+      userState.userSetting.userBitcoinAddress,
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
     const container = await validateContainerState(data.container_id)
     if (!container) {
       ErrorHandler.process(t('errors.empty-container'))
-      return
+      return []
     }
 
-    userState.students = prepareCertificateImg(container.clear_certificate)
-    return userState.students
+    return prepareCertificateImg(container.clear_certificate)
   } catch (error) {
     ErrorHandler.process(error)
-    return
+    return []
   }
 }
 
-const validateContainerState = async (containerID: string) => {
-  const data = await useValidateContainerState(containerID)
-  if (!data) {
-    ErrorHandler.process(t('errors.empty-container'))
-    return
+const successMint = (tx: string) => {
+  mintTx.value = tx
+  isMintSuccess.value = true
+}
+
+const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
+  const certificateList = ref<CertificateJSONResponse[]>([])
+  for (const certificate of certificates) {
+    certificate.attributes.id = Number(certificate.id)
+    certificateList.value.push(certificate.attributes)
   }
-  data.clear_certificate = prepareCertificate(data.certificates)
-  return data
+  return certificateList.value
 }
 
 const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
@@ -436,120 +451,46 @@ const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   return certificates
 }
 
-const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
-  /* eslint-disable no-console */
-  console.log('prepareCertificate: ', certificates)
-  const certificateList = ref<CertificateJSONResponse[]>([])
-  for (const certificate of certificates) {
-    certificate.attributes.id = Number(certificate.id)
-    certificateList.value.push(certificate.attributes)
-  }
-  return certificateList.value
-}
-
-const successMint = (tx: string) => {
-  mintTx.value = tx
-  isMintSuccess.value = true
-}
-
-refresh()
+getCertificates()
 </script>
 
 <style scoped lang="scss">
-.previously-certificates-page {
+.all-certificates-page {
+  width: 100%;
   margin: 0 auto;
-  width: 100%;
 }
 
-.previously-certificates-page__search-wrp {
-  margin-top: toRem(24);
+.all-certificates-page__search {
+  margin: toRem(24) 0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   border-radius: toRem(20);
-  margin-bottom: toRem(50);
 }
 
-.previously-certificates-page__search {
+.all-certificates-page__search-input-wrp {
   max-width: toRem(458);
-  max-height: toRem(50);
   width: 100%;
-  height: 100%;
 }
 
-.previously-certificates-page__btns-wrp {
-  max-width: toRem(300);
-  width: 100%;
-
-  @include respond-to(large) {
-    max-width: toRem(250);
-  }
-
-  @include respond-to(xmedium) {
-    max-width: toRem(200);
-  }
-}
-
-.previously-certificates-page__btns {
+.all-certificates-page__action-btns {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-between;
 }
 
-.previously-certificates-page__btn {
+.all-certificates-page__no-data {
+  margin: 20%;
+}
+
+.all-certificates-page__btn {
   max-height: toRem(52);
-  max-width: toRem(120);
   height: 100%;
-  width: 100%;
-  margin-left: toRem(5);
   border-radius: toRem(8);
-
-  @include respond-to(large) {
-    width: toRem(80);
-    height: toRem(45);
-  }
-
-  @include respond-to(xmedium) {
-    width: toRem(60);
-    height: toRem(40);
-  }
 }
 
-.previously-certificates-page__list-subtitle {
+.all-certificates-page___list-titles {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: toRem(810);
   margin-top: toRem(20);
-  margin-left: toRem(120);
-  width: 100%;
-
-  // todo make better
-
-  @include respond-to(large) {
-    max-width: toRem(650);
-  }
-
-  @include respond-to(xmedium) {
-    max-width: toRem(500);
-  }
-}
-
-.previously-certificates-page__btn-ref-wrp {
-  margin: 0 toRem(10);
-}
-
-.previously-certificates-page__btn-ref {
-  height: toRem(40);
-  width: toRem(40);
-  margin-left: toRem(5);
-  border-radius: toRem(8);
-}
-
-.previously-certificates-page__filters {
-  display: flex;
-  max-width: toRem(400);
-  width: 100%;
-  justify-content: space-between;
 }
 </style>

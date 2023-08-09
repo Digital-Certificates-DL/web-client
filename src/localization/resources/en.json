@@ -215,6 +215,13 @@
     "get-access-btn": "Get access",
     "send-code-btn": "Send code"
   },
+  "auth-form": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
+    "close-btn": "Close",
+    "get-access-btn": "Get access",
+    "send-code-btn": "Send code"
+  },
   "mint-form": {
     "close-btn": "Close",
     "mint-btn": "Mint",

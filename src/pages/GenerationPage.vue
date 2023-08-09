@@ -10,7 +10,7 @@
     />
 
     <auth-modal
-      v-model:is-shown="isUnauthorized"
+      v-model:is-shown="isAuthModalShown"
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
@@ -28,18 +28,17 @@ import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
 import { AuthModal, LoaderModal } from '@/common'
 
-const userState = useUserStore()
-
 const authLink = ref('')
 const loaderState = ref('')
 
-const isUnauthorized = ref(false)
+const isAuthModalShown = ref(false)
+const userState = useUserStore()
 const isLoaderModalShown = ref(false)
 
 const updateCode = async (code: string) => {
   //TODO move it to  api
   try {
-    isUnauthorized.value = false
+    isAuthModalShown.value = false
     await api.post<CertificateJSONResponseList>(
       '/integrations/ccp/users/settings',
       {
@@ -63,15 +62,15 @@ const updateLoaderState = (state: string) => {
   loaderState.value = state
 }
 
-const auth = (code: string) => {
-  authLink.value = code
-  isUnauthorized.value = true
+const auth = (link: string) => {
+  authLink.value = link
+  isAuthModalShown.value = true
 }
 </script>
 
 <style lang="scss" scoped>
 .generation-page {
-  width: 100%;
   margin: 0 auto;
+  width: 100%;
 }
 </style>

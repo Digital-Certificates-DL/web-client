@@ -1,18 +1,17 @@
 import { CertificateJSONResponse } from '@/types'
 import { FILES_BASE } from '@/enums'
 
-export const useSearchInTheList = (
+export const searchInTheList = (
   certificatesList: CertificateJSONResponse[],
   data: string,
 ) => {
   const searchQuery = data.toLowerCase()
-  certificatesList = certificatesList.filter(certificate => {
-    const title = certificate.participant.toLowerCase()
-    return title.includes(searchQuery)
+  return certificatesList.filter(certificate => {
+    return certificate.participant.toLowerCase().includes(searchQuery)
   })
-  return certificatesList
 }
-export const usePrepareCertificateImage = (
+
+export const prepareCertificateImage = (
   certificates: CertificateJSONResponse[],
 ) => {
   for (const certificate of certificates) {

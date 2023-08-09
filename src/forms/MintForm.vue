@@ -18,7 +18,7 @@
         color="info"
         :text="$t('mint-form.close-btn')"
         :disabled="isFormDisabled"
-        @click="emit('modal-close')"
+        @click="emit('mint-finished')"
       />
     </div>
   </form>
@@ -52,8 +52,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'mint-finished', tx: string): void
-  (event: 'modal-close'): void
+  (event: 'mint-finished'): void
 }>()
 
 const mint = async () => {

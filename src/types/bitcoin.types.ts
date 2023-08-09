@@ -114,3 +114,9 @@ export interface Status {
   block_hash: string
   block_time: number
 }
+
+export type PreparedTX = {
+  hex: string
+  exAddress: string
+  derivePath: number
+}

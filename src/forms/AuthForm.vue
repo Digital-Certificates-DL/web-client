@@ -1,49 +1,30 @@
 <template>
-  <form class="auth-form" autocomplete="off">
-    <h3 class="auth-form__title">
-      {{ $t('auth-modal.title') }}
-    </h3>
-    <div>
-      <p class="auth-form__step-title">
-        {{ $t('auth-modal.step-1-title') }}
-      </p>
-
-      <a
-        class="auth-form__link"
-        :href="tokenLink"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {{ $t('auth-modal.step-1-description') }}
-      </a>
-    </div>
-
-    <p class="auth-form__step-title">
-      {{ $t('auth-modal.step-2-title') }}
-    </p>
-
+  <form class="auth-form">
     <input-field
-      v-model="form.code"
-      class="auth-modal-form__input"
-      :label="$t('auth-modal-form.input-code-label')"
+      v-model="form.accessCodeInputData"
+      class="auth-form__input"
+      :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
       :error-message="getFieldErrorMessage('code')"
-      @input="validateCode"
     />
 
     <div class="auth-form__btns">
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
-        size="large"
-        :text="$t('auth-modal-form.send-code-btn')"
+        :text="$t('auth-form.get-access-btn')"
+        @click="window.open(props.tokenLink, '_blank')"
+      />
+      <app-button
+        class="auth-form__btn"
+        color="info"
+        :text="$t('auth-form.send-code-btn')"
         @click="sendCode"
       />
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
-        size="large"
-        :text="$t('auth-modal-form.close-btn')"
+        :text="$t('auth-form.close-btn')"
         @click="emit('close-modal')"
       />
     </div>
@@ -58,8 +39,6 @@ import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const isInputValid = ref(false)
 const accessCodeInputData = ref('')
 
 defineProps<{
@@ -72,26 +51,20 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive({
-  code: '',
+  accessCodeInputData: '',
 })
 
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  code: { required },
+  accessCodeInputData: { required },
 })
 
 const sendCode = () => {
   if (!isFormValid) return
   disableForm()
 
-  emit('send-auth-code', form.code)
+  emit('send-auth-code', accessCodeInputData.value)
 
   enableForm()
-}
-
-const validateCode = () => {
-  if (accessCodeInputData.value != '') {
-    isInputValid.value = true
-  }
 }
 </script>
 
@@ -100,30 +73,24 @@ const validateCode = () => {
   display: grid;
 }
 
-.auth-form__title {
-  margin-bottom: toRem(20);
-}
-
 .auth-form__btns {
   display: flex;
   height: toRem(58);
   justify-content: space-between;
 }
 
-.auth-modal-form__input {
+.auth-form__btn {
+  width: toRem(100);
+}
+
+.auth-form__btn-link {
+  max-height: toRem(58);
+  width: toRem(200);
   margin: 0 auto;
 }
 
-.auth-form__step-title {
-  font-size: toRem(21);
-  font-weight: 700;
-}
-
-.auth-modal-form__btn {
-  width: 45%;
-}
-
-.auth-form__link {
-  color: var(--text-primary-light);
+.auth-form__input {
+  margin: 0 auto;
+  width: toRem(350);
 }
 </style>

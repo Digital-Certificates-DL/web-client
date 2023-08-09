@@ -73,11 +73,17 @@ const success = (tx: string) => {
 .certificate-modal__pane {
   display: grid;
   position: fixed;
-  width: toRem(475);
-  height: toRem(796);
+  max-width: toRem(475);
+  max-height: toRem(796);
+  width: 100%;
+  height: 100%;
   background: var(--background-primary-main);
   border-radius: toRem(16);
   padding: toRem(24);
+
+  @include respond-to(x-small) {
+    padding: 3%;
+  }
 }
 
 .certificate-modal__img-wrp {
@@ -86,7 +92,8 @@ const success = (tx: string) => {
 }
 
 .certificate-modal__img {
-  width: toRem(427);
+  max-width: toRem(427);
+  width: 100%;
 }
 
 .certificate-modal__title {
