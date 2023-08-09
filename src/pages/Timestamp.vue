@@ -23,13 +23,6 @@
         </div>
       </div>
 
-      <div v-if="isModalActive">
-        <certificate-modal
-          v-model:is-shown="isModalActive"
-          :certificate="currentCertificate"
-        />
-      </div>
-
       <div class="timestamp__body">
         <div class="timestamp__list">
           <div v-if="!certificatesListBuffer.length">
@@ -56,6 +49,11 @@
         </div>
       </div>
     </div>
+
+    <certificate-modal
+      v-model:is-shown="isModalActive"
+      :certificate="currentCertificate"
+    />
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   </div>
 </template>

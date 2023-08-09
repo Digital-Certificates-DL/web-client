@@ -84,7 +84,8 @@
     "process-state-upload-img": "Upload certificate image",
     "certificates-item-name" : "Name",
     "certificates-item-course" : "Course",
-    "certificates-item-date" : "Date"
+    "certificates-item-date" : "Date",
+    "no-certificate-list": "Certificates list is empty"
   },
   "generation-page": {
     "title":"Create new certificate",

@@ -5,30 +5,16 @@
       <div class="all-certificates-page__search-input-wrp">
         <input-field
           v-model="searchData"
+          class="all-certificates-page__search-input"
           :placeholder="$t('all-certificates-page.certificates-find')"
         />
       </div>
 
-      <div class="previously-certificates-page__filters">
-        <!-- todo move to  external  component-->
-
-        <app-dropdown
-          :title="COURSE_FILTERS.ALL"
-          :items="DROP_DOWN_COURSE_LIST"
-          @select-item="findByCourse"
-        />
-        <app-dropdown
-          :title="DATA_FILTERS.ALL"
-          :items="DROP_DOWN_DATA_LIST"
-          :main-image="'/branding/data-ico.png'"
-        />
-        <app-dropdown
-          :title="STATE_FILTERS.ALL"
-          :items="DROP_DOWN_STATE_LIST"
-          :main-image="'/branding/success-ico.png'"
-          @select-item="findByState"
-        />
-      </div>
+      <filters
+        class="all-certificates-page__filters"
+        :list="filteredCertificateList"
+        @filer="onFilter"
+      />
 
       <div class="all-certificates-page__btns-wrp">
         <div
@@ -48,7 +34,7 @@
             class="all-certificates-page__btn"
             color="info"
             :text="$t('all-certificates-page.bitcoin-btn')"
-            @click="timestamp"
+            @click="moveToTimestampPage"
           />
         </div>
       </div>
@@ -87,45 +73,39 @@
       :certificate="currentCertificate"
       @success="successMint"
     />
+    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store'
-import {
-  CertificateJSONResponse,
-  DropdownItem,
-  PottyCertificateRequest,
-} from '@/types'
-import { getCertificates } from '@/api/api'
+import { CertificateJSONResponse } from '@/types'
 import { InputField } from '@/fields'
 import { ref, computed } from 'vue'
-import { Signature } from '@/utils'
 import {
   AppButton,
-  AppDropdown,
   Certificate,
   CertificateModal,
   NoDataMessage,
+  Filters,
+  LoaderModal,
 } from '@/common'
 import {
   ErrorHandler,
   searchInTheList,
   prepareCertificateImage,
+  clearCertificate,
+  signCertificateData,
 } from '@/helpers'
-import {
-  COURSE_FILTERS,
-  DATA_FILTERS,
-  STATE_FILTERS,
-} from '@/enums/filter.enum'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from '@/router'
 import {
   useCreatePdf,
   useDownloadImage,
   useValidateContainerState,
+  getCertificates,
 } from '@/api/api'
-import { FILES_BASE, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 
 const userState = useUserStore()
 
@@ -133,7 +113,6 @@ const { t } = useI18n()
 
 const selectedItems = ref<CertificateJSONResponse[]>([])
 const certificatesList = ref<CertificateJSONResponse[]>([])
-
 const router = useRouter()
 
 const isCertificateModalShown = ref(false)
@@ -146,56 +125,6 @@ const isLoading = ref(false)
 const processState = ref('')
 const isMintSuccess = ref(false)
 const mintTx = ref('')
-
-const DROP_DOWN_COURSE_LIST = [
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.ALL,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.SOLIDITY,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.GOLANG,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.DATABASE,
-  },
-  {
-    img: '/branding/solidity-ico.png',
-    text: COURSE_FILTERS.DEFI,
-  },
-] as DropdownItem[]
-
-const DROP_DOWN_DATA_LIST = [
-  {
-    text: DATA_FILTERS.ALL,
-  },
-  {
-    text: DATA_FILTERS.DAY,
-  },
-  {
-    text: DATA_FILTERS.WEEK,
-  },
-  {
-    text: DATA_FILTERS.MONTH,
-  },
-] as DropdownItem[]
-
-const DROP_DOWN_STATE_LIST = [
-  {
-    text: STATE_FILTERS.ALL,
-  },
-  {
-    text: STATE_FILTERS.GENERATED,
-  },
-  {
-    text: STATE_FILTERS.NOTGENERATED,
-  },
-] as DropdownItem[]
 
 const filteredCertificateList = computed(() =>
   searchInTheList(userState.certificates, searchData.value),
@@ -253,61 +182,22 @@ const selectItems = (
   }
 }
 
-const findByCourse = (filter: DropdownItem) => {
-  //todo make using computed
-  const currentCourse = filter.text
-  certificatesList.value = userState.certificates
-  if (!currentCourse.length || currentCourse === COURSE_FILTERS.ALL) {
-    certificatesList.value = userState.certificates
-    return
-  }
-
-  const searchQuery = currentCourse.toLowerCase()
-  certificatesList.value = certificatesList.value.filter(user => {
-    const courseTitle = user.courseTitle.toLowerCase()
-    return courseTitle.includes(searchQuery)
-  })
-}
-
-const findByState = (filter: DropdownItem) => {
-  const state = filter.text
-
-  certificatesList.value = userState.certificates
-  if (!state.length || state === STATE_FILTERS.ALL) {
-    certificatesList.value = userState.certificates
-    return
-  }
-
-  if (state === STATE_FILTERS.GENERATED) {
-    certificatesList.value = certificatesList.value.filter(certificate => {
-      return certificate.certificate || certificate.digitalCertificate
-    })
-  } else if (state === STATE_FILTERS.NOTGENERATED) {
-    certificatesList.value = certificatesList.value.filter(certificate => {
-      return !certificate.signature!.length
-    })
-  }
-}
-
 const generate = async () => {
   try {
     isLoading.value = true
-    processState.value = t(
-      'previously-certificates-page.process-state-validate-data',
-    )
+    processState.value = t('all-certificates-page.process-state-validate-data')
     if (!validateItemListGenerate()) {
       isLoading.value = false
       return
     }
 
-    processState.value = t(
-      'previously-certificates-page.process-state-sign-data',
-    )
+    processState.value = t('all-certificates-page.process-state-sign-data')
 
-    const signatures = await sign(selectedItems.value)
-    processState.value = t(
-      'previously-certificates-page.process-state-create-pdf',
+    const signatures = await signCertificateData(
+      selectedItems.value,
+      userState.userSetting.signKey,
     )
+    processState.value = t('all-certificates-page.process-state-create-pdf')
 
     const users = await createPDF(signatures)
     processState.value = ''
@@ -354,28 +244,17 @@ const validateContainerState = async (containerID: string) => {
     ErrorHandler.process(t('errors.empty-container'))
     return
   }
-  data.clear_certificate = prepareCertificate(data.certificates)
+  data.clear_certificate = clearCertificate(data.certificates)
   return data
 }
 
-const timestamp = async () => {
+const moveToTimestampPage = async () => {
   userState.setBufferCertificates(selectedItems.value)
   if (validateItemListTimestamp()) {
     await router.push({
       name: ROUTE_NAMES.timestamp,
     })
   }
-}
-
-const sign = async (users: CertificateJSONResponse[]) => {
-  const signature = new Signature(userState.userSetting.signKey)
-  for (const user of users) {
-    if (!user.signature) {
-      user.signature = signature.signMsg(user.msg)
-    }
-  }
-
-  return users
 }
 
 const createPDF = async (
@@ -394,37 +273,22 @@ const createPDF = async (
       return []
     }
 
-    return prepareCertificateImg(container.clear_certificate)
+    return prepareCertificateImage(container.clear_certificate)
   } catch (error) {
     ErrorHandler.process(error)
     return []
   }
 }
+const onFilter = (list: CertificateJSONResponse[]) => {
+  /* eslint-disable no-console */
+
+  console.log('list', list)
+  certificatesList.value = list
+}
 
 const successMint = (tx: string) => {
   mintTx.value = tx
   isMintSuccess.value = true
-}
-
-const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
-  const certificateList = ref<CertificateJSONResponse[]>([])
-  for (const certificate of certificates) {
-    certificate.attributes.id = Number(certificate.id)
-    certificateList.value.push(certificate.attributes)
-  }
-  return certificateList.value
-}
-
-const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
-  for (const certificate of certificates) {
-    if (!certificate.certificateImg) {
-      continue
-    }
-    certificate.img =
-      FILES_BASE.PNG_BASE + certificate.certificateImg.toString()
-  }
-
-  return certificates
 }
 
 const refreshCertificatesList = async () => {
@@ -434,6 +298,8 @@ const refreshCertificatesList = async () => {
       userState.userSetting.accountName,
     ),
   )
+
+  certificatesList.value = userState.certificates
 }
 
 refreshCertificatesList()
@@ -470,6 +336,7 @@ refreshCertificatesList()
   max-height: toRem(52);
   height: 100%;
   border-radius: toRem(8);
+  margin: 0 toRem(10);
 }
 
 .all-certificates-page___list-titles {
@@ -477,5 +344,16 @@ refreshCertificatesList()
   justify-content: space-between;
   align-items: center;
   margin-top: toRem(20);
+}
+
+.all-certificates-page__btns {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+}
+
+.all-certificates-page__filters {
+  width: 40%;
 }
 </style>

@@ -72,11 +72,8 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-
 import { useWeb3ProvidersStore } from '@/store'
-
 import { ErrorHandler } from '@/helpers'
-
 import { AppLogo, MainNav } from '@/common'
 
 const web3Store = useWeb3ProvidersStore()
@@ -164,6 +161,11 @@ $opacity: 0.6;
   grid-auto-rows: toRem(150);
 }
 
+.main-page__metamask-banner {
+  display: grid;
+  justify-content: center;
+}
+
 .main-page__metamask-title {
   font-size: toRem(35);
   margin: auto;
@@ -207,6 +209,7 @@ $opacity: 0.6;
 .main-page__info-description {
   font-size: toRem(16);
   max-width: toRem(426);
+  width: 100%;
   text-align: center;
   color: var(--text-primary-light);
 }

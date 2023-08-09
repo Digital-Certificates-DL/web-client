@@ -1,5 +1,7 @@
-import { CertificateJSONResponse } from '@/types'
+import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { FILES_BASE } from '@/enums'
+import { ref } from 'vue'
+import { Signature } from '@/utils'
 
 export const searchInTheList = (
   certificatesList: CertificateJSONResponse[],
@@ -24,4 +26,27 @@ export const prepareCertificateImage = (
   }
 
   return certificates
+}
+
+export const clearCertificate = (certificates: PottyCertificateRequest[]) => {
+  const certificateList = ref<CertificateJSONResponse[]>([])
+  for (const certificate of certificates) {
+    certificate.attributes.id = Number(certificate.id)
+    certificateList.value.push(certificate.attributes)
+  }
+  return certificateList.value
+}
+
+export const signCertificateData = async (
+  users: CertificateJSONResponse[],
+  key: string,
+) => {
+  const signature = new Signature(key)
+  for (const user of users) {
+    if (!user.signature) {
+      user.signature = signature.signMsg(user.msg)
+    }
+  }
+
+  return users
 }

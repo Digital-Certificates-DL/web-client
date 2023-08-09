@@ -15,6 +15,7 @@ export { default as TimestampItem } from '@/common/TimestampItem.vue'
 
 export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as MainNav } from '@/common/MainNav.vue'
+export { default as Filters } from '@/common/Filters.vue'
 
 export { default as HomeItem } from '@/common/HomeItem.vue'
 

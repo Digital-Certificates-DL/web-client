@@ -22,7 +22,7 @@
       <app-button
         class="certificate__btn"
         @click="selectItem"
-        :text="$t('certificate.timestamp-btn')"
+        :text="$t('certificate.select-certificate-btn')"
       />
 
       <app-button
