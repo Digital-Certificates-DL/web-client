@@ -30,24 +30,24 @@
         />
       </div>
 
-      <div class="previously-certificates-page__btns-wrp">
+      <div class="all-certificates-page__btns-wrp">
         <div
-          v-if="selectedCount > 0"
-          class="previously-certificates-page__btns"
+          v-if="selectedItems.length > 0"
+          class="all-certificates-page__btns"
         >
-          <p class="previously-certificates__count">
-            {{ selectedCount }}
+          <p class="all-certificates__count">
+            {{ selectedItems.length }}
           </p>
           <app-button
-            class="previously-certificates-page__btn"
+            class="all-certificates-page__btn"
             color="info"
-            :text="$t('previously-certificates-page.generate-btn')"
+            :text="$t('all-certificates-page.generate-btn')"
             @click="generate"
           />
           <app-button
-            class="previously-certificates-page__btn"
+            class="all-certificates-page__btn"
             color="info"
-            :text="$t('previously-certificates-page.bitcoin-btn')"
+            :text="$t('all-certificates-page.bitcoin-btn')"
             @click="timestamp"
           />
         </div>
@@ -82,7 +82,6 @@
         />
       </div>
     </div>
-
     <certificate-modal
       v-model:is-shown="isCertificateModalShown"
       :certificate="currentCertificate"
@@ -98,7 +97,7 @@ import {
   DropdownItem,
   PottyCertificateRequest,
 } from '@/types'
-import { api } from '@/api'
+import { getCertificates } from '@/api/api'
 import { InputField } from '@/fields'
 import { ref, computed } from 'vue'
 import { Signature } from '@/utils'
@@ -134,7 +133,6 @@ const { t } = useI18n()
 
 const selectedItems = ref<CertificateJSONResponse[]>([])
 const certificatesList = ref<CertificateJSONResponse[]>([])
-const selectedCount = ref(0)
 
 const router = useRouter()
 
@@ -142,7 +140,6 @@ const isCertificateModalShown = ref(false)
 const currentCertificate = ref<CertificateJSONResponse>(
   {} as CertificateJSONResponse,
 )
-const listForTimestamp = ref<CertificateJSONResponse[]>([])
 const searchData = ref('')
 
 const isLoading = ref(false)
@@ -227,9 +224,7 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
-    processState.value = t(
-      'previously-certificates-page.process-state-upload-img',
-    )
+    processState.value = t('all-certificates-page.process-state-upload-img')
     return await useDownloadImage(
       certificate,
       userState.userSetting.userBitcoinAddress,
@@ -248,32 +243,13 @@ const selectItems = (
   certificate: CertificateJSONResponse,
 ) => {
   if (isSelected) {
-    listForTimestamp.value.push(certificate)
+    selectedItems.value.push(certificate)
     return
   }
 
-  const index = listForTimestamp.value.indexOf(certificate, 0)
+  const index = selectedItems.value.indexOf(certificate, 0)
   if (index > -1) {
-    listForTimestamp.value.splice(index, 1)
-  }
-}
-
-const getCertificates = async () => {
-  try {
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/users/',
-      {
-        body: {
-          data: {
-            url: userState.userSetting.urlGoogleSheet,
-            name: userState.userSetting.accountName,
-          },
-        },
-      },
-    )
-    userState.setCertificates(prepareCertificateImage(data))
-  } catch (error) {
-    ErrorHandler.process(error)
+    selectedItems.value.splice(index, 1)
   }
 }
 
@@ -383,7 +359,7 @@ const validateContainerState = async (containerID: string) => {
 }
 
 const timestamp = async () => {
-  userState.bufferCertificateList = selectedItems.value
+  userState.setBufferCertificates(selectedItems.value)
   if (validateItemListTimestamp()) {
     await router.push({
       name: ROUTE_NAMES.timestamp,
@@ -451,7 +427,16 @@ const prepareCertificateImg = (certificates: CertificateJSONResponse[]) => {
   return certificates
 }
 
-getCertificates()
+const refreshCertificatesList = async () => {
+  userState.setCertificates(
+    await getCertificates(
+      userState.userSetting.urlGoogleSheet,
+      userState.userSetting.accountName,
+    ),
+  )
+}
+
+refreshCertificatesList()
 </script>
 
 <style scoped lang="scss">

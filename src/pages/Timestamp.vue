@@ -76,8 +76,8 @@ import {
 } from '@/common'
 import {
   ErrorHandler,
-  useSearchInTheList,
-  usePrepareCertificateImage,
+  searchInTheList,
+  prepareCertificateImage,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
@@ -100,7 +100,7 @@ const certificateList = ref<CertificateJSONResponse[]>([])
 const selectedItems = ref<CertificateJSONResponse[]>([])
 
 const certificateFilter = computed(() =>
-  useSearchInTheList(certificateList.value, searchData.value),
+  searchInTheList(certificateList.value, searchData.value),
 )
 
 const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
@@ -115,12 +115,12 @@ const bitcoinTimestamp = async () => {
 
     processState.value = t('timestamp.process-state-getting-utxo')
     await bitcoin.getUTXOBip32TestnetBlockstream(
-      userState.setting.bip39MnemonicPhrase,
+      userState.userSetting.bip39MnemonicPhrase,
     )
     processState.value = t('timestamp.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
       const tx = await bitcoin.PrepareLegacyTXTestnet(
-        userState.setting.bip39MnemonicPhrase,
+        userState.userSetting.bip39MnemonicPhrase,
       )
       const hex = tx?.hex || ''
       const exAddress = tx?.exAddress || ''
@@ -144,7 +144,7 @@ const bitcoinTimestamp = async () => {
     certificateList.value =
       (await updateCertificates(selectedItems.value)) || []
 
-    certificateList.value = usePrepareCertificateImage(certificateList.value)
+    certificateList.value = prepareCertificateImage(certificateList.value)
     isLoading.value = false
   } catch (error) {
     isLoading.value = false
@@ -163,9 +163,9 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
     const data = await useUpdateCertificates(
       removeImgCertificates(certificates),
-      userState.setting.userBitcoinAddress,
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+      userState.userSetting.userBitcoinAddress,
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
     if (!data) {
       ErrorHandler.process(t('errors.empty-container-id'))
@@ -176,7 +176,7 @@ const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
       ErrorHandler.process(t('errors.empty-container'))
       return
     }
-    return usePrepareCertificateImage(container.clear_certificate)
+    return prepareCertificateImage(container.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
   }

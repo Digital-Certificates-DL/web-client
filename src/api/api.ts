@@ -5,7 +5,7 @@ import {
   Container,
   IpfsAttributes,
 } from '@/types'
-import { sleep } from '@/helpers'
+import { prepareCertificateImage, sleep } from '@/helpers'
 
 export const useUpdateCertificates = async (
   certificates: CertificateJSONResponse[],
@@ -179,4 +179,29 @@ export const useSaveUserSetting = async (name: string) => {
       },
     },
   )
+}
+
+export const getCertificates = async (
+  url: string,
+  name: string,
+): Promise<CertificateJSONResponse[]> => {
+  try {
+    const { data } = await api.post<CertificateJSONResponse[]>(
+      '/integrations/ccp/users/',
+      {
+        body: {
+          data: {
+            attributes: {
+              url: url,
+              name: name,
+            },
+          },
+        },
+      },
+    )
+
+    return prepareCertificateImage(data)
+  } catch (error) {
+    throw new Error()
+  }
 }

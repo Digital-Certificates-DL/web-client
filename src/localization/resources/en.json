@@ -67,7 +67,7 @@
     "main-nav-settings-body": "Setup your keys and link to Google sheet",
     "main-nav-home-body": "Create new template, issue certificate, see full list of certificates"
   },
-  "previously-certificates-page": {
+  "all-certificates-page": {
     "certificates-title": "Previously certificates",
     "certificates-subtitle-name": "Name",
     "certificates-subtitle-course": "Course",
@@ -81,7 +81,10 @@
     "process-state-validate-data": "Validate data",
     "process-state-sign-data": "Sign data",
     "process-state-create-pdf": "Issuing certificates",
-    "process-state-upload-img": "Upload certificate image"
+    "process-state-upload-img": "Upload certificate image",
+    "certificates-item-name" : "Name",
+    "certificates-item-course" : "Course",
+    "certificates-item-date" : "Date"
   },
   "generation-page": {
     "title":"Create new certificate",
