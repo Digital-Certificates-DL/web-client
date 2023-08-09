@@ -90,7 +90,6 @@ const save = async () => {
   )
 
   userState.setting.userBitcoinAddress = address || ''
-
   try {
     await useSaveUserSetting(userState.setting.accountName)
     await router.push(ROUTE_NAMES.main)

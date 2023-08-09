@@ -16,11 +16,6 @@
 
 <script lang="ts" setup>
 import { SettingForm } from '@/forms'
-import { Bitcoin } from '@/utils'
-import { useUserStore } from '@/store'
-
-const btc = new Bitcoin()
-btc.getBip39(useUserStore().$state.setting.bip39MnemonicPhrase)
 </script>
 
 <style scoped lang="scss">

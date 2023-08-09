@@ -39,7 +39,7 @@
       <img
         class="template-page__back-image"
         id="testID"
-        src="/static/branding/blockchain.png"
+        :src="userStore.bufferImg || '/static/branding/blockchain.png'"
         alt="Uploaded Image"
       />
       <div
@@ -91,8 +91,9 @@ import { ErrorHandler } from '@/helpers'
 import { defineProps } from 'vue/dist/vue'
 import { useUserStore } from '@/store'
 
-const textValue = ref('')
+const userStore = useUserStore()
 
+const textValue = ref('')
 const inputField = ref(null)
 const currentInputInfo = ref<Template>({} as Template)
 const imgInfo = ref<HTMLImageElement>()
@@ -224,13 +225,13 @@ const sendTemplate = async () => {
       body: {
         data: {
           attributes: {
-            background_img: useUserStore().$state.bufferImg,
+            background_img: userStore.$state.bufferImg,
             is_completed: true,
             template: await prepareTemplates(),
             template_name: props.name,
           },
           relationships: {
-            user: useUserStore().setting.accountName,
+            user: userStore.setting.accountName,
           },
         },
       },
@@ -337,7 +338,7 @@ const changeXCentrilize = () => {
 
 .template-page__back-image-wrp {
   position: relative;
-  max-width: toRem(1300);
+  max-width: toRem(1300); // todo  fix this staff
 }
 
 .template-page__back-image {
@@ -351,7 +352,8 @@ const changeXCentrilize = () => {
 }
 
 .template-page__input input {
-  width: toRem(200);
+  max-width: toRem(200);
+  width: 100%;
   background: rgba(0, 0, 0, 0);
   border: none;
 
