@@ -52,7 +52,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'mint-finished'): void
+  (event: 'mint-finished', tx: string): void
+  (event: 'error', msg: string): void
 }>()
 
 const mint = async () => {
@@ -73,7 +74,12 @@ const mint = async () => {
     )
 
     const mintTx = await safeMint(form.address, data.url)
-    emit('mint-finished', mintTx!)
+    if (!mintTx) {
+      emit('error', t('errors.failed-send-tx'))
+      enableForm()
+      return
+    }
+    emit('mint-finished', mintTx)
   } catch (error) {
     ErrorHandler.process(error)
   }

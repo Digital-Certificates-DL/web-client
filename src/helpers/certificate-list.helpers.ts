@@ -34,6 +34,7 @@ export const clearCertificate = (certificates: PottyCertificateRequest[]) => {
     certificate.attributes.id = Number(certificate.id)
     certificateList.value.push(certificate.attributes)
   }
+
   return certificateList.value
 }
 
@@ -49,4 +50,39 @@ export const signCertificateData = async (
   }
 
   return users
+}
+
+export const filterByCourse = (
+  list: CertificateJSONResponse[],
+  filter?: string,
+): CertificateJSONResponse[] => {
+  if (!filter || filter === 'All') {
+    return list
+  }
+
+  const searchQuery = filter.toLowerCase()
+  return list.filter(user => {
+    const courseTitle = user.courseTitle.toLowerCase()
+    return courseTitle.includes(searchQuery)
+  })
+}
+
+export const filterByState = (
+  list: CertificateJSONResponse[],
+  filter: string,
+): CertificateJSONResponse[] => {
+  if (!filter.length || filter === 'All') {
+    return list
+  }
+
+  if (filter === 'Generated') {
+    return list.filter(certificate => {
+      return certificate.certificate || certificate.digitalCertificate
+    })
+  } else if (filter === 'Not generated') {
+    return list.filter(certificate => {
+      return !certificate.signature!.length
+    })
+  }
+  return list
 }

@@ -5,7 +5,7 @@
   >
     <div class="error-modal__pane">
       <div class="error-modal__payload">
-        <icon class="error-modal__icon" :name="ICON_NAMES.certificateError" />
+        <icon class="error-modal__icon" :name="$icons.certificateError" />
         <div class="error-modal__info">
           <h3 class="error-modal__title">
             {{ $t('error-modal.title') }}
@@ -27,9 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Modal, Icon } from '@/common'
-import { ICON_NAMES } from '@/enums'
-import AppButton from '@/common/AppButton.vue'
+import { Modal, Icon, AppButton } from '@/common'
 
 const props = defineProps<{
   message: string
@@ -53,7 +51,14 @@ const tryAgain = () => {
   border-radius: toRem(8);
   max-width: toRem(652);
   width: 100%;
-  height: toRem(164);
+  height: 100%;
+  max-height: toRem(300);
+  min-width: toRem(200);
+  min-height: toRem(164);
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .error-modal__payload {

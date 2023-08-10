@@ -37,7 +37,12 @@
     "empty-container-id": "Container id is empty",
     "empty-google-link": "Google link is empty",
     "empty-img": "Empty  image",
-    "empty-cert-list": "Empty certificate list"
+    "empty-cert-list": "Empty certificate list",
+    "failed-get-certificates": "Failed to  get  certificates",
+    "failed-generate-certificates": "Failed to generate certificates",
+    "certificate-was-generated": "Certificate was generated",
+    "certificate-has-timestamp": "Certificate has timestamp",
+    "failed-send-tx": "Failed to send tx"
   },
   "notification": {
     "default-title-success": "Success",
@@ -58,7 +63,6 @@
     "metamask-connect-btn": "Connect to MetaMask",
     "metamask-disconnect-btn": "Disconnect",
     "page-info-name": "Digital Certificate",
-
     "main-nav-home-title": "Home",
     "main-nav-home-description": "Home",
     "main-nav-settings-title": "Setup",
@@ -85,7 +89,9 @@
     "certificates-item-name" : "Name",
     "certificates-item-course" : "Course",
     "certificates-item-date" : "Date",
-    "no-certificate-list": "Certificates list is empty"
+    "no-certificate-list": "Certificates list is empty",
+    "process-state-update-date": "Updating certificates list",
+    "image_uploading":"Upload certificate image"
   },
   "generation-page": {
     "title":"Create new certificate",

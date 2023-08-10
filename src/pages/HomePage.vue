@@ -60,6 +60,7 @@
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
+      class="test"
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
@@ -76,16 +77,10 @@ import {
   HomeBodyNav,
 } from '@/common'
 import { router } from '@/router'
-import { ROUTE_NAMES } from '@/enums'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { ErrorHandler } from '@/helpers'
-import {
-  useGetUpdateLink,
-  useUpdateCode,
-  useUploadCertificates,
-} from '@/api/api'
+import { useUpdateCode, useUploadCertificates } from '@/api/api'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -102,47 +97,22 @@ const getCertificates = async () => {
     processState.value = t('home.process-state-getting-cert')
 
     const data = await useUploadCertificates(
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
     if (!data) {
       return
     }
     certificates.value = data
   } catch (error) {
-    switch (error.name) {
-      case 'ForbiddenError':
-        authLink.value = error.meta.auth_link
-        isUnauthorized.value = true
-        break
-      case 'UnauthorizedError':
-        try {
-          const data = await useGetUpdateLink(userState.setting.accountName)
-          if (!data) {
-            ErrorHandler.process(t('errors.empty-google-link'))
-            return
-          }
-          //todo  implement types for it
-          authLink.value = data.link
-          isUnauthorized.value = true
-          return
-        } catch (err) {
-          ErrorHandler.process(err)
-          return
-        }
-      default:
-        if (!userState.setting.urlGoogleSheet) {
-          await router.push(ROUTE_NAMES.settings)
-        }
-        break
-    }
-  } finally {
-    isLoading.value = false
+    authLink.value = error.meta.auth_link
+    isUnauthorized.value = true
   }
+  isLoading.value = false
 }
 
 const updateCode = async (code: string) => {
-  await useUpdateCode(code, userState.setting.accountName)
+  await useUpdateCode(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 
@@ -163,12 +133,8 @@ getCertificates()
 .home-page__body-nav-item {
   margin: toRem(20) 0;
   width: 47%;
-  height: toRem(150);
-
-  @include respond-to(xmedium) {
-    height: toRem(130);
-    width: 47%;
-  }
+  max-height: toRem(150);
+  height: 100%;
 }
 
 .home-page__items {
@@ -208,5 +174,12 @@ getCertificates()
   display: flex;
   justify-content: space-between;
   margin: toRem(20) 0;
+}
+
+.test {
+  max-width: toRem(600);
+  max-height: toRem(600);
+  width: 100%;
+  height: 100%;
 }
 </style>

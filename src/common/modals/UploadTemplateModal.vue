@@ -21,12 +21,20 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .upload-template-modal__pane {
-  width: toRem(400);
-  height: toRem(600);
-  background: var(--white);
+  display: grid;
+  max-width: toRem(400);
+  max-height: toRem(600);
+  min-width: toRem(200);
+  min-height: toRem(300);
+  width: 100%;
+  height: 100%;
+  background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
-  display: grid;
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .loader-modal__title {

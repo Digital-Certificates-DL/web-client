@@ -39,7 +39,7 @@
 
         <mint-form
           :certificate="certificate"
-          @mint-finished="success"
+          @mint-finished="onSuccess"
           @modal-close="modal.close"
         />
       </div>
@@ -63,7 +63,7 @@ const emit = defineEmits<{
   (e: 'update:is-shown', value: boolean): void
 }>()
 
-const success = (tx: string) => {
+const onSuccess = (tx: string) => {
   emit('success', tx)
   emit('update:is-shown', false)
 }

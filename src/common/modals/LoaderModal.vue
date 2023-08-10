@@ -4,7 +4,7 @@
     :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <div class="loader-modal">
+    <div class="loader-modal__pane">
       <loader />
       <h2 class="loader-modal__title">
         {{ props.state }}
@@ -28,13 +28,21 @@ const emit = defineEmits<{
 </script>
 
 <style scoped lang="scss">
-.loader-modal {
-  width: toRem(350);
-  height: toRem(350);
-  background: var(--white);
+.loader-modal__pane {
+  display: grid;
+  max-width: toRem(350);
+  max-height: toRem(300);
+  min-width: toRem(200);
+  min-height: toRem(200);
+  width: 100%;
+  height: 100%;
+  background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
-  display: grid;
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .loader-modal__title {

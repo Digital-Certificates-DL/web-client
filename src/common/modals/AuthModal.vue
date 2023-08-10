@@ -32,6 +32,7 @@ const emit = defineEmits<{
 }>()
 
 const sendCode = (code: string) => {
+  emit('update:is-shown', false)
   emit('send-auth-code', code)
 }
 
@@ -44,8 +45,10 @@ const closeModal = () => {
 <style scoped lang="scss">
 .auth-modal__pane {
   display: grid;
-  max-width: toRem(600);
+  max-width: toRem(652);
+  min-width: toRem(400);
   max-height: toRem(400);
+  min-height: toRem(300);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);

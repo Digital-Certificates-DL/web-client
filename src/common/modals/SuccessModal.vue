@@ -47,11 +47,16 @@ const emit = defineEmits<{
 
 <style lang="scss" scoped>
 .success-modal__pane {
+  display: grid;
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
   width: toRem(720);
   height: toRem(256);
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .success-modal__payload {

@@ -20,13 +20,11 @@
 </template>
 
 <script lang="ts" setup>
-import { api } from '@/api'
-import { CertificateJSONResponseList } from '@/types'
-import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
 import { AuthModal, LoaderModal } from '@/common'
+import { updateAuthCode } from '@/api/api'
 
 const authLink = ref('')
 const loaderState = ref('')
@@ -35,31 +33,12 @@ const isAuthModalShown = ref(false)
 const userState = useUserStore()
 const isLoaderModalShown = ref(false)
 
-const updateCode = async (code: string) => {
-  //TODO move it to  api
-  try {
-    isAuthModalShown.value = false
-    await api.post<CertificateJSONResponseList>(
-      '/integrations/ccp/users/settings',
-      {
-        body: {
-          data: {
-            attributes: {
-              code: code,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
-  } catch (error) {
-    ErrorHandler.process(error)
-    return
-  }
-}
-
 const updateLoaderState = (state: string) => {
   loaderState.value = state
+}
+
+const updateCode = (code: string) => {
+  updateAuthCode(code, userState.userSetting.accountName)
 }
 
 const auth = (link: string) => {
