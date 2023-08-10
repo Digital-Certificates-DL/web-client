@@ -15,6 +15,19 @@ import {
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
 
+  readonly TX_FEE_COEFS = {
+    numberOfInputs: 148,
+    numberOfOutputs: 34,
+    overhead: 10,
+  }
+
+  readonly TX_OUTPUTS_INFO = {
+    numberOfOutputs: 3,
+    firstOutput: 555,
+    secondOutput: 556,
+    thirdOutput: 557,
+  }
+
   private bip32Derive = (bip: Bip32, path: string) => {
     return bitcoin.ECPair.fromWIF(bip.derive(path).privKey.toWif())
   }
@@ -156,8 +169,6 @@ export class Bitcoin {
           index: utxo[i].vout,
           nonWitnessUtxo: txHex,
         })
-        /* eslint-disable no-console */
-        console.log('add input')
       }
     }
 
@@ -189,23 +200,20 @@ export class Bitcoin {
       address: 'n2AgWQWzkQoKFbw8p8RkM5uEV2ZdKwDUTi',
       value: 558,
     })
-    balance -= 556 + 557 + 558
+    balance -=
+      this.TX_OUTPUTS_INFO.firstOutput +
+      this.TX_OUTPUTS_INFO.secondOutput +
+      this.TX_OUTPUTS_INFO.thirdOutput
     balance -= fee
 
-    /* eslint-disable no-console */
-    console.log('balance: ', balance)
     psbt.addOutput({
       address: ex.address!,
       value: balance,
     })
     psbt.signInput(0, keyPair)
-    /* eslint-disable no-console */
-    console.log('sign ')
     psbt.finalizeAllInputs()
 
     const hex = psbt.extractTransaction().toHex()
-    /* eslint-disable no-console */
-    console.log('hex ', hex)
     const exAddress = ex.address
 
     this.addressInfoList = this.addressInfoList.filter(
@@ -266,8 +274,8 @@ export class Bitcoin {
           smaller.push(tx)
         }
       }
-      smaller.sort(this.reverseSort)
-      largeTxs.sort(this.sort)
+      smaller.reverse()
+      largeTxs.sort()
       if (smaller.length > 1) {
         let bufferValue = 0
         const utxos: UTXO[] = []
@@ -318,6 +326,7 @@ export class Bitcoin {
       pubkey: keyPairex.publicKey,
       network: network,
     })
+
     return key.address
   }
 
@@ -359,14 +368,6 @@ export class Bitcoin {
       return
     }
     this.addressInfoList[index].utxos.push(newUTXO)
-  }
-
-  private sort = (a: UTXO, b: UTXO) => {
-    return a.value - b.value
-  }
-
-  private reverseSort = (a: UTXO, b: UTXO) => {
-    return b.value - a.value
   }
 }
 

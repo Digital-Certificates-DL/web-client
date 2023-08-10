@@ -103,6 +103,15 @@
     "@distributedlab/fetcher" "0.2.0-rc.15"
     lodash "^4.17.21"
 
+"@distributedlab/tools@^1.0.0-rc.6":
+  version "1.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/@distributedlab/tools/-/tools-1.0.0-rc.6.tgz#6c472dea25a8451d6057052de8e8e164d3ffb3d6"
+  integrity sha512-V6SJweFWeTRPR+jq9SGE1yT5wfpEjjOG1LVScjakjlnNT9JJOU8fyUqfS09sYAX+KpaOPbfaAkH92Ji7rCxySw==
+  dependencies:
+    bignumber.js "^9.1.1"
+    dayjs "^1.11.7"
+    tslib "^2.5.0"
+
 "@esbuild-plugins/node-globals-polyfill@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@esbuild-plugins/node-globals-polyfill/-/node-globals-polyfill-0.2.3.tgz#0e4497a2b53c9e9485e149bc92ddb228438d6bcf"
@@ -8858,6 +8867,11 @@ tslib@^2.1.0, tslib@^2.4.1:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.2.tgz#1b6f07185c881557b0ffa84b111a0106989e8338"
   integrity sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==
+
+tslib@^2.5.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.1.tgz#fd8c9a0ff42590b25703c0acb3de3d3f4ede0410"
+  integrity sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==
 
 tsutils@^3.21.0:
   version "3.21.0"
