@@ -1,6 +1,7 @@
 import { testnet } from 'ecpair/src/networks'
 import bitcoin from 'bitcoinjs-lib'
 import { Bip32, Bip39 } from '@ts-bitcoin/core'
+
 import { mnemonicToSeedAsync } from 'bip39-web'
 
 import axios from 'axios'
@@ -15,29 +16,33 @@ import {
 export class Bitcoin {
   public addressInfoList: AddressInfo[] = []
 
-  readonly TX_FEE_COEFS = {
+  public readonly TX_FEE_COEFS = {
     numberOfInputs: 148,
     numberOfOutputs: 34,
     overhead: 10,
   }
 
-  readonly TX_OUTPUTS_INFO = {
-    numberOfOutputs: 3,
+  public readonly TX_OUTPUTS_INFO = {
+    numberOfOutputs: 4,
     firstOutput: 555,
     secondOutput: 556,
     thirdOutput: 557,
+    bufferValue: 2000,
   }
 
   private bip32Derive = (bip: Bip32, path: string) => {
     return bitcoin.ECPair.fromWIF(bip.derive(path).privKey.toWif())
   }
 
-  public getUTXOBip32MainBlockstream = async (mnph: string) => {
+  public getUTXOBip32MainBlockstream = async (
+    mnph: string,
+    emptyAddressCount: number,
+  ) => {
     const seed = await mnemonicToSeedAsync(mnph)
     let emptyAddreeses = 0
     let index = 0
     const bip = Bip32.fromSeed(seed)
-    while (emptyAddreeses < 10) {
+    while (emptyAddreeses < emptyAddressCount) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const keyPair = this.bip32Derive(bip, path)
@@ -45,9 +50,6 @@ export class Bitcoin {
         const { address } = bitcoin.payments.p2wpkh({
           pubkey: keyPair.publicKey,
         })
-
-        /* eslint-disable no-console */
-        console.log('address: ', address)
         if (!address) {
           continue
         }
@@ -80,19 +82,16 @@ export class Bitcoin {
     return this.addressInfoList
   }
 
-  public getUTXOBip32TestnetBlockstream = async (mnph: string) => {
+  public getUTXOBip32TestnetBlockstream = async (
+    mnph: string,
+    emptyAddressCount: number,
+  ) => {
     const seed = Bip39.fromString(mnph).toSeed()
     let emptyAddreeses = 0
     let index = 0
-
-    /* eslint-disable no-console */
-    console.log('seed: ', seed)
-
     const bip = Bip32.fromSeed(seed)
-    /* eslint-disable no-console */
-    console.log('bip: ', bip)
 
-    while (emptyAddreeses < 10) {
+    while (emptyAddreeses < emptyAddressCount) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const keyPair = this.bip32Derive(bip, path)
@@ -102,8 +101,6 @@ export class Bitcoin {
           network: testnet,
         })
 
-        /* eslint-disable no-console */
-        console.log('address: ', address)
         if (!address) {
           continue
         }
@@ -145,8 +142,15 @@ export class Bitcoin {
     let butxoAmount = 0
     let utxo: UTXO[] = []
 
-    //todo make better
-    const betterUTXO = await this.betterUtxoTestnet(4, 556 + 557 + 558 + 2000)
+    //todo use BN
+    const betterUTXO = await this.betterUtxoTestnet(
+      this.addressInfoList,
+      this.TX_OUTPUTS_INFO.numberOfOutputs,
+      this.TX_OUTPUTS_INFO.firstOutput +
+        this.TX_OUTPUTS_INFO.secondOutput +
+        this.TX_OUTPUTS_INFO.thirdOutput +
+        this.TX_OUTPUTS_INFO.bufferValue,
+    )
     if (!betterUTXO) {
       return
     }
@@ -173,9 +177,7 @@ export class Bitcoin {
     }
 
     const bip = Bip32.Testnet.fromSeed(seed)
-
     const keyPair = this.bip32Derive(bip, betterUTXO.addressInfo.path)
-
     const exPath = this.prepareExPath(betterUTXO.addressInfo.path)
 
     const keyPairex = this.bip32Derive(bip, exPath)
@@ -184,21 +186,18 @@ export class Bitcoin {
       network: testnet,
     })
 
-    /* eslint-disable no-console */
-    console.log('ex: ', ex)
-
     let balance = butxoAmount
     psbt.addOutput({
       address: '2N1fWEgZG7tYDQvdyHcs3LQMJtqrvf6vTW2',
-      value: 556,
+      value: this.TX_OUTPUTS_INFO.firstOutput,
     })
     psbt.addOutput({
       address: 'n1NffJM6mDvv27nPzxY8UdozxWbkQpjHS2',
-      value: 557,
+      value: this.TX_OUTPUTS_INFO.secondOutput,
     })
     psbt.addOutput({
       address: 'n2AgWQWzkQoKFbw8p8RkM5uEV2ZdKwDUTi',
-      value: 558,
+      value: this.TX_OUTPUTS_INFO.thirdOutput,
     })
     balance -=
       this.TX_OUTPUTS_INFO.firstOutput +
@@ -229,40 +228,41 @@ export class Bitcoin {
   }
 
   public async SendToTestnet(tx: string) {
-    const res = await axios
-      .post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: tx })
-      .then(function (response) {
-        return response
-      })
-      .catch(function (err) {
-        return err
-      })
-
-    return res as PustTxResponce
+    return (await axios.post(
+      'https://api.blockcypher.com/v1/btc/test3/txs/push',
+      { tx: tx },
+    )) as PustTxResponce
   }
   public async calculateFeeTestnet(outs: number, ins: number) {
-    const size = ins * 148 + outs * 34 + 10 - ins
+    const size =
+      ins * this.TX_FEE_COEFS.numberOfInputs +
+      outs * this.TX_FEE_COEFS.numberOfOutputs +
+      this.TX_FEE_COEFS.overhead -
+      ins
 
     return size * Number(1)
   }
 
   private async getTxTestnet(hash: string) {
-    return await axios
-      .get(
+    try {
+      const { data } = await axios.get(
         'https://api.blockcypher.com/v1/btc/test3/txs/' +
           hash +
           '?includeHex=true',
       )
-      .then(response => {
-        return response.data.hex
-      })
-      .catch(err => {
-        return err
-      })
+
+      return data.hex
+    } catch (error) {
+      throw new Error()
+    }
   }
 
-  private async betterUtxoTestnet(outs: number, txsValue: number) {
-    for (const addressInfo of this.addressInfoList) {
+  private async betterUtxoTestnet(
+    addressInfoList: AddressInfo[],
+    outs: number,
+    txsValue: number,
+  ) {
+    for (const addressInfo of addressInfoList) {
       const largeTxs: UTXO[] = []
       const smaller: UTXO[] = []
       let value = await this.calculateFeeTestnet(outs, 1)
@@ -349,7 +349,7 @@ export class Bitcoin {
     const newUTXO = {
       txid: hex,
       value: value,
-      vout: vout || 3,
+      vout: vout || this.TX_OUTPUTS_INFO.numberOfOutputs,
     } as UTXO
 
     const index = this.addressInfoList.findIndex(

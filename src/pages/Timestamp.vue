@@ -114,6 +114,7 @@ const bitcoinTimestamp = async () => {
     processState.value = t('timestamp.process-state-getting-utxo')
     await bitcoin.getUTXOBip32TestnetBlockstream(
       userState.userSetting.bip39MnemonicPhrase,
+      10,
     )
     processState.value = t('timestamp.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
@@ -131,9 +132,7 @@ const bitcoinTimestamp = async () => {
         continue
       }
       const { data } = await bitcoin.SendToTestnet(hex)
-
       certificate.txHash = data.tx.hash.toString()
-
       bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
     }
 
