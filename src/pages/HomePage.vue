@@ -134,7 +134,6 @@ getCertificates()
   margin: toRem(20) 0;
   width: 47%;
   max-height: toRem(150);
-  height: 100%;
 }
 
 .home-page__items {

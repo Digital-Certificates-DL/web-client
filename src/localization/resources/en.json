@@ -42,7 +42,8 @@
     "failed-generate-certificates": "Failed to generate certificates",
     "certificate-was-generated": "Certificate was generated",
     "certificate-has-timestamp": "Certificate has timestamp",
-    "failed-send-tx": "Failed to send tx"
+    "failed-send-tx": "Failed to send tx",
+    "failed-save-setting": "Failed to save settings"
   },
   "notification": {
     "default-title-success": "Success",
@@ -265,6 +266,10 @@
   "success-modal":{
     "title": "Success",
     "description ": "Certificate is minted successfully",
+    "btn-title": "Close"
+  },
+  "error-modal": {
+    "title": "Error",
     "btn-title": "Close"
   }
 }

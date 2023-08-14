@@ -17,8 +17,8 @@
       </div>
       <app-button
         class="error-modal__btn"
-        :text="$t('error-modal.btn')"
-        :size="'large'"
+        size="large"
+        :text="$t('error-modal.btn-title')"
         color="error"
         @click="tryAgain"
       />
@@ -52,9 +52,9 @@ const tryAgain = () => {
   max-width: toRem(652);
   width: 100%;
   height: 100%;
-  max-height: toRem(300);
+  max-height: toRem(200);
   min-width: toRem(200);
-  min-height: toRem(164);
+  min-height: toRem(104);
 
   @include respond-to(small) {
     padding: 3%;

@@ -11,7 +11,7 @@
     <div class="home-nav__btns">
       <app-button
         class="home-nav__btn"
-        :color="'info'"
+        color="info"
         :text="name"
         @click="emit('active')"
       />
@@ -42,7 +42,7 @@ const emit = defineEmits<{
   justify-content: space-evenly;
   align-items: center;
   border-radius: toRem(8);
-  height: toRem(160);
+  height: toRem(150);
 }
 
 .home-nav__title {

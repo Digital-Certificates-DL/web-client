@@ -109,7 +109,7 @@ const save = async () => {
     await useSaveUserSetting(userState.userSetting.accountName)
     await router.push(ROUTE_NAMES.main)
   } catch (error) {
-    emit('on-error', t('setting-form.failed-save-setting'))
+    emit('on-error', t('errors.failed-save-setting'))
     throw new Error()
   }
 }
