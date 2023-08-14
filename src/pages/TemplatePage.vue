@@ -16,12 +16,14 @@
       />
       <app-button
         v-if="currentInputInfo.font_size"
+        size="large"
         class="template-page__btn"
         :text="currentInputInfo.font_size.toString()"
       />
       <app-button v-else class="template-page__btn" text="15" />
       <app-button
         class="template-page__btn"
+        size="large"
         text="-"
         @click="currentInputInfo.font_size--"
       />
@@ -38,7 +40,7 @@
     >
       <img
         class="template-page__back-image"
-        id="testID"
+        id="certificate-background"
         :src="userStore.bufferImg || '/static/branding/blockchain.png'"
         alt="Uploaded Image"
       />
@@ -48,7 +50,7 @@
         class="template-page__input"
         draggable="true"
         :style="{
-          left: position.x_center ? '38%' : position.x + 'px',
+          left: position.x_center ? '42%' : position.x + 'px',
           display: 'flex',
           top: position.y + 'px',
         }"
@@ -64,7 +66,7 @@
           :style="{
             fontSize: position.font_size + 'px',
             color: position.color || 'white',
-            width: 400 + 'px',
+            width: 200 + 'px',
             'text-align': position.x_center ? 'center' : 'left',
           }"
           @focus="inputField = $event.target"
@@ -122,6 +124,7 @@ const defaultTemplate = ref<Template[]>([
     text: 'Your full name',
     x_center: true,
     y: 350,
+    x: 0,
     font_size: 15,
   } as Template,
   {
@@ -157,6 +160,7 @@ const defaultTemplate = ref<Template[]>([
     text: 'Successfully completed',
     x_center: true,
     y: 400,
+    x: 0,
     font_size: 15,
   } as Template,
   {
@@ -164,6 +168,7 @@ const defaultTemplate = ref<Template[]>([
     text: 'Level: beginner at theoretical aspects',
     x_center: true,
     y: 425,
+    x: 0,
     font_size: 15,
   } as Template,
   {
@@ -171,12 +176,14 @@ const defaultTemplate = ref<Template[]>([
     text: 'Data bases',
     x_center: true,
     y: 300,
+    x: 0,
     font_size: 20,
   } as Template,
   {
     name: 'note',
     text: 'Exam passed',
     y: 450,
+    x: 0,
     x_center: true,
     font_size: 15,
   } as Template,
@@ -245,6 +252,9 @@ const sendTemplate = async () => {
 const getDeltes = async () => {
   await getImageSize()
   const { height, width } = getCurrentImageSize()
+  if (!height || !width) {
+    throw new Error()
+  }
   const deltaHeight = imgInfo.value!.naturalHeight! / height
   const deltaWidth = imgInfo.value!.naturalWidth! / width
   return { deltaHeight, deltaWidth }
@@ -266,24 +276,22 @@ const calculateTemplatePositions = async () => {
 
 const clearFieldsMockData = () => {
   for (const field of defaultTemplate.value) {
-    if (field.name != 'credits') {
+    if (field.name != 'credits' && field.name != 'course') {
       field.text = ''
     }
   }
 }
 
 const getCurrentImageSize = () => {
-  const test = document.getElementById('testID')
-  /* eslint-disable no-console */
-  console.log(test)
-  if (test) {
-    console.log(test.getClientRects())
-    console.log(test.getClientRects().length)
-    console.log(test.getClientRects()[0])
+  const certificateBackground = document.getElementById(
+    'certificate-background',
+  )
+  if (!certificateBackground) {
+    throw new Error()
   }
   return {
-    width: test.getClientRects()[0].width,
-    height: test.getClientRects()[0].height,
+    width: certificateBackground?.getClientRects()[0].width,
+    height: certificateBackground?.getClientRects()[0].height,
   }
 }
 
@@ -303,7 +311,7 @@ const getImageSize = async () => {
 
 const prepareTemplates = async () => {
   await calculateTemplatePositions()
-  const template = {
+  return {
     high: imgInfo.value?.naturalHeight,
     width: imgInfo.value?.naturalWidth,
     name: getInputByName('name'),
@@ -316,7 +324,6 @@ const prepareTemplates = async () => {
     level: getInputByName('level'),
     note: getInputByName('note'),
   }
-  return template
 }
 const getInputByName = (name: string) => {
   return defaultTemplate.value.filter(data => {
@@ -338,7 +345,7 @@ const changeXCentrilize = () => {
 
 .template-page__back-image-wrp {
   position: relative;
-  max-width: toRem(1300); // todo  fix this staff
+  max-width: toRem(1300);
 }
 
 .template-page__back-image {
@@ -381,5 +388,11 @@ const changeXCentrilize = () => {
   background: #000a12;
   color: var(--white);
   opacity: 9;
+}
+
+.template-page__btn {
+  height: toRem(50);
+  width: toRem(50);
+  font-size: toRem(18);
 }
 </style>
