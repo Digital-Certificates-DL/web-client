@@ -34,54 +34,6 @@ export class Bitcoin {
     return bitcoin.ECPair.fromWIF(bip.derive(path).privKey.toWif())
   }
 
-  public getUTXOBip32MainBlockstream = async (
-    mnph: string,
-    emptyAddressCount: number,
-  ) => {
-    const seed = await mnemonicToSeedAsync(mnph)
-    let emptyAddreeses = 0
-    let index = 0
-    const bip = Bip32.fromSeed(seed)
-    while (emptyAddreeses < emptyAddressCount) {
-      for (let i = 0; i < 2; i++) {
-        const path = 'm/' + i + '/' + index
-        const keyPair = this.bip32Derive(bip, path)
-
-        const { address } = bitcoin.payments.p2wpkh({
-          pubkey: keyPair.publicKey,
-        })
-        if (!address) {
-          continue
-        }
-
-        const txs = await axios.get<BlockstreamTxList>(
-          'https://blockstream.info/api/address/' + address + '/txs',
-        )
-        if (txs.data.length === 0) {
-          emptyAddreeses++
-          continue
-        }
-
-        const utxos = await axios.get<UTXOs>(
-          'https://blockstream.info/api/address/' + address + '/utxo',
-        )
-        if (utxos.data.length === 0) {
-          continue
-        }
-
-        const addressInfo: AddressInfo = {
-          address: address,
-          path: path,
-          utxos: utxos.data,
-        }
-        this.addressInfoList.push(addressInfo)
-      }
-      index++
-      emptyAddreeses++
-    }
-    return this.addressInfoList
-  }
-
   public getUTXOBip32TestnetBlockstream = async (
     mnph: string,
     emptyAddressCount: number,
@@ -89,23 +41,19 @@ export class Bitcoin {
     const seed = Bip39.fromString(mnph).toSeed()
     let emptyAddreeses = 0
     let index = 0
-    const bip = Bip32.fromSeed(seed)
 
     while (emptyAddreeses < emptyAddressCount) {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
-        const keyPair = this.bip32Derive(bip, path)
+        const bipInfo = this.getBipInfoByPath(seed, path)
 
-        const { address } = bitcoin.payments.p2pkh({
-          pubkey: keyPair.publicKey,
-          network: testnet,
-        })
-
-        if (!address) {
+        if (!bipInfo.address) {
           continue
         }
         const txs = await axios.get<BlockstreamTxList>(
-          'https://blockstream.info/testnet/api/address/' + address + '/txs',
+          'https://blockstream.info/testnet/api/address/' +
+            bipInfo.address +
+            '/txs',
         )
         if (txs.data.length === 0) {
           emptyAddreeses++
@@ -113,14 +61,16 @@ export class Bitcoin {
         }
 
         const utxos = await axios.get<UTXOs>(
-          'https://blockstream.info/testnet/api/address/' + address + '/utxo',
+          'https://blockstream.info/testnet/api/address/' +
+            bipInfo.address +
+            '/utxo',
         )
         if (utxos.data.length === 0) {
           continue
         }
         emptyAddreeses = 0
         const addressInfo: AddressInfo = {
-          address: address,
+          address: bipInfo.address,
           path: path,
           utxos: utxos.data,
         }
@@ -136,13 +86,11 @@ export class Bitcoin {
       return bytes
     })
 
-    const psbt = new bitcoin.Psbt({ network: testnet })
+    let psbt = new bitcoin.Psbt({ network: testnet })
 
-    let fee = 0
     let butxoAmount = 0
     let utxo: UTXO[] = []
 
-    //todo use BN
     const betterUTXO = await this.betterUtxoTestnet(
       this.addressInfoList,
       this.TX_OUTPUTS_INFO.numberOfOutputs,
@@ -155,38 +103,48 @@ export class Bitcoin {
       return
     }
 
-    fee = betterUTXO.value
     utxo = betterUTXO.txs
     butxoAmount = betterUTXO.utxoAmount
     if (utxo.length) {
-      for (let i = 0; i < utxo.length; i++) {
-        if (utxo[i].vout === -1) {
-          this.addressInfoList = this.addressInfoList.filter(data =>
-            data.utxos.filter(data => data.vout !== -1),
-          )
-          return
-        }
-        const hex = await this.getTxTestnet(utxo[i].txid)
-        const txHex = new Buffer(hex, 'hex')
-        psbt.addInput({
-          hash: utxo[i].txid,
-          index: utxo[i].vout,
-          nonWitnessUtxo: txHex,
-        })
-      }
+      psbt = await this.setInputs(psbt, utxo)
     }
+    const bipInfo = this.getBipInfoByPath(seed, betterUTXO.addressInfo.path)
 
-    const bip = Bip32.Testnet.fromSeed(seed)
-    const keyPair = this.bip32Derive(bip, betterUTXO.addressInfo.path)
-    const exPath = this.prepareExPath(betterUTXO.addressInfo.path)
+    const exBipInfo = this.getBipInfoByPath(seed, bipInfo.exPath)
 
-    const keyPairex = this.bip32Derive(bip, exPath)
-    const ex = bitcoin.payments.p2pkh({
-      pubkey: keyPairex.publicKey,
-      network: testnet,
-    })
+    const balance = butxoAmount
 
-    let balance = butxoAmount
+    psbt = this.setOutputs(
+      psbt,
+      butxoAmount,
+      betterUTXO.value,
+      exBipInfo.address!,
+    )
+
+    psbt.signInput(0, bipInfo.keyPair)
+    psbt.finalizeAllInputs()
+
+    const hex = psbt.extractTransaction().toHex()
+    const exAddress = exBipInfo.keyPair
+
+    this.addressInfoList = this.addressInfoList.filter(
+      data => data.utxos.length !== 0,
+    )
+
+    return {
+      hex,
+      exAddress,
+      exPath,
+      balance,
+    }
+  }
+
+  private setOutputs(
+    psbt: bitcoin.Psbt,
+    balance: number,
+    fee: number,
+    exAddress: string,
+  ): bitcoin.Psbt {
     psbt.addOutput({
       address: '2N1fWEgZG7tYDQvdyHcs3LQMJtqrvf6vTW2',
       value: this.TX_OUTPUTS_INFO.firstOutput,
@@ -206,25 +164,33 @@ export class Bitcoin {
     balance -= fee
 
     psbt.addOutput({
-      address: ex.address!,
+      address: exAddress,
       value: balance,
     })
-    psbt.signInput(0, keyPair)
-    psbt.finalizeAllInputs()
+    return psbt
+  }
 
-    const hex = psbt.extractTransaction().toHex()
-    const exAddress = ex.address
-
-    this.addressInfoList = this.addressInfoList.filter(
-      data => data.utxos.length !== 0,
-    )
-
-    return {
-      hex,
-      exAddress,
-      exPath,
-      balance,
+  private async setInputs(
+    psbt: bitcoin.Psbt,
+    utxoList: UTXO[],
+  ): Promise<bitcoin.Psbt> {
+    for (let i = 0; i < utxoList.length; i++) {
+      if (utxoList[i].vout === -1) {
+        this.addressInfoList = this.addressInfoList.filter(data =>
+          data.utxos.filter(data => data.vout !== -1),
+        )
+        throw new Error()
+      }
+      const hex = await this.getTxTestnet(utxoList[i].txid)
+      const txHex = new Buffer(hex, 'hex')
+      psbt.addInput({
+        hash: utxoList[i].txid,
+        index: utxoList[i].vout,
+        nonWitnessUtxo: txHex,
+      })
     }
+
+    return psbt
   }
 
   public async SendToTestnet(tx: string) {
@@ -233,6 +199,7 @@ export class Bitcoin {
       { tx: tx },
     )) as PustTxResponce
   }
+
   public async calculateFeeTestnet(outs: number, ins: number) {
     const size =
       ins * this.TX_FEE_COEFS.numberOfInputs +
@@ -320,10 +287,29 @@ export class Bitcoin {
     }
   }
 
-  static getAddressFromWIF(wif: string, network?: bitcoin.Network) {
-    const keyPairex = bitcoin.ECPair.fromWIF(wif, network)
+  private getBipInfoByPath(
+    seed: Buffer,
+    path: string,
+    network?: bitcoin.Network,
+  ) {
+    const bip = Bip32.Testnet.fromSeed(seed)
+    const keyPair = this.bip32Derive(bip, path)
+    const exPath = this.prepareExPath(path)
     const key = bitcoin.payments.p2pkh({
-      pubkey: keyPairex.publicKey,
+      pubkey: keyPair.publicKey,
+      network: network,
+    })
+    return {
+      keyPair: keyPair,
+      address: key.address,
+      exPath: exPath,
+    }
+  }
+
+  static getAddressFromWIF(wif: string, network?: bitcoin.Network) {
+    const keyPair = bitcoin.ECPair.fromWIF(wif, network)
+    const key = bitcoin.payments.p2pkh({
+      pubkey: keyPair.publicKey,
       network: network,
     })
 
