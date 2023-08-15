@@ -52,12 +52,13 @@ export const signCertificateData = async (
   return users
 }
 
-export const filterByCourse = (
+export const filteringByCourse = (
   list: CertificateJSONResponse[],
+  baseList: CertificateJSONResponse[],
   filter?: string,
 ): CertificateJSONResponse[] => {
   if (!filter || filter === 'All') {
-    return list
+    return baseList
   }
 
   const searchQuery = filter.toLowerCase()
@@ -67,12 +68,13 @@ export const filterByCourse = (
   })
 }
 
-export const filterByState = (
+export const filteringByState = (
   list: CertificateJSONResponse[],
+  baseList: CertificateJSONResponse[],
   filter: string,
 ): CertificateJSONResponse[] => {
   if (!filter.length || filter === 'All') {
-    return list
+    return baseList
   }
 
   if (filter === 'Generated') {

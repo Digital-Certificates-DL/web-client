@@ -1,20 +1,11 @@
 <template>
   <div class="home-item">
     <div class="home-item__img-wrp">
-      <!--      <div v-if="props.img === ''">-->
-      <!--        <img-->
-      <!--          :src="props.img || '/branding/template.jpg'"-->
-      <!--          class="home-item__img"-->
-      <!--          alt="not found"-->
-      <!--        />-->
-      <!--      </div>-->
-      <!--      <div v-else>-->
       <img
         class="home-item__img"
         :src="img || '/branding/template.jpg'"
-        alt="error"
+        :alt="$t('home-item.img-alt')"
       />
-      <!--      </div>-->
     </div>
     <div class="home-item__title">
       <p>{{ title }}</p>
@@ -31,8 +22,10 @@ defineProps<{
 
 <style scoped lang="scss">
 .home-item__img {
-  width: toRem(314);
-  height: toRem(222);
+  max-width: toRem(314);
+  max-height: toRem(222);
+  width: 100%;
+  height: 100%;
   border-radius: toRem(8);
 }
 </style>

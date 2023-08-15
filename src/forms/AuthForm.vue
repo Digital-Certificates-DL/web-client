@@ -1,11 +1,11 @@
 <template>
   <form class="auth-form" autocomplete="off">
     <h3 class="auth-form__title">
-      {{ $t('auth-modal.title') }}
+      {{ $t('auth-form.title') }}
     </h3>
     <div>
       <p class="auth-form__step-title">
-        {{ $t('auth-modal.step-1-title') }}
+        {{ $t('auth-form.step-1-title') }}
       </p>
 
       <a
@@ -14,18 +14,18 @@
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ $t('auth-modal.step-1-description') }}
+        {{ $t('auth-form.step-1-description') }}
       </a>
     </div>
 
     <p class="auth-form__step-title">
-      {{ $t('auth-modal.step-2-title') }}
+      {{ $t('auth-form.step-2-title') }}
     </p>
 
     <input-field
       v-model="form.code"
-      class="auth-modal-form__input"
-      :label="$t('auth-modal-form.input-code-label')"
+      class="auth-form__input"
+      :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
       :error-message="getFieldErrorMessage('code')"
       @input="validateCode"
@@ -33,17 +33,17 @@
 
     <div class="auth-form__btns">
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
         size="large"
-        :text="$t('auth-modal-form.send-code-btn')"
+        :text="$t('auth-form.send-code-btn')"
         @click="sendCode"
       />
       <app-button
-        class="auth-modal-form__btn"
+        class="auth-form__btn"
         color="info"
         size="large"
-        :text="$t('auth-modal-form.close-btn')"
+        :text="$t('auth-form.close-btn')"
         @click="emit('close-modal')"
       />
     </div>
@@ -110,7 +110,7 @@ const validateCode = () => {
   justify-content: space-between;
 }
 
-.auth-modal-form__input {
+.auth-form__input {
   margin: 0 auto;
 }
 
@@ -119,7 +119,7 @@ const validateCode = () => {
   font-weight: 700;
 }
 
-.auth-modal-form__btn {
+.auth-form__btn {
   width: 45%;
 }
 

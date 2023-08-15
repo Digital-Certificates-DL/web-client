@@ -1,30 +1,30 @@
 <template>
-  <div class="timestamp">
+  <div class="timestamp-page">
     <h2>{{ $t('timestamp-page.page-title') }}</h2>
     <div class="timestamp-page__body">
-      <div class="timestamp__search">
-        <div class="timestamp__search-input-wrp">
+      <div class="timestamp-page__search">
+        <div class="timestamp-page__search-input-wrp">
           <input-field
             v-model="searchData"
-            class="timestamp__search-input"
+            class="timestamp-page__search-input"
             :placeholder="$t('timestamp-page.input-placeholder')"
           />
         </div>
 
-        <div v-if="selectedCount > 0" class="timestamp__btns">
+        <div v-if="selectedCount > 0" class="timestamp-page__btns">
           <p>{{ selectedCount }}</p>
 
           <app-button
-            class="timestamp__btn"
+            class="timestamp-page__btn"
             color="info"
             :text="$t('timestamp-page.bitcoin-btn')"
-            @click="bitcoinTimestamp"
+            @click="makeBitcoinTimestamp"
           />
         </div>
       </div>
 
-      <div class="timestamp__body">
-        <div class="timestamp__list">
+      <div class="timestamp-page__body">
+        <div class="timestamp-page__list">
           <div v-if="!certificatesListBuffer.length">
             <no-data-message :message="t('errors.empty-cert-list')" />
           </div>
@@ -40,9 +40,9 @@
           </div>
         </div>
 
-        <div class="timestamp__img-wrp">
+        <div class="timestamp-page__img-wrp">
           <img
-            class="timestamp__img"
+            class="timestamp-page__img"
             :alt="t('timestamp-page.certificate-image-alt')"
             :src="currentCertificate.img || 'branding/template.jpg'"
           />
@@ -64,7 +64,6 @@ import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { InputField } from '@/fields'
 import { ref, computed } from 'vue'
 import { Bitcoin } from '@/utils'
-import { tryOnBeforeMount } from '@vueuse/core'
 import {
   LoaderModal,
   TimestampItem,
@@ -106,7 +105,7 @@ const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
   currentCertificate.value = certificate
 }
 
-const bitcoinTimestamp = async () => {
+const makeBitcoinTimestamp = async () => {
   try {
     const bitcoin = new Bitcoin()
     isLoading.value = true
@@ -121,19 +120,18 @@ const bitcoinTimestamp = async () => {
       const tx = await bitcoin.PrepareLegacyTXTestnet(
         userState.userSetting.bip39MnemonicPhrase,
       )
-      const hex = tx?.hex || ''
-      const exAddress = tx?.exAddress || ''
-      const exPath = tx?.exPath || ''
-      const balance = tx?.balance || -1
-      if (!hex || !exAddress || !exPath || balance === -1) {
-        return
-      }
       if (!tx) {
         continue
       }
-      const { data } = await bitcoin.SendToTestnet(hex)
+
+      const { data } = await bitcoin.sendToTestnet(tx.hex)
       certificate.txHash = data.tx.hash.toString()
-      bitcoin.setNewUTXO(exAddress, exPath, data.tx.hash, balance)
+      bitcoin.setNewUTXO(
+        tx.exAddress,
+        tx.exPath,
+        data.tx.hash,
+        tx.balance || -1,
+      )
     }
 
     processState.value = t('timestamp.process-state-update-certificates')
@@ -142,11 +140,10 @@ const bitcoinTimestamp = async () => {
       (await updateCertificates(selectedItems.value)) || []
 
     certificateList.value = prepareCertificateImage(certificateList.value)
-    isLoading.value = false
   } catch (error) {
-    isLoading.value = false
     ErrorHandler.process(error)
   }
+  isLoading.value = false
 }
 
 const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
@@ -156,6 +153,7 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
   }
   return certificates
 }
+
 const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
     const data = await useUpdateCertificates(
@@ -196,10 +194,11 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
   for (const certificate of certificates) {
     certificateList.value.push(certificate.attributes)
   }
+
   return certificateList.value
 }
 
-const autoRefresh = () => {
+const getCertificates = () => {
   certificateList.value = userState.bufferCertificateList
   certificatesListBuffer.value = certificateList.value
 }
@@ -210,6 +209,7 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
     selectedItems.value.push(item)
     selectedCount.value = selectedItems.value.length
     isShowTimestampCheckbox.value = true
+
     return
   }
 
@@ -220,27 +220,29 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   selectedCount.value = selectedItems.value.length
   if (selectedItems.value.length < 1) {
     isShowTimestampCheckbox.value = false
+
     return
   }
+
   isShowTimestampCheckbox.value = true
 }
 
-tryOnBeforeMount(autoRefresh)
+getCertificates()
 </script>
 
 <style lang="scss" scoped>
-.timestamp {
+.timestamp-page {
   width: 100%;
   margin: 0 auto;
 }
 
-.timestamp__info {
+.timestamp-page__info {
   display: flex;
   width: 100%;
   justify-content: space-between;
 }
 
-.timestamp__img {
+.timestamp-page__img {
   max-width: toRem(600);
   width: 100%;
   border-radius: toRem(16);
@@ -254,16 +256,16 @@ tryOnBeforeMount(autoRefresh)
   }
 }
 
-.timestamp__list {
+.timestamp-page__list {
   width: 60%;
 }
 
-.timestamp__body {
+.timestamp-page__body {
   margin-top: toRem(20);
   display: flex;
 }
 
-.timestamp__search {
+.timestamp-page__search {
   display: flex;
   align-items: center;
   align-content: center;
@@ -271,7 +273,7 @@ tryOnBeforeMount(autoRefresh)
   margin-bottom: toRem(50);
 }
 
-.timestamp__btns {
+.timestamp-page__btns {
   max-width: toRem(200);
   width: 100%;
   display: flex;
@@ -280,7 +282,7 @@ tryOnBeforeMount(autoRefresh)
   align-items: center;
 }
 
-.timestamp__search-input-wrp {
+.timestamp-page__search-input-wrp {
   max-width: toRem(450);
   width: 35vw;
   margin-top: toRem(15);

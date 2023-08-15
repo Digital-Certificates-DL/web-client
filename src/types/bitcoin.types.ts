@@ -120,3 +120,7 @@ export type PreparedTX = {
   exAddress: string
   derivePath: number
 }
+
+export type getTxHex = {
+  hex: string
+}

@@ -152,6 +152,7 @@
     "step-1-placeholder": "Name",
     "start-btn": "Start",
     "cancel-btn": "Cancel"
+
   },
   "setting-form": {
     "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -271,5 +272,8 @@
   "error-modal": {
     "title": "Error",
     "btn-title": "Close"
+  },
+  "home-item": {
+    "img-alt": "Your image"
   }
 }

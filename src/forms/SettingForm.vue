@@ -8,7 +8,6 @@
       class="setting-form__form-input"
       :label="$t('setting-form.account-name-form-label')"
       :error-message="getFieldErrorMessage('accountName')"
-      @blur="touchField('accountName')"
     />
     <h3 class="setting-form__fields-title">
       {{ $t('setting-form.sign-key-title') }}
@@ -58,7 +57,7 @@ import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import { UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
-import { required, maxLength, mnemonic, link } from '@/validators'
+import { link, maxLength, mnemonic, required } from '@/validators'
 import { ROUTE_NAMES } from '@/enums'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
@@ -77,10 +76,10 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive({
-  accountName: '',
-  signKey: '',
-  bip39MnemonicPhrase: '',
-  urlGoogleSheet: '',
+  accountName: userState.userSetting.accountName || '',
+  signKey: userState.userSetting.signKey || '',
+  bip39MnemonicPhrase: userState.userSetting.bip39MnemonicPhrase || '',
+  urlGoogleSheet: userState.userSetting.urlGoogleSheet || '',
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
@@ -93,15 +92,15 @@ const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
 const save = async () => {
   if (!isFormValid()) return
   userState.setUserSetting(form)
-  const address = Bitcoin.getAddressFromWIF(form.signKey)
-
-  userState.userSetting.userBitcoinAddress = address || ''
+  userState.userSetting.userBitcoinAddress = Bitcoin.getAddressFromWIF(
+    form.signKey,
+  )
 
   try {
     const address = generateAddress(form.signKey)
     if (!address) {
       emit('on-error', t('errors.failed-generate-address'))
-      throw new Error()
+      return
     }
 
     userState.userSetting.userBitcoinAddress = address // TODO implement actions
@@ -116,13 +115,7 @@ const save = async () => {
 
 const generateAddress = (key: string): string => {
   try {
-    const address = Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
-    if (!address) {
-      emit('on-error', t('errors.failed-generate-address'))
-      throw new Error()
-    }
-
-    return address
+    return Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
   } catch (error) {
     emit('on-error', t('errors.failed-generate-address'))
     throw new Error()

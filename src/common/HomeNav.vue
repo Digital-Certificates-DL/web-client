@@ -42,7 +42,7 @@ const emit = defineEmits<{
   justify-content: space-evenly;
   align-items: center;
   border-radius: toRem(8);
-  height: toRem(150);
+  max-height: toRem(150);
 }
 
 .home-nav__title {
@@ -51,7 +51,7 @@ const emit = defineEmits<{
 }
 
 .home-nav__description {
-  color: var(--border-primary-dark);
+  color: var(--text-secondary-light);
   font-size: toRem(14);
 }
 

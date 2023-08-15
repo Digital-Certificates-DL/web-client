@@ -12,7 +12,7 @@
       <div class="all-certificates-page__filters">
         <app-dropdown
           :items="DROP_DOWN_COURSE_LIST"
-          @select-item="filterByCourseWrapper"
+          @select-item="filteringByCourseWrapper"
         />
         <app-dropdown
           :title="'Data'"
@@ -23,7 +23,7 @@
           :title="'All'"
           :items="DROP_DOWN_STATE_LIST"
           :main-image="'/branding/success-ico.png'"
-          @select-item="filterByStateWrapper"
+          @select-item="filteringByStateWrapper"
         />
       </div>
 
@@ -112,8 +112,8 @@ import {
   signCertificateData,
   validateItemListTimestamp,
   validateItemListGenerate,
-  filterByCourse,
-  filterByState,
+  filteringByCourse,
+  filteringByState,
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import {
@@ -224,11 +224,24 @@ const getCertificates = async () => {
   isLoading.value = false
 }
 
-const filterByCourseWrapper = (filter: DropdownItem) => {
-  certificatesList.value = filterByCourse(certificateFilter.value, filter.text)
+// TODO  make  it better
+
+const filteringByCourseWrapper = (filter: DropdownItem) => {
+  certificatesList.value = filteringByCourse(
+    certificateFilter.value,
+    userState.certificates,
+    filter.text,
+  )
 }
-const filterByStateWrapper = (filter: DropdownItem) => {
-  certificatesList.value = filterByState(certificateFilter.value, filter.text)
+
+// TODO  make  it better
+
+const filteringByStateWrapper = (filter: DropdownItem) => {
+  certificatesList.value = filteringByState(
+    certificateFilter.value,
+    userState.certificates,
+    filter.text,
+  )
 }
 
 const moveToTimestamp = async () => {
@@ -307,7 +320,6 @@ getCertificates()
 <style scoped lang="scss">
 .all-certificates-page {
   margin: 0 auto;
-  max-width: var(--page-large);
   width: 100%;
 }
 

@@ -11,7 +11,7 @@
           v-if="certificate.signature"
           class="certificate__img"
           :src="certificate.img || '/branding/template.jpg'"
-          alt="certificate"
+          :alt="$t('certificate.img-alt')"
         />
         <div v-else class="certificate__img"></div>
         <p class="certificate__name">
@@ -41,7 +41,7 @@
 
         <app-button
           class="certificate__btn certificate__btn-download"
-          icon-right="download"
+          :icon-right="$icons.download"
           @click="openLink(certificate)"
         />
       </div>

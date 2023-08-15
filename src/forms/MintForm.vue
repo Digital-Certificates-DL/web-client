@@ -18,7 +18,7 @@
         color="info"
         :text="$t('mint-form.close-btn')"
         :disabled="isFormDisabled"
-        @click="emit('mint-finished')"
+        @click="emit('mint-finished', '')"
       />
     </div>
   </form>
