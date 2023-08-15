@@ -11,7 +11,8 @@ import {
   BlockstreamTxList,
   UTXOs,
   getTxHex,
-} from '@/types/bitcoin.types'
+} from '@/types'
+import { BN } from '@distributedlab/tools'
 import { api } from '@/api'
 
 export class Bitcoin {
@@ -54,24 +55,19 @@ export class Bitcoin {
     }
     const bipInfo = this.getBipInfoByPath(seed, betterUTXO.addressInfo.path)
     const exBipInfo = this.getBipInfoByPath(seed, bipInfo.exPath)
-
     const psbtOuts = this.setOutputs(
       psbt,
       betterUTXO.utxoAmount,
       betterUTXO.value,
       exBipInfo.address,
     )
-    psbt = psbtOuts.psbt
-
-    psbt.signInput(0, bipInfo.keyPair)
-    psbt.finalizeAllInputs()
 
     this.addressInfoList = this.addressInfoList.filter(
       data => !data.utxos.length,
     )
 
     return {
-      hex: psbt.extractTransaction().toHex(),
+      hex: psbtOuts.psbt.signInput(0, bipInfo.keyPair).finalizeAllInputs().extractTransaction().toHex(),
       exAddress: exBipInfo.address,
       exPath: bipInfo.exPath,
       balance: psbtOuts.balance,
@@ -94,10 +90,10 @@ export class Bitcoin {
       for (let i = 0; i < 2; i++) {
         const path = 'm/' + i + '/' + index
         const bipInfo = this.getBipInfoByPath(seed, path)
-
         if (!bipInfo.address) {
           continue
         }
+
         const txs = await api.fetcher
           .withBaseUrl('https://blockstream.info')
           .get<BlockstreamTxList>(
@@ -129,7 +125,7 @@ export class Bitcoin {
 
   private setOutputs(
     psbt: bitcoin.Psbt,
-    balance: number,
+    balance: BN,
     fee: number,
     exAddress: string,
   ): { psbt: bitcoin.Psbt; balance: number } {
@@ -249,7 +245,7 @@ export class Bitcoin {
             utxos.push(smaller[i])
           } else {
             this.addressInfoList = this.addressInfoList.filter(
-              data => data.utxos.length !== 0,
+              data => data.utxos.length,
             )
             addressInfo.utxos = addressInfo.utxos.filter(
               data => !utxos.includes(data),
@@ -263,11 +259,11 @@ export class Bitcoin {
           }
         }
       }
-      if (largeTxs.length !== 0) {
+      if (largeTxs.length ) {
         const utxoRes: UTXO[] = []
         utxoRes.push(largeTxs[0])
         this.addressInfoList = this.addressInfoList.filter(
-          data => data.utxos.length !== 0,
+          data => data.utxos.length
         )
         addressInfo.utxos = addressInfo.utxos.filter(
           data => !utxoRes.includes(data),
