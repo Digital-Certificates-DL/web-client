@@ -6,26 +6,23 @@
         {{ $t('template_page.description') }}
       </p>
       <app-button text="send" @click="sendTemplate" />
+      <app-button text="get image size" @click="logImageSize" />
     </div>
     <div class="template-page__nav">
-      <app-button class="template-page__btn" :icon-left="$icons.cursorClick" />
       <app-button
         class="template-page__btn"
         text="+"
-        @click="currentInputInfo.font_size++"
+        @click="makeBigger()"
       />
-      <app-button
-        v-if="currentInputInfo.font_size"
-        size="large"
-        class="template-page__btn"
-        :text="currentInputInfo.font_size.toString()"
-      />
-      <app-button v-else class="template-page__btn" text="15" />
+
+      <h3 class="template-page__btn"
+          :disabled="currentInputInfo.is_qr"
+          >{{currentInputInfo.font_size || '0'}}</h3>
       <app-button
         class="template-page__btn"
         size="large"
         text="-"
-        @click="currentInputInfo.font_size--"
+        @click="  makeSmaller()"
       />
       <app-button
         class="template-page__btn"
@@ -44,6 +41,7 @@
         :src="userStore.bufferImg || '/static/branding/blockchain.png'"
         alt="Uploaded Image"
       />
+
       <div
         v-for="(position, index) in defaultTemplate"
         :key="index"
@@ -60,7 +58,19 @@
         @mouseleave.stop="endDrag"
         @click.stop
       >
+        <div
+          v-if="position.is_qr"
+          class="mock"
+          :style="{
+            width: position.width + 'px',
+            height: 200 + 'px',
+          }"
+          @focus="inputField = $event.target"
+          @click.stop="selectInput(position)"
+        ></div>
+
         <input
+          v-if="!position.is_qr"
           v-model="position.text"
           type="text"
           :style="{
@@ -187,6 +197,14 @@ const defaultTemplate = ref<Template[]>([
     x_center: true,
     font_size: 15,
   } as Template,
+  {
+    font_size: 0,
+    name: 'qr',
+    y: 100,
+    x: 900,
+    is_qr: true,
+    width: 200
+  } as Template,
 ])
 
 const removeInput = (index: number) => {
@@ -205,7 +223,7 @@ const startDrag = (index: number, event: MouseEvent) => {
   dragData.value.startY = event.clientY
 }
 
-const drag = (event: MouseEvent) => {
+const drag =  (event: MouseEvent) => {
   if (dragData.value.active) {
     const dx = event.clientX - dragData.value.startX
     const dy = event.clientY - dragData.value.startY
@@ -331,6 +349,30 @@ const getInputByName = (name: string) => {
   })[0]
 }
 
+const makeBigger = ( ) => {
+  if (!currentInputInfo.value.is_qr){
+    currentInputInfo.value.font_size++
+    return
+  }
+  currentInputInfo.value.width += 5
+
+}
+const makeSmaller = ( ) => {
+  if (!currentInputInfo.value.is_qr){
+    currentInputInfo.value.font_size--
+    return
+  }
+  currentInputInfo.value.width -= 5
+
+}
+
+const logImageSize = () =>{
+  console.log(imgInfo.value?.naturalWidth)
+  console.log(imgInfo.value?.naturalHeight)
+  console.log(imgInfo.value?.width)
+  console.log(imgInfo.value?.height)
+}
+
 const changeXCentrilize = () => {
   currentInputInfo.value.x_center = !currentInputInfo.value.x_center
 }
@@ -338,20 +380,17 @@ const changeXCentrilize = () => {
 
 <style scoped lang="scss">
 .template-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100%;
 }
 
 .template-page__back-image-wrp {
   position: relative;
-  max-width: toRem(1300);
+  width: 100%;
 }
 
 .template-page__back-image {
-  position: relative;
-  margin: auto;
   width: 100%;
+  height: 100%;
 }
 
 .template-page__input {
@@ -394,5 +433,11 @@ const changeXCentrilize = () => {
   height: toRem(50);
   width: toRem(50);
   font-size: toRem(18);
+  text-align: center
+
+}
+
+.mock{
+  background: red;
 }
 </style>

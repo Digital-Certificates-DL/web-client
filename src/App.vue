@@ -85,6 +85,7 @@ initUser()
 }
 
 .app__main {
+
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
 }
 

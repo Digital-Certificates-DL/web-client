@@ -7,4 +7,6 @@ export type Template = {
   y_center: boolean
   color: string
   font_size: number
+  is_qr: boolean
+  width: number
 }

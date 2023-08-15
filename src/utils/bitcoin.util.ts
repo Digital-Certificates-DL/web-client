@@ -174,8 +174,6 @@ export class Bitcoin {
           index: utxo[i].vout,
           nonWitnessUtxo: txHex,
         })
-        /* eslint-disable no-console */
-        console.log('add input')
       }
     }
 
@@ -189,9 +187,6 @@ export class Bitcoin {
     const ex = bitcoin.payments.p2pkh({
       pubkey: keyPairex.publicKey,
     })
-
-    /* eslint-disable no-console */
-    console.log('ex: ', ex)
 
     let balance = butxoAmount
     psbt.addOutput({
