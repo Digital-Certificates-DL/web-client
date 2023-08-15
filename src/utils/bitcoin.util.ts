@@ -67,7 +67,11 @@ export class Bitcoin {
     )
 
     return {
-      hex: psbtOuts.psbt.signInput(0, bipInfo.keyPair).finalizeAllInputs().extractTransaction().toHex(),
+      hex: psbtOuts.psbt
+        .signInput(0, bipInfo.keyPair)
+        .finalizeAllInputs()
+        .extractTransaction()
+        .toHex(),
       exAddress: exBipInfo.address,
       exPath: bipInfo.exPath,
       balance: psbtOuts.balance,
@@ -259,11 +263,11 @@ export class Bitcoin {
           }
         }
       }
-      if (largeTxs.length ) {
+      if (largeTxs.length) {
         const utxoRes: UTXO[] = []
         utxoRes.push(largeTxs[0])
         this.addressInfoList = this.addressInfoList.filter(
-          data => data.utxos.length
+          data => data.utxos.length,
         )
         addressInfo.utxos = addressInfo.utxos.filter(
           data => !utxoRes.includes(data),
