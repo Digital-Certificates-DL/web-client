@@ -9,7 +9,7 @@
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
-      <setting-form class="setting-page__form" @on-error="onError" />
+      <setting-form class="setting-page__form" @error="onError" />
     </div>
 
     <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
@@ -51,11 +51,11 @@ const onError = (msg: string) => {
   justify-items: center;
   margin-bottom: toRem(30);
 
-  @include respond-to('large') {
+  @include respond-to(large) {
     margin-bottom: toRem(23);
   }
 
-  @include respond-to('xmedium') {
+  @include respond-to(xmedium) {
     margin-bottom: toRem(15);
   }
 }

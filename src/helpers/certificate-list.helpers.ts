@@ -81,9 +81,11 @@ export const filteringByState = (
     return list.filter(certificate => {
       return certificate.certificate || certificate.digitalCertificate
     })
-  } else if (filter === 'Not generated') {
+  }
+
+  if (filter === 'Not generated') {
     return list.filter(certificate => {
-      return !certificate.signature!.length
+      return !certificate.signature
     })
   }
   return list

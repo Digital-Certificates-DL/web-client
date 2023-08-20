@@ -67,12 +67,14 @@ import bitcoin from 'bitcoinjs-lib'
 import { useSaveUserSetting } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 
+const MAX_NAME_LENGHT = 100
+
 const { t } = useI18n()
 const userState = useUserStore()
 const router = useRouter()
 
 const emit = defineEmits<{
-  (e: 'on-error', msg: string): void
+  (e: 'error', msg: string): void
 }>()
 
 const form = reactive({
@@ -83,7 +85,7 @@ const form = reactive({
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  accountName: { required, maxLength: maxLength(100) },
+  accountName: { required, maxLength: maxLength(MAX_NAME_LENGHT) },
   signKey: { required },
   bip39MnemonicPhrase: { required, mnemonic },
   urlGoogleSheet: { required, link },
@@ -99,16 +101,15 @@ const save = async () => {
   try {
     const address = generateAddress(form.signKey)
     if (!address) {
-      emit('on-error', t('errors.failed-generate-address'))
+      emit('error', t('errors.failed-generate-address'))
       return
     }
 
-    userState.userSetting.userBitcoinAddress = address // TODO implement actions
-
+    userState.userSetting.userBitcoinAddress = address
     await useSaveUserSetting(userState.userSetting.accountName)
     await router.push(ROUTE_NAMES.main)
   } catch (error) {
-    emit('on-error', t('errors.failed-save-setting'))
+    emit('error', t('errors.failed-save-setting'))
     throw new Error()
   }
 }
@@ -117,7 +118,7 @@ const generateAddress = (key: string): string => {
   try {
     return Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
   } catch (error) {
-    emit('on-error', t('errors.failed-generate-address'))
+    emit('error', t('errors.failed-generate-address'))
     throw new Error()
   }
 }
@@ -127,11 +128,11 @@ const generateAddress = (key: string): string => {
 .setting-form__form-input {
   margin-bottom: toRem(40);
 
-  @include respond-to('xmedium') {
+  @include respond-to(xmedium) {
     margin-bottom: toRem(30);
   }
 
-  @include respond-to('large') {
+  @include respond-to(large) {
     margin-bottom: toRem(35);
   }
 }

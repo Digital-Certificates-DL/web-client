@@ -15,7 +15,6 @@ const root = path.resolve(__dirname, resolveApp('src'))
 
 import wasm from 'vite-plugin-wasm'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
@@ -74,9 +73,7 @@ export default defineConfig(({ command, mode }) => {
         '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
-        // events: 'events-polyfill',
         buffer: 'buffer/index.js',
-        // crypto: 'crypto-browserify/index.js',
         'bitcoinjs-lib': 'bitcoinjs-lib-browser/bitcoinjs.js',
       },
     },

@@ -5,23 +5,23 @@
       <div class="home-page__body-nav">
         <home-navigation
           class="home-page__body-nav-item"
-          :title="$t('home.upload-title')"
-          :name="$t('home.upload-name')"
+          :title="$t('home-page.upload-title')"
+          :name="$t('home-page.upload-name')"
           :description="$t('home.upload-description')"
           @active="router.push($routes.template)"
         />
         <home-navigation
           class="home-page__body-nav-item"
-          :title="$t('home.create-title')"
-          :name="$t('home.create-name')"
-          :description="$t('home.create-description')"
+          :title="$t('home-page.create-title')"
+          :name="$t('home-page.create-name')"
+          :description="$t('home-page.create-description')"
           @active="router.push($routes.generate)"
         />
       </div>
       <div class="home__content">
         <div class="home__content-template">
           <div class="home-page__content-subtitle">
-            <h3>{{ $t('home.template-list-title') }}</h3>
+            <h3>{{ $t('home-page.template-list-title') }}</h3>
             <app-button color="info" :text="$t('home.get-all-btn')" />
           </div>
           <div class="home-page__items">
@@ -32,11 +32,11 @@
         </div>
         <div class="home__content-certificates">
           <div class="home-page__content-subtitle">
-            <h3>{{ $t('home.certificate-list-title') }}</h3>
+            <h3>{{ $t('home-page.certificate-list-title') }}</h3>
 
             <app-button
               color="info"
-              :text="$t('home.get-all-btn')"
+              :text="$t('home-page.get-all-btn')"
               :route="{
                 name: $routes.certificates,
               }"
@@ -49,7 +49,10 @@
             <div class="home-page__item-mock"></div>
           </div>
           <div v-else class="home-page__items">
-            <div v-for="item in certificates.slice(0, 3)" :key="item">
+            <div
+              v-for="item in certificates.slice(0, MAX_CERTIFICATES_ON_PAGE)"
+              :key="item"
+            >
               <home-certificate-item
                 :img="item.img"
                 :title="item.participant"
@@ -63,7 +66,6 @@
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
-      class="test"
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
@@ -84,6 +86,8 @@ import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { useUpdateCode, useUploadCertificates } from '@/api/api'
+
+const MAX_CERTIFICATES_ON_PAGE = 3
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -176,12 +180,5 @@ getCertificates()
   display: flex;
   justify-content: space-between;
   margin: toRem(20) 0;
-}
-
-.test {
-  max-width: toRem(600);
-  max-height: toRem(600);
-  width: 100%;
-  height: 100%;
 }
 </style>

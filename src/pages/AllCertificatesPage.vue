@@ -15,12 +15,12 @@
           @select-item="filteringByCourseWrapper"
         />
         <app-dropdown
-          :title="'Data'"
+          :title="DROP_DOWN_DATA_LIST[0].text"
           :items="DROP_DOWN_DATA_LIST"
           :main-image="'/branding/data-ico.png'"
         />
         <app-dropdown
-          :title="'All'"
+          :title="DROP_DOWN_DATA_LIST[0].text"
           :items="DROP_DOWN_STATE_LIST"
           :main-image="'/branding/success-ico.png'"
           @select-item="filteringByStateWrapper"
@@ -28,7 +28,7 @@
       </div>
 
       <div class="all-certificates-page__btns-wrp">
-        <div v-if="selectedCount > 0" class="all-certificates-page__btns">
+        <div v-if="selectedCount" class="all-certificates-page__btns">
           <p class="all-certificates__count">
             {{ selectedCount }}
           </p>
@@ -60,12 +60,13 @@
           {{ $t('all-certificates-page.certificates-item-date') }}
         </p>
         <p></p>
+        <!--        //TODO use grid-->
       </div>
 
       <no-data-message
         v-if="!userState.certificates.length"
         class="all-certificates-page__no-data-message"
-        :message="$t('errors.empty-cert-list')"
+        :message="$t('all-certificates-page.empty-certificates-list')"
       />
 
       <div v-for="item in certificateFilter" :key="item.id">
@@ -110,8 +111,8 @@ import {
   ErrorHandler,
   searchInTheList,
   signCertificateData,
-  validateItemListTimestamp,
-  validateItemListGenerate,
+  validateListTimestamp,
+  validateListGenerate,
   filteringByCourse,
   filteringByState,
 } from '@/helpers'
@@ -202,9 +203,9 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
     )
   } catch (error) {
     ErrorHandler.process(error)
+  } finally {
+    isLoading.value = false
   }
-
-  isLoading.value = false
 }
 
 const getCertificates = async () => {
@@ -246,7 +247,7 @@ const filteringByStateWrapper = (filter: DropdownItem) => {
 
 const moveToTimestamp = async () => {
   userState.setBufferCertificates(selectedItems.value)
-  if (validateItemListTimestamp(selectedItems.value)) {
+  if (validateListTimestamp(selectedItems.value)) {
     await router.push({
       name: ROUTE_NAMES.timestamp,
     })
@@ -257,7 +258,7 @@ const moveToTimestamp = async () => {
 const issueCertificates = async () => {
   isLoading.value = true
   processState.value = t('all-certificates-page.process-state-validate-data')
-  if (!validateItemListGenerate(selectedItems.value)) {
+  if (!validateListGenerate(selectedItems.value)) {
     isLoading.value = false
     ErrorHandler.process(t('errors.certificate-was-generated'))
     return
@@ -273,7 +274,7 @@ const issueCertificates = async () => {
   processState.value = t('all-certificates-page.process-state-create-pdf')
   const certificates = await generatePDF(signatures)
   if (!certificates) {
-    ErrorHandler.process('errors.no-certificate-list"')
+    ErrorHandler.process('all-certificates-page.empty-certificates-list"')
     return
   }
   userState.setBufferCertificates(certificates)

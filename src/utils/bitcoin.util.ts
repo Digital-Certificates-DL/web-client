@@ -34,7 +34,7 @@ export class Bitcoin {
     bufferValue: 2000,
   }
 
-  public PrepareLegacyTXTestnet = async (mnemonikPhrase: string) => {
+  public prepareLegacyTXTestnet = async (mnemonikPhrase: string) => {
     const seed = await mnemonicToSeedAsync(mnemonikPhrase)
 
     let psbt = new bitcoin.Psbt({ network: testnet })

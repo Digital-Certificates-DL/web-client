@@ -112,12 +112,15 @@ import {
 } from '@/api/api'
 
 import { AppButton } from '@/common'
-import { Signature } from '@/utils'
 import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
-import { ErrorHandler, prepareCertificateImage } from '@/helpers'
+import {
+  ErrorHandler,
+  prepareCertificateImage,
+  signCertificateData,
+} from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useI18n } from 'vue-i18n'
@@ -152,13 +155,16 @@ const start = async () => {
     disableForm()
     emit('update:is-loader-shown', true)
     emit('update-loader-state', t('generation-form.process-state-update-data'))
-    const users = await parsedData(form.link)
-    if (!users) {
+    const certificates = await parseData(form.link)
+    if (!certificates) {
       return
     }
     emit('update-loader-state', t('generation-form.process-state-sign-data'))
 
-    const signatures = sign(users)
+    const signatures = await signCertificateData(
+      certificates,
+      userState.userSetting.signKey,
+    )
     emit('update-loader-state', t('generation-form.process-state-create-pdf'))
     await createPDF(signatures)
 
@@ -172,7 +178,7 @@ const start = async () => {
     ErrorHandler.process(error)
   }
 }
-const parsedData = async (sheepUrl?: string) => {
+const parseData = async (sheepUrl?: string) => {
   try {
     return await useUploadCertificates(
       userState.userSetting.accountName,
@@ -193,16 +199,6 @@ const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
     certificateList.value.push(certificate.attributes)
   }
   return certificateList.value
-}
-
-const sign = (users: CertificateJSONResponse[]) => {
-  const signature = new Signature(userState.userSetting.signKey)
-  for (const user of users) {
-    if (!user.signature) {
-      user.signature = signature.signMsg(user.msg)
-    }
-  }
-  return users
 }
 
 const validateContainerState = async (containerID: string) => {
@@ -337,7 +333,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 .generation-form__choose-template-list {
   display: flex;
   max-height: toRem(222);
-  height: 10vw;
+  height: 10vh;
 }
 
 .generation-form__choose-template {

@@ -46,7 +46,7 @@ export type BitcoinTransactionOutput = {
 export interface AddressInfo {
   path: string
   address: string
-  utxos: UTXOs
+  utxos: UTXO[]
 }
 
 ////////////////
@@ -100,7 +100,6 @@ export interface Status {
   block_time: number
 }
 
-export type UTXOs = UTXO[]
 export interface UTXO {
   txid: string
   vout: number

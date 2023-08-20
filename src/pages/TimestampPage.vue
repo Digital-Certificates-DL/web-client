@@ -123,7 +123,7 @@ const makeBitcoinTimestamp = async () => {
     )
     processState.value = t('timestamp.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
-      const tx = await bitcoin.PrepareLegacyTXTestnet(
+      const tx = await bitcoin.prepareLegacyTXTestnet(
         userState.userSetting.bip39MnemonicPhrase,
       )
       if (!tx) {

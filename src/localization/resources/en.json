@@ -37,7 +37,6 @@
     "empty-container-id": "Container id is empty",
     "empty-google-link": "Google link is empty",
     "empty-img": "Empty  image",
-    "empty-cert-list": "Empty certificate list",
     "failed-get-certificates": "Failed to  get  certificates",
     "failed-generate-certificates": "Failed to generate certificates",
     "certificate-was-generated": "Certificate was generated",
@@ -92,7 +91,8 @@
     "certificates-item-date" : "Date",
     "no-certificate-list": "Certificates list is empty",
     "process-state-update-date": "Updating certificates list",
-    "image_uploading":"Upload certificate image"
+    "image_uploading":"Upload certificate image",
+    "empty-certificates-list": "Empty certificate list"
   },
   "generation-page": {
     "title":"Create new certificate",
@@ -241,7 +241,7 @@
     "mint-btn": "Mint",
     "placeholder-metamask-address": "Type student’s Ethereum address"
   },
-  "home": {
+  "home-page": {
     "upload-title": "Upload new template",
     "upload-name": "Upload",
     "upload-description": "Upload and customize new template of PDF file",
