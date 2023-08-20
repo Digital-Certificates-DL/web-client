@@ -10,9 +10,9 @@
 
       <a
         class="auth-form__link"
-        :href="tokenLink"
         target="_blank"
         rel="noopener noreferrer"
+        :href="tokenLink"
       >
         {{ $t('auth-form.step-1-description') }}
       </a>
@@ -23,12 +23,11 @@
     </p>
 
     <input-field
-      v-model="form.code"
+      v-model="form.accessCode"
       class="auth-form__input"
       :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
       :error-message="getFieldErrorMessage('code')"
-      @input="validateCode"
     />
 
     <div class="auth-form__btns">
@@ -52,15 +51,12 @@
 
 <script setup lang="ts">
 import { InputField } from '@/fields'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { AppButton } from '@/common'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 
 const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const isInputValid = ref(false)
-const accessCodeInputData = ref('')
 
 defineProps<{
   tokenLink: string
@@ -72,26 +68,19 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive({
-  code: '',
+  accessCode: '',
 })
 
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  code: { required },
+  accessCode: { required },
 })
 
 const sendCode = () => {
   if (!isFormValid) return
   disableForm()
 
-  emit('send-auth-code', form.code)
-
+  emit('send-auth-code', form.accessCode)
   enableForm()
-}
-
-const validateCode = () => {
-  if (accessCodeInputData.value != '') {
-    isInputValid.value = true
-  }
 }
 </script>
 

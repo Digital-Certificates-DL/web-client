@@ -1,10 +1,6 @@
 <template>
   <div class="timestamp-item">
-    <checkbox-field
-      :model-value="isSelected"
-      v-show="isShow"
-      @click="selectItem"
-    />
+    <checkbox-field v-model="isSelected" v-show="isShow" @click="clickItem" />
     <div class="timestamp-item__body">
       <div class="timestamp-item__name">
         <p>{{ name }}</p>
@@ -14,54 +10,61 @@
       </div>
 
       <app-button
-        class="certificate__btn"
-        @click="emit('open-modal', true, props.user)"
-        :text="$t('certificate.mint-text')"
+        class="timestamp-item__btn"
+        @click="emit('open-modal', true, certificate)"
+        :text="$t('timestamp-item.mint-btn-text')"
       />
 
       <app-button
-        class="certificate__btn"
-        @click="selectItem"
-        :text="$t('certificate.select-certificate-btn')"
+        class="timestamp-item__btn"
+        @click="clickItem"
+        :text="$t('timestamp-item.select-certificate-btn-text')"
       />
 
       <app-button
-        class="certificate__btn certificate__btn-download"
-        @click="window.open(props.user.certificate, '_blank')"
-      >
-        <img src="/branding/download.png" alt="download img" />
-      </app-button>
+        class="timestamp-item__btn timestamp-item__btn-download"
+        :icon-right="$icons.download"
+        @click="openLink(certificate)"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { CertificateJSONResponse } from '@/types'
-import CheckboxField from '@/fields/CheckboxField.vue'
+import { CheckboxField } from '@/fields'
 import { ref } from 'vue'
-import AppButton from '@/common/AppButton.vue'
+import { AppButton } from '@/common'
+
 const isSelected = ref(false)
 
-const props = withDefaults(
-  defineProps<{
-    isShow: boolean
-    name: string
-    date: string
-    user: CertificateJSONResponse
-  }>(),
-  {
-    isShow: false,
-  },
-)
-
-const emit = defineEmits<{
-  (e: 'open-modal', state: boolean, user: CertificateJSONResponse): boolean
-  (e: 'select', state: boolean, user: CertificateJSONResponse): boolean
+defineProps<{
+  isShow: boolean
+  name: string
+  date: string
+  certificate: CertificateJSONResponse
 }>()
 
-const selectItem = () => {
+const emit = defineEmits<{
+  (
+    e: 'open-modal',
+    state: boolean,
+    certificate: CertificateJSONResponse,
+  ): boolean
+  (e: 'select', state: boolean, certificate: CertificateJSONResponse): boolean
+}>()
+
+const openLink = (certificate: CertificateJSONResponse) => {
+  window.open(
+    'https://' + certificate.certificate,
+    '_blank',
+    'noopener, noreferrer',
+  )
+}
+
+const clickItem = () => {
   isSelected.value = !isSelected.value
-  emit('select', isSelected.value, props.user)
+  emit('select', isSelected.value, props.certificate)
 }
 </script>
 
@@ -89,7 +92,14 @@ const selectItem = () => {
   display: flex;
 }
 
-.timestamp-item__download {
-  background: var(--app-button-bg);
+.timestamp-item__btn {
+  width: toRem(140);
+  height: toRem(50);
+}
+
+.timestamp-item__btn-download {
+  width: toRem(50);
+  margin-left: toRem(20);
+  font-size: toRem(20);
 }
 </style>

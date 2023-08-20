@@ -1,10 +1,6 @@
 <template>
   <div class="certificate">
-    <checkbox-field
-      v-show="true"
-      :model-value="isSelected"
-      @click="selectItem"
-    />
+    <checkbox-field v-show="true" v-model="isSelected" @click="selectItem" />
     <div class="certificate__body">
       <div class="certificate__img-wrp" @click="selectItem">
         <img
@@ -13,11 +9,10 @@
           :src="certificate.img || '/branding/template.jpg'"
           :alt="$t('certificate.img-alt')"
         />
-        <div v-else class="certificate__img"></div>
-        <p class="certificate__name">
-          {{ certificate.participant }}
-        </p>
       </div>
+      <p class="certificate__name">
+        {{ certificate.participant }}
+      </p>
       <div class="certificate__titles">
         <p>
           {{ certificate.courseTitle }}
@@ -27,7 +22,7 @@
         </p>
       </div>
 
-      <div class="certificate__btns" v-if="certificate.signature !== ''">
+      <div class="certificate__btns" v-if="!certificate.signature">
         <app-button
           class="certificate__btn"
           :text="$t('certificate.mint-text')"
@@ -40,7 +35,7 @@
         />
 
         <app-button
-          class="certificate__btn certificate__btn-download"
+          class="certificate__btn timestamp-item__btn-download"
           :icon-right="$icons.download"
           @click="openLink(certificate)"
         />
@@ -109,6 +104,7 @@ const openLink = (certificate: CertificateJSONResponse) => {
 .certificate__img-wrp {
   display: flex;
   align-items: center;
+  width: toRem(74);
 }
 
 .certificate__img {
@@ -137,7 +133,7 @@ const openLink = (certificate: CertificateJSONResponse) => {
   height: toRem(50);
 }
 
-.certificate__btn-download {
+.timestamp-item__btn-download {
   width: toRem(50);
   margin-left: toRem(20);
   font-size: toRem(20);

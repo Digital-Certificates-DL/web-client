@@ -24,7 +24,7 @@
         <app-button
           class="success-modal__btn"
           color="success"
-          :text="$t('success-modal.btn-title')"
+          :text="$t('success-modal.btn-text')"
           @click="modal.close"
         />
       </div>
@@ -51,8 +51,12 @@ const emit = defineEmits<{
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
-  width: toRem(720);
-  height: toRem(256);
+  max-width: toRem(720);
+  max-height: toRem(256);
+  min-width: toRem(400);
+  min-height: toRem(150);
+  width: 100%;
+  height: 100%;
 
   @include respond-to(small) {
     padding: 3%;

@@ -1,16 +1,16 @@
 <template>
   <div :class="mainNavClasses">
     <app-button
-      class="main-nav__btn"
-      :color="props.color"
-      :text="props.title"
+      class="main-navigation__btn"
+      :color="color"
+      :text="title"
       :route="route"
     />
-    <p class="main-nav__description">
-      {{ props.description }}
+    <p class="main-navigation__description">
+      {{ description }}
     </p>
-    <p class="main-nav__description" :class="mainNavClasses">
-      {{ props.body }}
+    <p class="main-navigation__description" :class="mainNavClasses">
+      {{ body }}
     </p>
   </div>
 </template>
@@ -48,26 +48,18 @@ const props = withDefaults(
 )
 
 const mainNavClasses = computed(() =>
-  ['main-nav', `main-nav--${props.size}`].join(' '),
+  ['main-navigation', `main-navigation--${props.size}`].join(' '),
 )
 </script>
 
 <style lang="scss" scoped>
-.nav-button {
-  display: block;
-
-  &--large {
-    max-width: toRem(304);
-  }
-}
-
-.main-nav__description {
+.main-navigation__description {
   @include respond-to(xmedium) {
     font-size: toRem(14);
   }
 }
 
-.main-nav__btn {
+.main-navigation__btn {
   width: toRem(89);
   height: toRem(34);
   margin-bottom: toRem(8);

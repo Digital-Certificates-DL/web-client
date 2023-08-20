@@ -1,16 +1,16 @@
 <template>
-  <div class="home-nav">
-    <div class="home-nav__info">
-      <h3 class="home-nav__title">
+  <div class="home-navigation">
+    <div class="home-navigation__info">
+      <h3 class="home-navigation__title">
         {{ title }}
       </h3>
-      <p class="home-nav__description">
+      <p class="home-navigation__description">
         {{ description }}
       </p>
     </div>
-    <div class="home-nav__btns">
+    <div class="home-navigation__btns">
       <app-button
-        class="home-nav__btn"
+        class="home-navigation__btn"
         color="info"
         :text="name"
         @click="emit('active')"
@@ -22,13 +22,22 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 
-defineProps<{
-  color?: string
-  title?: string
-  name?: string
-  description?: string
-  router?: string
-}>()
+withDefaults(
+  defineProps<{
+    color?: string
+    title?: string
+    name?: string
+    description?: string
+    router?: string
+  }>(),
+  {
+    color: 'primary',
+    title: '',
+    name: '',
+    description: '',
+    router: '',
+  },
+)
 
 const emit = defineEmits<{
   (e: 'active'): boolean
@@ -36,7 +45,7 @@ const emit = defineEmits<{
 </script>
 
 <style lang="scss" scoped>
-.home-nav {
+.home-navigation {
   border: toRem(2) solid var(--border-primary-main);
   display: flex;
   justify-content: space-evenly;
@@ -45,21 +54,21 @@ const emit = defineEmits<{
   max-height: toRem(150);
 }
 
-.home-nav__title {
+.home-navigation__title {
   white-space: nowrap;
   margin-bottom: toRem(10);
 }
 
-.home-nav__description {
+.home-navigation__description {
   color: var(--text-secondary-light);
   font-size: toRem(14);
 }
 
-.home-nav__info {
+.home-navigation__info {
   width: 50%;
 }
 
-.home-nav__btns {
+.home-navigation__btns {
   width: 30%;
   display: flex;
   justify-content: right;

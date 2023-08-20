@@ -7,17 +7,16 @@
     <div class="loader-modal__pane">
       <loader />
       <h2 class="loader-modal__title">
-        {{ props.state }}
+        {{ state }}
       </h2>
     </div>
   </modal>
 </template>
 
 <script lang="ts" setup>
-import { Modal } from '@/common'
-import Loader from '@/common/Loader.vue'
+import { Modal, Loader } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   state: string
   isShown: boolean
 }>()

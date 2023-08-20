@@ -60,12 +60,10 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'success', tx: string): boolean
-  (e: 'update:is-shown', value: boolean): void
 }>()
 
 const onSuccess = (tx: string) => {
   emit('success', tx)
-  emit('update:is-shown', false)
 }
 </script>
 

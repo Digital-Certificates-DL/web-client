@@ -32,7 +32,7 @@
             <timestamp-item
               :name="item.participant"
               :date="item.date"
-              :user="item"
+              :certificate="item"
               :is-show="isShowTimestampCheckbox"
               @select="selectItem"
               @open-modal="openModal"
@@ -50,9 +50,11 @@
       </div>
     </div>
 
+    <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
     <certificate-modal
-      v-model:is-shown="isModalActive"
+      v-model:is-shown="isCertificateModalShown"
       :certificate="currentCertificate"
+      @success="onSuccessMint"
     />
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
   </div>
@@ -70,6 +72,7 @@ import {
   AppButton,
   CertificateModal,
   NoDataMessage,
+  SuccessModal,
 } from '@/common'
 import {
   ErrorHandler,
@@ -81,9 +84,12 @@ import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
 
 const { t } = useI18n()
 
-const isModalActive = ref(false)
+const isCertificateModalShown = ref(false)
 const currentCertificate = ref({} as CertificateJSONResponse)
 const selectedCount = ref(0)
+
+const isMintSuccess = ref(false)
+const mintTx = ref('')
 
 const userState = useUserStore()
 
@@ -101,7 +107,7 @@ const certificateFilter = computed(() =>
 )
 
 const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
-  isModalActive.value = state
+  isCertificateModalShown.value = state
   currentCertificate.value = certificate
 }
 
@@ -225,6 +231,12 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   }
 
   isShowTimestampCheckbox.value = true
+}
+
+const onSuccessMint = (tx: string) => {
+  mintTx.value = tx
+  isCertificateModalShown.value = false
+  isMintSuccess.value = true
 }
 
 getCertificates()

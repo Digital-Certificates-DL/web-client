@@ -35,7 +35,7 @@
         class="setting-form__btn"
         color="info"
         size="large"
-        :text="$t('setting-form.save-btn-title')"
+        :text="$t('setting-form.save-btn-text')"
         :disabled="!isFormValid"
         @click="save"
       />
@@ -43,7 +43,7 @@
         class="setting-form__btn"
         color="info"
         size="large"
-        :text="$t('setting-form.cancel-btn-title')"
+        :text="$t('setting-form.cancel-btn-text')"
         :route="{
           name: $routes.main,
         }"

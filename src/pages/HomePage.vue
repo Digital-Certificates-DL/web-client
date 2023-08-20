@@ -3,14 +3,14 @@
     <div class="home-page__body">
       <h2>{{ $t('home.title') }}</h2>
       <div class="home-page__body-nav">
-        <home-body-nav
+        <home-navigation
           class="home-page__body-nav-item"
           :title="$t('home.upload-title')"
           :name="$t('home.upload-name')"
           :description="$t('home.upload-description')"
           @active="router.push($routes.template)"
         />
-        <home-body-nav
+        <home-navigation
           class="home-page__body-nav-item"
           :title="$t('home.create-title')"
           :name="$t('home.create-name')"
@@ -50,7 +50,10 @@
           </div>
           <div v-else class="home-page__items">
             <div v-for="item in certificates.slice(0, 3)" :key="item">
-              <home-item :img="item.img" :title="item.participant" />
+              <home-certificate-item
+                :img="item.img"
+                :title="item.participant"
+              />
             </div>
           </div>
         </div>
@@ -70,11 +73,11 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import {
-  HomeItem,
+  HomeCertificateItem,
   AppButton,
   LoaderModal,
   AuthModal,
-  HomeBodyNav,
+  HomeNavigation,
 } from '@/common'
 import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'

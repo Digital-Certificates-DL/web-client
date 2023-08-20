@@ -159,8 +159,8 @@
     "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings",
-    "cancel-btn-title": "Cancel",
-    "save-btn-title": "Save",
+    "cancel-btn-text": "Cancel",
+    "save-btn-text": "Save",
     "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
@@ -172,8 +172,8 @@
     "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings",
-    "cancel-btn-title": "Cancel",
-    "save-btn-title": "Save",
+    "cancel-btn-text": "Cancel",
+    "save-btn-text": "Save",
     "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
@@ -209,7 +209,9 @@
     "certificate-image-alt": "Certificate preview"
   },
   "timestamp-item":{
-    "timestamp-btn": "Timestamp"
+    "timestamp-btn": "Timestamp",
+    "mint-btn-text": "Mint",
+    "select-certificate-btn-text": "Select him"
   },
   "template_page": {
     "title": "Upload new  template",
@@ -267,13 +269,17 @@
   "success-modal":{
     "title": "Success",
     "description ": "Certificate is minted successfully",
-    "btn-title": "Close"
+    "btn-text": "Close"
   },
   "error-modal": {
     "title": "Error",
-    "btn-title": "Close"
+    "btn-text": "Close"
   },
-  "home-item": {
+  "home-certificate-item": {
     "img-alt": "Your image"
+  },
+  "app-dropdown": {
+    "img-alt": "Course icon",
+    "select-title": "Select"
   }
 }

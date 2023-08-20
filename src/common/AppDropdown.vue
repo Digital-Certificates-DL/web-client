@@ -8,17 +8,17 @@
         alt="course icon"
       />
       <p class="dropdown__item-title">
-        {{ currentItem.text || title || 'Select' }}
+        {{ currentItem.text || title || $t('app-dropdown.select-title') }}
       </p>
     </div>
     <div class="app-dropdown__content">
-      <div v-for="(item, key) in items" :value="key" :key="item">
+      <div v-for="item in items" :key="item">
         <div class="app-dropdown__item" @click="selectItem(item)">
           <img
             v-if="Boolean(item.img)"
             class="app-dropdown__item-img"
             :src="item.img"
-            alt="course icon"
+            :alt="$t('app-dropdown.img-alt')"
           />
           <p class="app-dropdown__item-title">
             {{ item.text }}
@@ -31,19 +31,27 @@
 
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue'
-import { DropdownItem } from '@/types/dropdown.types'
+import { DropdownItem } from '@/types'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const currentItem = ref({} as DropdownItem)
 
 const emit = defineEmits<{
   (event: 'select-item', value: DropdownItem): void
 }>()
 
-defineProps<{
-  title?: string
-  items?: DropdownItem[]
-  mainImage?: string
-}>()
+withDefaults(
+  defineProps<{
+    items: DropdownItem[]
+    title?: string
+    mainImage?: string
+  }>(),
+  {
+    title: t('app-dropdown.select-title'),
+    mainImage: '',
+  },
+)
 
 const selectItem = (item: DropdownItem) => {
   currentItem.value = item
@@ -52,8 +60,6 @@ const selectItem = (item: DropdownItem) => {
 </script>
 
 <style scoped lang="scss">
-$index: 1;
-
 .app-dropdown {
   position: relative;
   display: inline-block;
@@ -75,7 +81,7 @@ $index: 1;
   padding: toRem(8);
   min-width: toRem(160);
   box-shadow: 0 toRem(8) toRem(16) 0 rgba(0, 0, 0, 0.2);
-  z-index: $index;
+  z-index: var(--defaut-z-index);
 }
 
 .app-dropdown__content a {

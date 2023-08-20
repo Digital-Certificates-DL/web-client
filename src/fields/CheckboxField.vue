@@ -46,7 +46,7 @@ enum EVENTS {
 }
 
 export default defineComponent({
-  name: 'c',
+  name: 'checkbox-field',
   components: { Icon },
   props: {
     modelValue: { type: Boolean, default: false },
@@ -117,7 +117,7 @@ export default defineComponent({
   color: var(--field-bg-primary);
 
   .checkbox-field--checked & {
-    background-color: var(--text-primary-light);
+    background-color: var(--background-primary-dark);
   }
 }
 

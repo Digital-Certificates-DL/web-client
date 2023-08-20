@@ -1,6 +1,6 @@
 <template>
   <modal
-    :is-shown="props.isShown"
+    :is-shown="isShown"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <div class="error-modal__pane">
@@ -18,8 +18,8 @@
       <app-button
         class="error-modal__btn"
         size="large"
-        :text="$t('error-modal.btn-title')"
         color="error"
+        :text="$t('error-modal.btn-text')"
         @click="tryAgain"
       />
     </div>
@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { Modal, Icon, AppButton } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   message: string
   isShown: boolean
 }>()
@@ -77,6 +77,5 @@ const tryAgain = () => {
 
 .error-modal__btn {
   margin: toRem(10) auto;
-  width: 40%;
 }
 </style>

@@ -311,6 +311,7 @@ const generatePDF = async (certificates: CertificateJSONResponse[]) => {
 
 const onSuccessMint = (tx: string) => {
   mintTx.value = tx
+  isCertificateModalShown.value = false
   isMintSuccess.value = true
 }
 
