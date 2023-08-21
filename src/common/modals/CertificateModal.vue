@@ -40,6 +40,7 @@
         <mint-form
           :certificate="certificate"
           @mint-finished="onSuccess"
+          @error="onError"
           @modal-close="modal.close"
         />
       </div>
@@ -60,10 +61,14 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'success', tx: string): boolean
+  (e: 'error', msg: string): void
 }>()
 
 const onSuccess = (tx: string) => {
   emit('success', tx)
+}
+const onError = (msg: string) => {
+  emit('error', msg)
 }
 </script>
 
@@ -73,6 +78,8 @@ const onSuccess = (tx: string) => {
   position: fixed;
   max-width: toRem(475);
   max-height: toRem(796);
+  min-height: toRem(400);
+  min-width: toRem(300);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);

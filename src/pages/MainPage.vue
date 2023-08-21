@@ -24,7 +24,7 @@
           <app-button
             class="main-page__metamask-btn main-page__btn-connect"
             color="info"
-            :text="$t('main-page.metamask-connect-btn')"
+            :text="$t('main-page.metamask-connect-btn-text')"
             :disabled="web3Store.provider.isConnected"
             @click="connect"
           />
@@ -38,7 +38,7 @@
             class="main-page__metamask-btn"
             color="info"
             size="large"
-            :text="$t('main-page.metamask-disconnect-btn')"
+            :text="$t('main-page.metamask-disconnect-btn-text')"
             @click="web3Store.provider.disconnect"
           />
         </div>

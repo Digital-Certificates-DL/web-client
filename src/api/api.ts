@@ -5,9 +5,10 @@ import {
   Container,
   IpfsAttributes,
 } from '@/types'
-import { ErrorHandler, prepareCertificateImage, sleep } from '@/helpers'
+import { prepareCertificateImage, sleep } from '@/helpers'
+import { JsonApiError } from '@distributedlab/jac'
 
-export const useUpdateCertificates = async (
+export const updateCertificatesAPICall = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -31,7 +32,7 @@ export const useUpdateCertificates = async (
   return data
 }
 
-export const useDownloadImage = async (
+export const downloadImageAPICall = async (
   certificate: CertificateJSONResponse,
   bitcoinAddress: string,
   name: string,
@@ -55,7 +56,10 @@ export const useDownloadImage = async (
   return data
 }
 
-export const useUploadCertificates = async (name: string, sheepUrl: string) => {
+export const uploadCertificatesAPICall = async (
+  name: string,
+  sheepUrl: string,
+) => {
   const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/users/',
     {
@@ -69,10 +73,10 @@ export const useUploadCertificates = async (name: string, sheepUrl: string) => {
       },
     },
   )
-  return data
+  return prepareCertificateImage(data)
 }
 
-export const useCreatePdf = async (
+export const createPdfAPICall = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -93,7 +97,7 @@ export const useCreatePdf = async (
   return data
 }
 
-export const useValidateContainerState = async (containerID: string) => {
+export const validateContainerStateAPICall = async (containerID: string) => {
   await sleep(5000)
   const containerStatus = true
   while (containerStatus) {
@@ -108,26 +112,15 @@ export const useValidateContainerState = async (containerID: string) => {
 
       return data
     } catch (error) {
+      if ((error as JsonApiError).httpStatus === 500) {
+        throw new Error()
+      }
       await sleep(5000)
-      // ErrorHandler.process(error)
     }
   }
 }
 
-export const useGetUpdateLink = async (name: string) => {
-  const { data } = await api.post('/integrations/ccp/users/token', {
-    body: {
-      data: {
-        attributes: {
-          name: name,
-        },
-      },
-    },
-  })
-  return data
-}
-
-export const useUpdateCode = async (code: string, name: string) => {
+export const updateCodeAPICall = async (code: string, name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {
@@ -143,7 +136,7 @@ export const useUpdateCode = async (code: string, name: string) => {
   )
 }
 
-export const useSendToIPFS = async (
+export const sendToIPFSAPICall = async (
   description: string,
   img: Uint8Array,
   participant: string,
@@ -165,7 +158,7 @@ export const useSendToIPFS = async (
   return data
 }
 
-export const useSaveUserSetting = async (name: string) => {
+export const saveUserSettingAPICall = async (name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {
@@ -181,48 +174,18 @@ export const useSaveUserSetting = async (name: string) => {
   )
 }
 
-export const getCertificates = async (
-  url: string,
-  name: string,
-): Promise<CertificateJSONResponse[]> => {
-  try {
-    const { data } = await api.post<CertificateJSONResponse[]>(
-      '/integrations/ccp/users/',
-      {
-        body: {
-          data: {
-            attributes: {
-              url: url,
-              name: name,
-            },
+export const updateAuthCodeAPICall = async (code: string, name: string) => {
+  await api.post<CertificateJSONResponseList>(
+    '/integrations/ccp/users/settings',
+    {
+      body: {
+        data: {
+          attributes: {
+            code: code,
+            name: name,
           },
         },
       },
-    )
-
-    return prepareCertificateImage(data)
-  } catch (error) {
-    throw new Error()
-  }
-}
-
-export const updateAuthCode = async (code: string, name: string) => {
-  try {
-    await api.post<CertificateJSONResponseList>(
-      '/integrations/ccp/users/settings',
-      {
-        body: {
-          data: {
-            attributes: {
-              code: code,
-              name: name,
-            },
-          },
-        },
-      },
-    )
-  } catch (error) {
-    ErrorHandler.process(error)
-    return
-  }
+    },
+  )
 }

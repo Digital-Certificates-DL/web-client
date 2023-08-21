@@ -74,6 +74,7 @@
             class="generation-form__text-input"
             :label="$t('generation-form.step-3-placeholder')"
             :disabled="isFormDisabled"
+            :error-message="getFieldErrorMessage('link')"
           />
 
           <div class="generation-form__btns-wrp">
@@ -81,7 +82,7 @@
               class="generation-form__btn"
               color="info"
               size="large"
-              :text="$t('generation-form.start-btn')"
+              :text="$t('generation-form.start-btn-text')"
               :disabled="!isFormValid"
               @click="start"
             />
@@ -93,7 +94,7 @@
               :route="{
                 name: $routes.main,
               }"
-              :text="$t('generation-form.cancel-btn')"
+              :text="$t('generation-form.cancel-btn-text')"
             />
           </div>
         </div>
@@ -103,16 +104,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { InputField } from '@/fields'
-import {
-  useValidateContainerState,
-  useCreatePdf,
-  useUploadCertificates,
-} from '@/api/api'
-
+import { createPdfAPICall, uploadCertificatesAPICall } from '@/api/api'
 import { AppButton } from '@/common'
-import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
@@ -120,14 +116,17 @@ import {
   ErrorHandler,
   prepareCertificateImage,
   signCertificateData,
+  validateContainerState,
 } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
-import { required } from '@/validators'
+import { link, maxLength, required } from '@/validators'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const userState = useUserStore()
 const { isFormDisabled, disableForm, enableForm } = useForm()
+
+const MAX_NAME_LENGTH = 100
 
 defineProps<{
   isLoaderShown: boolean
@@ -145,8 +144,8 @@ const form = reactive({
 })
 
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  name: { required },
-  link: { required },
+  name: { required, maxLength: maxLength(MAX_NAME_LENGTH) },
+  link: { required, link },
 })
 
 const start = async () => {
@@ -168,19 +167,19 @@ const start = async () => {
     emit('update-loader-state', t('generation-form.process-state-create-pdf'))
     await createPDF(signatures)
 
-    enableForm()
-
     emit('update:is-loader-shown', false)
     await router.push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
-    enableForm()
     emit('update:is-loader-shown', false)
     ErrorHandler.process(error)
   }
+
+  enableForm()
 }
+
 const parseData = async (sheepUrl?: string) => {
   try {
-    return await useUploadCertificates(
+    return await uploadCertificatesAPICall(
       userState.userSetting.accountName,
       sheepUrl || userState.userSetting.urlGoogleSheet,
     )
@@ -189,31 +188,14 @@ const parseData = async (sheepUrl?: string) => {
       emit('auth', error.metadata.link)
       return
     }
-    ErrorHandler.process(error)
-  }
-}
 
-const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
-  const certificateList = ref<CertificateJSONResponse[]>([])
-  for (const certificate of certificates) {
-    certificateList.value.push(certificate.attributes)
+    throw error
   }
-  return certificateList.value
-}
-
-const validateContainerState = async (containerID: string) => {
-  const data = await useValidateContainerState(containerID)
-  if (!data) {
-    ErrorHandler.process(t('errors.empty-container'))
-    return
-  }
-  data.clear_certificate = prepareCertificate(data.certificates)
-  return data
 }
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const data = await useCreatePdf(
+    const data = await createPdfAPICall(
       users,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
@@ -331,9 +313,11 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 }
 
 .generation-form__choose-template-list {
-  display: flex;
-  max-height: toRem(222);
-  height: 10vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: toRem(50);
+  max-height: toRem(180);
+  height: 100%;
 }
 
 .generation-form__choose-template {
@@ -342,6 +326,7 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   background: var(--background-primary-dark);
   border-radius: toRem(12);
   margin-right: toRem(15);
+  height: 100%;
 }
 
 .generation-form__field-input {

@@ -9,7 +9,6 @@ import {
   PustTxResponce,
   UTXO,
   BlockstreamTxList,
-  UTXOs,
   getTxHex,
 } from '@/types'
 import { BN } from '@distributedlab/tools'
@@ -57,7 +56,7 @@ export class Bitcoin {
     const exBipInfo = this.getBipInfoByPath(seed, bipInfo.exPath)
     const psbtOuts = this.setOutputs(
       psbt,
-      betterUTXO.utxoAmount,
+      BN.fromRaw(betterUTXO.utxoAmount),
       betterUTXO.value,
       exBipInfo.address,
     )
@@ -110,7 +109,7 @@ export class Bitcoin {
 
         const utxos = await api.fetcher
           .withBaseUrl('https://blockstream.info')
-          .get<UTXOs>('/testnet/api/address/' + bipInfo.address + '/utxo')
+          .get<UTXO[]>('/testnet/api/address/' + bipInfo.address + '/utxo')
         if (!utxos.data || !utxos.data.length) {
           continue
         }
@@ -145,17 +144,19 @@ export class Bitcoin {
       address: 'n2AgWQWzkQoKFbw8p8RkM5uEV2ZdKwDUTi',
       value: this.TX_OUTPUTS_INFO.thirdOutput,
     })
-    balance -=
-      this.TX_OUTPUTS_INFO.firstOutput +
-      this.TX_OUTPUTS_INFO.secondOutput +
-      this.TX_OUTPUTS_INFO.thirdOutput
-    balance -= fee
+    balance.sub(
+      BN.fromRaw(this.TX_OUTPUTS_INFO.firstOutput)
+        .add(BN.fromRaw(this.TX_OUTPUTS_INFO.secondOutput))
+        .add(BN.fromRaw(this.TX_OUTPUTS_INFO.thirdOutput)),
+    )
+
+    balance.sub(BN.fromRaw(fee))
 
     psbt.addOutput({
       address: exAddress,
-      value: balance,
+      value: balance.decimals,
     })
-    return { psbt: psbt, balance: balance }
+    return { psbt: psbt, balance: balance.decimals }
   }
 
   private async setInputs(

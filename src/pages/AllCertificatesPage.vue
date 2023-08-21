@@ -35,13 +35,13 @@
           <app-button
             class="all-certificates-page__btn"
             color="info"
-            :text="$t('all-certificates-page.generate-btn')"
+            :text="$t('all-certificates-page.generate-btn-text')"
             @click="issueCertificates"
           />
           <app-button
             class="all-certificates-page__btn"
             color="info"
-            :text="$t('all-certificates-page.bitcoin-btn')"
+            :text="$t('all-certificates-page.bitcoin-btn-text')"
             @click="moveToTimestamp"
           />
         </div>
@@ -49,18 +49,16 @@
     </div>
 
     <div class="all-certificates-page__list">
-      <div class="all-certificates-page__list-subtitle">
-        <p>
+      <div class="all-certificates-page__list-titles">
+        <p class="all-certificates-page__list-title" id="grid-start">
           {{ $t('all-certificates-page.certificates-item-name') }}
         </p>
-        <p>
+        <p class="all-certificates-page__list-title">
           {{ $t('all-certificates-page.certificates-item-course') }}
         </p>
-        <p>
+        <p class="all-certificates-page__list-title">
           {{ $t('all-certificates-page.certificates-item-date') }}
         </p>
-        <p></p>
-        <!--        //TODO use grid-->
       </div>
 
       <no-data-message
@@ -83,9 +81,14 @@
       v-model:is-shown="isCertificateModalShown"
       :certificate="currentCertificate"
       @success="onSuccessMint"
+      @error="onErrorMint"
     />
     <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-    <success-modal v-model:is-shown="isMintSuccess" :transaction="mintTx" />
+    <success-modal
+      v-model:is-shown="isMintSuccessModalShown"
+      :transaction="mintTx"
+    />
+    <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
   </div>
 </template>
 
@@ -104,6 +107,7 @@ import {
   NoDataMessage,
   SuccessModal,
   LoaderModal,
+  ErrorModal,
 } from '@/common'
 import {
   prepareCertificateImage,
@@ -118,9 +122,9 @@ import {
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import {
-  useCreatePdf,
-  useDownloadImage,
-  useUploadCertificates,
+  createPdfAPICall,
+  downloadImageAPICall,
+  uploadCertificatesAPICall,
 } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 import {
@@ -145,8 +149,10 @@ const router = useRouter()
 
 const isLoading = ref(false)
 const processState = ref('')
-const isMintSuccess = ref(false)
+const isMintSuccessModalShown = ref(false)
+const isErrorModalShown = ref(false)
 const mintTx = ref('')
+const errorMsg = ref('')
 
 const certificateFilter = computed(() =>
   searchInTheList(certificatesList.value, searchData.value),
@@ -173,7 +179,7 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
     isCertificateModalShown.value = true
     currentCertificate.value = certificate
   } catch (error) {
-    ErrorHandler.process(t('error.default'))
+    ErrorHandler.process(t('errors.failed-download-image'))
   }
 }
 
@@ -195,7 +201,7 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
     processState.value = t('all-certificate-page.image_uploading')
-    return await useDownloadImage(
+    return await downloadImageAPICall(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
@@ -212,12 +218,12 @@ const getCertificates = async () => {
   try {
     isLoading.value = true
     processState.value = t('all-certificates-page.process-state-update-date')
-    const data = await useUploadCertificates(
+    const data = await uploadCertificatesAPICall(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
 
-    userState.setCertificates(prepareCertificateImage(data))
+    userState.setCertificates(data)
     certificatesList.value = userState.certificates
   } catch (error) {
     ErrorHandler.process(t('errors.failed-get-certificates'))
@@ -226,7 +232,6 @@ const getCertificates = async () => {
 }
 
 // TODO  make  it better
-
 const filteringByCourseWrapper = (filter: DropdownItem) => {
   certificatesList.value = filteringByCourse(
     certificateFilter.value,
@@ -288,17 +293,13 @@ const issueCertificates = async () => {
 
 const generatePDF = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await useCreatePdf(
+    const data = await createPdfAPICall(
       certificates,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
     const container = await validateContainerState(data.container_id)
-    if (!container) {
-      ErrorHandler.process(t('errors.empty-container'))
-      return
-    }
 
     userState.setCertificates(
       prepareCertificateImage(container.clear_certificate),
@@ -313,7 +314,13 @@ const generatePDF = async (certificates: CertificateJSONResponse[]) => {
 const onSuccessMint = (tx: string) => {
   mintTx.value = tx
   isCertificateModalShown.value = false
-  isMintSuccess.value = true
+  isMintSuccessModalShown.value = true
+}
+
+const onErrorMint = (msg: string) => {
+  isCertificateModalShown.value = false
+  errorMsg.value = msg
+  isErrorModalShown.value = true
 }
 
 getCertificates()
@@ -384,13 +391,13 @@ getCertificates()
   border-radius: toRem(8);
 }
 
-.all-certificates-page__list-subtitle {
-  display: flex;
+.all-certificates-page__list-titles {
+  display: grid;
+  grid-template-columns: 1fr 2fr 4fr 1fr 3fr;
+  margin-left: toRem(25);
+  gap: toRem(50);
   justify-content: space-between;
-  align-items: center;
-  max-width: toRem(810);
   margin-top: toRem(20);
-  margin-left: toRem(120);
   width: 100%;
 }
 
@@ -403,5 +410,13 @@ getCertificates()
 
 .all-certificates-page__no-data-message {
   margin-top: 15vh;
+}
+
+.all-certificates-page__list-title {
+  text-align: center;
+}
+
+#grid-start {
+  grid-column-start: 2;
 }
 </style>

@@ -64,10 +64,10 @@ import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
 import bitcoin from 'bitcoinjs-lib'
-import { useSaveUserSetting } from '@/api/api'
+import { saveUserSettingAPICall } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 
-const MAX_NAME_LENGHT = 100
+const MAX_NAME_LENGTH = 100
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -85,7 +85,7 @@ const form = reactive({
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  accountName: { required, maxLength: maxLength(MAX_NAME_LENGHT) },
+  accountName: { required, maxLength: maxLength(MAX_NAME_LENGTH) },
   signKey: { required },
   bip39MnemonicPhrase: { required, mnemonic },
   urlGoogleSheet: { required, link },
@@ -99,15 +99,9 @@ const save = async () => {
   )
 
   try {
-    const address = generateAddress(form.signKey)
-    if (!address) {
-      emit('error', t('errors.failed-generate-address'))
-      return
-    }
-
-    userState.userSetting.userBitcoinAddress = address
-    await useSaveUserSetting(userState.userSetting.accountName)
-    await router.push(ROUTE_NAMES.main)
+    userState.userSetting.userBitcoinAddress = generateAddress(form.signKey)
+    await saveUserSettingAPICall(userState.userSetting.accountName)
+    await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
     emit('error', t('errors.failed-save-setting'))
     throw new Error()
@@ -115,12 +109,7 @@ const save = async () => {
 }
 
 const generateAddress = (key: string): string => {
-  try {
-    return Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
-  } catch (error) {
-    emit('error', t('errors.failed-generate-address'))
-    throw new Error()
-  }
+  return Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
 }
 </script>
 

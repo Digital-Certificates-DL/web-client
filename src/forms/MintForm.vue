@@ -10,15 +10,15 @@
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.mint-btn')"
+        :text="$t('mint-form.mint-btn-text')"
         @click="mint"
       />
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.close-btn')"
+        :text="$t('mint-form.close-btn-text')"
         :disabled="isFormDisabled"
-        @click="emit('mint-finished', '')"
+        @click="emit('modal-close')"
       />
     </div>
   </form>
@@ -28,7 +28,7 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { useSendToIPFS } from '@/api/api'
+import { sendToIPFSAPICall } from '@/api/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
@@ -53,21 +53,20 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (event: 'mint-finished', tx: string): void
+  (event: 'modal-close'): void
   (event: 'error', msg: string): void
 }>()
 
 const mint = async () => {
   if (!isFormValid()) return
 
+  if (!props.certificate.certificateImg) {
+    throw new Error(t('errors.empty-img'))
+  }
+
   try {
     disableForm()
-
-    if (!props.certificate.certificateImg) {
-      ErrorHandler.process(t('errors.empty-img'))
-      return
-    }
-
-    const data = await useSendToIPFS(
+    const data = await sendToIPFSAPICall(
       prepareTokenDescription(props.certificate),
       props.certificate.certificateImg,
       props.certificate.participant,

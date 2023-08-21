@@ -1,7 +1,7 @@
 <template>
   <div class="timestamp-page">
     <h2>{{ $t('timestamp-page.page-title') }}</h2>
-    <div class="timestamp-page__body">
+    <div>
       <div class="timestamp-page__search">
         <div class="timestamp-page__search-input-wrp">
           <input-field
@@ -17,7 +17,7 @@
           <app-button
             class="timestamp-page__btn"
             color="info"
-            :text="$t('timestamp-page.bitcoin-btn')"
+            :text="$t('timestamp-page.bitcoin-btn-text')"
             @click="makeBitcoinTimestamp"
           />
         </div>
@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store'
-import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { InputField } from '@/fields'
 import { ref, computed } from 'vue'
 import { Bitcoin } from '@/utils'
@@ -78,9 +78,10 @@ import {
   ErrorHandler,
   searchInTheList,
   prepareCertificateImage,
+  validateContainerState,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { useUpdateCertificates, useValidateContainerState } from '@/api/api'
+import { updateCertificatesAPICall } from '@/api/api'
 
 const { t } = useI18n()
 
@@ -106,8 +107,8 @@ const certificateFilter = computed(() =>
   searchInTheList(certificateList.value, searchData.value),
 )
 
-const openModal = (state: boolean, certificate: CertificateJSONResponse) => {
-  isCertificateModalShown.value = state
+const openModal = (certificate: CertificateJSONResponse) => {
+  isCertificateModalShown.value = true
   currentCertificate.value = certificate
 }
 
@@ -162,46 +163,17 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
 
 const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await useUpdateCertificates(
+    const data = await updateCertificatesAPICall(
       removeImgCertificates(certificates),
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    if (!data) {
-      ErrorHandler.process(t('errors.empty-container-id'))
-      return
-    }
     const container = await validateContainerState(data.container_id)
-    if (!container) {
-      ErrorHandler.process(t('errors.empty-container'))
-      return
-    }
     return prepareCertificateImage(container.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
   }
-}
-
-const validateContainerState = async (containerID: string) => {
-  const data = await useValidateContainerState(containerID)
-
-  if (!data) {
-    ErrorHandler.process('errors.empty-container')
-    return
-  }
-
-  data.clear_certificate = prepareCertificate(data.certificates)
-  return data
-}
-
-const prepareCertificate = (certificates: PottyCertificateRequest[]) => {
-  const certificateList = ref<CertificateJSONResponse[]>([])
-  for (const certificate of certificates) {
-    certificateList.value.push(certificate.attributes)
-  }
-
-  return certificateList.value
 }
 
 const getCertificates = () => {

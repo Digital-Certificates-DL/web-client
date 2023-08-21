@@ -1,8 +1,8 @@
 <template>
   <div class="certificate">
-    <checkbox-field v-show="true" v-model="isSelected" @click="selectItem" />
+    <checkbox-field v-show="true" v-model="isSelected" @click="clickItem" />
     <div class="certificate__body">
-      <div class="certificate__img-wrp" @click="selectItem">
+      <div class="certificate__img-wrp" @click="clickItem">
         <img
           v-if="certificate.signature"
           class="certificate__img"
@@ -10,41 +10,31 @@
           :alt="$t('certificate.img-alt')"
         />
       </div>
-      <p class="certificate__name">
+      <p class="certificate__name certificate__text-content">
         {{ certificate.participant }}
       </p>
-      <div class="certificate__titles">
-        <p>
-          {{ certificate.courseTitle }}
-        </p>
-        <p>
-          {{ certificate.date }}
-        </p>
-      </div>
+      <p class="certificate__text-content">
+        {{ certificate.courseTitle }}
+      </p>
+      <p class="certificate__text-content">
+        {{ certificate.date }}
+      </p>
 
-      <div class="certificate__btns" v-if="!certificate.signature">
+      <div class="certificate__btns">
         <app-button
-          class="certificate__btn"
-          :text="$t('certificate.mint-text')"
+          v-if="certificate.signature"
+          :text="$t('certificate.mint-btn-text')"
           @click="emit('open-modal', certificate)"
         />
         <app-button
-          class="certificate__btn"
-          :text="$t('certificate.select-certificate-btn')"
-          @click="selectItem"
+          :text="$t('certificate.select-certificate-btn-text')"
+          @click="clickItem"
         />
-
         <app-button
-          class="certificate__btn timestamp-item__btn-download"
+          v-if="certificate.signature"
+          class="timestamp-item__btn-download"
           :icon-right="$icons.download"
           @click="openLink(certificate)"
-        />
-      </div>
-      <div class="certificate__btns" v-else>
-        <app-button
-          class="certificate__btn"
-          :text="$t('certificate.select-certificate-btn')"
-          @click="selectItem"
         />
       </div>
     </div>
@@ -70,7 +60,7 @@ const props = defineProps<{
   certificate: CertificateJSONResponse
 }>()
 
-const selectItem = () => {
+const clickItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value, props.certificate)
 }
@@ -91,12 +81,12 @@ const openLink = (certificate: CertificateJSONResponse) => {
   margin-top: toRem(35);
   padding-bottom: toRem(10);
   border-bottom: var(--border-primary-main) toRem(1) solid;
-  max-width: var(--page-large);
 }
 
 .certificate__body {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr 4fr 1fr 3fr;
+  gap: toRem(50);
   width: 100%;
   align-items: center;
 }
@@ -108,7 +98,7 @@ const openLink = (certificate: CertificateJSONResponse) => {
 }
 
 .certificate__img {
-  width: toRem(74);
+  width: 100%;
   border-radius: toRem(4);
   margin-right: toRem(10);
 
@@ -118,31 +108,17 @@ const openLink = (certificate: CertificateJSONResponse) => {
   }
 }
 
-.certificate__titles {
-  display: flex;
-  justify-content: space-between;
-  width: 40%;
-}
-
-.certificate__name {
-  width: toRem(150);
-}
-
-.certificate__btn {
-  width: toRem(140);
-  height: toRem(50);
-}
-
 .timestamp-item__btn-download {
-  width: toRem(50);
-  margin-left: toRem(20);
   font-size: toRem(20);
 }
 
 .certificate__btns {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 20%;
+  max-width: toRem(200);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.certificate__text-content {
+  text-align: center;
 }
 </style>

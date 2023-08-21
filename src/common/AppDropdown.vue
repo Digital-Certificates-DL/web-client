@@ -32,9 +32,6 @@
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue'
 import { DropdownItem } from '@/types'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 const currentItem = ref({} as DropdownItem)
 
 const emit = defineEmits<{
@@ -48,7 +45,7 @@ withDefaults(
     mainImage?: string
   }>(),
   {
-    title: t('app-dropdown.select-title'),
+    title: '',
     mainImage: '',
   },
 )
@@ -80,7 +77,7 @@ const selectItem = (item: DropdownItem) => {
   border-radius: toRem(8);
   padding: toRem(8);
   min-width: toRem(160);
-  box-shadow: 0 toRem(8) toRem(16) 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 toRem(8) toRem(16) 0 rgba(var(--white-rgb), 0.2);
   z-index: var(--defaut-z-index);
 }
 

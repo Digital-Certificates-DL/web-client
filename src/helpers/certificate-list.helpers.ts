@@ -28,7 +28,7 @@ export const prepareCertificateImage = (
   return certificates
 }
 
-export const clearCertificate = (certificates: PottyCertificateRequest[]) => {
+export const cleanCertificate = (certificates: PottyCertificateRequest[]) => {
   const certificateList = ref<CertificateJSONResponse[]>([])
   for (const certificate of certificates) {
     certificate.attributes.id = Number(certificate.id)

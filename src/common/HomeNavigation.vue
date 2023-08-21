@@ -51,7 +51,7 @@ const emit = defineEmits<{
   justify-content: space-evenly;
   align-items: center;
   border-radius: toRem(8);
-  max-height: toRem(150);
+  padding: toRem(20);
 }
 
 .home-navigation__title {
@@ -65,13 +65,16 @@ const emit = defineEmits<{
 }
 
 .home-navigation__info {
-  width: 50%;
+  max-width: toRem(250);
+  width: 100%;
 }
 
 .home-navigation__btns {
-  width: 30%;
-  display: flex;
-  justify-content: right;
-  margin-right: toRem(20);
+  max-width: toRem(150);
+  width: 100%;
+}
+
+.home-navigation__btn {
+  margin: auto;
 }
 </style>

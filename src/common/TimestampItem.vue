@@ -9,23 +9,25 @@
         <p>{{ date }}</p>
       </div>
 
-      <app-button
-        class="timestamp-item__btn"
-        @click="emit('open-modal', true, certificate)"
-        :text="$t('timestamp-item.mint-btn-text')"
-      />
+      <div class="timestamp-item__btns">
+        <app-button
+          class="timestamp-item__btn"
+          @click="emit('open-modal', certificate)"
+          :text="$t('timestamp-item.mint-btn-text')"
+        />
 
-      <app-button
-        class="timestamp-item__btn"
-        @click="clickItem"
-        :text="$t('timestamp-item.select-certificate-btn-text')"
-      />
+        <app-button
+          class="timestamp-item__btn"
+          @click="clickItem"
+          :text="$t('timestamp-item.select-certificate-btn-text')"
+        />
 
-      <app-button
-        class="timestamp-item__btn timestamp-item__btn-download"
-        :icon-right="$icons.download"
-        @click="openLink(certificate)"
-      />
+        <app-button
+          class="timestamp-item__btn timestamp-item__btn-download"
+          :icon-right="$icons.download"
+          @click="openLink(certificate)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +40,7 @@ import { AppButton } from '@/common'
 
 const isSelected = ref(false)
 
-defineProps<{
+const props = defineProps<{
   isShow: boolean
   name: string
   date: string
@@ -46,11 +48,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (
-    e: 'open-modal',
-    state: boolean,
-    certificate: CertificateJSONResponse,
-  ): boolean
+  (e: 'open-modal', certificate: CertificateJSONResponse): boolean
   (e: 'select', state: boolean, certificate: CertificateJSONResponse): boolean
 }>()
 
@@ -75,31 +73,22 @@ const clickItem = () => {
   border: var(--border-primary-main), toRem(1), solid;
   border-radius: toRem(8);
   padding: toRem(16);
-  align-content: center;
   align-items: center;
 }
 
 .timestamp-item__body {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: toRem(50);
   width: 100%;
-}
-
-.timestamp-item__name,
-.timestamp-item__date {
-  width: 30%;
-  display: flex;
-}
-
-.timestamp-item__btn {
-  width: toRem(140);
-  height: toRem(50);
+  align-items: center;
 }
 
 .timestamp-item__btn-download {
-  width: toRem(50);
-  margin-left: toRem(20);
   font-size: toRem(20);
+}
+
+.timestamp-item__btns {
+  display: flex;
 }
 </style>

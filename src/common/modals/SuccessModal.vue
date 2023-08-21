@@ -24,7 +24,7 @@
         <app-button
           class="success-modal__btn"
           color="success"
-          :text="$t('success-modal.btn-text')"
+          :text="$t('success-modal.close-btn-text')"
           @click="modal.close"
         />
       </div>

@@ -27,7 +27,7 @@
       class="auth-form__input"
       :label="$t('auth-form.input-code-label')"
       :disabled="isFormDisabled"
-      :error-message="getFieldErrorMessage('code')"
+      :error-message="getFieldErrorMessage('accessCode')"
     />
 
     <div class="auth-form__btns">
@@ -35,14 +35,14 @@
         class="auth-form__btn"
         color="info"
         size="large"
-        :text="$t('auth-form.send-code-btn')"
+        :text="$t('auth-form.send-code-btn-text')"
         @click="sendCode"
       />
       <app-button
         class="auth-form__btn"
         color="info"
         size="large"
-        :text="$t('auth-form.close-btn')"
+        :text="$t('auth-form.close-btn-text')"
         @click="emit('close-modal')"
       />
     </div>
@@ -94,9 +94,10 @@ const sendCode = () => {
 }
 
 .auth-form__btns {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: toRem(100);
   height: toRem(58);
-  justify-content: space-between;
 }
 
 .auth-form__input {
@@ -109,7 +110,8 @@ const sendCode = () => {
 }
 
 .auth-form__btn {
-  width: 45%;
+  max-width: toRem(300);
+  width: 100%;
 }
 
 .auth-form__link {

@@ -1,13 +1,13 @@
 <template>
   <div class="home-page">
     <div class="home-page__body">
-      <h2>{{ $t('home.title') }}</h2>
+      <h2>{{ $t('home-page.title') }}</h2>
       <div class="home-page__body-nav">
         <home-navigation
           class="home-page__body-nav-item"
           :title="$t('home-page.upload-title')"
           :name="$t('home-page.upload-name')"
-          :description="$t('home.upload-description')"
+          :description="$t('home-page.upload-description')"
           @active="router.push($routes.template)"
         />
         <home-navigation
@@ -22,7 +22,7 @@
         <div class="home__content-template">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home-page.template-list-title') }}</h3>
-            <app-button color="info" :text="$t('home.get-all-btn')" />
+            <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
           </div>
           <div class="home-page__items">
             <div class="home-page__item-mock"></div>
@@ -36,7 +36,7 @@
 
             <app-button
               color="info"
-              :text="$t('home-page.get-all-btn')"
+              :text="$t('home-page.get-all-btn-text')"
               :route="{
                 name: $routes.certificates,
               }"
@@ -85,7 +85,7 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { useUpdateCode, useUploadCertificates } from '@/api/api'
+import { updateCodeAPICall, uploadCertificatesAPICall } from '@/api/api'
 
 const MAX_CERTIFICATES_ON_PAGE = 3
 
@@ -99,27 +99,28 @@ const isLoading = ref(false)
 const processState = ref('')
 
 const getCertificates = async () => {
-  try {
-    isLoading.value = true
-    processState.value = t('home.process-state-getting-cert')
+  isLoading.value = true
+  processState.value = t('home-page.process-state-getting-cert')
 
-    const data = await useUploadCertificates(
+  try {
+    certificates.value = await uploadCertificatesAPICall(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    if (!data) {
-      return
-    }
-    certificates.value = data
   } catch (error) {
-    authLink.value = error.meta.auth_link
+    if (error.meta) {
+      authLink.value = error.meta.auth_link
+    }
+    if (error.status === '500') {
+      throw error
+    }
     isUnauthorized.value = true
   }
   isLoading.value = false
 }
 
 const updateCode = async (code: string) => {
-  await useUpdateCode(code, userState.userSetting.accountName)
+  await updateCodeAPICall(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 
@@ -133,14 +134,15 @@ getCertificates()
 }
 
 .home-page__body-nav {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  gap: toRem(150);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .home-page__body-nav-item {
   margin: toRem(20) 0;
-  width: 47%;
-  max-height: toRem(150);
+  max-width: toRem(550);
+  width: 100%;
 }
 
 .home-page__items {
