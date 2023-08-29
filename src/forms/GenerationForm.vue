@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { InputField } from '@/fields'
-import { CreatePdfAPICall, UploadCertificatesAPICall } from '@/api/api'
+import { CreatePdf, UploadCertificates } from '@/api/api'
 import { AppButton } from '@/common'
 import { CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store'
@@ -177,7 +177,7 @@ const start = async () => {
 
 const parseData = async (sheepUrl?: string) => {
   try {
-    return await UploadCertificatesAPICall(
+    return await UploadCertificates(
       userState.userSetting.accountName,
       sheepUrl || userState.userSetting.urlGoogleSheet,
     )
@@ -193,7 +193,7 @@ const parseData = async (sheepUrl?: string) => {
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const data = await CreatePdfAPICall(
+    const data = await CreatePdf(
       users,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,

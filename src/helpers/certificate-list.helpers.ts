@@ -2,6 +2,7 @@ import { CertificateJSONResponse, PottyCertificateRequest } from '@/types'
 import { FILES_BASE } from '@/enums'
 import { ref } from 'vue'
 import { Signature } from '@/utils'
+import { DROP_DOWN_COURSE_LIST, DROP_DOWN_STATE_LIST } from '@/constant'
 
 export const searchInTheList = (
   certificatesList: CertificateJSONResponse[],
@@ -57,7 +58,7 @@ export const filteringByCourse = (
   baseList: CertificateJSONResponse[],
   filter?: string,
 ): CertificateJSONResponse[] => {
-  if (!filter || filter === 'All') {
+  if (!filter || filter === DROP_DOWN_COURSE_LIST[0].text) {
     return baseList
   }
 
@@ -73,17 +74,17 @@ export const filteringByState = (
   baseList: CertificateJSONResponse[],
   filter: string,
 ): CertificateJSONResponse[] => {
-  if (!filter.length || filter === 'All') {
+  if (!filter.length || filter === DROP_DOWN_STATE_LIST[0].text) {
     return baseList
   }
 
-  if (filter === 'Generated') {
+  if (filter === DROP_DOWN_STATE_LIST[1].text) {
     return list.filter(certificate => {
       return certificate.certificate || certificate.digitalCertificate
     })
   }
 
-  if (filter === 'Not generated') {
+  if (filter === DROP_DOWN_STATE_LIST[2].text) {
     return list.filter(certificate => {
       return !certificate.signature
     })

@@ -32,6 +32,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { DropdownItem } from '@/types'
+
 const currentItem = ref({} as DropdownItem)
 
 const emit = defineEmits<{

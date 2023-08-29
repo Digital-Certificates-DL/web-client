@@ -50,7 +50,6 @@
 
 <script lang="ts" setup>
 import { CertificateJSONResponse } from '@/types'
-
 import { Modal } from '@/common'
 import { MintForm } from '@/forms'
 

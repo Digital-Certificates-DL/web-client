@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="main-page__endpoints-side">
-        <main-navigation
+        <navigation-item
           class="main-page__navigation-item"
           color="warning"
           size="large"
@@ -56,7 +56,7 @@
           }"
         />
 
-        <main-navigation
+        <navigation-item
           :title="$t('main-page.main-nav-home-title')"
           color="success"
           :description="$t('main-page.main-nav-home-description')"
@@ -74,7 +74,7 @@
 import { AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
-import { AppLogo, MainNavigation } from '@/common'
+import { AppLogo, NavigationItem } from '@/common'
 
 const web3Store = useWeb3ProvidersStore()
 

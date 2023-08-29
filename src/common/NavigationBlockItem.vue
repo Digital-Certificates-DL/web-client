@@ -1,16 +1,16 @@
 <template>
-  <div class="home-navigation">
-    <div class="home-navigation__info">
-      <h3 class="home-navigation__title">
+  <div class="navigation-block-item">
+    <div class="navigation-block-item__info">
+      <h3 class="navigation-block-item__title">
         {{ title }}
       </h3>
-      <p class="home-navigation__description">
+      <p class="navigation-block-item__description">
         {{ description }}
       </p>
     </div>
-    <div class="home-navigation__btns">
+    <div class="navigation-block-item__btns">
       <app-button
-        class="home-navigation__btn"
+        class="navigation-block-item__btn"
         color="info"
         :text="name"
         @click="emit('active')"
@@ -41,36 +41,36 @@ const emit = defineEmits<{
 </script>
 
 <style lang="scss" scoped>
-.home-navigation {
-  border: toRem(2) solid var(--border-primary-main);
+.navigation-block-item {
   display: flex;
+  border: toRem(2) solid var(--border-primary-main);
   justify-content: space-evenly;
   align-items: center;
   border-radius: toRem(8);
   padding: toRem(20);
 }
 
-.home-navigation__title {
+.navigation-block-item__title {
   white-space: nowrap;
   margin-bottom: toRem(10);
 }
 
-.home-navigation__description {
+.navigation-block-item__description {
   color: var(--text-secondary-light);
   font-size: toRem(14);
 }
 
-.home-navigation__info {
+.navigation-block-item__info {
   max-width: toRem(250);
   width: 100%;
 }
 
-.home-navigation__btns {
+.navigation-block-item__btns {
   max-width: toRem(150);
   width: 100%;
 }
 
-.home-navigation__btn {
+.navigation-block-item__btn {
   margin: auto;
 }
 </style>

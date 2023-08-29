@@ -8,7 +8,7 @@ import {
 import { prepareCertificateImage, sleep } from '@/helpers'
 import { JsonApiError } from '@distributedlab/jac'
 
-export const UpdateCertificatesAPICall = async (
+export const UpdateCertificates = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -32,7 +32,7 @@ export const UpdateCertificatesAPICall = async (
   return data
 }
 
-export const DownloadCertificateImageAPICall = async (
+export const DownloadCertificateImage = async (
   certificate: CertificateJSONResponse,
   bitcoinAddress: string,
   name: string,
@@ -57,10 +57,7 @@ export const DownloadCertificateImageAPICall = async (
   return data
 }
 
-export const UploadCertificatesAPICall = async (
-  name: string,
-  sheepUrl: string,
-) => {
+export const UploadCertificates = async (name: string, sheepUrl: string) => {
   const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/users/',
     {
@@ -77,7 +74,7 @@ export const UploadCertificatesAPICall = async (
   return prepareCertificateImage(data)
 }
 
-export const CreatePdfAPICall = async (
+export const CreatePdf = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -98,7 +95,7 @@ export const CreatePdfAPICall = async (
   return data
 }
 
-export const ValidateContainerStateAPICall = async (containerID: string) => {
+export const ValidateContainerState = async (containerID: string) => {
   await sleep(5000)
   const containerStatus = true
   while (containerStatus) {
@@ -121,7 +118,7 @@ export const ValidateContainerStateAPICall = async (containerID: string) => {
   }
 }
 
-export const SendToIPFSAPICall = async (
+export const SendToIPFS = async (
   description: string,
   img: Uint8Array,
   participant: string,
@@ -143,7 +140,7 @@ export const SendToIPFSAPICall = async (
   return data
 }
 
-export const SaveUserSettingAPICall = async (name: string) => {
+export const SaveUserSetting = async (name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {
@@ -159,7 +156,7 @@ export const SaveUserSettingAPICall = async (name: string) => {
   )
 }
 
-export const UpdateAuthCodeAPICall = async (code: string, name: string) => {
+export const UpdateAuthCode = async (code: string, name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {

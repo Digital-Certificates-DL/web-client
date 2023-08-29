@@ -28,7 +28,7 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { SendToIPFSAPICall } from '@/api/api'
+import { SendToIPFS } from '@/api/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
@@ -66,7 +66,7 @@ const mint = async () => {
 
   try {
     disableForm()
-    const data = await SendToIPFSAPICall(
+    const data = await SendToIPFS(
       prepareTokenDescription(props.certificate),
       props.certificate.certificateImg,
       props.certificate.participant,

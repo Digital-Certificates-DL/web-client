@@ -1,6 +1,6 @@
 <template>
   <div class="certificate">
-    <checkbox-field v-show="true" v-model="isSelected" @click="clickItem" />
+    <checkbox-field v-model="isSelected" @click="clickItem" />
     <div class="certificate__body">
       <div class="certificate__img-wrp" @click="clickItem">
         <img

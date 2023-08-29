@@ -1,8 +1,8 @@
-import { ValidateContainerStateAPICall } from '@/api/api'
+import { ValidateContainerState } from '@/api/api'
 import { cleanCertificate } from '@/helpers/certificate-list.helpers'
 
 export const validateContainerState = async (containerID: string) => {
-  const data = await ValidateContainerStateAPICall(containerID)
+  const data = await ValidateContainerState(containerID)
   if (!data) {
     throw new Error()
   }

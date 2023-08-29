@@ -3,14 +3,14 @@
     <div class="home-page__body">
       <h2>{{ $t('home-page.title') }}</h2>
       <div class="home-page__body-nav">
-        <home-navigation
+        <navigation-block-item
           class="home-page__body-nav-item"
           :title="$t('home-page.upload-title')"
           :name="$t('home-page.upload-name')"
           :description="$t('home-page.upload-description')"
           @active="router.push($routes.template)"
         />
-        <home-navigation
+        <navigation-block-item
           class="home-page__body-nav-item"
           :title="$t('home-page.create-title')"
           :name="$t('home-page.create-name')"
@@ -56,7 +56,7 @@
               )"
               :key="key"
             >
-              <home-certificate-item
+              <preview-certificate-item
                 :img="item.img"
                 :title="item.participant"
               />
@@ -78,17 +78,17 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import {
-  HomeCertificateItem,
+  PreviewCertificateItem,
   AppButton,
   LoaderModal,
   AuthModal,
-  HomeNavigation,
+  NavigationBlockItem,
 } from '@/common'
 import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { UpdateAuthCodeAPICall, UploadCertificatesAPICall } from '@/api/api'
+import { UpdateAuthCode, UploadCertificates } from '@/api/api'
 import { ErrorHandler } from '@/helpers'
 
 const MAX_CERTIFICATES_ON_PAGE = 3
@@ -107,7 +107,7 @@ const getCertificates = async () => {
   processState.value = t('home-page.process-state-getting-cert')
 
   try {
-    certificates.value = await UploadCertificatesAPICall(
+    certificates.value = await UploadCertificates(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -124,7 +124,7 @@ const getCertificates = async () => {
 }
 
 const updateCode = async (code: string) => {
-  await UpdateAuthCodeAPICall(code, userState.userSetting.accountName)
+  await UpdateAuthCode(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 

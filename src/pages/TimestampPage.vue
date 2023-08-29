@@ -29,7 +29,7 @@
             <no-data-message :message="t('errors.empty-cert-list')" />
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
-            <timestamp-item
+            <short-certificate-item
               :name="item.participant"
               :date="item.date"
               :certificate="item"
@@ -68,7 +68,7 @@ import { ref, computed } from 'vue'
 import { Bitcoin } from '@/utils'
 import {
   LoaderModal,
-  TimestampItem,
+  ShortCertificateItem,
   AppButton,
   CertificateModal,
   NoDataMessage,
@@ -81,7 +81,7 @@ import {
   validateContainerState,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { UpdateCertificatesAPICall } from '@/api/api'
+import { UpdateCertificates } from '@/api/api'
 
 const { t } = useI18n()
 
@@ -160,7 +160,7 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
 
 const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await UpdateCertificatesAPICall(
+    const data = await UpdateCertificates(
       removeImgCertificates(certificates),
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,

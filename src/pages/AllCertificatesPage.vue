@@ -11,6 +11,7 @@
 
       <div class="all-certificates-page__filters">
         <app-dropdown
+          :title="DROP_DOWN_COURSE_LIST[0].text"
           :items="DROP_DOWN_COURSE_LIST"
           @select-item="filteringByCourseWrapper"
         />
@@ -126,9 +127,9 @@ import {
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import {
-  CreatePdfAPICall,
-  DownloadCertificateImageAPICall,
-  UploadCertificatesAPICall,
+  CreatePdf,
+  DownloadCertificateImage,
+  UploadCertificates,
 } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 import {
@@ -209,7 +210,7 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
     loaderText.value = t('all-certificate-page.image_uploading')
-    data.value = await DownloadCertificateImageAPICall(
+    data.value = await DownloadCertificateImage(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
@@ -228,7 +229,7 @@ const getCertificates = async () => {
   try {
     isLoading.value = true
     loaderText.value = t('all-certificates-page.process-state-update-date')
-    const data = await UploadCertificatesAPICall(
+    const data = await UploadCertificates(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -303,7 +304,7 @@ const issueCertificates = async () => {
 
 const generatePDF = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await CreatePdfAPICall(
+    const data = await CreatePdf(
       certificates,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,

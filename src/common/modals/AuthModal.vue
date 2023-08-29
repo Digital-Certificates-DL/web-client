@@ -19,6 +19,7 @@ import { AuthForm } from '@/forms'
 import { Modal } from '@/common'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+
 const router = useRouter()
 
 defineProps<{
