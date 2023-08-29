@@ -1,13 +1,13 @@
 <template>
-  <div class="home-certificate-item">
-    <div class="home-certificate-item__img-wrp">
+  <div class="preview-certificate-item">
+    <div class="preview-certificate-item__img-wrp">
       <img
-        class="home-certificate-item__img"
+        class="preview-certificate-item__img"
         :src="img"
-        :alt="$t('home-certificate-item.img-alt')"
+        :alt="$t('preview-certificate-item.img-alt')"
       />
     </div>
-    <div class="home-certificate-item__title">
+    <div class="preview-certificate-item__title">
       <p>{{ title }}</p>
     </div>
   </div>
@@ -27,7 +27,7 @@ withDefaults(
 </script>
 
 <style scoped lang="scss">
-.home-certificate-item__img {
+.preview-certificate-item__img {
   max-width: toRem(314);
   max-height: toRem(222);
   width: 100%;

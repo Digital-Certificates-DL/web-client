@@ -60,6 +60,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'update:is-shown', tx: boolean): boolean
   (e: 'success', tx: string): boolean
   (e: 'error', msg: string): void
 }>()

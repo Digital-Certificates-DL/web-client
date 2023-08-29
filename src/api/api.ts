@@ -8,7 +8,7 @@ import {
 import { prepareCertificateImage, sleep } from '@/helpers'
 import { JsonApiError } from '@distributedlab/jac'
 
-export const updateCertificatesAPICall = async (
+export const UpdateCertificatesAPICall = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -32,7 +32,7 @@ export const updateCertificatesAPICall = async (
   return data
 }
 
-export const downloadImageAPICall = async (
+export const DownloadCertificateImageAPICall = async (
   certificate: CertificateJSONResponse,
   bitcoinAddress: string,
   name: string,
@@ -53,10 +53,11 @@ export const downloadImageAPICall = async (
       },
     },
   )
+
   return data
 }
 
-export const uploadCertificatesAPICall = async (
+export const UploadCertificatesAPICall = async (
   name: string,
   sheepUrl: string,
 ) => {
@@ -76,7 +77,7 @@ export const uploadCertificatesAPICall = async (
   return prepareCertificateImage(data)
 }
 
-export const createPdfAPICall = async (
+export const CreatePdfAPICall = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
@@ -97,7 +98,7 @@ export const createPdfAPICall = async (
   return data
 }
 
-export const validateContainerStateAPICall = async (containerID: string) => {
+export const ValidateContainerStateAPICall = async (containerID: string) => {
   await sleep(5000)
   const containerStatus = true
   while (containerStatus) {
@@ -120,23 +121,7 @@ export const validateContainerStateAPICall = async (containerID: string) => {
   }
 }
 
-export const updateCodeAPICall = async (code: string, name: string) => {
-  await api.post<CertificateJSONResponseList>(
-    '/integrations/ccp/users/settings',
-    {
-      body: {
-        data: {
-          attributes: {
-            code: code,
-            name: name,
-          },
-        },
-      },
-    },
-  )
-}
-
-export const sendToIPFSAPICall = async (
+export const SendToIPFSAPICall = async (
   description: string,
   img: Uint8Array,
   participant: string,
@@ -158,7 +143,7 @@ export const sendToIPFSAPICall = async (
   return data
 }
 
-export const saveUserSettingAPICall = async (name: string) => {
+export const SaveUserSettingAPICall = async (name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {
@@ -174,7 +159,7 @@ export const saveUserSettingAPICall = async (name: string) => {
   )
 }
 
-export const updateAuthCodeAPICall = async (code: string, name: string) => {
+export const UpdateAuthCodeAPICall = async (code: string, name: string) => {
   await api.post<CertificateJSONResponseList>(
     '/integrations/ccp/users/settings',
     {

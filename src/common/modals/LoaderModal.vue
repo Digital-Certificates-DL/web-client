@@ -6,8 +6,8 @@
   >
     <div class="loader-modal__pane">
       <loader />
-      <h2 class="loader-modal__title">
-        {{ state }}
+      <h2 class="loader-modal__text">
+        {{ text }}
       </h2>
     </div>
   </modal>
@@ -17,7 +17,7 @@
 import { Modal, Loader } from '@/common'
 
 defineProps<{
-  state: string
+  text: string
   isShown: boolean
 }>()
 
@@ -44,7 +44,7 @@ const emit = defineEmits<{
   }
 }
 
-.loader-modal__title {
+.loader-modal__text {
   margin: auto;
   text-align: center;
 }

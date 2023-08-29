@@ -5,14 +5,14 @@
         v-if="Boolean(mainImage) || Boolean(currentItem.img)"
         class="app-dropdown__label-img"
         :src="currentItem.img || mainImage"
-        alt="course icon"
+        :alt="$t('app-dropdown.img-alt')"
       />
       <p class="dropdown__item-title">
         {{ currentItem.text || title || $t('app-dropdown.select-title') }}
       </p>
     </div>
     <div class="app-dropdown__content">
-      <div v-for="item in items" :key="item">
+      <div v-for="(item, key) in items" :key="key">
         <div class="app-dropdown__item" @click="selectItem(item)">
           <img
             v-if="Boolean(item.img)"
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { DropdownItem } from '@/types'
 const currentItem = ref({} as DropdownItem)
 

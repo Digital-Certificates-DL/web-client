@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { InputField } from '@/fields'
-import { createPdfAPICall, uploadCertificatesAPICall } from '@/api/api'
+import { CreatePdfAPICall, UploadCertificatesAPICall } from '@/api/api'
 import { AppButton } from '@/common'
 import { CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store'
@@ -135,7 +135,7 @@ defineProps<{
 const emit = defineEmits<{
   (event: 'auth', code: string): void
   (event: 'update:is-loader-shown', isShown: boolean): void
-  (event: 'update-loader-state', state: string): void
+  (event: 'update-loader-text', text: string): void
 }>()
 
 const form = reactive({
@@ -153,18 +153,16 @@ const start = async () => {
   try {
     disableForm()
     emit('update:is-loader-shown', true)
-    emit('update-loader-state', t('generation-form.process-state-update-data'))
+    emit('update-loader-text', t('generation-form.process-state-update-data'))
     const certificates = await parseData(form.link)
-    if (!certificates) {
-      return
-    }
-    emit('update-loader-state', t('generation-form.process-state-sign-data'))
+
+    emit('update-loader-text', t('generation-form.process-state-sign-data'))
 
     const signatures = await signCertificateData(
       certificates,
       userState.userSetting.signKey,
     )
-    emit('update-loader-state', t('generation-form.process-state-create-pdf'))
+    emit('update-loader-text', t('generation-form.process-state-create-pdf'))
     await createPDF(signatures)
 
     emit('update:is-loader-shown', false)
@@ -179,14 +177,14 @@ const start = async () => {
 
 const parseData = async (sheepUrl?: string) => {
   try {
-    return await uploadCertificatesAPICall(
+    return await UploadCertificatesAPICall(
       userState.userSetting.accountName,
       sheepUrl || userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
     if (error.metadata.link) {
       emit('auth', error.metadata.link)
-      return
+      throw error
     }
 
     throw error
@@ -195,7 +193,7 @@ const parseData = async (sheepUrl?: string) => {
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const data = await createPdfAPICall(
+    const data = await CreatePdfAPICall(
       users,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,

@@ -24,18 +24,14 @@ import { AppButton } from '@/common'
 
 withDefaults(
   defineProps<{
+    title: string
+    name: string
     color?: string
-    title?: string
-    name?: string
     description?: string
-    router?: string
   }>(),
   {
     color: 'primary',
-    title: '',
-    name: '',
     description: '',
-    router: '',
   },
 )
 

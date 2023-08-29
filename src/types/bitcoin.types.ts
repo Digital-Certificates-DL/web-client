@@ -114,12 +114,6 @@ export interface Status {
   block_time: number
 }
 
-export type PreparedTX = {
-  hex: string
-  exAddress: string
-  derivePath: number
-}
-
-export type getTxHex = {
+export type GetTxHex = {
   hex: string
 }

@@ -64,7 +64,7 @@ import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
 import bitcoin from 'bitcoinjs-lib'
-import { saveUserSettingAPICall } from '@/api/api'
+import { SaveUserSettingAPICall } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 
 const MAX_NAME_LENGTH = 100
@@ -100,11 +100,11 @@ const save = async () => {
 
   try {
     userState.userSetting.userBitcoinAddress = generateAddress(form.signKey)
-    await saveUserSettingAPICall(userState.userSetting.accountName)
+    await SaveUserSettingAPICall(userState.userSetting.accountName)
     await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
     emit('error', t('errors.failed-save-setting'))
-    throw new Error()
+    throw error
   }
 }
 

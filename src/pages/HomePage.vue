@@ -50,8 +50,11 @@
           </div>
           <div v-else class="home-page__items">
             <div
-              v-for="item in certificates.slice(0, MAX_CERTIFICATES_ON_PAGE)"
-              :key="item"
+              v-for="(item, key) in certificates.slice(
+                0,
+                MAX_CERTIFICATES_ON_PAGE,
+              )"
+              :key="key"
             >
               <home-certificate-item
                 :img="item.img"
@@ -63,7 +66,7 @@
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="processState" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -85,7 +88,8 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateCodeAPICall, uploadCertificatesAPICall } from '@/api/api'
+import { UpdateAuthCodeAPICall, UploadCertificatesAPICall } from '@/api/api'
+import { ErrorHandler } from '@/helpers'
 
 const MAX_CERTIFICATES_ON_PAGE = 3
 
@@ -103,7 +107,7 @@ const getCertificates = async () => {
   processState.value = t('home-page.process-state-getting-cert')
 
   try {
-    certificates.value = await uploadCertificatesAPICall(
+    certificates.value = await UploadCertificatesAPICall(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -112,7 +116,7 @@ const getCertificates = async () => {
       authLink.value = error.meta.auth_link
     }
     if (error.status === '500') {
-      throw error
+      ErrorHandler.process('errors.failed-get-certificates')
     }
     isUnauthorized.value = true
   }
@@ -120,7 +124,7 @@ const getCertificates = async () => {
 }
 
 const updateCode = async (code: string) => {
-  await updateCodeAPICall(code, userState.userSetting.accountName)
+  await UpdateAuthCodeAPICall(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 

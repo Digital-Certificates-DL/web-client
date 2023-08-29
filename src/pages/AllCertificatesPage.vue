@@ -50,7 +50,10 @@
 
     <div class="all-certificates-page__list">
       <div class="all-certificates-page__list-titles">
-        <p class="all-certificates-page__list-title" id="grid-start">
+        <!--  eslint-disable max-len-->
+        <p
+          class="all-certificates-page__list-title all-certificates-page__list-title--start"
+        >
           {{ $t('all-certificates-page.certificates-item-name') }}
         </p>
         <p class="all-certificates-page__list-title">
@@ -69,6 +72,7 @@
 
       <div v-for="item in certificateFilter" :key="item.id">
         <certificate
+          class="all-certificates-page__certificate-item"
           :is-show="selectedItems.length > 0"
           :certificate="item"
           @open-modal="openCertificateModal"
@@ -83,7 +87,7 @@
       @success="onSuccessMint"
       @error="onErrorMint"
     />
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
     <success-modal
       v-model:is-shown="isMintSuccessModalShown"
       :transaction="mintTx"
@@ -122,9 +126,9 @@ import {
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import {
-  createPdfAPICall,
-  downloadImageAPICall,
-  uploadCertificatesAPICall,
+  CreatePdfAPICall,
+  DownloadCertificateImageAPICall,
+  UploadCertificatesAPICall,
 } from '@/api/api'
 import { useI18n } from 'vue-i18n'
 import {
@@ -148,7 +152,7 @@ const selectedCount = ref(0)
 const router = useRouter()
 
 const isLoading = ref(false)
-const processState = ref('')
+const loaderText = ref('')
 const isMintSuccessModalShown = ref(false)
 const isErrorModalShown = ref(false)
 const mintTx = ref('')
@@ -161,6 +165,8 @@ const certificateFilter = computed(() =>
 const openCertificateModal = async (certificate: CertificateJSONResponse) => {
   try {
     if (!certificate.certificateImg) {
+      isLoading.value = true
+
       const certificateWithImg = ref<CertificateJSONResponse[]>([])
       certificateWithImg.value = (await getCertificateImage(
         certificate,
@@ -198,10 +204,12 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
 }
 
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
+  const data = ref<CertificateJSONResponse[]>([])
+
   try {
     isLoading.value = true
-    processState.value = t('all-certificate-page.image_uploading')
-    return await downloadImageAPICall(
+    loaderText.value = t('all-certificate-page.image_uploading')
+    data.value = await DownloadCertificateImageAPICall(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
@@ -209,16 +217,18 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
     )
   } catch (error) {
     ErrorHandler.process(error)
-  } finally {
-    isLoading.value = false
   }
+
+  isLoading.value = false
+
+  return data.value
 }
 
 const getCertificates = async () => {
   try {
     isLoading.value = true
-    processState.value = t('all-certificates-page.process-state-update-date')
-    const data = await uploadCertificatesAPICall(
+    loaderText.value = t('all-certificates-page.process-state-update-date')
+    const data = await UploadCertificatesAPICall(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -262,28 +272,28 @@ const moveToTimestamp = async () => {
 
 const issueCertificates = async () => {
   isLoading.value = true
-  processState.value = t('all-certificates-page.process-state-validate-data')
+  loaderText.value = t('all-certificates-page.process-state-validate-data')
   if (!validateListGenerate(selectedItems.value)) {
     isLoading.value = false
     ErrorHandler.process(t('errors.certificate-was-generated'))
     return
   }
 
-  processState.value = t('all-certificates-page.process-state-sign-data')
+  loaderText.value = t('all-certificates-page.process-state-sign-data')
 
   const signatures = await signCertificateData(
     selectedItems.value,
     userState.userSetting.signKey,
   )
 
-  processState.value = t('all-certificates-page.process-state-create-pdf')
+  loaderText.value = t('all-certificates-page.process-state-create-pdf')
   const certificates = await generatePDF(signatures)
   if (!certificates) {
     ErrorHandler.process('all-certificates-page.empty-certificates-list"')
     return
   }
   userState.setBufferCertificates(certificates)
-  processState.value = ''
+  loaderText.value = ''
 
   isLoading.value = false
   await router.push({
@@ -293,7 +303,7 @@ const issueCertificates = async () => {
 
 const generatePDF = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await createPdfAPICall(
+    const data = await CreatePdfAPICall(
       certificates,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
@@ -416,7 +426,12 @@ getCertificates()
   text-align: center;
 }
 
-#grid-start {
+.all-certificates-page__list-title--start {
   grid-column-start: 2;
+}
+
+.all-certificates-page__certificate-item {
+  margin-top: toRem(35);
+  padding-bottom: toRem(10);
 }
 </style>

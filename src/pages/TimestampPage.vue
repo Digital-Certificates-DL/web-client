@@ -56,7 +56,7 @@
       :certificate="currentCertificate"
       @success="onSuccessMint"
     />
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="processState" />
   </div>
 </template>
 
@@ -81,7 +81,7 @@ import {
   validateContainerState,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { updateCertificatesAPICall } from '@/api/api'
+import { UpdateCertificatesAPICall } from '@/api/api'
 
 const { t } = useI18n()
 
@@ -118,18 +118,15 @@ const makeBitcoinTimestamp = async () => {
     isLoading.value = true
 
     processState.value = t('timestamp.process-state-getting-utxo')
-    await bitcoin.getUTXOBip32TestnetBlockstream(
+    await bitcoin.initUTXOBip32TestnetBlockstream(
       userState.userSetting.bip39MnemonicPhrase,
       10,
     )
     processState.value = t('timestamp.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
-      const tx = await bitcoin.prepareLegacyTXTestnet(
+      const tx = await bitcoin.prepareLegacyTxTestnet(
         userState.userSetting.bip39MnemonicPhrase,
       )
-      if (!tx) {
-        continue
-      }
 
       const { data } = await bitcoin.sendToTestnet(tx.hex)
       certificate.txHash = data.tx.hash.toString()
@@ -163,7 +160,7 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
 
 const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
   try {
-    const data = await updateCertificatesAPICall(
+    const data = await UpdateCertificatesAPICall(
       removeImgCertificates(certificates),
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,

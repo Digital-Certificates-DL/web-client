@@ -11,6 +11,8 @@ import varuint from 'varuint-bitcoin'
 import { Buffer } from 'buffer'
 
 export class Signature {
+  private readonly NUMBER_OF_SIGNATURE_TYPES = 4
+
   private keyPair: KeyPair
   private address: Address
 
@@ -26,7 +28,7 @@ export class Signature {
     const bitcoinMsg = this.magicHash(message)
     const sign = Ecdsa.sign(bitcoinMsg, this.keyPair)
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < this.NUMBER_OF_SIGNATURE_TYPES; i++) {
       const compSign = sign.toCompact(i)
       const newPB = Ecdsa.sig2PubKey(Sig.fromCompact(compSign), bitcoinMsg)
       if (newPB.toHex() !== this.keyPair.pubKey.toHex()) {

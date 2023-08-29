@@ -5,7 +5,7 @@
     </div>
     <generation-form
       v-model:is-loader-shown="isLoaderModalShown"
-      @update-loader-state="updateLoaderState"
+      @update-loader-text="updateLoaderText"
       @auth="auth"
     />
 
@@ -15,7 +15,7 @@
       @send-auth-code="updateCode"
     />
 
-    <loader-modal :is-shown="isLoaderModalShown" :state="loaderState" />
+    <loader-modal :is-shown="isLoaderModalShown" :text="loaderText" />
   </div>
 </template>
 
@@ -24,23 +24,23 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
 import { AuthModal, LoaderModal } from '@/common'
-import { updateAuthCodeAPICall } from '@/api/api'
+import { UpdateAuthCodeAPICall } from '@/api/api'
 import { ErrorHandler } from '@/helpers'
 
 const authLink = ref('')
-const loaderState = ref('')
+const loaderText = ref('')
 
 const isAuthModalShown = ref(false)
 const userState = useUserStore()
 const isLoaderModalShown = ref(false)
 
-const updateLoaderState = (state: string) => {
-  loaderState.value = state
+const updateLoaderText = (text: string) => {
+  loaderText.value = text
 }
 
 const updateCode = (code: string) => {
   try {
-    updateAuthCodeAPICall(code, userState.userSetting.accountName)
+    UpdateAuthCodeAPICall(code, userState.userSetting.accountName)
   } catch (error) {
     ErrorHandler.process('errors.failed-call-api')
   }

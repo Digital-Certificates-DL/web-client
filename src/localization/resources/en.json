@@ -43,8 +43,9 @@
     "certificate-has-timestamp": "Certificate has timestamp",
     "failed-send-tx": "Failed to send tx",
     "failed-save-setting": "Failed to save settings",
-    "failed-call-api": "Failed to call  api",
-    "failed-download-image": "Failed to download image"
+    "failed-call-api": "Failed to call api",
+    "failed-download-image": "Failed to download image",
+    "failed-set-bitcoin-input": "Failed to set  bitcoin input"
   },
   "notification": {
     "default-title-success": "Success",
@@ -209,8 +210,8 @@
     "template-list-title": "My templates",
     "certificate-list-title": "Previously certificates",
     "get-all-btn-text": "See more",
-    "error-templates-nil": "templates was not found",
-    "error-certificate-nil": "certificates was not found",
+    "nil-templates": "templates was not found",
+    "nil-certificates": "certificates was not found",
     "process-state-getting-cert": "Getting certificates"
   },
   "timestamp": {
@@ -228,7 +229,7 @@
     "title": "Error",
     "close-btn-text": "Close"
   },
-  "home-certificate-item": {
+  "preview-certificate-item": {
     "img-alt": "Your image"
   },
   "app-dropdown": {

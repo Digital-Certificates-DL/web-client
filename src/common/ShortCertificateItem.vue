@@ -1,29 +1,23 @@
 <template>
-  <div class="timestamp-item">
+  <div class="short-certificate-item">
     <checkbox-field v-model="isSelected" v-show="isShow" @click="clickItem" />
-    <div class="timestamp-item__body">
-      <div class="timestamp-item__name">
-        <p>{{ name }}</p>
-      </div>
-      <div class="timestamp-item__date">
-        <p>{{ date }}</p>
-      </div>
+    <div class="short-certificate-item__body">
+      <p>{{ name }}</p>
+      <p>{{ date }}</p>
 
-      <div class="timestamp-item__btns">
+      <div class="short-certificate-item__btns">
         <app-button
-          class="timestamp-item__btn"
+          :text="$t('short-certificate-item.mint-btn-text')"
           @click="emit('open-modal', certificate)"
-          :text="$t('timestamp-item.mint-btn-text')"
         />
 
         <app-button
-          class="timestamp-item__btn"
+          :text="$t('short-certificate-item.select-certificate-btn-text')"
           @click="clickItem"
-          :text="$t('timestamp-item.select-certificate-btn-text')"
         />
 
         <app-button
-          class="timestamp-item__btn timestamp-item__btn-download"
+          class="short-certificate-item__btn-download"
           :icon-right="$icons.download"
           @click="openLink(certificate)"
         />
@@ -67,7 +61,7 @@ const clickItem = () => {
 </script>
 
 <style scoped lang="scss">
-.timestamp-item {
+.short-certificate-item {
   display: flex;
   justify-content: space-between;
   border: var(--border-primary-main), toRem(1), solid;
@@ -76,7 +70,7 @@ const clickItem = () => {
   align-items: center;
 }
 
-.timestamp-item__body {
+.short-certificate-item__body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: toRem(50);
@@ -84,11 +78,11 @@ const clickItem = () => {
   align-items: center;
 }
 
-.timestamp-item__btn-download {
+.short-certificate-item__btn-download {
   font-size: toRem(20);
 }
 
-.timestamp-item__btns {
+.short-certificate-item__btns {
   display: flex;
 }
 </style>

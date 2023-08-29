@@ -11,12 +11,12 @@ export { default as Modal } from '@/common/Modal.vue'
 export { default as Certificate } from '@/common/Certificate.vue'
 export { default as AppDropdown } from '@/common/AppDropdown.vue'
 export { default as HomeNavigation } from '@/common/HomeNavigation.vue'
-export { default as TimestampItem } from '@/common/TimestampItem.vue'
+export { default as TimestampItem } from '@/common/ShortCertificateItem.vue'
 
 export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as MainNavigation } from '@/common/MainNavigation.vue'
 
-export { default as HomeCertificateItem } from '@/common/HomeCertificateItem.vue'
+export { default as HomeCertificateItem } from '@/common/PreviewCertificateItem.vue'
 
 export * from './modals'
 export * from './loaders'

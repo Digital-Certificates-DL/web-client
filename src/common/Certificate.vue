@@ -32,9 +32,9 @@
         />
         <app-button
           v-if="certificate.signature"
-          class="timestamp-item__btn-download"
+          class="certificate__btn-download"
           :icon-right="$icons.download"
-          @click="openLink(certificate)"
+          @click="openCertificateDownloadLink(certificate)"
         />
       </div>
     </div>
@@ -65,7 +65,7 @@ const clickItem = () => {
   emit('select', isSelected.value, props.certificate)
 }
 
-const openLink = (certificate: CertificateJSONResponse) => {
+const openCertificateDownloadLink = (certificate: CertificateJSONResponse) => {
   window.open(
     'https://' + certificate.certificate,
     '_blank',
@@ -78,8 +78,6 @@ const openLink = (certificate: CertificateJSONResponse) => {
 .certificate {
   display: flex;
   align-items: center;
-  margin-top: toRem(35);
-  padding-bottom: toRem(10);
   border-bottom: var(--border-primary-main) toRem(1) solid;
 }
 
@@ -108,7 +106,7 @@ const openLink = (certificate: CertificateJSONResponse) => {
   }
 }
 
-.timestamp-item__btn-download {
+.certificate__btn-download {
   font-size: toRem(20);
 }
 
