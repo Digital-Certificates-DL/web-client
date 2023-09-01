@@ -11,20 +11,15 @@
 
       <div class="all-certificates-page__filters">
         <app-dropdown
+          v-model="filteredCourse"
           :title="DROP_DOWN_COURSE_LIST[0].text"
           :items="DROP_DOWN_COURSE_LIST"
-          @select-item="filteringByCourseWrapper"
         />
         <app-dropdown
-          :title="DROP_DOWN_DATA_LIST[0].text"
-          :items="DROP_DOWN_DATA_LIST"
-          :main-image="'/branding/data-ico.png'"
-        />
-        <app-dropdown
-          :title="DROP_DOWN_DATA_LIST[0].text"
+          v-model="filteredState"
+          :title="DROP_DOWN_STATE_LIST[0].text"
           :items="DROP_DOWN_STATE_LIST"
           :main-image="'/branding/success-ico.png'"
-          @select-item="filteringByStateWrapper"
         />
       </div>
 
@@ -99,7 +94,7 @@
 
 <script lang="ts" setup>
 import { useUserStore } from '@/store'
-import { CertificateJSONResponse, DropdownItem } from '@/types'
+import { CertificateJSONResponse } from '@/types'
 import { InputField } from '@/fields'
 import { ref, computed } from 'vue'
 import { useRouter } from '@/router'
@@ -132,11 +127,7 @@ import {
   UploadCertificates,
 } from '@/api/api'
 import { useI18n } from 'vue-i18n'
-import {
-  DROP_DOWN_COURSE_LIST,
-  DROP_DOWN_DATA_LIST,
-  DROP_DOWN_STATE_LIST,
-} from '@/constant'
+import { DROP_DOWN_COURSE_LIST, DROP_DOWN_STATE_LIST } from '@/constant'
 const { t } = useI18n()
 
 const userState = useUserStore()
@@ -159,9 +150,18 @@ const isErrorModalShown = ref(false)
 const mintTx = ref('')
 const errorMsg = ref('')
 
-const certificateFilter = computed(() =>
-  searchInTheList(certificatesList.value, searchData.value),
-)
+const filteredState = ref('')
+const filteredCourse = ref('')
+
+const certificateFilter = computed(() => {
+  return filteringByState(
+    filteringByCourse(
+      searchInTheList(certificatesList.value, searchData.value),
+      filteredCourse.value,
+    ),
+    filteredState.value,
+  )
+})
 
 const openCertificateModal = async (certificate: CertificateJSONResponse) => {
   try {
@@ -206,7 +206,6 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
 
 const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   const data = ref<CertificateJSONResponse[]>([])
-
   try {
     isLoading.value = true
     loaderText.value = t('all-certificate-page.image_uploading')
@@ -240,25 +239,6 @@ const getCertificates = async () => {
     ErrorHandler.process(t('errors.failed-get-certificates'))
   }
   isLoading.value = false
-}
-
-// TODO  make  it better
-const filteringByCourseWrapper = (filter: DropdownItem) => {
-  certificatesList.value = filteringByCourse(
-    certificateFilter.value,
-    userState.certificates,
-    filter.text,
-  )
-}
-
-// TODO  make  it better
-
-const filteringByStateWrapper = (filter: DropdownItem) => {
-  certificatesList.value = filteringByState(
-    certificateFilter.value,
-    userState.certificates,
-    filter.text,
-  )
 }
 
 const moveToTimestamp = async () => {
@@ -414,8 +394,9 @@ getCertificates()
 
 .all-certificates-page__filters {
   display: flex;
-  max-width: toRem(400);
+  max-width: toRem(260);
   width: 100%;
+  margin-left: toRem(10);
   justify-content: space-between;
 }
 

@@ -36,7 +36,7 @@ import { DropdownItem } from '@/types'
 const currentItem = ref({} as DropdownItem)
 
 const emit = defineEmits<{
-  (event: 'select-item', value: DropdownItem): void
+  (event: 'update:model-value', value: string): void
 }>()
 
 withDefaults(
@@ -53,7 +53,7 @@ withDefaults(
 
 const selectItem = (item: DropdownItem) => {
   currentItem.value = item
-  emit('select-item', item)
+  emit('update:model-value', item.text)
 }
 </script>
 

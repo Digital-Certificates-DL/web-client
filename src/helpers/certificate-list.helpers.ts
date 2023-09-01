@@ -55,11 +55,10 @@ export const signCertificateData = async (
 
 export const filteringByCourse = (
   list: CertificateJSONResponse[],
-  baseList: CertificateJSONResponse[],
   filter?: string,
 ): CertificateJSONResponse[] => {
-  if (!filter || filter === DROP_DOWN_COURSE_LIST[0].text) {
-    return baseList
+  if (!filter || filter === DROP_DOWN_COURSE_LIST[0].search) {
+    return list
   }
 
   const searchQuery = filter.toLowerCase()
@@ -71,20 +70,19 @@ export const filteringByCourse = (
 
 export const filteringByState = (
   list: CertificateJSONResponse[],
-  baseList: CertificateJSONResponse[],
   filter: string,
 ): CertificateJSONResponse[] => {
-  if (!filter.length || filter === DROP_DOWN_STATE_LIST[0].text) {
-    return baseList
+  if (!filter.length || filter === DROP_DOWN_STATE_LIST[0].search) {
+    return list
   }
 
-  if (filter === DROP_DOWN_STATE_LIST[1].text) {
+  if (filter === DROP_DOWN_STATE_LIST[1].search) {
     return list.filter(certificate => {
       return certificate.certificate || certificate.digitalCertificate
     })
   }
 
-  if (filter === DROP_DOWN_STATE_LIST[2].text) {
+  if (filter === DROP_DOWN_STATE_LIST[2].search) {
     return list.filter(certificate => {
       return !certificate.signature
     })
