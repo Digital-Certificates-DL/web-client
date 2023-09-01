@@ -24,9 +24,15 @@
       </div>
 
       <div class="timestamp-page__body">
+        <img
+          class="timestamp-page__img"
+          :alt="t('timestamp-page.certificate-image-alt')"
+          :src="currentCertificate.img || 'branding/template.jpg'"
+        />
+
         <div class="timestamp-page__list">
           <div v-if="!certificatesListBuffer.length">
-            <no-data-message :message="t('errors.empty-cert-list')" />
+            <no-data-message :message="t('timestamp-page.empty-cert-list')" />
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
             <short-certificate-item
@@ -38,14 +44,6 @@
               @open-modal="openModal"
             />
           </div>
-        </div>
-
-        <div class="timestamp-page__img-wrp">
-          <img
-            class="timestamp-page__img"
-            :alt="t('timestamp-page.certificate-image-alt')"
-            :src="currentCertificate.img || 'branding/template.jpg'"
-          />
         </div>
       </div>
     </div>
@@ -117,12 +115,12 @@ const makeBitcoinTimestamp = async () => {
     const bitcoin = new Bitcoin()
     isLoading.value = true
 
-    processState.value = t('timestamp.process-state-getting-utxo')
+    processState.value = t('timestamp-page.process-state-getting-utxo')
     await bitcoin.initUTXOBip32TestnetBlockstream(
       userState.userSetting.bip39MnemonicPhrase,
       10,
     )
-    processState.value = t('timestamp.process-state-prepare-tx')
+    processState.value = t('timestamp-page.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
       const tx = await bitcoin.prepareLegacyTxTestnet(
         userState.userSetting.bip39MnemonicPhrase,
@@ -138,7 +136,7 @@ const makeBitcoinTimestamp = async () => {
       )
     }
 
-    processState.value = t('timestamp.process-state-update-certificates')
+    processState.value = t('timestamp-page.process-state-update-certificates')
 
     certificateList.value =
       (await updateCertificates(selectedItems.value)) || []
@@ -225,16 +223,10 @@ getCertificates()
 
 .timestamp-page__img {
   max-width: toRem(600);
+  min-width: toRem(210);
   width: 100%;
   border-radius: toRem(16);
-
-  @include respond-to(large) {
-    max-width: toRem(500);
-  }
-
-  @include respond-to(xmedium) {
-    max-width: toRem(400);
-  }
+  margin: auto;
 }
 
 .timestamp-page__list {
@@ -242,8 +234,17 @@ getCertificates()
 }
 
 .timestamp-page__body {
+  display: grid;
   margin-top: toRem(20);
-  display: flex;
+  grid-template-columns: 3fr 2fr;
+  grid-auto-flow: revert;
+  direction: ltr;
+  gap: toRem(50);
+
+  @include respond-to(tablet) {
+    grid-template-columns: 1fr;
+    grid-auto-flow: initial;
+  }
 }
 
 .timestamp-page__search {
@@ -265,7 +266,7 @@ getCertificates()
 
 .timestamp-page__search-input-wrp {
   max-width: toRem(450);
-  width: 35vw;
+  width: 100%;
   margin-top: toRem(15);
 }
 </style>

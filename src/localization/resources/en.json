@@ -169,20 +169,14 @@
     "page-title": "Previously certificates",
     "bitcoin-btn-text": "Make timestamp",
     "input-placeholder": "Find",
-    "certificate-image-alt": "Certificate preview"
+    "certificate-image-alt": "Certificate preview",
+    "process-state-getting-utxo": "Getting UTXO",
+    "process-state-prepare-tx": "Prepare transaction",
+    "process-state-update-certificates": "Update Certificate"
   },
-  "timestamp-item":{
+  "short-certificate-item":{
     "mint-btn-text": "Mint",
     "select-certificate-btn-text": "Select him"
-  },
-  "template_page": {
-    "title": "Upload new  template",
-    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.\n",
-    "label-participant": "Full name",
-    "label-date": "Issued on",
-    "label-course": "Course name",
-    "certificate-alt": "Certificate",
-    "label-metamask-address": "Type student’s Ethereum address"
   },
   "auth-form": {
     "title" : "SBT issuance",
@@ -213,12 +207,6 @@
     "nil-templates": "templates was not found",
     "nil-certificates": "certificates was not found",
     "process-state-getting-cert": "Getting certificates"
-  },
-  "timestamp": {
-    "page-title": "Previously certificates",
-    "process-state-getting-utxo": "Getting UTXO",
-    "process-state-prepare-tx": "Prepare transaction",
-    "process-state-update-certificates": "Update Certificate"
   },
   "success-modal":{
     "title": "Success",

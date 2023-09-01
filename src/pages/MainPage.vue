@@ -71,10 +71,9 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
-import { AppLogo, NavigationItem } from '@/common'
+import { AppLogo, NavigationItem, AppButton } from '@/common'
 
 const web3Store = useWeb3ProvidersStore()
 

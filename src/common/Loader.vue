@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Spinner, Skeleton } from '@/common/loaders'
+import { Spinner, Skeleton } from '@/common'
 
 type LOADER_TYPE = 'spinner' | 'skeleton'
 

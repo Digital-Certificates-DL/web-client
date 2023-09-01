@@ -117,7 +117,7 @@ export default defineComponent({
   color: var(--field-bg-primary);
 
   .checkbox-field--checked & {
-    background-color: var(--background-primary-dark);
+    background-color: var(--secondary-main);
   }
 }
 

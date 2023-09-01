@@ -12,6 +12,7 @@ export { default as Certificate } from '@/common/Certificate.vue'
 export { default as AppDropdown } from '@/common/AppDropdown.vue'
 export { default as NavigationBlockItem } from '@/common/NavigationBlockItem.vue'
 export { default as ShortCertificateItem } from '@/common/ShortCertificateItem.vue'
+export { default as AppNavbar } from '@/common/AppNavbar.vue'
 
 export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as NavigationItem } from '@/common/NavigationItem.vue'
