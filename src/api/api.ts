@@ -124,7 +124,7 @@ export const validateContainerState = async (containerID: string) => {
       return data
     } catch (error) {
       if ((error as JsonApiError).httpStatus === 500) {
-        throw errors.FailedCallApip
+        throw errors.FailedCallApi
       }
       await sleep(5000)
     }
