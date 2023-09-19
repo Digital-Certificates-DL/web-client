@@ -126,9 +126,9 @@ const makeBitcoinTimestamp = async () => {
         userState.userSetting.bip39MnemonicPhrase,
         EXPECTED_EMPTY_ADDRESSES,
       )
-      loaderText.value = t('timestamp-page.process-state-getting-utxo')
+      loaderText.value = t('timestamp-page.loader-text-getting-utxo')
 
-      loaderText.value = t('timestamp-page.process-state-prepare-tx')
+      loaderText.value = t('timestamp-page.loader-text-prepare-tx')
 
       const tx = await bitcoin.prepareLegacyTxTestnet(
         userState.userSetting.bip39MnemonicPhrase,
@@ -145,7 +145,7 @@ const makeBitcoinTimestamp = async () => {
       )
     }
 
-    loaderText.value = t('timestamp-page.process-state-update-certificates')
+    loaderText.value = t('timestamp-page.loader-text-update-certificates')
 
     certificateList.value =
       (await updateCertificatesWrapper(selectedItems.value)) || []

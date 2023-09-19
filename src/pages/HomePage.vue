@@ -103,7 +103,7 @@ const loaderText = ref('')
 
 const getCertificates = async () => {
   isLoading.value = true
-  loaderText.value = t('home-page.process-state-getting-cert')
+  loaderText.value = t('home-page.loader-text-getting-cert')
 
   try {
     certificates.value = await uploadCertificates(

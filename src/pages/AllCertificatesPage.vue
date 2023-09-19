@@ -228,7 +228,7 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
 const getCertificates = async () => {
   try {
     isLoading.value = true
-    loaderText.value = t('all-certificates-page.process-state-update-date')
+    loaderText.value = t('all-certificates-page.loader-text-update-date')
     const data = await uploadCertificates(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
@@ -256,21 +256,21 @@ const moveToTimestamp = async () => {
 const issueCertificates = async () => {
   try {
     isLoading.value = true
-    loaderText.value = t('all-certificates-page.process-state-validate-data')
+    loaderText.value = t('all-certificates-page.loader-text-validate-data')
     if (!validateListGenerate(selectedItems.value)) {
       isLoading.value = false
       ErrorHandler.process(t('errors.certificate-was-generated'))
       return
     }
 
-    loaderText.value = t('all-certificates-page.process-state-sign-data')
+    loaderText.value = t('all-certificates-page.loader-text-sign-data')
 
     const signatures = await signCertificateData(
       selectedItems.value,
       userState.userSetting.signKey,
     )
 
-    loaderText.value = t('all-certificates-page.process-state-create-pdf')
+    loaderText.value = t('all-certificates-page.loader-text-create-pdf')
     const certificates = await generatePDF(signatures)
 
     userState.setBufferCertificates(certificates)

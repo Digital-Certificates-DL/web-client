@@ -86,16 +86,16 @@
     "certificates-subtitle-data": "Date",
     "error-certificate-list": "Empty certificate list",
     "certificates-find": "Find",
-    "process-state-update-data": "Update data",
-    "process-state-validate-data": "Validate data",
-    "process-state-sign-data": "Sign data",
-    "process-state-create-pdf": "Issuing certificates",
-    "process-state-upload-img": "Upload certificate image",
+    "loader-text-update-data": "Update data",
+    "loader-text-validate-data": "Validate data",
+    "loader-text-sign-data": "Sign data",
+    "loader-text-create-pdf": "Issuing certificates",
+    "loader-text-upload-img": "Upload certificate image",
     "certificates-item-name" : "Name",
     "certificates-item-course" : "Course",
     "certificates-item-date" : "Date",
     "no-certificate-list": "Certificates list is empty",
-    "process-state-update-date": "Updating certificates list",
+    "loader-text-update-date": "Updating certificates list",
     "image_uploading":"Upload certificate image",
     "empty-certificates-list": "Empty certificate list"
   },
@@ -119,11 +119,11 @@
     "upload-new-template-symbol": "+",
     "upload-new-template": "Upload new template",
     "choose-template": "Choose from my templates",
-    "process-state-update-data": "Update data",
-    "process-state-validate-data": "Validate data",
-    "process-state-sign-data": "Sign data",
-    "process-state-create-pdf": "Create PDF",
-    "process-state-upload-img": "Upload certificate image"
+    "loader-text-update-data": "Update data",
+    "loader-text-validate-data": "Validate data",
+    "loader-text-sign-data": "Sign data",
+    "loader-text-create-pdf": "Create PDF",
+    "loader-text-upload-img": "Upload certificate image"
   },
   "certificate": {
     "select-certificate-btn-text": "Select him",
@@ -173,9 +173,9 @@
     "bitcoin-btn-text": "Make timestamp",
     "input-placeholder": "Find",
     "certificate-image-alt": "Certificate preview",
-    "process-state-getting-utxo": "Getting UTXO",
-    "process-state-prepare-tx": "Prepare transaction",
-    "process-state-update-certificates": "Update Certificate"
+    "loader-text-getting-utxo": "Getting UTXO",
+    "loader-text-prepare-tx": "Prepare transaction",
+    "loader-text-update-certificates": "Update Certificate"
   },
   "short-certificate-item":{
     "mint-btn-text": "Mint",
@@ -209,7 +209,7 @@
     "get-all-btn-text": "See more",
     "nil-templates": "templates was not found",
     "nil-certificates": "certificates was not found",
-    "process-state-getting-cert": "Getting certificates"
+    "loader-text-getting-cert": "Getting certificates"
   },
   "success-modal":{
     "title": "Success",

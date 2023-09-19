@@ -153,16 +153,16 @@ const start = async () => {
   try {
     disableForm()
     emit('update:is-loader-shown', true)
-    emit('update-loader-text', t('generation-form.process-state-update-data'))
+    emit('update-loader-text', t('generation-form.loader-text-update-data'))
     const certificates = await parseData(form.link)
 
-    emit('update-loader-text', t('generation-form.process-state-sign-data'))
+    emit('update-loader-text', t('generation-form.loader-text-sign-data'))
 
     const signatures = await signCertificateData(
       certificates,
       userState.userSetting.signKey,
     )
-    emit('update-loader-text', t('generation-form.process-state-create-pdf'))
+    emit('update-loader-text', t('generation-form.loader-text-create-pdf'))
     await createPDF(signatures)
 
     emit('update:is-loader-shown', false)
