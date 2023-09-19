@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:text="processText" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -99,11 +99,11 @@ const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
-const processText = ref('')
+const loaderText = ref('')
 
 const getCertificates = async () => {
   isLoading.value = true
-  processText.value = t('home-page.process-state-getting-cert')
+  loaderText.value = t('home-page.process-state-getting-cert')
 
   try {
     certificates.value = await uploadCertificates(

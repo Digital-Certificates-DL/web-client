@@ -30,7 +30,7 @@ export const validateMnemonic = (mnemonic: string): boolean => {
   return Bip39.isValid(mnemonic)
 }
 
-export const validateLink = (link: string): boolean => {
+export const validateTableLink = (link: string): boolean => {
   return link.includes('https://docs.google.com/spreadsheets')
 }
 export const email = <ValidationRule>withI18nMessage(_email)
@@ -48,4 +48,4 @@ export const sameAs = (field: Ref): ValidationRule => {
 export const address = <ValidationRule>withI18nMessage(validateAddress)
 
 export const mnemonic = <ValidationRule>withI18nMessage(validateMnemonic)
-export const link = <ValidationRule>withI18nMessage(validateLink)
+export const link = <ValidationRule>withI18nMessage(validateTableLink)

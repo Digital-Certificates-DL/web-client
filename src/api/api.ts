@@ -8,6 +8,7 @@ import {
 import { prepareCertificateImage, sleep } from '@/helpers'
 import { JsonApiError } from '@distributedlab/jac'
 import { errors } from '@/errors'
+import { CONTAINER_STATUSES } from '@/enums'
 
 export const updateCertificates = async (
   certificates: CertificateJSONResponse[],
@@ -115,7 +116,7 @@ export const validateContainerState = async (containerID: string) => {
       const { data } = await api.get<Container>(
         '/integrations/ccp/certificate/' + containerID,
       )
-      if (data.status != 'ready_status') {
+      if (data.status != CONTAINER_STATUSES.READY_STATUS) {
         await sleep(5000)
         continue
       }

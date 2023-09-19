@@ -63,7 +63,8 @@ const mint = async () => {
   if (!isFormValid()) return
 
   if (!props.certificate.certificateImg) {
-    throw errors.EmptyImageError
+    ErrorHandler.process(errors.EmptyImageError)
+    return
   }
 
   try {
