@@ -45,7 +45,10 @@
     "failed-save-setting": "Failed to save settings",
     "failed-call-api": "Failed to call api",
     "failed-download-image": "Failed to download image",
-    "failed-set-bitcoin-input": "Failed to set  bitcoin input"
+    "failed-set-bitcoin-input": "Failed to set  bitcoin input",
+    "unauthorized": "Failed to auth",
+    "empty-better-utxo": "Empty better UTXOs",
+    "empty-private-key": "Empty private key"
   },
   "notification": {
     "default-title-success": "Success",

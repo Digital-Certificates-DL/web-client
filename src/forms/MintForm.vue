@@ -28,12 +28,14 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { SendToIPFS } from '@/api/api'
+import { sendToIPFS } from '@/api/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
 import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { errors } from '@/errors'
+
 const { t } = useI18n()
 const { safeMint } = useErc721()
 
@@ -61,12 +63,12 @@ const mint = async () => {
   if (!isFormValid()) return
 
   if (!props.certificate.certificateImg) {
-    throw new Error(t('errors.empty-img'))
+    throw errors.EmptyImageError
   }
 
   try {
     disableForm()
-    const data = await SendToIPFS(
+    const data = await sendToIPFS(
       prepareTokenDescription(props.certificate),
       props.certificate.certificateImg,
       props.certificate.participant,

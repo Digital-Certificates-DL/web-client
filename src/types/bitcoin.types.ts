@@ -1,7 +1,5 @@
 export type PustTxResponce = {
-  data: {
-    tx: BitcoinTransaction
-  }
+  tx: BitcoinTransaction
 }
 
 export type BitcoinTransaction = {
@@ -49,11 +47,9 @@ export interface AddressInfo {
   utxos: UTXO[]
 }
 
-////////////////
-
 export type BlockstreamTxList = Transaction[]
 
-export interface Transaction {
+export type Transaction = {
   txid: string
   version: number
   locktime: number
@@ -65,7 +61,7 @@ export interface Transaction {
   status: Status
 }
 
-export interface Vin {
+export type Vin = {
   txid: string
   vout: number
   prevout: Prevout
@@ -77,7 +73,7 @@ export interface Vin {
   inner_redeemscript_asm?: string
 }
 
-export interface Prevout {
+export type Prevout = {
   scriptpubkey: string
   scriptpubkey_asm: string
   scriptpubkey_type: string
@@ -85,7 +81,7 @@ export interface Prevout {
   value: number
 }
 
-export interface Vout {
+export type Vout = {
   scriptpubkey: string
   scriptpubkey_asm: string
   scriptpubkey_type: string
@@ -93,21 +89,14 @@ export interface Vout {
   value: number
 }
 
-export interface Status {
-  confirmed: boolean
-  block_height: number
-  block_hash: string
-  block_time: number
-}
-
-export interface UTXO {
+export type UTXO = {
   txid: string
   vout: number
   status: Status
   value: number
 }
 
-export interface Status {
+export type Status = {
   confirmed: boolean
   block_height: number
   block_hash: string

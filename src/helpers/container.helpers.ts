@@ -1,10 +1,11 @@
-import { ValidateContainerState } from '@/api/api'
+import { validateContainerState } from '@/api/api'
 import { cleanCertificate } from '@/helpers/certificate-list.helpers'
+import { errors } from '@/errors'
 
-export const validateContainerState = async (containerID: string) => {
-  const data = await ValidateContainerState(containerID)
+export const validateContainerStateWrapper = async (containerID: string) => {
+  const data = await validateContainerState(containerID)
   if (!data) {
-    throw new Error()
+    throw errors.EmptyContainerError
   }
   data.clear_certificate = cleanCertificate(data.certificates)
   return data

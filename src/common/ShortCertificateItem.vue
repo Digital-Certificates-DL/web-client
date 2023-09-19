@@ -62,18 +62,16 @@ const clickItem = () => {
 
 <style scoped lang="scss">
 .short-certificate-item {
-  display: flex;
-  justify-content: space-between;
+  width: 100%;
   border: var(--border-primary-main), toRem(1), solid;
   border-radius: toRem(8);
   padding: toRem(16);
-  align-items: center;
 }
 
 .short-certificate-item__body {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: toRem(50);
+  grid-template-columns: 2fr 1fr 2fr;
+  gap: toRem(15);
   width: 100%;
   align-items: center;
 }

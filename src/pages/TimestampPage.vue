@@ -11,8 +11,8 @@
           />
         </div>
 
-        <div v-if="selectedCount > 0" class="timestamp-page__btns">
-          <p>{{ selectedCount }}</p>
+        <div v-if="selectedItems.length" class="timestamp-page__btns">
+          <p>{{ selectedItems.length }}</p>
 
           <app-button
             class="timestamp-page__btn"
@@ -36,6 +36,7 @@
           </div>
           <div v-for="item in certificateFilter" :key="item.id">
             <short-certificate-item
+              class="timestamp-page__certificate"
               :name="item.participant"
               :date="item.date"
               :certificate="item"
@@ -54,7 +55,7 @@
       :certificate="currentCertificate"
       @success="onSuccessMint"
     />
-    <loader-modal v-model:is-shown="isLoading" v-model:text="processState" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
   </div>
 </template>
 
@@ -76,25 +77,29 @@ import {
   ErrorHandler,
   searchInTheList,
   prepareCertificateImage,
-  validateContainerState,
+  validateContainerStateWrapper,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { UpdateCertificates } from '@/api/api'
+import { updateCertificates } from '@/api/api'
+import { useRouter } from '@/router'
+import { ROUTE_NAMES } from '@/enums'
 
 const { t } = useI18n()
 
+const EXPECTED_EMPTY_ADDRESSES = 10
+
 const isCertificateModalShown = ref(false)
 const currentCertificate = ref({} as CertificateJSONResponse)
-const selectedCount = ref(0)
 
 const isMintSuccess = ref(false)
 const mintTx = ref('')
 
 const userState = useUserStore()
+const router = useRouter()
 
 const searchData = ref('')
 const isShowTimestampCheckbox = ref(false)
-const processState = ref('')
+const loaderText = ref('')
 const isLoading = ref(false)
 
 const certificatesListBuffer = ref<CertificateJSONResponse[]>([])
@@ -112,21 +117,25 @@ const openModal = (certificate: CertificateJSONResponse) => {
 
 const makeBitcoinTimestamp = async () => {
   try {
-    const bitcoin = new Bitcoin()
     isLoading.value = true
 
-    processState.value = t('timestamp-page.process-state-getting-utxo')
-    await bitcoin.initUTXOBip32TestnetBlockstream(
-      userState.userSetting.bip39MnemonicPhrase,
-      10,
-    )
-    processState.value = t('timestamp-page.process-state-prepare-tx')
     for (const certificate of selectedItems.value) {
+      const bitcoin = new Bitcoin()
+
+      await bitcoin.initUTXOBip32TestnetBlockstream(
+        userState.userSetting.bip39MnemonicPhrase,
+        EXPECTED_EMPTY_ADDRESSES,
+      )
+      loaderText.value = t('timestamp-page.process-state-getting-utxo')
+
+      loaderText.value = t('timestamp-page.process-state-prepare-tx')
+
       const tx = await bitcoin.prepareLegacyTxTestnet(
         userState.userSetting.bip39MnemonicPhrase,
       )
 
-      const { data } = await bitcoin.sendToTestnet(tx.hex)
+      const data = await bitcoin.sendToTestnet(tx.hex)
+
       certificate.txHash = data.tx.hash.toString()
       bitcoin.setNewUTXO(
         tx.exAddress,
@@ -136,12 +145,12 @@ const makeBitcoinTimestamp = async () => {
       )
     }
 
-    processState.value = t('timestamp-page.process-state-update-certificates')
+    loaderText.value = t('timestamp-page.process-state-update-certificates')
 
     certificateList.value =
-      (await updateCertificates(selectedItems.value)) || []
+      (await updateCertificatesWrapper(selectedItems.value)) || []
 
-    certificateList.value = prepareCertificateImage(certificateList.value)
+    await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -156,15 +165,17 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
   return certificates
 }
 
-const updateCertificates = async (certificates: CertificateJSONResponse[]) => {
+const updateCertificatesWrapper = async (
+  certificates: CertificateJSONResponse[],
+) => {
   try {
-    const data = await UpdateCertificates(
+    const data = await updateCertificates(
       removeImgCertificates(certificates),
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    const container = await validateContainerState(data.container_id)
+    const container = await validateContainerStateWrapper(data.container_id)
     return prepareCertificateImage(container.clear_certificate)
   } catch (err) {
     ErrorHandler.process(err)
@@ -180,7 +191,6 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (state) {
     currentCertificate.value = item
     selectedItems.value.push(item)
-    selectedCount.value = selectedItems.value.length
     isShowTimestampCheckbox.value = true
 
     return
@@ -190,7 +200,7 @@ const selectItem = (state: boolean, item: CertificateJSONResponse) => {
   if (index > -1) {
     selectedItems.value.splice(index, 1)
   }
-  selectedCount.value = selectedItems.value.length
+  selectedItems.value.length
   if (selectedItems.value.length < 1) {
     isShowTimestampCheckbox.value = false
 
@@ -222,15 +232,11 @@ getCertificates()
 }
 
 .timestamp-page__img {
-  max-width: toRem(600);
+  max-width: toRem(500);
   min-width: toRem(210);
   width: 100%;
   border-radius: toRem(16);
   margin: auto;
-}
-
-.timestamp-page__list {
-  width: 60%;
 }
 
 .timestamp-page__body {
@@ -244,6 +250,7 @@ getCertificates()
   @include respond-to(tablet) {
     grid-template-columns: 1fr;
     grid-auto-flow: initial;
+    margin: auto;
   }
 }
 
@@ -268,5 +275,9 @@ getCertificates()
   max-width: toRem(450);
   width: 100%;
   margin-top: toRem(15);
+}
+
+.timestamp-page__certificate {
+  width: 100%;
 }
 </style>

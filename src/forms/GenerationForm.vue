@@ -106,17 +106,19 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { InputField } from '@/fields'
-import { CreatePdf, UploadCertificates } from '@/api/api'
+import { createPdf, uploadCertificates } from '@/api/api'
 import { AppButton } from '@/common'
 import { CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+import { errors } from '@/errors'
+import { MAX_NAME_LENGTH } from '@/constant'
 import {
   ErrorHandler,
   prepareCertificateImage,
   signCertificateData,
-  validateContainerState,
+  validateContainerStateWrapper,
 } from '@/helpers'
 import { useForm, useFormValidation } from '@/composables'
 import { link, maxLength, required } from '@/validators'
@@ -125,8 +127,6 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const userState = useUserStore()
 const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const MAX_NAME_LENGTH = 100
 
 defineProps<{
   isLoaderShown: boolean
@@ -177,33 +177,28 @@ const start = async () => {
 
 const parseData = async (sheepUrl?: string) => {
   try {
-    return await UploadCertificates(
+    return await uploadCertificates(
       userState.userSetting.accountName,
       sheepUrl || userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
     if (error.metadata.link) {
       emit('auth', error.metadata.link)
-      throw error
     }
 
-    throw error
+    throw errors.UnauthorizedError
   }
 }
 
 const createPDF = async (users: CertificateJSONResponse[]) => {
   try {
-    const data = await CreatePdf(
+    const data = await createPdf(
       users,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    const container = await validateContainerState(data.container_id)
-    if (!container) {
-      ErrorHandler.process(t('errors.empty-container'))
-      return
-    }
+    const container = await validateContainerStateWrapper(data.container_id)
     const updatedUsers = prepareCertificateImage(container.clear_certificate)
     userState.setCertificates(updatedUsers)
 

@@ -24,7 +24,7 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
 import { AuthModal, LoaderModal } from '@/common'
-import { UpdateAuthCode } from '@/api/api'
+import { updateAuthCode } from '@/api/api'
 import { ErrorHandler } from '@/helpers'
 
 const authLink = ref('')
@@ -40,9 +40,9 @@ const updateLoaderText = (text: string) => {
 
 const updateCode = (code: string) => {
   try {
-    UpdateAuthCode(code, userState.userSetting.accountName)
+    updateAuthCode(code, userState.userSetting.accountName)
   } catch (error) {
-    ErrorHandler.process('errors.failed-call-api')
+    ErrorHandler.process(error)
   }
 }
 

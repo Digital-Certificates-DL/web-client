@@ -7,7 +7,7 @@
         :src="currentItem.img || mainImage"
         :alt="$t('app-dropdown.img-alt')"
       />
-      <p class="dropdown__item-title">
+      <p>
         {{ currentItem.text || title || $t('app-dropdown.select-title') }}
       </p>
     </div>
@@ -76,17 +76,12 @@ const selectItem = (item: DropdownItem) => {
   position: absolute;
   background-color: var(--background-primary-main);
   border-radius: toRem(8);
-  padding: toRem(8);
   min-width: toRem(160);
   box-shadow: 0 toRem(8) toRem(16) 0 rgba(var(--white-rgb), 0.2);
   z-index: var(--defaut-z-index);
-}
-
-.app-dropdown__content a {
   color: var(--black);
   padding: toRem(12) toRem(16);
   text-decoration: none;
-  display: block;
 }
 
 .app-dropdown__item-img,

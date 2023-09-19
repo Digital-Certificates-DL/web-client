@@ -63,11 +63,11 @@ import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
-import bitcoin from 'bitcoinjs-lib'
-import { SaveUserSetting } from '@/api/api'
+import { networks } from 'bitcoinjs-lib'
+import { saveUserSetting } from '@/api/api'
 import { useI18n } from 'vue-i18n'
-
-const MAX_NAME_LENGTH = 100
+import { MAX_NAME_LENGTH } from '@/constant'
+import { ErrorHandler } from '@/helpers'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -100,16 +100,16 @@ const save = async () => {
 
   try {
     userState.userSetting.userBitcoinAddress = generateAddress(form.signKey)
-    await SaveUserSetting(userState.userSetting.accountName)
+    await saveUserSetting(userState.userSetting.accountName)
     await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
+    ErrorHandler.process(error)
     emit('error', t('errors.failed-save-setting'))
-    throw error
   }
 }
 
 const generateAddress = (key: string): string => {
-  return Bitcoin.getAddressFromWIF(key, bitcoin.networks.bitcoin)
+  return Bitcoin.getAddressFromWIF(key, networks.bitcoin)
 }
 </script>
 

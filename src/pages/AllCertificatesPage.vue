@@ -111,7 +111,7 @@ import {
 } from '@/common'
 import {
   prepareCertificateImage,
-  validateContainerState,
+  validateContainerStateWrapper,
   ErrorHandler,
   searchInTheList,
   signCertificateData,
@@ -122,10 +122,11 @@ import {
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import {
-  CreatePdf,
-  DownloadCertificateImage,
-  UploadCertificates,
+  createPdf,
+  downloadCertificateImage,
+  uploadCertificates,
 } from '@/api/api'
+import { errors } from '@/errors'
 import { useI18n } from 'vue-i18n'
 import { DROP_DOWN_COURSE_LIST, DROP_DOWN_STATE_LIST } from '@/constant'
 const { t } = useI18n()
@@ -186,7 +187,7 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
     isCertificateModalShown.value = true
     currentCertificate.value = certificate
   } catch (error) {
-    ErrorHandler.process(t('errors.failed-download-image'))
+    ErrorHandler.process(error)
   }
 }
 
@@ -208,15 +209,15 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   const data = ref<CertificateJSONResponse[]>([])
   try {
     isLoading.value = true
-    loaderText.value = t('all-certificate-page.image_uploading')
-    data.value = await DownloadCertificateImage(
+    loaderText.value = t('all-certificates-page.image_uploading')
+    data.value = await downloadCertificateImage(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
-    ErrorHandler.process(error)
+    throw errors.FailedDownloadImage
   }
 
   isLoading.value = false
@@ -228,7 +229,7 @@ const getCertificates = async () => {
   try {
     isLoading.value = true
     loaderText.value = t('all-certificates-page.process-state-update-date')
-    const data = await UploadCertificates(
+    const data = await uploadCertificates(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -236,69 +237,71 @@ const getCertificates = async () => {
     userState.setCertificates(data)
     certificatesList.value = userState.certificates
   } catch (error) {
-    ErrorHandler.process(t('errors.failed-get-certificates'))
+    ErrorHandler.process(error)
   }
   isLoading.value = false
 }
 
 const moveToTimestamp = async () => {
   userState.setBufferCertificates(selectedItems.value)
-  if (validateListTimestamp(selectedItems.value)) {
-    await router.push({
-      name: ROUTE_NAMES.timestamp,
-    })
-  }
-  ErrorHandler.process(t('errors.certificate-has-timestamp'))
-}
-
-const issueCertificates = async () => {
-  isLoading.value = true
-  loaderText.value = t('all-certificates-page.process-state-validate-data')
-  if (!validateListGenerate(selectedItems.value)) {
-    isLoading.value = false
-    ErrorHandler.process(t('errors.certificate-was-generated'))
+  if (!validateListTimestamp(selectedItems.value)) {
+    ErrorHandler.process(t('errors.certificate-has-timestamp'))
     return
   }
-
-  loaderText.value = t('all-certificates-page.process-state-sign-data')
-
-  const signatures = await signCertificateData(
-    selectedItems.value,
-    userState.userSetting.signKey,
-  )
-
-  loaderText.value = t('all-certificates-page.process-state-create-pdf')
-  const certificates = await generatePDF(signatures)
-  if (!certificates) {
-    ErrorHandler.process('all-certificates-page.empty-certificates-list"')
-    return
-  }
-  userState.setBufferCertificates(certificates)
-  loaderText.value = ''
-
-  isLoading.value = false
   await router.push({
     name: ROUTE_NAMES.timestamp,
   })
 }
 
-const generatePDF = async (certificates: CertificateJSONResponse[]) => {
+const issueCertificates = async () => {
   try {
-    const data = await CreatePdf(
+    isLoading.value = true
+    loaderText.value = t('all-certificates-page.process-state-validate-data')
+    if (!validateListGenerate(selectedItems.value)) {
+      isLoading.value = false
+      ErrorHandler.process(t('errors.certificate-was-generated'))
+      return
+    }
+
+    loaderText.value = t('all-certificates-page.process-state-sign-data')
+
+    const signatures = await signCertificateData(
+      selectedItems.value,
+      userState.userSetting.signKey,
+    )
+
+    loaderText.value = t('all-certificates-page.process-state-create-pdf')
+    const certificates = await generatePDF(signatures)
+
+    userState.setBufferCertificates(certificates)
+    loaderText.value = ''
+
+    isLoading.value = false
+    await router.push({
+      name: ROUTE_NAMES.timestamp,
+    })
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+const generatePDF = async (certificates: CertificateJSONResponse[]) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const data = await createPdf(
       certificates,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    const container = await validateContainerState(data.container_id)
+    const container = await validateContainerStateWrapper(data.container_id)
 
     userState.setCertificates(
       prepareCertificateImage(container.clear_certificate),
     )
     return userState.certificates
   } catch (error) {
-    ErrorHandler.process(t('errors.failed-generate-certificates'))
-    return
+    throw error
   }
 }
 

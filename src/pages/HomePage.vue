@@ -18,8 +18,8 @@
           @active="router.push($routes.generate)"
         />
       </div>
-      <div class="home__content">
-        <div class="home__content-template">
+      <div class="home-page__content">
+        <div class="home-page__content-template">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home-page.template-list-title') }}</h3>
             <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
@@ -30,7 +30,7 @@
             <div class="home-page__item-mock"></div>
           </div>
         </div>
-        <div class="home__content-certificates">
+        <div class="home-page__content-certificates">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home-page.certificate-list-title') }}</h3>
 
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:text="processState" />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="processText" />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -88,11 +88,10 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { UpdateAuthCode, UploadCertificates } from '@/api/api'
+import { updateAuthCode, uploadCertificates } from '@/api/api'
 import { ErrorHandler } from '@/helpers'
-
-const MAX_CERTIFICATES_ON_PAGE = 3
-
+import { errors } from '@/errors'
+import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
 const { t } = useI18n()
 const userState = useUserStore()
 
@@ -100,14 +99,14 @@ const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
-const processState = ref('')
+const processText = ref('')
 
 const getCertificates = async () => {
   isLoading.value = true
-  processState.value = t('home-page.process-state-getting-cert')
+  processText.value = t('home-page.process-state-getting-cert')
 
   try {
-    certificates.value = await UploadCertificates(
+    certificates.value = await uploadCertificates(
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
@@ -116,15 +115,17 @@ const getCertificates = async () => {
       authLink.value = error.meta.auth_link
     }
     if (error.status === '500') {
-      ErrorHandler.process('errors.failed-get-certificates')
+      ErrorHandler.process(errors.FailedGetCertificates)
     }
+
     isUnauthorized.value = true
   }
+
   isLoading.value = false
 }
 
 const updateCode = async (code: string) => {
-  await UpdateAuthCode(code, userState.userSetting.accountName)
+  await updateAuthCode(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 

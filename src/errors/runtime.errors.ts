@@ -46,3 +46,18 @@ export class ProviderLimitExceeded extends RuntimeError {}
 export class ProviderJsonRpcVersionNotSupported extends RuntimeError {}
 
 export class FailedToSetInput extends RuntimeError {}
+
+export class UnauthorizedError extends RuntimeError {}
+
+export class EmptyContainerError extends RuntimeError {}
+
+export class EmptyImageError extends RuntimeError {}
+
+export class EmptyBetterUTXO extends RuntimeError {}
+export class EmptySignKey extends RuntimeError {}
+
+export class FailedDownloadImage extends RuntimeError {}
+export class FailedGetCertificates extends RuntimeError {}
+export class FailedCallApi extends RuntimeError {}
+
+export class FailedGenerateCertificate extends RuntimeError {}
