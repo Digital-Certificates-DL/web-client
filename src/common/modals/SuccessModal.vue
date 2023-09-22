@@ -8,8 +8,8 @@
       <div class="success-modal__pane">
         <div class="success-modal__payload">
           <icon class="success-modal__icon" :name="$icons.certificate" />
-          <div class="success-modal__info">
-            <h3 class="success-modal__title">
+          <div>
+            <h3>
               {{ $t('success-modal.title') }}
             </h3>
             <p class="success-modal__description">
@@ -53,8 +53,6 @@ const emit = defineEmits<{
   border-radius: toRem(8);
   max-width: toRem(720);
   max-height: toRem(256);
-  min-width: toRem(400);
-  min-height: toRem(150);
   width: 100%;
   height: 100%;
 
@@ -75,10 +73,6 @@ const emit = defineEmits<{
   width: toRem(55);
   height: toRem(55);
   margin-right: toRem(20);
-}
-
-.success-modal__tx-wrp {
-  margin-top: toRem(25);
 }
 
 .success-modal__tx {

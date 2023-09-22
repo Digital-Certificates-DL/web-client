@@ -24,7 +24,7 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
 import { AuthModal, LoaderModal } from '@/common'
-import { updateAuthCode } from '@/api/api'
+import { updateAuthCode } from '@/api'
 import { ErrorHandler } from '@/helpers'
 
 const authLink = ref('')

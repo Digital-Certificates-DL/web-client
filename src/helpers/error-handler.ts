@@ -113,6 +113,9 @@ export class ErrorHandler {
         case errors.EmptySignKey:
           errorMessage = t('errors.empty-private-key')
           break
+        case errors.RateLimit:
+          errorMessage = t('errors.rate-limit')
+          break
         default: {
           errorMessage = t('errors.default')
         }

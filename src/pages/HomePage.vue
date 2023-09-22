@@ -88,10 +88,11 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateAuthCode, uploadCertificates } from '@/api/api'
+import { updateAuthCode, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { errors } from '@/errors'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
+
 const { t } = useI18n()
 const userState = useUserStore()
 
@@ -157,13 +158,6 @@ getCertificates()
   height: 100%;
   width: 100%;
   justify-content: space-between;
-}
-
-.home-page__item {
-  width: toRem(300);
-  height: toRem(222);
-  border-radius: toRem(8);
-  background: var(--background-primary-dark);
 }
 
 .home-page__item-mock {

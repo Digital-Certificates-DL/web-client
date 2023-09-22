@@ -31,8 +31,6 @@ const emit = defineEmits<{
   display: grid;
   max-width: toRem(350);
   max-height: toRem(300);
-  min-width: toRem(200);
-  min-height: toRem(200);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);

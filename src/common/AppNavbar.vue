@@ -65,11 +65,6 @@ const connect = async () => {
   max-height: toRem(50);
 }
 
-.app-navbar__img {
-  width: toRem(20);
-  height: 100%;
-}
-
 .app-navbar__btn {
   border-radius: toRem(8);
   height: 100%;

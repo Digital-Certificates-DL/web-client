@@ -133,23 +133,9 @@ $opacity: 0.6;
   text-align: center;
 }
 
-.main-page__provider-side {
-  display: flex;
-  align-items: center;
-}
-
 .main-page__metamask-block {
   max-width: toRem(652);
   width: 100%;
-}
-
-.main-page__metamask {
-  display: grid;
-  place-content: center;
-  border-radius: toRem(8);
-  max-height: toRem(346);
-  height: 100%;
-  padding: toRem(12);
 }
 
 .main-page__endpoints-side {
@@ -183,20 +169,6 @@ $opacity: 0.6;
 .main-page__navigation-item {
   max-width: toRem(304);
   width: 100%;
-}
-
-.main-page__card-indicator {
-  position: absolute;
-  top: toRem(12);
-  right: toRem(12);
-  width: toRem(12);
-  height: toRem(12);
-  border-radius: toRem(8);
-  background: var(--error-main);
-
-  &--active {
-    background: var(--success-main);
-  }
 }
 
 .main-page__metamask-btn {

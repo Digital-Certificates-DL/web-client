@@ -6,8 +6,8 @@
     <div class="error-modal__pane">
       <div class="error-modal__payload">
         <icon class="error-modal__icon" :name="$icons.certificateError" />
-        <div class="error-modal__info">
-          <h3 class="error-modal__title">
+        <div>
+          <h3>
             {{ $t('error-modal.title') }}
           </h3>
           <p class="error-modal__description">
@@ -53,8 +53,6 @@ const tryAgain = () => {
   width: 100%;
   height: 100%;
   max-height: toRem(200);
-  min-width: toRem(200);
-  min-height: toRem(104);
 
   @include respond-to(small) {
     padding: 3%;

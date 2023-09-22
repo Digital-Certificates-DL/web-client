@@ -1,6 +1,6 @@
 import { CertificateJSONResponse } from '@/types'
 
-export const validateListGenerate = (
+export const validateListNeedToGenerate = (
   selectedItems: CertificateJSONResponse[],
 ): boolean => {
   for (const item of selectedItems) {
@@ -11,7 +11,7 @@ export const validateListGenerate = (
   return true
 }
 
-export const validateListTimestamp = (
+export const validateListCanMakeTimestamp = (
   selectedItems: CertificateJSONResponse[],
 ): boolean => {
   for (const item of selectedItems) {

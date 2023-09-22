@@ -2,7 +2,6 @@
  * General runtime error
  */
 export class RuntimeError extends Error {}
-
 export class ProviderWrapperMethodNotFoundError extends RuntimeError {}
 
 export class ProviderChainNotFoundError extends RuntimeError {}
@@ -61,3 +60,14 @@ export class FailedGetCertificates extends RuntimeError {}
 export class FailedCallApi extends RuntimeError {}
 
 export class FailedGenerateCertificate extends RuntimeError {}
+
+export class RateLimit extends RuntimeError {
+  containerID: number | undefined
+
+  setContainerID(containerID: number) {
+    this.containerID = containerID
+  }
+  getContainerID() {
+    return this.containerID
+  }
+}

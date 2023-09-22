@@ -16,7 +16,7 @@
         <h3 class="certificate-modal__title">
           {{ $t('certificate-modal.title') }}
         </h3>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-participant') }}
         </p>
 
@@ -24,16 +24,16 @@
           {{ certificate.participant }}
         </h4>
 
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-date') }}
         </p>
         <h4>{{ certificate.date }}</h4>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-course') }}
         </p>
 
         <h4>{{ certificate.courseTitle }}</h4>
-        <p class="certificate-modal__form-label">
+        <p>
           {{ $t('certificate-modal.label-metamask-address') }}
         </p>
 
@@ -59,7 +59,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:is-shown', tx: boolean): boolean
+  (e: 'update:is-shown', isShown: boolean): boolean
   (e: 'success', tx: string): boolean
   (e: 'error', msg: string): void
 }>()
@@ -78,8 +78,6 @@ const onError = (msg: string) => {
   position: fixed;
   max-width: toRem(475);
   max-height: toRem(796);
-  min-height: toRem(400);
-  min-width: toRem(300);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);

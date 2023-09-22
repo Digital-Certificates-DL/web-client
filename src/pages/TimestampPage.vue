@@ -80,7 +80,7 @@ import {
   validateContainerStateWrapper,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { updateCertificates } from '@/api/api'
+import { updateCertificates } from '@/api'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 
@@ -126,7 +126,6 @@ const makeBitcoinTimestamp = async () => {
         userState.userSetting.bip39MnemonicPhrase,
         EXPECTED_EMPTY_ADDRESSES,
       )
-      loaderText.value = t('timestamp-page.loader-text-getting-utxo')
 
       loaderText.value = t('timestamp-page.loader-text-prepare-tx')
 
@@ -223,12 +222,6 @@ getCertificates()
 .timestamp-page {
   width: 100%;
   margin: 0 auto;
-}
-
-.timestamp-page__info {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
 }
 
 .timestamp-page__img {

@@ -28,7 +28,7 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { sendToIPFS } from '@/api/api'
+import { sendToIPFS } from '@/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
@@ -113,15 +113,5 @@ const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
 .mint-form__btn {
   max-width: toRem(200);
   width: 100%;
-}
-
-.mint-form__label {
-  font-size: toRem(14);
-  color: var(--text-secondary-light);
-}
-
-.mint-form__form-label {
-  font-size: toRem(14);
-  color: var(--text-primary-main);
 }
 </style>

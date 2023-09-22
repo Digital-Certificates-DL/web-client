@@ -56,7 +56,6 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  isShow: boolean
   certificate: CertificateJSONResponse
 }>()
 
@@ -66,11 +65,7 @@ const clickItem = () => {
 }
 
 const openCertificateDownloadLink = (certificate: CertificateJSONResponse) => {
-  window.open(
-    'https://' + certificate.certificate,
-    '_blank',
-    'noopener, noreferrer',
-  )
+  window.open('https://' + certificate.certificate, 'download')
 }
 </script>
 

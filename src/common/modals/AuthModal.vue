@@ -5,7 +5,6 @@
   >
     <div class="auth-modal__pane">
       <auth-form
-        class="auth-modal__form"
         :token-link="tokenLink"
         @close-modal="closeModal"
         @send-auth-code="sendCode"
@@ -47,9 +46,7 @@ const closeModal = () => {
 .auth-modal__pane {
   display: grid;
   max-width: toRem(652);
-  min-width: toRem(400);
   max-height: toRem(400);
-  min-height: toRem(300);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);

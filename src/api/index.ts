@@ -1,6 +1,7 @@
 import { config } from '@config'
 import { JsonApiClient } from '@distributedlab/jac'
 
+export * from './api'
 export let api: JsonApiClient
 
 export function initApi(): void {

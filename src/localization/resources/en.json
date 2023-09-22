@@ -32,15 +32,13 @@
     "provider-method-not-supported": "Method is not implemented non-standard",
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
-    "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
+    "provider-wrapper-method-not-found": "Provider does not exist or method unavailable",
     "empty-container": "Container is empty",
     "empty-container-id": "Container id is empty",
     "empty-google-link": "Google link is empty",
     "empty-img": "Empty  image",
     "failed-get-certificates": "Failed to  get  certificates",
     "failed-generate-certificates": "Failed to generate certificates",
-    "certificate-was-generated": "Certificate was generated",
-    "certificate-has-timestamp": "Certificate has timestamp",
     "failed-send-tx": "Failed to send tx",
     "failed-save-setting": "Failed to save settings",
     "failed-call-api": "Failed to call api",
@@ -48,7 +46,12 @@
     "failed-set-bitcoin-input": "Failed to set  bitcoin input",
     "unauthorized": "Failed to auth",
     "empty-better-utxo": "Empty better UTXOs",
-    "empty-private-key": "Empty private key"
+    "empty-private-key": "Empty private key",
+    "rate-limit":  "Rate  limit"
+  },
+  "warnings": {
+    "certificate-was-generated": "Certificate has already been generated",
+    "certificate-has-timestamp": "Certificate has timestamp"
   },
   "notification": {
     "default-title-success": "Success",
@@ -226,5 +229,9 @@
   "app-dropdown": {
     "img-alt": "Course icon",
     "select-title": "Select"
+  },
+  "container-error-modal":{
+    "message": "Do you want to  try  again?",
+    "btn-text": "Try again"
   }
 }

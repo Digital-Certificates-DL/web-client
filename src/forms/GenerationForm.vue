@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { InputField } from '@/fields'
-import { createPdf, uploadCertificates } from '@/api/api'
+import { createPdf, uploadCertificates } from '@/api'
 import { AppButton } from '@/common'
 import { CertificateJSONResponse } from '@/types'
 import { useUserStore } from '@/store'
@@ -165,11 +165,11 @@ const start = async () => {
     emit('update-loader-text', t('generation-form.loader-text-create-pdf'))
     await createPDF(signatures)
 
-    emit('update:is-loader-shown', false)
     await router.push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
-    emit('update:is-loader-shown', false)
     ErrorHandler.process(error)
+  } finally {
+    emit('update:is-loader-shown', false)
   }
 
   enableForm()
@@ -204,6 +204,8 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 
     return updatedUsers
   } catch (error) {
+    // TODO if  error  as  rate limit and show new modal
+
     ErrorHandler.process(error)
   }
 }
@@ -212,10 +214,6 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
 <style scoped lang="scss">
 .generation-form__body {
   display: flex;
-}
-
-.generation-form__title {
-  margin-bottom: toRem(30);
 }
 
 .generation-form__payload {
@@ -247,19 +245,11 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   background: var(--info-dark);
 }
 
-.generation-form__input-wrp {
-  max-width: toRem(450);
-}
-
 .generation-form__field-border {
   width: toRem(1);
   height: 65%;
   margin: toRem(30) auto;
   border: toRem(1) solid var(--info-dark);
-}
-
-.generation-form__field-payload {
-  margin: toRem(10) 0;
 }
 
 .generation-form__field-title {
@@ -272,11 +262,6 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   justify-content: space-between;
   width: 100%;
   margin-bottom: toRem(20);
-}
-
-.generation-form__field-border-wrp {
-  display: grid;
-  justify-items: center;
 }
 
 .generation-form__btns-wrp {
@@ -320,14 +305,5 @@ const createPDF = async (users: CertificateJSONResponse[]) => {
   border-radius: toRem(12);
   margin-right: toRem(15);
   height: 100%;
-}
-
-.generation-form__field-input {
-  max-width: toRem(427);
-  width: 100%;
-}
-
-.generation-form__field-images {
-  display: flex;
 }
 </style>
