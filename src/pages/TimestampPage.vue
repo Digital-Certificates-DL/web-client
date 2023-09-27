@@ -56,6 +56,12 @@
       @success="onSuccessMint"
     />
     <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
+    <container-error-modal
+      v-model:is-shown="isContainerErrorModalShown"
+      :is-shown="isContainerErrorModalShown"
+      :container-id="processingContainerID"
+      @try-again="revalidateContainerState"
+    />
   </div>
 </template>
 
@@ -72,6 +78,7 @@ import {
   CertificateModal,
   NoDataMessage,
   SuccessModal,
+  ContainerErrorModal,
 } from '@/common'
 import {
   ErrorHandler,
@@ -80,9 +87,10 @@ import {
   validateContainerStateWrapper,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { updateCertificates } from '@/api'
+import { createPdf } from '@/api'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+import { errors } from '@/errors'
 
 const { t } = useI18n()
 
@@ -93,6 +101,9 @@ const currentCertificate = ref({} as CertificateJSONResponse)
 
 const isMintSuccess = ref(false)
 const mintTx = ref('')
+
+const isContainerErrorModalShown = ref(false)
+const processingContainerID = ref('')
 
 const userState = useUserStore()
 const router = useRouter()
@@ -146,8 +157,11 @@ const makeBitcoinTimestamp = async () => {
 
     loaderText.value = t('timestamp-page.loader-text-update-certificates')
 
-    certificateList.value =
-      (await updateCertificatesWrapper(selectedItems.value)) || []
+    processingContainerID.value = await generatePDF(selectedItems.value)
+
+    await asyncValidateContainerState(processingContainerID.value)
+
+    userState.setBufferCertificates(userState.certificates)
 
     await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
@@ -163,21 +177,42 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
   }
   return certificates
 }
+const generatePDF = async (certificates: CertificateJSONResponse[]) => {
+  const data = await createPdf(
+    removeImgCertificates(certificates),
+    userState.userSetting.userBitcoinAddress,
+    userState.userSetting.accountName,
+    userState.userSetting.urlGoogleSheet,
+  )
+  return data.container_id
+}
+const asyncValidateContainerState = async (containerID: string) => {
+  const container = await validateContainerStateWrapper(containerID)
 
-const updateCertificatesWrapper = async (
-  certificates: CertificateJSONResponse[],
-) => {
+  userState.setCertificates(
+    prepareCertificateImage(container.clear_certificate),
+  )
+}
+
+const revalidateContainerState = async (containerID: string) => {
   try {
-    const data = await updateCertificates(
-      removeImgCertificates(certificates),
-      userState.userSetting.userBitcoinAddress,
-      userState.userSetting.accountName,
-      userState.userSetting.urlGoogleSheet,
-    )
-    const container = await validateContainerStateWrapper(data.container_id)
-    return prepareCertificateImage(container.clear_certificate)
-  } catch (err) {
-    ErrorHandler.process(err)
+    isLoading.value = true
+    await asyncValidateContainerState(containerID)
+    userState.setBufferCertificates(userState.certificates)
+    loaderText.value = ''
+
+    await router.push({
+      name: ROUTE_NAMES.timestamp,
+    })
+  } catch (error) {
+    if (error === errors.RateLimit) {
+      processingContainerID.value = containerID
+      isContainerErrorModalShown.value = true
+      return
+    }
+    ErrorHandler.process(error)
+  } finally {
+    isLoading.value = false
   }
 }
 
