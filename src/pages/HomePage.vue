@@ -8,7 +8,7 @@
           :title="$t('home-page.upload-title')"
           :name="$t('home-page.upload-name')"
           :description="$t('home-page.upload-description')"
-          @active="router.push($routes.template)"
+          @active="isUploadTemplateModalShown = true"
         />
         <navigation-block-item
           class="home-page__body-nav-item"
@@ -72,6 +72,7 @@
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
+    <upload-template-modal v-model:is-shown="isUploadTemplateModalShown" />
   </div>
 </template>
 
@@ -83,6 +84,7 @@ import {
   LoaderModal,
   AuthModal,
   NavigationBlockItem,
+  UploadTemplateModal,
 } from '@/common'
 import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
@@ -101,6 +103,8 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
 const loaderText = ref('')
+
+const isUploadTemplateModalShown = ref(false)
 
 const getCertificates = async () => {
   isLoading.value = true

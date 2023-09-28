@@ -233,5 +233,12 @@
   "container-error-modal":{
     "message": "Do you want to  try  again?",
     "btn-text": "Try again"
+  },
+  "template_page":{
+    "title": "Page",
+    "description": "description"
+  },
+  "file-drop-ares": {
+    "description": "Drag or chose file for  template"
   }
 }

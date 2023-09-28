@@ -5,15 +5,15 @@
       <p class="template-page__description">
         {{ $t('template_page.description') }}
       </p>
-      <app-button text="send" @click="sendTemplate" />
-      <app-button text="get image size" @click="logImageSize" />
     </div>
     <div class="template-page__nav">
+      <app-button text="send" @click="sendTemplate" />
+      <app-button text="get image size" @click="logImageSize" />
       <app-button class="template-page__btn" text="+" @click="makeBigger()" />
 
-      <h3 class="template-page__btn" :disabled="currentInputInfo.is_qr">
+      <app-button class="template-page__btn" :disabled="currentInputInfo.is_qr">
         {{ currentInputInfo.font_size || '0' }}
-      </h3>
+      </app-button>
       <app-button
         class="template-page__btn"
         size="large"
@@ -241,18 +241,20 @@ const selectInput = (info: Template) => {
 }
 
 const sendTemplate = async () => {
+  // TODO move to api
+
   try {
     const { data } = await api.post('/integrations/ccp/certificate/template', {
       body: {
         data: {
           attributes: {
-            background_img: userStore.$state.bufferImg,
+            background_img: userStore.bufferImg,
             is_completed: true,
             template: await prepareTemplates(),
             template_name: props.name,
           },
           relationships: {
-            user: userStore.setting.accountName,
+            user: userStore.userSetting.accountName,
           },
         },
       },
@@ -319,7 +321,7 @@ const getImageSize = async () => {
     img.onerror = function () {
       reject(new Error('Failed to load the image.'))
     }
-    img.src = useUserStore().$state.bufferImg
+    img.src = useUserStore().bufferImg
   })
 }
 
@@ -362,7 +364,7 @@ const makeSmaller = () => {
 
 const logImageSize = () => {
   /* eslint-disable no-console */
-
+  console.log('move')
   console.log(imgInfo.value?.naturalWidth)
   console.log(imgInfo.value?.naturalHeight)
   console.log(imgInfo.value?.width)
@@ -417,6 +419,10 @@ const changeXCentrilize = () => {
 .template-page__nav {
   display: flex;
   align-items: center;
+  text-align: center;
+  justify-content: space-evenly;
+  height: toRem(40);
+  margin: toRem(40) 0;
 }
 
 .template-page__remove-field-btn {

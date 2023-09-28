@@ -81,7 +81,7 @@ const parseImages = async (fileList: File[]) => {
   const reader = new FileReader()
   reader.readAsDataURL(file)
   reader.onload = function async() {
-    useUserStore().bufferImg = reader.result as string
+    useUserStore().setBufferImage(reader.result as string)
   }
   reader.onerror = function (error) {
     ErrorHandler.process(error)
