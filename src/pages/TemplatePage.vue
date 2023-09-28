@@ -379,11 +379,13 @@ const changeXCentrilize = () => {
 <style scoped lang="scss">
 .template-page {
   width: 100%;
+  margin: 0 auto;
 }
 
 .template-page__back-image-wrp {
   position: relative;
-  width: 100%;
+  width: 80vw;
+  margin: auto 0;
 }
 
 .template-page__back-image {
@@ -417,6 +419,7 @@ const changeXCentrilize = () => {
 }
 
 .template-page__nav {
+  width: 70vw;
   display: flex;
   align-items: center;
   text-align: center;
