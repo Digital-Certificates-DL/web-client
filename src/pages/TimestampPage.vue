@@ -264,7 +264,7 @@ getCertificates()
   min-width: toRem(210);
   width: 100%;
   border-radius: toRem(16);
-  margin: auto;
+  margin: 0 auto;
 }
 
 .timestamp-page__body {
