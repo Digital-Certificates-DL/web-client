@@ -114,9 +114,7 @@ export const validateContainerState = async (containerID: string) => {
   const { data } = await api.get<Container>(
     '/integrations/ccp/certificate/' + containerID,
   )
-  /* eslint-disable no-console */
 
-  console.log('validateContainerState')
   return data
 }
 

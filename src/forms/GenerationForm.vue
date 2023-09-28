@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, watch, ref } from 'vue'
 import { InputField } from '@/fields'
 import { createPdf, uploadCertificates } from '@/api'
 import { AppButton } from '@/common'
@@ -128,14 +128,34 @@ const { t } = useI18n()
 const userState = useUserStore()
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
-defineProps<{
-  isLoaderShown: boolean
-}>()
+const processingContainerID = ref('')
+
+const props = withDefaults(
+  defineProps<{
+    isLoaderShown: boolean
+    isRevalidateContainer: boolean
+    containerId: string
+  }>(),
+  {
+    containerId: '',
+    isRevalidateContainer: false,
+  },
+)
+
+watch(
+  () => props.isRevalidateContainer,
+  newValue => {
+    if (newValue) {
+      revalidateContainerState(props.containerId)
+    }
+  },
+)
 
 const emit = defineEmits<{
   (event: 'auth', code: string): void
   (event: 'update:is-loader-shown', isShown: boolean): void
   (event: 'update-loader-text', text: string): void
+  (event: 'validation-rate-limit', containerID: string): void
 }>()
 
 const form = reactive({
@@ -163,10 +183,15 @@ const start = async () => {
       userState.userSetting.signKey,
     )
     emit('update-loader-text', t('generation-form.loader-text-create-pdf'))
-    await createPDF(signatures)
+    processingContainerID.value = await generatePDF(signatures)
+    await asyncValidateContainerState(processingContainerID.value)
 
     await router.push({ name: ROUTE_NAMES.certificates })
   } catch (error) {
+    if (error === errors.RateLimit) {
+      emit('validation-rate-limit', processingContainerID.value)
+      return
+    }
     ErrorHandler.process(error)
   } finally {
     emit('update:is-loader-shown', false)
@@ -190,23 +215,40 @@ const parseData = async (sheepUrl?: string) => {
   }
 }
 
-const createPDF = async (users: CertificateJSONResponse[]) => {
+const generatePDF = async (certificates: CertificateJSONResponse[]) => {
+  const data = await createPdf(
+    certificates,
+    userState.userSetting.userBitcoinAddress,
+    userState.userSetting.accountName,
+    userState.userSetting.urlGoogleSheet,
+  )
+  return data.container_id
+}
+
+const asyncValidateContainerState = async (containerID: string) => {
+  const container = await validateContainerStateWrapper(containerID)
+  userState.setCertificates(
+    prepareCertificateImage(container.clear_certificate),
+  )
+}
+
+const revalidateContainerState = async (containerID: string) => {
   try {
-    const data = await createPdf(
-      users,
-      userState.userSetting.userBitcoinAddress,
-      userState.userSetting.accountName,
-      userState.userSetting.urlGoogleSheet,
-    )
-    const container = await validateContainerStateWrapper(data.container_id)
-    const updatedUsers = prepareCertificateImage(container.clear_certificate)
-    userState.setCertificates(updatedUsers)
-
-    return updatedUsers
+    emit('update:is-loader-shown', true)
+    await asyncValidateContainerState(containerID)
+    userState.setBufferCertificates(userState.certificates)
+    emit('update-loader-text', '')
+    await router.push({
+      name: ROUTE_NAMES.certificates,
+    })
   } catch (error) {
-    // TODO if  error  as  rate limit and show new modal
-
+    if (error === errors.RateLimit) {
+      emit('validation-rate-limit', containerID)
+      return
+    }
     ErrorHandler.process(error)
+  } finally {
+    emit('update:is-loader-shown', false)
   }
 }
 </script>
