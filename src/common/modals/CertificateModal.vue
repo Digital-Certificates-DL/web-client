@@ -59,9 +59,9 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:is-shown', isShown: boolean): boolean
-  (e: 'success', tx: string): boolean
-  (e: 'error', msg: string): void
+  (event: 'update:is-shown', isShown: boolean): boolean
+  (event: 'success', tx: string): boolean
+  (event: 'error', msg: string): void
 }>()
 
 const onSuccess = (tx: string) => {

@@ -40,7 +40,7 @@
               :name="item.participant"
               :date="item.date"
               :certificate="item"
-              :is-show="isShowTimestampCheckbox"
+              :is-shown="isShowTimestampCheckbox"
               @select="selectItem"
               @open-modal="openModal"
             />
@@ -221,8 +221,8 @@ const getCertificates = () => {
   certificatesListBuffer.value = certificateList.value
 }
 
-const selectItem = (state: boolean, item: CertificateJSONResponse) => {
-  if (state) {
+const selectItem = (isSelected: boolean, item: CertificateJSONResponse) => {
+  if (isSelected) {
     currentCertificate.value = item
     selectedItems.value.push(item)
     isShowTimestampCheckbox.value = true

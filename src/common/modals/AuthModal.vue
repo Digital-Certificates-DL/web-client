@@ -27,7 +27,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'send-auth-code', code: string): boolean
+  (event: 'send-auth-code', code: string): boolean
   (event: 'update:is-shown', value: boolean): void
 }>()
 

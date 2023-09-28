@@ -51,8 +51,8 @@ import { ref } from 'vue'
 const isSelected = ref(false)
 
 const emit = defineEmits<{
-  (e: 'open-modal', user: CertificateJSONResponse): boolean
-  (e: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
+  (event: 'open-modal', user: CertificateJSONResponse): boolean
+  (event: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{

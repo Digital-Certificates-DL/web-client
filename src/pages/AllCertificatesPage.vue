@@ -194,8 +194,8 @@ const openCertificateModal = async (certificate: CertificateJSONResponse) => {
   }
 }
 
-const selectItem = (state: boolean, item: CertificateJSONResponse) => {
-  if (state) {
+const selectItem = (isSelected: boolean, item: CertificateJSONResponse) => {
+  if (isSelected) {
     selectedItems.value.push(item)
     selectedCount.value++
     return

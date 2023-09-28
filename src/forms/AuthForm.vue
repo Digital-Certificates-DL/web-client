@@ -63,8 +63,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'send-auth-code', code: string): boolean
-  (e: 'close-modal'): boolean
+  (event: 'send-auth-code', code: string): boolean
+  (event: 'close-modal'): boolean
 }>()
 
 const form = reactive({

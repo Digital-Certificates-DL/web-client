@@ -74,7 +74,7 @@ const userState = useUserStore()
 const router = useRouter()
 
 const emit = defineEmits<{
-  (e: 'error', msg: string): void
+  (event: 'error', msg: string): void
 }>()
 
 const form = reactive({

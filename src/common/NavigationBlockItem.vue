@@ -36,7 +36,7 @@ withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'active'): boolean
+  (event: 'active'): boolean
 }>()
 </script>
 

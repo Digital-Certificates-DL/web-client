@@ -35,7 +35,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:is-shown', v: boolean): void
+  (event: 'update:is-shown', v: boolean): void
 }>()
 
 const tryAgain = () => {

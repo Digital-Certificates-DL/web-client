@@ -1,6 +1,6 @@
 <template>
   <div class="short-certificate-item">
-    <checkbox-field v-model="isSelected" v-show="isShow" @click="clickItem" />
+    <checkbox-field v-model="isSelected" v-show="isShown" @click="clickItem" />
     <div class="short-certificate-item__body">
       <p>{{ name }}</p>
       <p>{{ date }}</p>
@@ -35,15 +35,19 @@ import { AppButton } from '@/common'
 const isSelected = ref(false)
 
 const props = defineProps<{
-  isShow: boolean
+  isShown: boolean
   name: string
   date: string
   certificate: CertificateJSONResponse
 }>()
 
 const emit = defineEmits<{
-  (e: 'open-modal', certificate: CertificateJSONResponse): boolean
-  (e: 'select', state: boolean, certificate: CertificateJSONResponse): boolean
+  (event: 'open-modal', certificate: CertificateJSONResponse): boolean
+  (
+    event: 'select',
+    isSelected: boolean,
+    certificate: CertificateJSONResponse,
+  ): boolean
 }>()
 
 const openLink = (certificate: CertificateJSONResponse) => {
