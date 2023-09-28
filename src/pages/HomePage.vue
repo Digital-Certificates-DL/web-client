@@ -1,50 +1,42 @@
 <template>
   <div class="home-page">
-    <loader-modal v-model:is-shown="isLoading" v-model:state="processState" />
-    <upload-template-modal v-model:is-shown="isUploadTemplateModalShown" />
-    <auth-modal
-      v-model:is-shown="isUnauthorized"
-      :token-link="authLink"
-      @send-auth-code="updateCode"
-    />
-
     <div class="home-page__body">
-      <h2>{{ $t('home.title') }}</h2>
+      <h2>{{ $t('home-page.title') }}</h2>
       <div class="home-page__body-nav">
-        <home-body-nav
+        <navigation-block-item
           class="home-page__body-nav-item"
-          :title="$t('home.upload-title')"
-          :name="$t('home.upload-name')"
-          :description="$t('home.upload-description')"
-          @active="isUploadTemplateModalShown = true"
+          :title="$t('home-page.upload-title')"
+          :name="$t('home-page.upload-name')"
+          :description="$t('home-page.upload-description')"
+          @active="router.push($routes.template)"
         />
-        <home-body-nav
+        <navigation-block-item
           class="home-page__body-nav-item"
-          :title="$t('home.create-title')"
-          :name="$t('home.create-name')"
-          :description="$t('home.create-description')"
-          @active="router.push({ name: ROUTE_NAMES.generate })"
+          :title="$t('home-page.create-title')"
+          :name="$t('home-page.create-name')"
+          :description="$t('home-page.create-description')"
+          @active="router.push($routes.generate)"
         />
       </div>
-      <div class="home__content">
-        <div class="home__content-template">
+      <div class="home-page__content">
+        <div class="home-page__content-template">
           <div class="home-page__content-subtitle">
-            <h3>{{ $t('home.template-list-title') }}</h3>
-            <app-button color="info" :text="$t('home.get-all-btn')" />
+            <h3>{{ $t('home-page.template-list-title') }}</h3>
+            <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
           </div>
           <div class="home-page__items">
-            <div class="home__item home-page__item-mock"></div>
-            <div class="home__item home-page__item-mock"></div>
-            <div class="home__item home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
+            <div class="home-page__item-mock"></div>
           </div>
         </div>
-        <div class="home__content-certificates">
+        <div class="home-page__content-certificates">
           <div class="home-page__content-subtitle">
-            <h3>{{ $t('home.certificate-list-title') }}</h3>
+            <h3>{{ $t('home-page.certificate-list-title') }}</h3>
 
             <app-button
               color="info"
-              :text="$t('home.get-all-btn')"
+              :text="$t('home-page.get-all-btn-text')"
               :route="{
                 name: $routes.certificates,
               }"
@@ -57,37 +49,49 @@
             <div class="home-page__item-mock"></div>
           </div>
           <div v-else class="home-page__items">
-            <div v-for="item in certificates.slice(0, 3)" :key="item">
-              <home-item :img="item.img" :title="item.participant" />
+            <div
+              v-for="(item, key) in certificates.slice(
+                0,
+                MAX_CERTIFICATES_ON_PAGE,
+              )"
+              :key="key"
+            >
+              <preview-certificate-item
+                :img="item.img"
+                :title="item.participant"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
+    <auth-modal
+      v-model:is-shown="isUnauthorized"
+      :token-link="authLink"
+      @send-auth-code="updateCode"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import {
-  HomeItem,
+  PreviewCertificateItem,
   AppButton,
   LoaderModal,
   AuthModal,
-  HomeBodyNav,
-  UploadTemplateModal,
+  NavigationBlockItem,
 } from '@/common'
-import { useI18n } from 'vue-i18n'
 import { router } from '@/router'
-import { ROUTE_NAMES } from '@/enums'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import {
-  useUpdateCode,
-  useUploadCertificates,
-  useGetUpdateLink,
-} from '@/api/api'
+import { updateAuthCode, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
+import { errors } from '@/errors'
+import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -96,56 +100,33 @@ const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
-const isUploadTemplateModalShown = ref(false)
-const processState = ref('')
+const loaderText = ref('')
 
 const getCertificates = async () => {
-  try {
-    isLoading.value = true
-    processState.value = t('home.process-state-getting-cert')
+  isLoading.value = true
+  loaderText.value = t('home-page.loader-text-getting-cert')
 
-    const data = await useUploadCertificates(
-      userState.setting.accountName,
-      userState.setting.urlGoogleSheet,
+  try {
+    certificates.value = await uploadCertificates(
+      userState.userSetting.accountName,
+      userState.userSetting.urlGoogleSheet,
     )
-    if (!data) {
-      return
-    }
-    certificates.value = data
   } catch (error) {
-    switch (error.name) {
-      case 'ForbiddenError':
-        authLink.value = error.meta.auth_link
-        isUnauthorized.value = true
-        break
-      case 'UnauthorizedError':
-        try {
-          const data = await useGetUpdateLink(userState.setting.accountName)
-          if (!data) {
-            ErrorHandler.process(t('errors.empty-google-link'))
-            return
-          }
-          //todo  implement types for it
-          authLink.value = data.link
-          isUnauthorized.value = true
-          return
-        } catch (err) {
-          ErrorHandler.process(err)
-          return
-        }
-      default:
-        if (!userState.setting.urlGoogleSheet) {
-          await router.push(ROUTE_NAMES.settings)
-        }
-        break
+    if (error.meta) {
+      authLink.value = error.meta.auth_link
     }
-  } finally {
-    isLoading.value = false
+    if (error.status === '500') {
+      ErrorHandler.process(errors.FailedGetCertificates)
+    }
+
+    isUnauthorized.value = true
   }
+
+  isLoading.value = false
 }
 
 const updateCode = async (code: string) => {
-  await useUpdateCode(code, userState.setting.accountName)
+  await updateAuthCode(code, userState.userSetting.accountName)
   isUnauthorized.value = false
 }
 
@@ -154,25 +135,20 @@ getCertificates()
 
 <style scoped lang="scss">
 .home-page {
-  max-width: var(--page-large);
   width: 100%;
   margin: 0 auto;
 }
 
 .home-page__body-nav {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  gap: toRem(150);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .home-page__body-nav-item {
   margin: toRem(20) 0;
-  width: 47%;
-  height: toRem(150);
-
-  @include respond-to(xmedium) {
-    height: toRem(130);
-    width: 47%;
-  }
+  max-width: toRem(550);
+  width: 100%;
 }
 
 .home-page__items {
@@ -180,14 +156,13 @@ getCertificates()
   max-height: toRem(222);
   min-height: toRem(200);
   height: 100%;
+  width: 100%;
   justify-content: space-between;
 }
 
 .home-page__item-mock {
-  max-width: toRem(300);
-  width: 100%;
-  max-height: toRem(222);
-  height: 100%;
+  width: toRem(300);
+  height: toRem(222);
   border-radius: toRem(8);
   background: var(--background-primary-dark);
 

@@ -5,7 +5,6 @@
   >
     <div class="auth-modal__pane">
       <auth-form
-        class="auth-modal__form"
         :token-link="tokenLink"
         @close-modal="closeModal"
         @send-auth-code="sendCode"
@@ -19,6 +18,7 @@ import { AuthForm } from '@/forms'
 import { Modal } from '@/common'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
+
 const router = useRouter()
 
 defineProps<{
@@ -27,11 +27,12 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'send-auth-code', code: string): boolean
+  (event: 'send-auth-code', code: string): boolean
   (event: 'update:is-shown', value: boolean): void
 }>()
 
 const sendCode = (code: string) => {
+  emit('update:is-shown', false)
   emit('send-auth-code', code)
 }
 
@@ -44,12 +45,16 @@ const closeModal = () => {
 <style scoped lang="scss">
 .auth-modal__pane {
   display: grid;
-  max-width: toRem(600);
+  max-width: toRem(652);
   max-height: toRem(400);
   width: 100%;
   height: 100%;
   background: var(--background-primary-main);
   border-radius: toRem(15);
   padding: toRem(24);
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 </style>

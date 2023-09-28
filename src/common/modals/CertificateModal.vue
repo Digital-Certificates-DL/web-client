@@ -16,7 +16,7 @@
         <h3 class="certificate-modal__title">
           {{ $t('certificate-modal.title') }}
         </h3>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-participant') }}
         </p>
 
@@ -24,22 +24,23 @@
           {{ certificate.participant }}
         </h4>
 
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-date') }}
         </p>
         <h4>{{ certificate.date }}</h4>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-course') }}
         </p>
 
         <h4>{{ certificate.courseTitle }}</h4>
-        <p class="certificate-modal__form-label">
+        <p>
           {{ $t('certificate-modal.label-metamask-address') }}
         </p>
 
         <mint-form
           :certificate="certificate"
-          @mint-finished="success"
+          @mint-finished="onSuccess"
+          @error="onError"
           @modal-close="modal.close"
         />
       </div>
@@ -49,7 +50,6 @@
 
 <script lang="ts" setup>
 import { CertificateJSONResponse } from '@/types'
-
 import { Modal } from '@/common'
 import { MintForm } from '@/forms'
 
@@ -59,13 +59,16 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'success', tx: string): boolean
-  (e: 'update:is-shown', value: boolean): void
+  (event: 'update:is-shown', isShown: boolean): boolean
+  (event: 'success', tx: string): boolean
+  (event: 'error', msg: string): void
 }>()
 
-const success = (tx: string) => {
+const onSuccess = (tx: string) => {
   emit('success', tx)
-  emit('update:is-shown', false)
+}
+const onError = (msg: string) => {
+  emit('error', msg)
 }
 </script>
 
@@ -73,11 +76,17 @@ const success = (tx: string) => {
 .certificate-modal__pane {
   display: grid;
   position: fixed;
-  width: toRem(475);
-  height: toRem(796);
+  max-width: toRem(475);
+  max-height: toRem(796);
+  width: 100%;
+  height: 100%;
   background: var(--background-primary-main);
   border-radius: toRem(16);
   padding: toRem(24);
+
+  @include respond-to(x-small) {
+    padding: 3%;
+  }
 }
 
 .certificate-modal__img-wrp {
@@ -86,7 +95,8 @@ const success = (tx: string) => {
 }
 
 .certificate-modal__img {
-  width: toRem(427);
+  max-width: toRem(427);
+  width: 100%;
 }
 
 .certificate-modal__title {

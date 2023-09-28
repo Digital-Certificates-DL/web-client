@@ -1,62 +1,84 @@
 <template>
   <div class="generation-page">
-    <auth-modal
-      v-model:is-shown="isUnauthorized"
-      :token-link="authLink"
-      @send-auth-code="updateCode"
-    />
     <div class="generation-page__title">
       <h2>{{ $t('generation-page.title') }}</h2>
     </div>
-    <generation-form @auth="auth" />
+    <generation-form
+      v-model:is-loader-shown="isLoaderModalShown"
+      :container-id="validationContainerID"
+      :is-revalidate-container="isRevalidateContainer"
+      @update-loader-text="updateLoaderText"
+      @auth="auth"
+      @validation-rate-limit="handleValidateContainerError"
+    />
+
+    <auth-modal
+      v-model:is-shown="isAuthModalShown"
+      :token-link="authLink"
+      @send-auth-code="updateCode"
+    />
+
+    <loader-modal :is-shown="isLoaderModalShown" :text="loaderText" />
+    <container-error-modal
+      :is-shown="isContainerErrorModalShown"
+      :container-id="validationContainerID"
+      @try-again="revalidateContainer"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { api } from '@/api'
-import { CertificateJSONResponseList } from '@/types'
-import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
-import { AuthModal } from '@/common/modals'
+import { AuthModal, LoaderModal, ContainerErrorModal } from '@/common'
+import { updateAuthCode } from '@/api'
+import { ErrorHandler } from '@/helpers'
 
 const authLink = ref('')
-const isUnauthorized = ref(false)
-const userState = useUserStore()
+const loaderText = ref('')
 
-const updateCode = async (code: string) => {
+const isAuthModalShown = ref(false)
+const userState = useUserStore()
+const isLoaderModalShown = ref(false)
+const isContainerErrorModalShown = ref(false)
+const isRevalidateContainer = ref(false)
+const validationContainerID = ref('')
+
+const updateLoaderText = (text: string) => {
+  loaderText.value = text
+}
+
+const updateCode = (code: string) => {
   try {
-    isUnauthorized.value = false
-    await api.post<CertificateJSONResponseList>(
-      '/integrations/ccp/users/settings',
-      {
-        body: {
-          data: {
-            attributes: {
-              code: code,
-              name: userState.setting.accountName,
-            },
-          },
-        },
-      },
-    )
+    updateAuthCode(code, userState.userSetting.accountName)
   } catch (error) {
     ErrorHandler.process(error)
-    return
   }
 }
 
-const auth = (code: string) => {
-  authLink.value = code
-  isUnauthorized.value = true
+const handleValidateContainerError = (containerID: string) => {
+  isRevalidateContainer.value = false
+  validationContainerID.value = containerID
+  isContainerErrorModalShown.value = true
+}
+
+const revalidateContainer = (containerID: string) => {
+  validationContainerID.value = containerID
+  isContainerErrorModalShown.value = false
+  isRevalidateContainer.value = true
+  isLoaderModalShown.value = true
+}
+
+const auth = (link: string) => {
+  authLink.value = link
+  isAuthModalShown.value = true
 }
 </script>
 
 <style lang="scss" scoped>
 .generation-page {
-  max-width: var(--page-large);
-  width: 100%;
   margin: 0 auto;
+  width: 100%;
 }
 </style>

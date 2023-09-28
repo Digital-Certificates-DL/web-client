@@ -1,182 +1,187 @@
-import { api } from '@/api/index'
+import { api } from '@/api'
 import {
   CertificateJSONResponse,
   CertificateJSONResponseList,
   Container,
   IpfsAttributes,
 } from '@/types'
-import { sleep } from '@/helpers'
+import { prepareCertificateImage } from '@/helpers'
+import { JsonApiBodyBuilder } from '@distributedlab/jac'
+import { errors } from '@/errors'
 
-export const useUpdateCertificates = async (
+export const updateCertificates = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
   url: string,
 ) => {
-  const { data } = await api.post<Container>(
-    '/integrations/ccp/certificate/bitcoin',
-    {
-      body: {
-        data: {
-          attributes: {
-            certificates_data: certificates,
-            address: bitcoinAddress,
-            name: name,
-            url: url,
-          },
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'users',
+        attributes: {
+          certificates_data: certificates,
+          address: bitcoinAddress,
+          name: name,
+          url: url,
         },
-      },
-    },
-  )
-  return data
+      })
+      .build()
+
+    const { data } = await api.post<Container>(
+      '/integrations/ccp/certificate/bitcoin',
+      { body },
+    )
+    return data
+  } catch (error) {
+    throw errors.FailedGenerateCertificate
+  }
 }
 
-export const useDownloadImage = async (
+export const downloadCertificateImage = async (
   certificate: CertificateJSONResponse,
   bitcoinAddress: string,
   name: string,
   url: string,
 ) => {
+  const body = new JsonApiBodyBuilder()
+    .setData({
+      type: 'download_image',
+      attributes: {
+        certificates_data: [certificate],
+        address: bitcoinAddress,
+        url: url,
+        name: name,
+      },
+    })
+    .build()
   const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/certificate/image',
-    {
-      body: {
-        data: {
-          attributes: {
-            certificates_data: [certificate],
-            address: bitcoinAddress,
-            url: url,
-            name: name,
-          },
-        },
-      },
-    },
+    { body },
   )
+
   return data
 }
 
-export const useUploadCertificates = async (name: string, sheepUrl: string) => {
+export const uploadCertificates = async (name: string, sheepUrl: string) => {
+  const body = new JsonApiBodyBuilder()
+    .setData({
+      type: 'parse_users',
+      attributes: {
+        url: sheepUrl,
+        name: name,
+      },
+    })
+    .build()
+
   const { data } = await api.post<CertificateJSONResponse[]>(
     '/integrations/ccp/users/',
-    {
-      body: {
-        data: {
-          attributes: {
-            url: sheepUrl,
-            name: name,
-          },
-        },
-      },
-    },
+    { body },
   )
-  return data
+  return prepareCertificateImage(data)
 }
 
-export const useCreatePdf = async (
+export const createPdf = async (
   certificates: CertificateJSONResponse[],
   bitcoinAddress: string,
   name: string,
   url: string,
 ) => {
-  const { data } = await api.post<Container>('/integrations/ccp/certificate/', {
-    body: {
-      data: {
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'prepare_certificate',
         attributes: {
           certificates_data: certificates,
           address: bitcoinAddress,
           url: url,
           name: name,
         },
-      },
-    },
-  })
-  return data
-}
+      })
+      .build()
 
-export const useValidateContainerState = async (containerID: string) => {
-  await sleep(5000)
-  const containerStatus = true
-  while (containerStatus) {
-    try {
-      const { data } = await api.get<Container>(
-        '/integrations/ccp/certificate/' + containerID,
-      )
-      if (data.status != 'ready_status') {
-        await sleep(5000)
-        continue
-      }
-
-      return data
-    } catch (error) {
-      await sleep(5000)
-      // ErrorHandler.process(error)
-    }
+    const { data } = await api.post<Container>(
+      '/integrations/ccp/certificate/',
+      { body },
+    )
+    return data
+  } catch (error) {
+    throw errors.FailedGenerateCertificate
   }
 }
 
-export const useGetUpdateLink = async (name: string) => {
-  const { data } = await api.post('/integrations/ccp/users/token', {
-    body: {
-      data: {
-        attributes: {
-          name: name,
-        },
-      },
-    },
-  })
+export const validateContainerState = async (containerID: string) => {
+  const { data } = await api.get<Container>(
+    '/integrations/ccp/certificate/' + containerID,
+  )
+
   return data
 }
 
-export const useUpdateCode = async (code: string, name: string) => {
-  await api.post<CertificateJSONResponseList>(
-    '/integrations/ccp/users/settings',
-    {
-      body: {
-        data: {
-          attributes: {
-            code: code,
-            name: name,
-          },
-        },
-      },
-    },
-  )
-}
-
-export const useSendToIPFS = async (
+export const sendToIPFS = async (
   description: string,
   img: Uint8Array,
   participant: string,
 ) => {
-  const { data } = await api.post<IpfsAttributes>(
-    '/integrations/ccp/certificate/ipfs',
-    {
-      body: {
-        data: {
-          attributes: {
-            description: description,
-            img: img,
-            name: 'certificate - ' + participant,
-          },
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'ipfs_file_upload',
+        attributes: {
+          description: description,
+          img: img,
+          name: 'certificate - ' + participant,
         },
-      },
-    },
-  )
-  return data
+      })
+      .build()
+
+    const { data } = await api.post<IpfsAttributes>(
+      '/integrations/ccp/certificate/ipfs',
+      { body },
+    )
+    return data
+  } catch (error) {
+    throw errors.FailedCallApi
+  }
 }
 
-export const useSaveUserSetting = async (name: string) => {
-  await api.post<CertificateJSONResponseList>(
-    '/integrations/ccp/users/settings',
-    {
-      body: {
-        data: {
-          attributes: {
-            code: '',
-            name: name,
-          },
+export const saveUserSetting = async (name: string) => {
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'settings',
+        attributes: {
+          code: '',
+          name: name,
         },
-      },
-    },
-  )
+      })
+      .build()
+
+    await api.post<CertificateJSONResponseList>(
+      '/integrations/ccp/users/settings',
+      { body },
+    )
+  } catch (error) {
+    throw errors.FailedCallApi
+  }
+}
+
+export const updateAuthCode = async (code: string, name: string) => {
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'settings',
+        attributes: {
+          code: code,
+          name: name,
+        },
+      })
+      .build()
+    await api.post<CertificateJSONResponseList>(
+      '/integrations/ccp/users/settings',
+      { body },
+    )
+  } catch (error) {
+    throw errors.FailedCallApi
+  }
 }

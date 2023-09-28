@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
-    component: () => import('@/pages/PreviouslyCertificatesPage.vue'),
+    component: () => import('@/pages/AllCertificatesPage.vue'),
   },
   {
     path: '/settings',
@@ -35,7 +35,7 @@ const routes = [
   {
     path: '/timestamp',
     name: ROUTE_NAMES.timestamp,
-    component: () => import('@/pages/Timestamp.vue'),
+    component: () => import('@/pages/TimestampPage.vue'),
   },
   {
     path: '/template/:name',

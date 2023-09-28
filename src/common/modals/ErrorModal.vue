@@ -1,13 +1,13 @@
 <template>
   <modal
-    :is-shown="props.isShown"
+    :is-shown="isShown"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <div class="error-modal__pane">
       <div class="error-modal__payload">
-        <icon class="error-modal__icon" :name="ICON_NAMES.certificateError" />
-        <div class="error-modal__info">
-          <h3 class="error-modal__title">
+        <icon class="error-modal__icon" :name="$icons.certificateError" />
+        <div>
+          <h3>
             {{ $t('error-modal.title') }}
           </h3>
           <p class="error-modal__description">
@@ -17,9 +17,9 @@
       </div>
       <app-button
         class="error-modal__btn"
-        :text="$t('error-modal.btn')"
-        :size="'large'"
+        size="large"
         color="error"
+        :text="$t('error-modal.close-btn-text')"
         @click="tryAgain"
       />
     </div>
@@ -27,17 +27,15 @@
 </template>
 
 <script lang="ts" setup>
-import { Modal, Icon } from '@/common'
-import { ICON_NAMES } from '@/enums'
-import AppButton from '@/common/AppButton.vue'
+import { Modal, Icon, AppButton } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   message: string
   isShown: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:is-shown', v: boolean): void
+  (event: 'update:is-shown', v: boolean): void
 }>()
 
 const tryAgain = () => {
@@ -51,8 +49,14 @@ const tryAgain = () => {
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
-  width: toRem(652);
-  height: toRem(164);
+  max-width: toRem(652);
+  width: 100%;
+  height: 100%;
+  max-height: toRem(200);
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .error-modal__payload {
@@ -71,6 +75,5 @@ const tryAgain = () => {
 
 .error-modal__btn {
   margin: toRem(10) auto;
-  width: 40%;
 }
 </style>

@@ -10,13 +10,13 @@
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.mint-btn')"
+        :text="$t('mint-form.mint-btn-text')"
         @click="mint"
       />
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.close-btn')"
+        :text="$t('mint-form.close-btn-text')"
         :disabled="isFormDisabled"
         @click="emit('modal-close')"
       />
@@ -28,12 +28,14 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-import { useSendToIPFS } from '@/api/api'
+import { sendToIPFS } from '@/api'
 import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
 import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { errors } from '@/errors'
+
 const { t } = useI18n()
 const { safeMint } = useErc721()
 
@@ -54,27 +56,32 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: 'mint-finished', tx: string): void
   (event: 'modal-close'): void
+  (event: 'error', msg: string): void
 }>()
 
 const mint = async () => {
   if (!isFormValid()) return
 
+  if (!props.certificate.certificateImg) {
+    ErrorHandler.process(errors.EmptyImageError)
+    return
+  }
+
   try {
     disableForm()
-
-    if (!props.certificate.certificateImg) {
-      ErrorHandler.process(t('errors.empty-img'))
-      return
-    }
-
-    const data = await useSendToIPFS(
+    const data = await sendToIPFS(
       prepareTokenDescription(props.certificate),
       props.certificate.certificateImg,
       props.certificate.participant,
     )
 
     const mintTx = await safeMint(form.address, data.url)
-    emit('mint-finished', mintTx!)
+    if (!mintTx) {
+      emit('error', t('errors.failed-send-tx'))
+      enableForm()
+      return
+    }
+    emit('mint-finished', mintTx)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -106,15 +113,5 @@ const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
 .mint-form__btn {
   max-width: toRem(200);
   width: 100%;
-}
-
-.mint-form__label {
-  font-size: toRem(14);
-  color: var(--text-secondary-light);
-}
-
-.mint-form__form-label {
-  font-size: toRem(14);
-  color: var(--text-primary-main);
 }
 </style>

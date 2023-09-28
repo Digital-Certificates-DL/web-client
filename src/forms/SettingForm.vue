@@ -1,7 +1,7 @@
 <template>
   <form class="setting-form" autocomplete="off">
     <h3 class="setting-form__fields-title">
-      {{ $t('setting-page.general-title') }}
+      {{ $t('setting-form.general-title') }}
     </h3>
     <input-field
       v-model="form.accountName"
@@ -34,13 +34,16 @@
       <app-button
         class="setting-form__btn"
         color="info"
-        :text="$t('setting-form.save-btn-title')"
+        size="large"
+        :text="$t('setting-form.save-btn-text')"
+        :disabled="!isFormValid"
         @click="save"
       />
       <app-button
         class="setting-form__btn"
         color="info"
-        :text="$t('setting-form.cancel-btn-title')"
+        size="large"
+        :text="$t('setting-form.cancel-btn-text')"
         :route="{
           name: $routes.main,
         }"
@@ -54,48 +57,59 @@ import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import { UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
+import { link, maxLength, mnemonic, required } from '@/validators'
 import { ROUTE_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
 import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
-import bitcoin from 'bitcoinjs-lib'
-import { useSaveUserSetting } from '@/api/api'
+import { networks } from 'bitcoinjs-lib'
+import { saveUserSetting } from '@/api'
+import { useI18n } from 'vue-i18n'
+import { MAX_NAME_LENGTH } from '@/constant'
+import { ErrorHandler } from '@/helpers'
 
+const { t } = useI18n()
 const userState = useUserStore()
 const router = useRouter()
 
+const emit = defineEmits<{
+  (event: 'error', msg: string): void
+}>()
+
 const form = reactive({
-  accountName: userState.setting.accountName || '',
-  signKey: userState.setting.signKey || '',
-  bip39MnemonicPhrase: userState.setting.bip39MnemonicPhrase || '',
-  urlGoogleSheet: userState.setting.urlGoogleSheet || '',
+  accountName: userState.userSetting.accountName || '',
+  signKey: userState.userSetting.signKey || '',
+  bip39MnemonicPhrase: userState.userSetting.bip39MnemonicPhrase || '',
+  urlGoogleSheet: userState.userSetting.urlGoogleSheet || '',
 } as UserSetting)
 
 const { getFieldErrorMessage, isFormValid } = useFormValidation(form, {
-  accountName: { required },
+  accountName: { required, maxLength: maxLength(MAX_NAME_LENGTH) },
   signKey: { required },
-  bip39MnemonicPhrase: { required },
-  urlGoogleSheet: { required },
+  bip39MnemonicPhrase: { required, mnemonic },
+  urlGoogleSheet: { required, link },
 })
 
 const save = async () => {
   if (!isFormValid()) return
-  userState.setting = form
-  const address = Bitcoin.getAddressFromWIF(
+  userState.setUserSetting(form)
+  userState.userSetting.userBitcoinAddress = Bitcoin.getAddressFromWIF(
     form.signKey,
-    bitcoin.networks.bitcoin,
   )
 
-  userState.setting.userBitcoinAddress = address || ''
   try {
-    await useSaveUserSetting(userState.setting.accountName)
-    await router.push(ROUTE_NAMES.main)
+    userState.userSetting.userBitcoinAddress = generateAddress(form.signKey)
+    await saveUserSetting(userState.userSetting.accountName)
+    await router.push({ name: ROUTE_NAMES.main })
   } catch (error) {
     ErrorHandler.process(error)
+    emit('error', t('errors.failed-save-setting'))
   }
+}
+
+const generateAddress = (key: string): string => {
+  return Bitcoin.getAddressFromWIF(key, networks.bitcoin)
 }
 </script>
 
@@ -103,11 +117,11 @@ const save = async () => {
 .setting-form__form-input {
   margin-bottom: toRem(40);
 
-  @include respond-to('xmedium') {
+  @include respond-to(xmedium) {
     margin-bottom: toRem(30);
   }
 
-  @include respond-to('large') {
+  @include respond-to(large) {
     margin-bottom: toRem(35);
   }
 }
@@ -118,7 +132,8 @@ const save = async () => {
 }
 
 .setting-form__btn {
-  width: toRem(100);
+  max-width: toRem(150);
+  width: 100%;
   border-radius: toRem(8);
 }
 

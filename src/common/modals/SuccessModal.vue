@@ -8,8 +8,8 @@
       <div class="success-modal__pane">
         <div class="success-modal__payload">
           <icon class="success-modal__icon" :name="$icons.certificate" />
-          <div class="success-modal__info">
-            <h3 class="success-modal__title">
+          <div>
+            <h3>
               {{ $t('success-modal.title') }}
             </h3>
             <p class="success-modal__description">
@@ -24,7 +24,7 @@
         <app-button
           class="success-modal__btn"
           color="success"
-          :text="$t('success-modal.btn-title')"
+          :text="$t('success-modal.close-btn-text')"
           @click="modal.close"
         />
       </div>
@@ -41,17 +41,24 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:is-shown', v: boolean): void
+  (event: 'update:is-shown', v: boolean): void
 }>()
 </script>
 
 <style lang="scss" scoped>
 .success-modal__pane {
+  display: grid;
   background: var(--background-primary-main);
   padding: toRem(24);
   border-radius: toRem(8);
-  width: toRem(720);
-  height: toRem(256);
+  max-width: toRem(720);
+  max-height: toRem(256);
+  width: 100%;
+  height: 100%;
+
+  @include respond-to(small) {
+    padding: 3%;
+  }
 }
 
 .success-modal__payload {
@@ -66,10 +73,6 @@ const emit = defineEmits<{
   width: toRem(55);
   height: toRem(55);
   margin-right: toRem(20);
-}
-
-.success-modal__tx-wrp {
-  margin-top: toRem(25);
 }
 
 .success-modal__tx {

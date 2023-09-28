@@ -12,6 +12,7 @@ export type CertificateJSONResponse = {
   digitalCertificate: string
   id: number
   msg: string
+  shortCourse: string
   certificateImg?: Uint8Array
   img?: string
 }

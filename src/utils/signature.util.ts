@@ -11,6 +11,8 @@ import varuint from 'varuint-bitcoin'
 import { Buffer } from 'buffer'
 
 export class Signature {
+  private readonly NUMBER_OF_SIGNATURE_TYPES = 4
+
   private keyPair: KeyPair
   private address: Address
 
@@ -22,15 +24,11 @@ export class Signature {
     this.address = address
   }
 
-  /////////////////////
   public signMsg = (message: string | Buffer) => {
     const bitcoinMsg = this.magicHash(message)
-
     const sign = Ecdsa.sign(bitcoinMsg, this.keyPair)
 
-    for (let i = 0; i < 4; i++) {
-      // eslint-disable-next-line no-console
-      console.log('I: ', i)
+    for (let i = 0; i < this.NUMBER_OF_SIGNATURE_TYPES; i++) {
       const compSign = sign.toCompact(i)
       const newPB = Ecdsa.sig2PubKey(Sig.fromCompact(compSign), bitcoinMsg)
       if (newPB.toHex() !== this.keyPair.pubKey.toHex()) {
@@ -43,8 +41,6 @@ export class Signature {
           Sig.fromCompact(compSign),
         )
       ) {
-        // eslint-disable-next-line no-console
-        console.log('signBuffer : ', compSign.toString('base64'), 'I: ', i)
         return compSign.toString('base64')
       }
     }
@@ -55,13 +51,7 @@ export class Signature {
     pubKey: PubKey,
     signature: Sig,
   ) => {
-    // eslint-disable-next-line no-console
-    console.log('start verify')
-    const isValid = Ecdsa.verify(Buffer.from(message), signature, pubKey)
-
-    // eslint-disable-next-line no-console
-    console.log('is valid  : ', isValid)
-    return isValid
+    return Ecdsa.verify(Buffer.from(message), signature, pubKey)
   }
 
   private magicHash = (message: string | Buffer, messagePrefix?: string) => {
@@ -85,21 +75,15 @@ export class Signature {
 
     varuint.encode(message.length, buffer, messagePrefix.length)
     message.copy(buffer, messagePrefix.length + messageVISize)
-    // eslint-disable-next-line no-console
-    console.log('before hash')
     return this.hash256(buffer)
   }
 
   private sha256 = (b: Buffer): Buffer => {
-    // eslint-disable-next-line no-console
-    console.log('hashing')
     return Hash.sha256(b)
   }
 
   private hash256 = (buffer: Buffer): Buffer => {
     const hash = this.sha256(buffer)
-    // eslint-disable-next-line no-console
-    console.log('hash done: ', hash)
     return this.sha256(hash)
   }
 }

@@ -10,6 +10,7 @@ import { Ref } from 'vue'
 import { createI18nMessage, MessageProps } from '@vuelidate/validators'
 import { get } from 'lodash-es'
 import { i18n } from '@/localization'
+import { Bip39 } from '@ts-bitcoin/core'
 
 const { t } = i18n.global || i18n
 
@@ -25,6 +26,13 @@ export const validateAddress = (address: string): boolean => {
 
 export const required = <ValidationRule>withI18nMessage(_required)
 
+export const validateMnemonic = (mnemonic: string): boolean => {
+  return Bip39.isValid(mnemonic)
+}
+
+export const validateTableLink = (link: string): boolean => {
+  return link.includes('https://docs.google.com/spreadsheets')
+}
 export const email = <ValidationRule>withI18nMessage(_email)
 
 export const minLength = (length: number): ValidationRule =>
@@ -38,3 +46,6 @@ export const sameAs = (field: Ref): ValidationRule => {
 }
 
 export const address = <ValidationRule>withI18nMessage(validateAddress)
+
+export const mnemonic = <ValidationRule>withI18nMessage(validateMnemonic)
+export const link = <ValidationRule>withI18nMessage(validateTableLink)
