@@ -185,3 +185,26 @@ export const updateAuthCode = async (code: string, name: string) => {
     throw errors.FailedCallApi
   }
 }
+
+export const saveTemplate = async (
+  bufferImg: string,
+  template: object,
+  templateName: string,
+  accountName: string,
+) => {
+  await api.post('/integrations/ccp/certificate/template', {
+    body: {
+      data: {
+        attributes: {
+          background_img: bufferImg,
+          is_completed: true,
+          template: template,
+          template_name: templateName,
+        },
+        relationships: {
+          user: accountName,
+        },
+      },
+    },
+  })
+}

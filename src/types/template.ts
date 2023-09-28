@@ -9,4 +9,5 @@ export type Template = {
   font_size: number
   is_qr: boolean
   width: number
+  height: number
 }

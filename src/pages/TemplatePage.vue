@@ -56,10 +56,10 @@
       >
         <div
           v-if="position.is_qr"
-          class="mock"
+          class="template-page__qr-default-style"
           :style="{
             width: position.width + 'px',
-            height: 200 + 'px',
+            height: position.height + 'px',
           }"
           @focus="inputField = $event.target"
           @click.stop="selectInput(position)"
@@ -87,6 +87,11 @@
         </app-button>
       </div>
     </div>
+
+    <success-modal
+      :is-shown="isSuccessModalShown"
+      :transaction="$t('template-page.success-msg')"
+    />
   </div>
 </template>
 
@@ -94,10 +99,11 @@
 import { ref } from 'vue'
 import AppButton from '@/common/AppButton.vue'
 import { Template } from '@/types/template'
-import { api } from '@/api'
+import { saveTemplate } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { defineProps } from 'vue/dist/vue'
 import { useUserStore } from '@/store'
+import SuccessModal from '@/common/modals/SuccessModal.vue'
 
 const userStore = useUserStore()
 
@@ -105,7 +111,7 @@ const textValue = ref('')
 const inputField = ref(null)
 const currentInputInfo = ref<Template>({} as Template)
 const imgInfo = ref<HTMLImageElement>()
-
+const isSuccessModalShown = ref(false)
 const props = defineProps<{
   name: string
 }>()
@@ -200,6 +206,7 @@ const defaultTemplate = ref<Template[]>([
     x: 900,
     is_qr: true,
     width: 200,
+    height: 200,
   } as Template,
 ])
 
@@ -241,25 +248,15 @@ const selectInput = (info: Template) => {
 }
 
 const sendTemplate = async () => {
-  // TODO move to api
-
   try {
-    const { data } = await api.post('/integrations/ccp/certificate/template', {
-      body: {
-        data: {
-          attributes: {
-            background_img: userStore.bufferImg,
-            is_completed: true,
-            template: await prepareTemplates(),
-            template_name: props.name,
-          },
-          relationships: {
-            user: userStore.userSetting.accountName,
-          },
-        },
-      },
-    })
-    return data
+    const template = await prepareTemplates()
+    await saveTemplate(
+      useUserStore().bufferImg,
+      template,
+      props.name,
+      useUserStore().userSetting.accountName,
+    )
+    isSuccessModalShown.value = true
   } catch (err) {
     ErrorHandler.process(err)
   }
@@ -286,6 +283,13 @@ const calculateTemplatePositions = async () => {
     field.x = Math.round(field.x)
     field.y = Math.round(field.y)
     field.font_size = Math.round(field.font_size)
+
+    if (field.width && field.height) {
+      field.height *= deltaHeight
+      field.width *= deltaHeight
+      field.width = Math.round(field.width)
+      field.height = Math.round(field.height)
+    }
   }
   clearFieldsMockData()
 }
@@ -339,6 +343,7 @@ const prepareTemplates = async () => {
     exam: getInputByName('exam'),
     level: getInputByName('level'),
     note: getInputByName('note'),
+    qr: getInputByName('qr'),
   }
 }
 const getInputByName = (name: string) => {
@@ -353,6 +358,7 @@ const makeBigger = () => {
     return
   }
   currentInputInfo.value.width += 5
+  currentInputInfo.value.height += 5
 }
 const makeSmaller = () => {
   if (!currentInputInfo.value.is_qr) {
@@ -360,6 +366,7 @@ const makeSmaller = () => {
     return
   }
   currentInputInfo.value.width -= 5
+  currentInputInfo.value.height -= 5
 }
 
 const logImageSize = () => {
@@ -441,7 +448,7 @@ const changeXCentrilize = () => {
   text-align: center;
 }
 
-.mock {
+.template-page__qr-default-style {
   background: red;
 }
 </style>
