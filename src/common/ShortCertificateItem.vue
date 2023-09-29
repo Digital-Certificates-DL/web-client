@@ -1,6 +1,6 @@
 <template>
   <div class="short-certificate-item">
-    <checkbox-field v-model="isSelected" v-show="isShown" @click="clickItem" />
+    <checkbox-field v-model="isSelected" v-show="isShown" />
     <div class="short-certificate-item__body">
       <p>{{ name }}</p>
       <p>{{ date }}</p>
@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { CertificateJSONResponse } from '@/types'
 import { CheckboxField } from '@/fields'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { AppButton } from '@/common'
 
 const isSelected = ref(false)
@@ -51,21 +51,22 @@ const emit = defineEmits<{
 }>()
 
 const openLink = (certificate: CertificateJSONResponse) => {
-  window.open(
-    'https://' + certificate.certificate,
-    '_blank',
-    'noopener, noreferrer',
-  )
+  window.open('https://' + certificate.certificate, 'download')
 }
 
 const clickItem = () => {
   isSelected.value = !isSelected.value
-  emit('select', isSelected.value, props.certificate)
 }
+
+watch(isSelected, () => {
+  emit('select', isSelected.value, props.certificate)
+})
 </script>
 
 <style scoped lang="scss">
 .short-certificate-item {
+  display: flex;
+  align-items: center;
   width: 100%;
   border: var(--border-primary-main), toRem(1), solid;
   border-radius: toRem(8);
@@ -74,7 +75,7 @@ const clickItem = () => {
 
 .short-certificate-item__body {
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
+  grid-template-columns: 3fr 1fr 2fr;
   gap: toRem(15);
   width: 100%;
   align-items: center;

@@ -5,9 +5,8 @@ import { validateContainerState } from '@/api'
 import { CONTAINER_STATUSES } from '@/enums'
 
 export const validateContainerStateHandler = async (containerID: string) => {
-  //TODO  add the option to continue this process later
-  //TODO  create modal  with  button  -  try  again
-  for (let i = 0; i < 1; i++) {
+  const RATE_LIMIT_COUNT = 10
+  for (let i = 0; i < RATE_LIMIT_COUNT; i++) {
     await sleep(5000)
 
     try {

@@ -261,19 +261,27 @@ getCertificates()
 
 .timestamp-page__img {
   max-width: toRem(500);
-  min-width: toRem(210);
+  min-width: toRem(300);
   width: 100%;
   border-radius: toRem(16);
-  margin: 0 auto;
+  margin: 0;
+
+  @include respond-to(tablet) {
+    margin: 0 auto;
+  }
 }
 
 .timestamp-page__body {
   display: grid;
   margin-top: toRem(20);
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 2fr;
   grid-auto-flow: revert;
   direction: ltr;
   gap: toRem(50);
+
+  @include respond-to(medium) {
+    gap: toRem(10);
+  }
 
   @include respond-to(tablet) {
     grid-template-columns: 1fr;
