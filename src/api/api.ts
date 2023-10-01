@@ -186,6 +186,22 @@ export const updateAuthCode = async (code: string, name: string) => {
   }
 }
 
+export const updateToken = async (name: string) => {
+  try {
+    const body = new JsonApiBodyBuilder()
+      .setData({
+        type: 'token',
+        attributes: {
+          name: name,
+        },
+      })
+      .build()
+    await api.post('/integrations/ccp/users/token', { body })
+  } catch (error) {
+    throw errors.FailedCallApi
+  }
+}
+
 export const saveTemplate = async (
   bufferImg: string,
   template: object,
