@@ -88,7 +88,7 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateAuthCode, uploadCertificates } from '@/api'
+import { updateAuthCode, updateToken, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { errors } from '@/errors'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
@@ -114,15 +114,20 @@ const getCertificates = async () => {
   } catch (error) {
     if (error.meta) {
       authLink.value = error.meta.auth_link
+      isUnauthorized.value = true
+      return
     }
-    if (error.status === '500') {
-      ErrorHandler.process(errors.FailedGetCertificates)
+    if (error.name === 'UnauthorizedError') {
+      await updateToken(userState.userSetting.accountName)
+      await getCertificates()
+      return
     }
 
-    isUnauthorized.value = true
+    ErrorHandler.process(errors.FailedGetCertificates)
+    isLoading.value = false
+  } finally {
+    isLoading.value = false
   }
-
-  isLoading.value = false
 }
 
 const updateCode = async (code: string) => {

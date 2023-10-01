@@ -87,7 +87,7 @@ import {
   validateContainerStateWrapper,
 } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { createPdf } from '@/api'
+import { updateCertificates } from '@/api'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { errors } from '@/errors'
@@ -178,7 +178,7 @@ const removeImgCertificates = (certificates: CertificateJSONResponse[]) => {
   return certificates
 }
 const generatePDF = async (certificates: CertificateJSONResponse[]) => {
-  const data = await createPdf(
+  const data = await updateCertificates(
     removeImgCertificates(certificates),
     userState.userSetting.userBitcoinAddress,
     userState.userSetting.accountName,
