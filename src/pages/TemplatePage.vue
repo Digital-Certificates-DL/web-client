@@ -284,11 +284,17 @@ const calculateTemplatePositions = async () => {
     field.y = Math.round(field.y)
     field.font_size = Math.round(field.font_size)
 
-    if (field.width && field.height) {
+    if (field.name === 'qr') {
+      /* eslint-disable no-console */
+
+      console.log('width : ', field.width)
+      console.log('height : ', field.height)
       field.height *= deltaHeight
-      field.width *= deltaHeight
+      field.width *= deltaWidth
       field.width = Math.round(field.width)
       field.height = Math.round(field.height)
+      console.log('width : ', field.width)
+      console.log('height : ', field.height)
     }
   }
   clearFieldsMockData()
@@ -332,7 +338,7 @@ const getImageSize = async () => {
 const prepareTemplates = async () => {
   await calculateTemplatePositions()
   return {
-    high: imgInfo.value?.naturalHeight,
+    height: imgInfo.value?.naturalHeight,
     width: imgInfo.value?.naturalWidth,
     name: getInputByName('name'),
     course: getInputByName('course'),

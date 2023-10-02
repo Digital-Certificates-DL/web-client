@@ -116,7 +116,7 @@ const getCertificates = async () => {
       userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
-    if (error.meta) {
+    if (error.meta && error.name === 'ForbiddenError') {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
       return
