@@ -1,4 +1,4 @@
-<template-types>
+<template>
   <div class="template-page">
     <div class="template-page__info">
       <h3>{{ $t('template-page.title') }}</h3>
@@ -33,7 +33,7 @@
       <img
         class="template-page__back-image"
         id="certificate-background"
-        :src="userStore.bufferImg || '/static/branding/blockchain.png'"
+        :src="userStore.bufferImg || '/branding/blockchain.png'"
         alt="Uploaded Image"
       />
 
@@ -91,9 +91,12 @@
       :is-shown="isSuccessModalShown"
       :transaction="$t('template-page.success-msg')"
     />
-    <loader-modal v-model:is-shown="isLoading" v-model:text="$t('template-page.loader-text')" />
+    <loader-modal
+      v-model:is-shown="isLoading"
+      :text="$t('template-page.loader-text')"
+    />
   </div>
-</template-types>
+</template>
 
 <script lang="ts" setup>
 import { ref, defineProps } from 'vue'
@@ -248,6 +251,7 @@ const selectInput = (info: TemplateTypes) => {
 
 const sendTemplate = async () => {
   try {
+    isLoading.value = true
     const template = await prepareTemplates()
     await saveTemplate(
       useUserStore().bufferImg,
@@ -259,6 +263,7 @@ const sendTemplate = async () => {
   } catch (err) {
     ErrorHandler.process(err)
   }
+  isLoading.value = false
 }
 
 const getDeltes = async () => {

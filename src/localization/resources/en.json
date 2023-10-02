@@ -237,7 +237,8 @@
   "template-page":{
     "title": "Page",
     "description": "description",
-    "success-msg": "Success!!"
+    "success-msg": "Success!!",
+    "loader-text": "Creating template"
   },
   "file-drop-area": {
     "description": "Drag or chose file for  template"

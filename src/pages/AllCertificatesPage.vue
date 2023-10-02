@@ -17,7 +17,7 @@
         />
         <app-dropdown
           v-model="filteredState"
-          main-image="'/static/branding/success-ico.png'"
+          main-image="/branding/solidity-ico.png"
           :title="DROP_DOWN_STATE_LIST[0].text"
           :items="DROP_DOWN_STATE_LIST"
         />
@@ -101,35 +101,36 @@
 import { useUserStore } from '@/store'
 import { CertificateJSONResponse } from '@/types'
 import { InputField } from '@/fields'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from '@/router'
 import {
   AppButton,
   AppDropdown,
   Certificate,
   CertificateModal,
+  ContainerErrorModal,
+  ErrorModal,
+  LoaderModal,
   NoDataMessage,
   SuccessModal,
-  LoaderModal,
-  ErrorModal,
-  ContainerErrorModal,
 } from '@/common'
 import {
-  prepareCertificateImage,
-  validateContainerStateWrapper,
   ErrorHandler,
-  searchInTheList,
-  signCertificateData,
-  validateListCanMakeTimestamp,
-  validateListNeedToGenerate,
   filteringByCourse,
   filteringByState,
+  prepareCertificateImage,
+  searchInTheList,
+  signCertificateData,
+  validateContainerStateWrapper,
+  validateListCanMakeTimestamp,
+  validateListNeedToGenerate,
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { createPdf, downloadCertificateImage, uploadCertificates } from '@/api'
 import { errors } from '@/errors'
 import { useI18n } from 'vue-i18n'
 import { DROP_DOWN_COURSE_LIST, DROP_DOWN_STATE_LIST } from '@/constant'
+
 const { t } = useI18n()
 
 const userState = useUserStore()
@@ -212,13 +213,12 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
     loaderText.value = t('all-certificates-page.image_uploading')
-    const data = await downloadCertificateImage(
+    return downloadCertificateImage(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    return data
   } catch (error) {
     throw errors.FailedDownloadImage
   } finally {

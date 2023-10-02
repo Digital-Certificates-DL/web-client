@@ -56,10 +56,7 @@
               )"
               :key="key"
             >
-              <preview-certificate-item
-                :img="item.img"
-                :title="item.participant"
-              />
+              <preview-certificate-item :title="item.participant" />
             </div>
           </div>
         </div>
