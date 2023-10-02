@@ -61,13 +61,4 @@ export class FailedCallApi extends RuntimeError {}
 
 export class FailedGenerateCertificate extends RuntimeError {}
 
-export class RateLimit extends RuntimeError {
-  containerID: number | undefined
-
-  setContainerID(containerID: number) {
-    this.containerID = containerID
-  }
-  getContainerID() {
-    return this.containerID
-  }
-}
+export class RateLimit extends RuntimeError {}

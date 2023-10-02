@@ -124,12 +124,6 @@ import { useForm, useFormValidation } from '@/composables'
 import { link, maxLength, required } from '@/validators'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
-const userState = useUserStore()
-const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const processingContainerID = ref('')
-
 const props = withDefaults(
   defineProps<{
     isLoaderShown: boolean
@@ -142,14 +136,7 @@ const props = withDefaults(
   },
 )
 
-watch(
-  () => props.isRevalidateContainer,
-  newValue => {
-    if (newValue) {
-      revalidateContainerState(props.containerId)
-    }
-  },
-)
+const processingContainerID = ref('')
 
 const emit = defineEmits<{
   (event: 'auth', code: string): void
@@ -157,6 +144,10 @@ const emit = defineEmits<{
   (event: 'update-loader-text', text: string): void
   (event: 'validation-rate-limit', containerID: string): void
 }>()
+
+const { t } = useI18n()
+const userState = useUserStore()
+const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const form = reactive({
   name: '',
@@ -251,6 +242,15 @@ const revalidateContainerState = async (containerID: string) => {
     emit('update:is-loader-shown', false)
   }
 }
+
+watch(
+  () => props.isRevalidateContainer,
+  newValue => {
+    if (newValue) {
+      revalidateContainerState(props.containerId)
+    }
+  },
+)
 </script>
 
 <style scoped lang="scss">
