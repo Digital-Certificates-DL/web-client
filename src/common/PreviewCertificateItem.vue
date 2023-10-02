@@ -6,7 +6,6 @@
         :src="img"
         :alt="$t('preview-certificate-item.img-alt')"
       />
-      <p>{{ img }}</p>
     </div>
     <div class="preview-certificate-item__title">
       <p>{{ title }}</p>
