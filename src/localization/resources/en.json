@@ -236,9 +236,11 @@
   },
   "template-page":{
     "title": "Page",
-    "description": "description",
+    "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.",
     "success-msg": "Success!!",
-    "loader-text": "Creating template"
+    "loader-text": "Creating template",
+    "save-btn-text": "Save",
+    "cancel-btn-text": "Cancel"
   },
   "file-drop-area": {
     "description": "Drag or chose file for  template"

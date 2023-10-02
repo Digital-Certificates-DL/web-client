@@ -206,6 +206,7 @@ export const saveTemplate = async (
   bufferImg: string,
   template: object,
   templateName: string,
+  templateShortName: string,
   accountName: string,
 ) => {
   await api.post('/integrations/ccp/certificate/template', {
@@ -216,6 +217,7 @@ export const saveTemplate = async (
           is_completed: true,
           template: template,
           template_name: templateName,
+          template_short_name: templateShortName,
         },
         relationships: {
           user: accountName,

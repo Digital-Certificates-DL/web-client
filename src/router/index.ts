@@ -38,7 +38,7 @@ const routes = [
     component: () => import('@/pages/TimestampPage.vue'),
   },
   {
-    path: '/template/:name',
+    path: '/template/:name/:short',
     props: true,
     name: ROUTE_NAMES.template,
     component: () => import('@/pages/TemplatePage.vue'),

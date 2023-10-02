@@ -89,8 +89,8 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { updateAuthCode, updateToken, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
-import { errors } from '@/errors'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
+import { ROUTE_NAMES } from '@/enums'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -124,8 +124,9 @@ const getCertificates = async () => {
       return
     }
 
-    ErrorHandler.process(errors.FailedGetCertificates)
+    ErrorHandler.process(error)
     isLoading.value = false
+    router.push({ name: ROUTE_NAMES.main })
   } finally {
     isLoading.value = false
   }

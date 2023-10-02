@@ -1,13 +1,31 @@
 <template>
   <div class="template-page">
     <div class="template-page__info">
-      <h3>{{ $t('template-page.title') }}</h3>
-      <p class="template-page__description">
-        {{ $t('template-page.description') }}
-      </p>
+      <h2 class="template-page__title">
+        {{ $t('template-page.title') }}
+      </h2>
+      <div class="template-page__description">
+        <p class="template-page__description-text">
+          {{ $t('template-page.description') }}
+        </p>
+        <div class="template-page__nav-btns">
+          <app-button
+            :text="$t('template-page.save-btn-text')"
+            :color="'info'"
+            @click="sendTemplate"
+          />
+          <app-button
+            :text="$t('template-page.cancel-btn-text')"
+            :route="{
+              name: $routes.main,
+            }"
+          />
+        </div>
+      </div>
     </div>
-    <div class="template-page__nav">
-      <app-button text="send" @click="sendTemplate" />
+    <div class="template-page__tool-btns">
+      <input v-model="currentInputInfo.color" type="color" />
+
       <app-button class="template-page__btn" text="+" @click="makeBigger()" />
 
       <app-button class="template-page__btn" :disabled="currentInputInfo.is_qr">
@@ -24,7 +42,6 @@
         :icon-left="$icons.viewList"
         @click="changeXCentrilize"
       />
-      <input v-model="currentInputInfo.color" type="color" />
     </div>
     <div
       class="template-page__back-image-wrp"
@@ -95,6 +112,7 @@
       v-model:is-shown="isLoading"
       :text="$t('template-page.loader-text')"
     />
+    <p>{{ short }}</p>
   </div>
 </template>
 
@@ -120,6 +138,7 @@ const windowSizeCoef = ref(1)
 
 const props = defineProps<{
   name: string
+  short: string
 }>()
 
 interface DragData {
@@ -155,14 +174,14 @@ const defaultTemplate = ref<TemplateTypes[]>([
   {
     name: 'serial_number',
     text: '7db1205abadcb4459af2',
-    x: 1000,
+    x: 900,
     y: 112,
     font_size: 15,
   } as TemplateTypes,
   {
     name: 'date',
     text: 'Issued on: 99.99.9999',
-    x: 1000,
+    x: 900,
     y: 158,
     font_size: 15,
   } as TemplateTypes,
@@ -208,7 +227,7 @@ const defaultTemplate = ref<TemplateTypes[]>([
   {
     font_size: 0,
     name: 'qr',
-    y: 100,
+    y: 250,
     x: 900,
     is_qr: true,
     width: 200,
@@ -261,6 +280,7 @@ const sendTemplate = async () => {
       useUserStore().bufferImg,
       template,
       props.name,
+      props.short,
       useUserStore().userSetting.accountName,
     )
     isSuccessModalShown.value = true
@@ -398,6 +418,8 @@ watch(width, (oldVal, newVal) => {
 
 <style scoped lang="scss">
 .template-page {
+  max-width: var(--page-large);
+  min-width: var(--page-medium);
   width: 100%;
   margin: 0 auto;
 }
@@ -405,7 +427,6 @@ watch(width, (oldVal, newVal) => {
 .template-page__back-image-wrp {
   position: relative;
   margin: auto 0;
-  max-width: toRem(1200);
   width: 100%;
 }
 
@@ -428,29 +449,44 @@ watch(width, (oldVal, newVal) => {
   }
 }
 
+.template-page__title {
+  margin: toRem(10) 0;
+}
+
 .template-page__description {
-  width: toRem(600);
+  display: grid;
+  grid-template-columns: 6fr 1fr;
+  align-items: center;
+}
+
+.template-page__description-text {
+  max-width: toRem(600);
+  width: 100%;
 }
 
 .template-page__info {
-  max-width: var(--page-large);
   display: grid;
   justify-content: left;
 }
 
-.template-page__nav {
+.template-page__nav-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: toRem(40);
+}
+
+.template-page__tool-btns {
   display: flex;
   align-items: center;
   text-align: center;
-  justify-content: space-evenly;
   height: toRem(40);
   margin: toRem(40) 0;
 }
 
 .template-page__remove-field-btn {
-  background: #000a12;
+  background: var(--black);
   color: var(--white);
-  opacity: 9;
+  opacity: 0.6;
 }
 
 .template-page__btn {
@@ -458,6 +494,7 @@ watch(width, (oldVal, newVal) => {
   width: toRem(50);
   font-size: toRem(18);
   text-align: center;
+  margin: 0 toRem(20);
 }
 
 .template-page__qr-default-style {
