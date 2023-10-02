@@ -1,4 +1,4 @@
-export type Template = {
+export type TemplateTypes = {
   name: string
   text: string
   x: number

@@ -1,14 +1,13 @@
-<template>
+<template-types>
   <div class="template-page">
     <div class="template-page__info">
-      <h3>{{ $t('template_page.title') }}</h3>
+      <h3>{{ $t('template-page.title') }}</h3>
       <p class="template-page__description">
-        {{ $t('template_page.description') }}
+        {{ $t('template-page.description') }}
       </p>
     </div>
     <div class="template-page__nav">
       <app-button text="send" @click="sendTemplate" />
-      <app-button text="get image size" @click="logImageSize" />
       <app-button class="template-page__btn" text="+" @click="makeBigger()" />
 
       <app-button class="template-page__btn" :disabled="currentInputInfo.is_qr">
@@ -29,7 +28,7 @@
     </div>
     <div
       class="template-page__back-image-wrp"
-      @click="currentInputInfo = {} as Template"
+      @click="currentInputInfo = {} as TemplateTypes"
     >
       <img
         class="template-page__back-image"
@@ -92,24 +91,24 @@
       :is-shown="isSuccessModalShown"
       :transaction="$t('template-page.success-msg')"
     />
+    <loader-modal v-model:is-shown="isLoading" v-model:text="$t('template-page.loader-text')" />
   </div>
-</template>
+</template-types>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import AppButton from '@/common/AppButton.vue'
-import { Template } from '@/types/template'
+import { ref, defineProps } from 'vue'
+import { TemplateTypes } from '@/types'
 import { saveTemplate } from '@/api'
 import { ErrorHandler } from '@/helpers'
-import { defineProps } from 'vue/dist/vue'
 import { useUserStore } from '@/store'
-import SuccessModal from '@/common/modals/SuccessModal.vue'
+import { LoaderModal, AppButton, SuccessModal } from '@/common'
 
 const userStore = useUserStore()
 
+const isLoading = ref(false)
 const textValue = ref('')
 const inputField = ref(null)
-const currentInputInfo = ref<Template>({} as Template)
+const currentInputInfo = ref<TemplateTypes>({} as TemplateTypes)
 const imgInfo = ref<HTMLImageElement>()
 const isSuccessModalShown = ref(false)
 const props = defineProps<{
@@ -130,7 +129,7 @@ const dragData = ref({
   startY: 0,
 } as DragData)
 
-const defaultTemplate = ref<Template[]>([
+const defaultTemplate = ref<TemplateTypes[]>([
   {
     name: 'name',
     text: 'Your full name',
@@ -138,35 +137,35 @@ const defaultTemplate = ref<Template[]>([
     y: 350,
     x: 0,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'points',
     text: '145/800',
     x: 140,
     y: 158,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'serial_number',
     text: '7db1205abadcb4459af2',
     x: 1000,
     y: 112,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'date',
     text: 'Issued on: 99.99.9999',
     x: 1000,
     y: 158,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'credits',
     text: 'ECTS Credit',
     x: 140,
     y: 112,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'exam',
     text: 'Successfully completed',
@@ -174,7 +173,7 @@ const defaultTemplate = ref<Template[]>([
     y: 400,
     x: 0,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'level',
     text: 'Level: beginner at theoretical aspects',
@@ -182,7 +181,7 @@ const defaultTemplate = ref<Template[]>([
     y: 425,
     x: 0,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'course',
     text: 'Data bases',
@@ -190,7 +189,7 @@ const defaultTemplate = ref<Template[]>([
     y: 300,
     x: 0,
     font_size: 20,
-  } as Template,
+  } as TemplateTypes,
   {
     name: 'note',
     text: 'Exam passed',
@@ -198,7 +197,7 @@ const defaultTemplate = ref<Template[]>([
     x: 0,
     x_center: true,
     font_size: 15,
-  } as Template,
+  } as TemplateTypes,
   {
     font_size: 0,
     name: 'qr',
@@ -207,7 +206,7 @@ const defaultTemplate = ref<Template[]>([
     is_qr: true,
     width: 200,
     height: 200,
-  } as Template,
+  } as TemplateTypes,
 ])
 
 const removeInput = (index: number) => {
@@ -243,7 +242,7 @@ const endDrag = () => {
   dragData.value.index = null
 }
 
-const selectInput = (info: Template) => {
+const selectInput = (info: TemplateTypes) => {
   currentInputInfo.value = info
 }
 
@@ -285,16 +284,10 @@ const calculateTemplatePositions = async () => {
     field.font_size = Math.round(field.font_size)
 
     if (field.name === 'qr') {
-      /* eslint-disable no-console */
-
-      console.log('width : ', field.width)
-      console.log('height : ', field.height)
       field.height *= deltaHeight
       field.width *= deltaWidth
       field.width = Math.round(field.width)
       field.height = Math.round(field.height)
-      console.log('width : ', field.width)
-      console.log('height : ', field.height)
     }
   }
   clearFieldsMockData()
@@ -373,15 +366,6 @@ const makeSmaller = () => {
   }
   currentInputInfo.value.width -= 5
   currentInputInfo.value.height -= 5
-}
-
-const logImageSize = () => {
-  /* eslint-disable no-console */
-  console.log('move')
-  console.log(imgInfo.value?.naturalWidth)
-  console.log(imgInfo.value?.naturalHeight)
-  console.log(imgInfo.value?.width)
-  console.log(imgInfo.value?.height)
 }
 
 const changeXCentrilize = () => {

@@ -4,36 +4,37 @@
     :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <template #default="{ modal }">
-      <div class="success-modal__pane">
-        <div class="success-modal__payload">
-          <icon class="success-modal__icon" :name="$icons.certificate" />
-          <div>
-            <h3>
-              {{ $t('success-modal.title') }}
-            </h3>
-            <p class="success-modal__description">
-              {{ $t('success-modal.description') }}
-            </p>
-          </div>
+    <div class="success-modal__pane">
+      <div class="success-modal__payload">
+        <icon class="success-modal__icon" :name="$icons.certificate" />
+        <div>
+          <h3>
+            {{ $t('success-modal.title') }}
+          </h3>
+          <p class="success-modal__description">
+            {{ $t('success-modal.description') }}
+          </p>
         </div>
-
-        <p class="success-modal__tx">
-          {{ transaction }}
-        </p>
-        <app-button
-          class="success-modal__btn"
-          color="success"
-          :text="$t('success-modal.close-btn-text')"
-          @click="modal.close"
-        />
       </div>
-    </template>
+
+      <p class="success-modal__tx">
+        {{ transaction }}
+      </p>
+      <app-button
+        class="success-modal__btn"
+        color="success"
+        :text="$t('success-modal.close-btn-text')"
+        @click="closeModel"
+      />
+    </div>
   </modal>
 </template>
 
 <script lang="ts" setup>
 import { Icon, AppButton, Modal } from '@/common'
+import { ROUTE_NAMES } from '@/enums'
+import { useRouter } from '@/router'
+const router = useRouter()
 
 defineProps<{
   isShown: boolean
@@ -43,6 +44,11 @@ defineProps<{
 const emit = defineEmits<{
   (event: 'update:is-shown', v: boolean): void
 }>()
+
+const closeModel = () => {
+  emit('update:is-shown', false)
+  router.push({ name: ROUTE_NAMES.main })
+}
 </script>
 
 <style lang="scss" scoped>

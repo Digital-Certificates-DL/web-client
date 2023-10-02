@@ -17,7 +17,7 @@
         />
         <app-dropdown
           v-model="filteredState"
-          main-image="'/branding/success-ico.png'"
+          main-image="'/static/branding/success-ico.png'"
           :title="DROP_DOWN_STATE_LIST[0].text"
           :items="DROP_DOWN_STATE_LIST"
         />

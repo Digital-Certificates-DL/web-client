@@ -216,7 +216,7 @@
   },
   "success-modal":{
     "title": "Success",
-    "description ": "Certificate is minted successfully",
+    "description": "Certificate is minted successfully",
     "close-btn-text": "Close"
   },
   "error-modal": {
@@ -234,11 +234,17 @@
     "message": "Do you want to  try  again?",
     "btn-text": "Try again"
   },
-  "template_page":{
+  "template-page":{
     "title": "Page",
-    "description": "description"
+    "description": "description",
+    "success-msg": "Success!!"
   },
-  "file-drop-ares": {
+  "file-drop-area": {
     "description": "Drag or chose file for  template"
+  },
+  "upload-template-modal": {
+    "title": "Upload  template image",
+    "description": "Some description",
+    "close-btn-text": "Close"
   }
 }
