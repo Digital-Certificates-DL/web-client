@@ -43,9 +43,9 @@
         class="template-page__input"
         draggable="true"
         :style="{
-          left: position.x_center ? '42%' : position.x + 'px',
+          left: position.x_center ? '42%' : position.x * windowSizeCoef + 'px',
           display: 'flex',
-          top: position.y + 'px',
+          top: position.y * windowSizeCoef + 'px',
         }"
         @mousedown.stop="startDrag(index, $event)"
         @mousemove.stop="drag($event)"
@@ -57,8 +57,8 @@
           v-if="position.is_qr"
           class="template-page__qr-default-style"
           :style="{
-            width: position.width + 'px',
-            height: position.height + 'px',
+            width: position.width * windowSizeCoef + 'px',
+            height: position.height * windowSizeCoef + 'px',
           }"
           @focus="inputField = $event.target"
           @click.stop="selectInput(position)"
@@ -99,14 +99,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch } from 'vue'
 import { TemplateTypes } from '@/types'
 import { saveTemplate } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { LoaderModal, AppButton, SuccessModal } from '@/common'
+import { useWindowSize } from '@vueuse/core'
 
 const userStore = useUserStore()
+const { width } = useWindowSize()
 
 const isLoading = ref(false)
 const textValue = ref('')
@@ -114,6 +116,8 @@ const inputField = ref(null)
 const currentInputInfo = ref<TemplateTypes>({} as TemplateTypes)
 const imgInfo = ref<HTMLImageElement>()
 const isSuccessModalShown = ref(false)
+const windowSizeCoef = ref(1)
+
 const props = defineProps<{
   name: string
 }>()
@@ -376,6 +380,20 @@ const makeSmaller = () => {
 const changeXCentrilize = () => {
   currentInputInfo.value.x_center = !currentInputInfo.value.x_center
 }
+
+const updateFieldsPassions = () => {
+  for (const field of defaultTemplate.value) {
+    field.y *= windowSizeCoef.value
+    field.x *= windowSizeCoef.value
+    field.width *= windowSizeCoef.value
+    field.height *= windowSizeCoef.value
+  }
+}
+
+watch(width, (oldVal, newVal) => {
+  windowSizeCoef.value = oldVal / newVal
+  updateFieldsPassions()
+})
 </script>
 
 <style scoped lang="scss">
@@ -386,13 +404,13 @@ const changeXCentrilize = () => {
 
 .template-page__back-image-wrp {
   position: relative;
-  width: 80vw;
   margin: auto 0;
+  max-width: toRem(1200);
+  width: 100%;
 }
 
 .template-page__back-image {
   width: 100%;
-  height: 100%;
 }
 
 .template-page__input {
@@ -415,13 +433,12 @@ const changeXCentrilize = () => {
 }
 
 .template-page__info {
-  width: var(--page-large);
+  max-width: var(--page-large);
   display: grid;
   justify-content: left;
 }
 
 .template-page__nav {
-  width: 70vw;
   display: flex;
   align-items: center;
   text-align: center;
