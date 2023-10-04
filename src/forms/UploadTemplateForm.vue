@@ -8,12 +8,6 @@
       :error-message="getFieldErrorMessage('name')"
     />
 
-    <input-field
-      v-model="form.shortName"
-      class="upload-template-form__name-input"
-      :error-message="getFieldErrorMessage('shortName')"
-    />
-
     <file-drop-area
       title="upload file"
       :files-type="IMAGE_FORMAT"
@@ -49,12 +43,10 @@ const emit = defineEmits<{
 
 const form = reactive({
   name: '',
-  shortName: '',
 })
 
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
   name: { required },
-  shortName: { required },
 })
 
 const onFileUpload = (files: File[]) => {
@@ -69,7 +61,7 @@ const sendTemplate = () => {
   emit('close-modal')
   router.push({
     name: ROUTE_NAMES.template,
-    params: { name: form.name, short: form.shortName },
+    params: { name: form.name },
   })
   enableForm()
 }

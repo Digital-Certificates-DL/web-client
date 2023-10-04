@@ -138,7 +138,6 @@ const windowSizeCoef = ref(1)
 
 const props = defineProps<{
   name: string
-  short: string
 }>()
 
 interface DragData {
@@ -280,7 +279,6 @@ const sendTemplate = async () => {
       useUserStore().bufferImg,
       template,
       props.name,
-      props.short,
       useUserStore().userSetting.accountName,
     )
     isSuccessModalShown.value = true
@@ -324,7 +322,11 @@ const calculateTemplatePositions = async () => {
 
 const clearFieldsMockData = () => {
   for (const field of defaultTemplate.value) {
-    if (field.name != 'credits' && field.name != 'course') {
+    if (
+      field.name != 'credits' &&
+      field.name != 'course' &&
+      field.name != 'level'
+    ) {
       field.text = ''
     }
   }
