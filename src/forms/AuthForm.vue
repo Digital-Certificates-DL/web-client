@@ -56,8 +56,6 @@ import { AppButton } from '@/common'
 import { useForm, useFormValidation } from '@/composables'
 import { required } from '@/validators'
 
-const { isFormDisabled, disableForm, enableForm } = useForm()
-
 defineProps<{
   tokenLink: string
 }>()
@@ -74,6 +72,8 @@ const form = reactive({
 const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
   accessCode: { required },
 })
+
+const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const sendCode = () => {
   if (!isFormValid) return

@@ -194,10 +194,10 @@ const asyncValidateContainerState = async (containerID: string) => {
   )
 }
 
-const revalidateContainerState = async (containerID: string) => {
+const revalidateContainerState = async () => {
   try {
     isLoading.value = true
-    await asyncValidateContainerState(containerID)
+    await asyncValidateContainerState(processingContainerID.value)
     userState.setBufferCertificates(userState.certificates)
     loaderText.value = ''
 
@@ -206,7 +206,6 @@ const revalidateContainerState = async (containerID: string) => {
     })
   } catch (error) {
     if (error === errors.RateLimit) {
-      processingContainerID.value = containerID
       isContainerErrorModalShown.value = true
       return
     }
@@ -299,9 +298,9 @@ getCertificates()
 }
 
 .timestamp-page__btns {
+  display: flex;
   max-width: toRem(200);
   width: 100%;
-  display: flex;
   justify-content: space-between;
   align-content: center;
   align-items: center;

@@ -293,10 +293,10 @@ const issueCertificates = async () => {
   }
 }
 
-const revalidateContainerState = async (containerID: string) => {
+const revalidateContainerState = async () => {
   try {
     isLoading.value = true
-    await asyncValidateContainerState(containerID)
+    await asyncValidateContainerState(processingContainerID.value)
     userState.setBufferCertificates(userState.certificates)
     loaderText.value = ''
 
@@ -305,7 +305,6 @@ const revalidateContainerState = async (containerID: string) => {
     })
   } catch (error) {
     if (error === errors.RateLimit) {
-      processingContainerID.value = containerID
       isContainerErrorModalShown.value = true
       return
     }

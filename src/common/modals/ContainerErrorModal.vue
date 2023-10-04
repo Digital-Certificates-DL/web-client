@@ -8,8 +8,8 @@
         {{ $t('container-error-modal.message') }}
       </h3>
       <app-button
-        :text="$t('container-error-modal.btn-text')"
         class="container-error-modal__btn"
+        :text="$t('container-error-modal.btn-text')"
         @click="getContainerState"
       />
     </div>
@@ -19,18 +19,17 @@
 <script lang="ts" setup>
 import { Modal, AppButton } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   isShown: boolean
-  containerId: string
 }>()
 
 const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
-  (event: 'try-again', containerId: string): void
+  (event: 'try-again'): void
 }>()
 
 const getContainerState = () => {
-  emit('try-again', props.containerId)
+  emit('try-again')
   emit('update:is-shown', false)
 }
 </script>

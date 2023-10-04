@@ -57,8 +57,8 @@
         />
 
         <navigation-item
-          :title="$t('main-page.main-nav-home-title')"
           color="success"
+          :title="$t('main-page.main-nav-home-title')"
           :description="$t('main-page.main-nav-home-description')"
           :body="$t('main-page.main-nav-home-body')"
           :route="{

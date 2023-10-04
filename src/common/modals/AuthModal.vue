@@ -19,8 +19,6 @@ import { Modal } from '@/common'
 import { useRouter } from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 
-const router = useRouter()
-
 defineProps<{
   isShown: boolean
   tokenLink: string
@@ -30,6 +28,8 @@ const emit = defineEmits<{
   (event: 'send-auth-code', code: string): boolean
   (event: 'update:is-shown', value: boolean): void
 }>()
+
+const router = useRouter()
 
 const sendCode = (code: string) => {
   emit('update:is-shown', false)

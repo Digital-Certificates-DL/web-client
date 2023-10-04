@@ -136,14 +136,14 @@ const props = withDefaults(
   },
 )
 
-const processingContainerID = ref('')
-
 const emit = defineEmits<{
   (event: 'auth', code: string): void
   (event: 'update:is-loader-shown', isShown: boolean): void
   (event: 'update-loader-text', text: string): void
   (event: 'validation-rate-limit', containerID: string): void
 }>()
+
+const processingContainerID = ref('')
 
 const { t } = useI18n()
 const userState = useUserStore()

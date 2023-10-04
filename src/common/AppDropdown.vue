@@ -33,8 +33,6 @@
 import { ref } from 'vue'
 import { DropdownItem } from '@/types'
 
-const currentItem = ref({} as DropdownItem)
-
 const emit = defineEmits<{
   (event: 'update:model-value', value: string): void
 }>()
@@ -50,6 +48,8 @@ withDefaults(
     mainImage: '',
   },
 )
+
+const currentItem = ref({} as DropdownItem)
 
 const selectItem = (item: DropdownItem) => {
   currentItem.value = item

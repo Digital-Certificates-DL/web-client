@@ -69,13 +69,13 @@ import { useI18n } from 'vue-i18n'
 import { MAX_NAME_LENGTH } from '@/constant'
 import { ErrorHandler } from '@/helpers'
 
-const { t } = useI18n()
-const userState = useUserStore()
-const router = useRouter()
-
 const emit = defineEmits<{
   (event: 'error', msg: string): void
 }>()
+
+const { t } = useI18n()
+const userState = useUserStore()
+const router = useRouter()
 
 const form = reactive({
   accountName: userState.userSetting.accountName || '',

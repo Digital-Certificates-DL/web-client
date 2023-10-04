@@ -63,7 +63,10 @@ export const downloadCertificateImage = async (
   return data
 }
 
-export const uploadCertificates = async (name: string, sheepUrl: string) => {
+export const uploadCertificates = async (
+  name: string,
+  sheepUrl: string,
+): Promise<CertificateJSONResponse[]> => {
   const body = new JsonApiBodyBuilder()
     .setData({
       type: 'parse_users',
