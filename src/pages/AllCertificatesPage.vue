@@ -90,7 +90,6 @@
     <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
     <container-error-modal
       v-model:is-shown="isContainerErrorModalShown"
-      :is-shown="isContainerErrorModalShown"
       :container-id="processingContainerID"
       @try-again="revalidateContainerState"
     />
