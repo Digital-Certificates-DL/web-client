@@ -303,8 +303,12 @@ const revalidateContainerState = async (containerID: string) => {
       name: ROUTE_NAMES.timestamp,
     })
   } catch (error) {
+    /* eslint-disable no-console */
+    console.log(error)
     if (error === errors.RateLimit) {
       processingContainerID.value = containerID
+
+      console.log(errors.RateLimit)
       isContainerErrorModalShown.value = true
       return
     }

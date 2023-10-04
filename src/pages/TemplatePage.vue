@@ -112,7 +112,6 @@
       v-model:is-shown="isLoading"
       :text="$t('template-page.loader-text')"
     />
-    <p>{{ short }}</p>
   </div>
 </template>
 

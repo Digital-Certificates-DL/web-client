@@ -41,7 +41,7 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .upload-template-modal__pane {
   max-width: toRem(600);
-  max-height: toRem(500);
+  max-height: toRem(400);
   width: 100%;
   height: 100%;
   background: var(--background-primary-light);
