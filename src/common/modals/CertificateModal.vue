@@ -1,6 +1,7 @@
 <template>
   <modal
     :is-shown="isShown"
+    :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
     <template #default="{ modal }">
@@ -15,7 +16,7 @@
         <h3 class="certificate-modal__title">
           {{ $t('certificate-modal.title') }}
         </h3>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-participant') }}
         </p>
 
@@ -23,20 +24,25 @@
           {{ certificate.participant }}
         </h4>
 
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-date') }}
         </p>
         <h4>{{ certificate.date }}</h4>
-        <p class="certificate-modal__label">
+        <p>
           {{ $t('certificate-modal.label-course') }}
         </p>
 
         <h4>{{ certificate.courseTitle }}</h4>
-        <p class="certificate-modal__form-label">
+        <p>
           {{ $t('certificate-modal.label-metamask-address') }}
         </p>
 
-        <mint-form :certificate="certificate" @mint-finished="modal.close" />
+        <mint-form
+          :certificate="certificate"
+          @mint-finished="onSuccess"
+          @error="onError"
+          @modal-close="modal.close"
+        />
       </div>
     </template>
   </modal>
@@ -44,7 +50,6 @@
 
 <script lang="ts" setup>
 import { CertificateJSONResponse } from '@/types'
-
 import { Modal } from '@/common'
 import { MintForm } from '@/forms'
 
@@ -54,8 +59,17 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'update:is-shown', value: boolean): void
+  (event: 'update:is-shown', isShown: boolean): boolean
+  (event: 'success', tx: string): boolean
+  (event: 'error', msg: string): void
 }>()
+
+const onSuccess = (tx: string) => {
+  emit('success', tx)
+}
+const onError = (msg: string) => {
+  emit('error', msg)
+}
 </script>
 
 <style scoped lang="scss">

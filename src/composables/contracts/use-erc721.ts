@@ -27,10 +27,12 @@ export const useErc721 = () => {
         uri,
       ])
 
-      return await provider.value.signAndSendTx({
-        to: contractAddress.value,
-        data,
-      })
+      return provider.value.getHashFromTxResponse(
+        await provider.value.signAndSendTx({
+          to: contractAddress.value,
+          data,
+        }),
+      )
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }

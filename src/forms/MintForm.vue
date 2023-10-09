@@ -1,5 +1,5 @@
 <template>
-  <form class="mint-form">
+  <form class="mint-form" autocomplete="off">
     <input-field
       v-model="form.address"
       :label="$t('mint-form.placeholder-metamask-address')"
@@ -10,15 +10,15 @@
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.mint-btn')"
+        :text="$t('mint-form.mint-btn-text')"
         @click="mint"
       />
       <app-button
         class="mint-form__btn"
         color="info"
-        :text="$t('mint-form.close-btn')"
+        :text="$t('mint-form.close-btn-text')"
         :disabled="isFormDisabled"
-        @click="emit('mint-finished')"
+        @click="emit('modal-close')"
       />
     </div>
   </form>
@@ -28,15 +28,26 @@
 import { address, required } from '@/validators'
 import { AppButton } from '@/common'
 import { InputField } from '@/fields'
-
-import { api } from '@/api'
-import { IpfsJSONResponse, CertificateJSONResponse } from '@/types'
+import { sendToIPFS } from '@/api'
+import { CertificateJSONResponse } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useErc721, useForm, useFormValidation } from '@/composables'
 import { reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { errors } from '@/errors'
 
+const props = defineProps<{
+  certificate: CertificateJSONResponse
+}>()
+
+const emit = defineEmits<{
+  (event: 'mint-finished', tx: string): void
+  (event: 'modal-close'): void
+  (event: 'error', msg: string): void
+}>()
+
+const { t } = useI18n()
 const { safeMint } = useErc721()
-
 const { isFormDisabled, disableForm, enableForm } = useForm()
 
 const form = reactive({
@@ -47,39 +58,33 @@ const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
   address: { required, address },
 })
 
-const props = defineProps<{
-  certificate: CertificateJSONResponse
-}>()
-
-const emit = defineEmits<{
-  (event: 'mint-finished'): void
-}>()
-
 const mint = async () => {
   if (!isFormValid()) return
 
+  if (!props.certificate.certificateImg) {
+    ErrorHandler.process(errors.EmptyImageError)
+    return
+  }
+
   try {
     disableForm()
-    const ipfsLink = await api.post<IpfsJSONResponse>(
-      '/integrations/ccp/certificate/ipfs',
-      {
-        body: {
-          data: {
-            description: prepareTokenDescription(props.certificate),
-            img: props.certificate.certificateImg,
-            name: 'certificate - ' + props.certificate.participant,
-          },
-        },
-      },
+    const data = await sendToIPFS(
+      prepareTokenDescription(props.certificate),
+      props.certificate.certificateImg,
+      props.certificate.participant,
     )
 
-    await safeMint(form.address, ipfsLink.data.attributes.url)
+    const mintTx = await safeMint(form.address, data.url)
+    if (!mintTx) {
+      emit('error', t('errors.failed-send-tx'))
+      enableForm()
+      return
+    }
+    emit('mint-finished', mintTx)
   } catch (error) {
     ErrorHandler.process(error)
-  } finally {
-    enableForm()
-    emit('mint-finished')
   }
+  enableForm()
 }
 
 const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
@@ -101,19 +106,11 @@ const prepareTokenDescription = (certificate: CertificateJSONResponse) => {
 .mint-form__btns {
   display: flex;
   justify-content: space-between;
+  margin-top: toRem(15);
 }
 
 .mint-form__btn {
-  width: toRem(200);
-}
-
-.mint-form__label {
-  font-size: toRem(14);
-  color: var(--text-secondary-light);
-}
-
-.mint-form__form-label {
-  font-size: toRem(14);
-  color: var(--text-primary-main);
+  max-width: toRem(200);
+  width: 100%;
 }
 </style>

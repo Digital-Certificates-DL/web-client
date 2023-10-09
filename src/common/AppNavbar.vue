@@ -48,15 +48,13 @@ const connect = async () => {
   border-bottom: var(--border-primary-main);
   box-shadow: 0 toRem(4) toRem(16) rgba(var(--black-rgb), 0.06);
   margin-bottom: toRem(20);
-
-  @include respond-to(tablet) {
-    flex-wrap: wrap;
-  }
 }
 
 .app-navbar__logo {
+  max-width: toRem(50);
+  width: 100%;
+
   @include respond-to(xsmall) {
-    width: 100%;
     margin-bottom: toRem(24);
   }
 }
@@ -65,11 +63,6 @@ const connect = async () => {
   display: flex;
   align-items: center;
   max-height: toRem(50);
-}
-
-.app-navbar__img {
-  width: toRem(20);
-  height: 100%;
 }
 
 .app-navbar__btn {

@@ -12,8 +12,15 @@ export type CertificateJSONResponse = {
   digitalCertificate: string
   id: number
   msg: string
-  certificateImg: Uint8Array
-  img: string
+  shortCourse: string
+  certificateImg?: Uint8Array
+  img?: string
+}
+
+export type PottyCertificateRequest = {
+  id: string
+  type: string
+  attributes: CertificateJSONResponse
 }
 
 export type CertificateJSONResponseList = {

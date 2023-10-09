@@ -15,9 +15,8 @@ import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { PROVIDERS } from '@/enums'
-
 import { useWeb3ProvidersStore } from '@/store'
-import AppNavbar from '@/common/AppNavbar.vue'
+import { AppNavbar } from '@/common'
 
 const web3Store = useWeb3ProvidersStore()
 const isAppInitialized = ref(false)

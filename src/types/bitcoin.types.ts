@@ -1,7 +1,5 @@
 export type PustTxResponce = {
-  data: {
-    tx: BitcoinTransaction
-  }
+  tx: BitcoinTransaction
 }
 
 export type BitcoinTransaction = {
@@ -43,22 +41,68 @@ export type BitcoinTransactionOutput = {
   scriptType: string
 }
 
-export type UTXO = {
-  txHash: string
-  blockHeight: number
-  txInputN: number
-  txOutputN: number
-  value: number
-  refBalance: number
-  spent: boolean
-  spentBy: string
-  confirmations: number
-  confirmed: string
-  doubleSpend: boolean
+export interface AddressInfo {
+  path: string
+  address: string
+  utxos: UTXO[]
 }
 
-export type PreparedTX = {
+export type BlockstreamTxList = Transaction[]
+
+export type Transaction = {
+  txid: string
+  version: number
+  locktime: number
+  vin: Vin[]
+  vout: Vout[]
+  size: number
+  weight: number
+  fee: number
+  status: Status
+}
+
+export type Vin = {
+  txid: string
+  vout: number
+  prevout: Prevout
+  scriptsig: string
+  scriptsig_asm: string
+  witness: string[]
+  is_coinbase: boolean
+  sequence: number
+  inner_redeemscript_asm?: string
+}
+
+export type Prevout = {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
+  value: number
+}
+
+export type Vout = {
+  scriptpubkey: string
+  scriptpubkey_asm: string
+  scriptpubkey_type: string
+  scriptpubkey_address: string
+  value: number
+}
+
+export type UTXO = {
+  txid: string
+  vout: number
+  status: Status
+  value: number
+}
+
+export type Status = {
+  confirmed: boolean
+  block_height: number
+  block_hash: string
+  block_time: number
+}
+
+export type GetTxHex = {
   hex: string
-  exAddress: string
-  derivePath: number
 }

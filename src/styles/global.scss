@@ -100,14 +100,38 @@ h5 {
 
 h1 {
   font-size: toRem(46);
+
+  @include respond-to(medium) {
+    font-size: toRem(40);
+  }
+
+  @include respond-to(xmedium) {
+    font-size: toRem(43);
+  }
 }
 
 h2 {
   font-size: toRem(40);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(37);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(34);
+  }
 }
 
 h3 {
   font-size: toRem(28);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(25);
+  }
+
+  @include respond-to(medium) {
+    font-size: toRem(23);
+  }
 }
 
 h4 {

@@ -83,6 +83,39 @@ export class ErrorHandler {
         case errors.ProviderWrapperMethodNotFoundError:
           errorMessage = t('errors.provider-wrapper-method-not-found')
           break
+        case errors.UnauthorizedError:
+          errorMessage = t('errors.unauthorized')
+          break
+        case errors.FailedToSetInput:
+          errorMessage = t('errors.failed-set-bitcoin-input')
+          break
+        case errors.EmptyContainerError:
+          errorMessage = t('errors.empty-container')
+          break
+        case errors.EmptyImageError:
+          errorMessage = t('errors.empty-img')
+          break
+        case errors.FailedDownloadImage:
+          errorMessage = t('errors.failed-download-image')
+          break
+        case errors.FailedGetCertificates:
+          errorMessage = t('errors.failed-get-certificates')
+          break
+        case errors.FailedCallApi:
+          errorMessage = t('errors.failed-call-api')
+          break
+        case errors.FailedGenerateCertificate:
+          errorMessage = t('errors.failed-generate-certificates')
+          break
+        case errors.EmptyBetterUTXO:
+          errorMessage = t('errors.empty-better-utxo')
+          break
+        case errors.EmptySignKey:
+          errorMessage = t('errors.empty-private-key')
+          break
+        case errors.RateLimit:
+          errorMessage = t('errors.rate-limit')
+          break
         default: {
           errorMessage = t('errors.default')
         }

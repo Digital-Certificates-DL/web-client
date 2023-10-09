@@ -1,32 +1,42 @@
 <template>
   <div class="certificate">
-    <checkbox-field v-model="isSelected" @click="selectItem" />
-    <div class="certificate__img-wrp">
-      <img
-        class="certificate_img"
-        :src="certificate.img || '/branding/template.jpg'"
-        :alt="$t('certificate.img-alt')"
-      />
-    </div>
+    <checkbox-field v-model="isSelected" @click="clickItem" />
+    <div class="certificate__body">
+      <div class="certificate__img-wrp" @click="clickItem">
+        <img
+          v-if="certificate.signature"
+          class="certificate__img"
+          :src="certificate.img || '/branding/template.jpg'"
+          :alt="$t('certificate.img-alt')"
+        />
+      </div>
+      <p class="certificate__name certificate__text-content">
+        {{ certificate.participant }}
+      </p>
+      <p class="certificate__text-content">
+        {{ certificate.courseTitle }}
+      </p>
+      <p class="certificate__text-content">
+        {{ certificate.date }}
+      </p>
 
-    <p class="certificate__name">
-      {{ certificate.participant }}
-    </p>
-    <p>
-      {{ certificate.date }}
-    </p>
-    <div class="certificate__btns">
-      <app-button
-        class="certificate__btn"
-        :text="$t('certificate.mint-text')"
-        @click="emit('open-modal', certificate)"
-      />
-
-      <app-button
-        class="certificate__btn certificate__btn-download"
-        :icon-left="$icons.download"
-        @click="window.open(certificate.certificate, '_blank', 'noopener')"
-      />
+      <div class="certificate__btns">
+        <app-button
+          v-if="certificate.signature"
+          :text="$t('certificate.mint-btn-text')"
+          @click="emit('open-modal', certificate)"
+        />
+        <app-button
+          :text="$t('certificate.select-certificate-btn-text')"
+          @click="clickItem"
+        />
+        <app-button
+          v-if="certificate.signature"
+          class="certificate__btn-download"
+          :icon-right="$icons.download"
+          @click="openCertificateDownloadLink(certificate)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -38,64 +48,70 @@ import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
 
-const isSelected = ref(false)
-
 const emit = defineEmits<{
-  (e: 'open-modal', user: CertificateJSONResponse): boolean
-  (e: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
+  (event: 'open-modal', user: CertificateJSONResponse): boolean
+  (event: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
 }>()
 
 const props = defineProps<{
   certificate: CertificateJSONResponse
 }>()
 
-const selectItem = () => {
+const isSelected = ref(false)
+
+const clickItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value, props.certificate)
+}
+
+const openCertificateDownloadLink = (certificate: CertificateJSONResponse) => {
+  window.open('https://' + certificate.certificate, 'download')
 }
 </script>
 
 <style lang="scss" scoped>
 .certificate {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: toRem(20);
-  padding-bottom: toRem(10);
-  border-bottom: var(--border-primary-dark), toRem(2), solid;
+  border-bottom: var(--border-primary-main) toRem(1) solid;
 }
 
-.certificate_img {
+.certificate__body {
+  display: grid;
+  grid-template-columns: 1fr 2fr 4fr 1fr 3fr;
+  gap: toRem(50);
+  width: 100%;
+  align-items: center;
+}
+
+.certificate__img-wrp {
+  display: flex;
+  align-items: center;
   width: toRem(74);
+}
+
+.certificate__img {
+  width: 100%;
   border-radius: toRem(4);
+  margin-right: toRem(10);
 
-  @include respond-to(medium) {
-    width: toRem(54);
+  @include respond-to(large) {
+    width: toRem(74);
+    border-radius: toRem(4);
   }
-
-  @include respond-to(xmedium) {
-    width: toRem(64);
-  }
-}
-
-.certificate__name {
-  width: toRem(150);
-}
-
-.certificate__btn {
-  width: toRem(140);
-  height: toRem(50);
 }
 
 .certificate__btn-download {
-  width: toRem(50);
-  margin-left: toRem(20);
   font-size: toRem(20);
 }
 
 .certificate__btns {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  max-width: toRem(200);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.certificate__text-content {
+  text-align: center;
 }
 </style>

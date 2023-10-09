@@ -3,7 +3,7 @@
     <transition name="modal">
       <div v-show="isShown" class="modal" v-bind="$attrs">
         <div class="modal__pane" ref="modalPane">
-          <slot :modal="{ close: closeModal }" />
+          <slot :modal="{ close: closeModal }" :key="isShown" />
         </div>
       </div>
     </transition>
@@ -77,8 +77,8 @@ $z-index-local: 1;
   align-items: center;
   justify-content: center;
   position: relative;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .modal-enter-active,

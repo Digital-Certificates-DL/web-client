@@ -17,7 +17,11 @@ const routes = [
     name: ROUTE_NAMES.generate,
     component: () => import('@/pages/GenerationPage.vue'),
   },
-
+  {
+    path: '/home',
+    name: ROUTE_NAMES.home,
+    component: () => import('@/pages/HomePage.vue'),
+  },
   {
     path: '/certificates',
     name: ROUTE_NAMES.certificates,
@@ -27,6 +31,11 @@ const routes = [
     path: '/settings',
     name: ROUTE_NAMES.settings,
     component: () => import('@/pages/SettingPage.vue'),
+  },
+  {
+    path: '/timestamp',
+    name: ROUTE_NAMES.timestamp,
+    component: () => import('@/pages/TimestampPage.vue'),
   },
 ]
 

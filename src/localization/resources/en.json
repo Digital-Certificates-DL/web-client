@@ -1,12 +1,17 @@
 {
   "validations": {
     "field-error_required": "Please fill out this field",
+    "field-error_required-all": "Please fill out all fields",
     "field-error_email": "Field must be a valid email",
-    "field-error_address": "Invalid address",
     "field-error_code": "Code is required",
+    "field-error_sendMnemonicPhrase": "Not valid mnemonic",
+    "field-error_address": "Invalid address",
     "field-error_name": "Empty name",
     "field-error_settings": "We need fill all fields",
-    "field-error_sendMnemonicPhrase": "Not valid mnemonic"
+    "field-error_privateKey": "Invalid private key",
+    "field-error_signKey": "Invalid sign private key",
+    "field-error_mnemonic": "Invalid bip 39 ...",
+    "field-error_link": "Invalid link  to sheet"
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -27,7 +32,26 @@
     "provider-method-not-supported": "Method is not implemented non-standard",
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
-    "provider-wrapper-method-not-found": "provider not exist or hasn't this method"
+    "provider-wrapper-method-not-found": "Provider does not exist or method unavailable",
+    "empty-container": "Container is empty",
+    "empty-container-id": "Container id is empty",
+    "empty-google-link": "Google link is empty",
+    "empty-img": "Empty  image",
+    "failed-get-certificates": "Failed to  get  certificates",
+    "failed-generate-certificates": "Failed to generate certificates",
+    "failed-send-tx": "Failed to send tx",
+    "failed-save-setting": "Failed to save settings",
+    "failed-call-api": "Failed to call api",
+    "failed-download-image": "Failed to download image",
+    "failed-set-bitcoin-input": "Failed to set  bitcoin input",
+    "unauthorized": "Failed to auth",
+    "empty-better-utxo": "Empty better UTXOs",
+    "empty-private-key": "Empty private key",
+    "rate-limit":  "Rate  limit"
+  },
+  "warnings": {
+    "certificate-was-generated": "Certificate has already been generated",
+    "certificate-has-timestamp": "Certificate has timestamp"
   },
   "notification": {
     "default-title-success": "Success",
@@ -43,36 +67,45 @@
   },
   "main-page": {
     "metamask-connect": "Connect to MetaMask",
-    "page-info-title": "Service name",
-    "metamask-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "metamask-connect-btn": "Connect to MetaMask",
-    "metamask-disconnect-btn": "Disconnect",
-    "main-nav-certificates-title": "Certificates",
-    "main-nav-certificates-description": "Your certificates",
-    "main-nav-generation-title": "Generation",
-    "main-nav-generation-description": "Generate certificates",
-    "main-nav-settings-title": "Settings",
+    "page-info-title": "Digital Certificate",
+    "metamask-description": "Connect Metamask wallet if you going to issue SBT",
+    "metamask-connect-btn-text": "Connect to MetaMask",
+    "metamask-disconnect-btn-text": "Disconnect",
+    "page-info-name": "Digital Certificate",
+    "main-nav-home-title": "Home",
+    "main-nav-home-description": "Home",
+    "main-nav-settings-title": "Setup",
     "main-nav-settings-description": "Your settings",
-    "page-info-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "main-nav-settings-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "main-nav-certificates-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
-    "main-nav-generation-body": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus"
+    "page-info-description": "Service provides functionality for issuance certificates after finishing any educational course.",
+    "main-nav-settings-body": "Setup your keys and link to Google sheet",
+    "main-nav-home-body": "Create new template, issue certificate, see full list of certificates"
   },
   "all-certificates-page": {
-    "certificates-title": "All certificates",
-    "certificates-item-name": "Name",
-    "certificates-item-course": "Course",
-    "certificates-item-date": "Date",
-    "certificates-bitcoin-btn-text": "Bitcoin",
-    "no-certificate-list": "Empty certificate list",
-    "certificates-find": "find"
+    "certificates-title": "Previously certificates",
+    "certificates-subtitle-name": "Name",
+    "certificates-subtitle-course": "Course",
+    "generate-btn-text": "Generate",
+    "bitcoin-btn-text": "Timestamp",
+    "certificates-subtitle-data": "Date",
+    "error-certificate-list": "Empty certificate list",
+    "certificates-find": "Find",
+    "loader-text-update-data": "Update data",
+    "loader-text-validate-data": "Validate data",
+    "loader-text-sign-data": "Sign data",
+    "loader-text-create-pdf": "Issuing certificates",
+    "loader-text-upload-img": "Upload certificate image",
+    "certificates-item-name" : "Name",
+    "certificates-item-course" : "Course",
+    "certificates-item-date" : "Date",
+    "no-certificate-list": "Certificates list is empty",
+    "loader-text-update-date": "Updating certificates list",
+    "image_uploading":"Upload certificate image",
+    "empty-certificates-list": "Empty certificate list"
   },
   "generation-page": {
     "title":"Create new certificate"
   },
-
   "generation-form": {
-    "title":"Create new certificate",
     "step-1-description": "Write a name for your certificate",
     "step-2-description": "Choose or upload template for a new certificate",
     "step-3-description": "Write a link to  google sheet",
@@ -84,12 +117,20 @@
     "step-3-number": "3",
     "step-3-placeholder": "Link",
     "step-1-placeholder": "Name",
-    "start-btn": "Start",
-    "cancel-btn": "Cancel"
+    "start-btn-text": "Start",
+    "cancel-btn-text": "Cancel",
+    "upload-new-template-symbol": "+",
+    "upload-new-template": "Upload new template",
+    "choose-template": "Choose from my templates",
+    "loader-text-update-data": "Update data",
+    "loader-text-validate-data": "Validate data",
+    "loader-text-sign-data": "Sign data",
+    "loader-text-create-pdf": "Create PDF",
+    "loader-text-upload-img": "Upload certificate image"
   },
   "certificate": {
-    "mint-text": "Make sbt issuance",
-    "bitcoin-btn": "Bitcoin",
+    "select-certificate-btn-text": "Select him",
+    "mint-btn-text": "Іssue SBT",
     "img-alt":  "Certificate"
   },
   "setting-form": {
@@ -97,8 +138,8 @@
     "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings",
-    "cancel-btn-title": "Cancel",
-    "save-btn-title": "Save",
+    "cancel-btn-text": "Cancel",
+    "save-btn-text": "Save",
     "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
@@ -110,8 +151,8 @@
     "page-title": "Setting",
     "sign-key-title": "Key settings for signatures",
     "general-title": "General settings",
-    "cancel-btn-title": "Cancel",
-    "save-btn-title": "Save",
+    "cancel-btn-text": "Cancel",
+    "save-btn-text": "Save",
     "bitcoin-phrase-form-label": "Bitcoin Timestamping Mnemonic Phrase",
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
@@ -126,27 +167,71 @@
     "certificate-alt": "Certificate",
     "label-metamask-address": "Student’s MetaMask address"
   },
-  "auth-modal-form": {
-    "title" : "SBT issuance",
-    "input-code-label": "Code",
-    "close-btn": "Close",
-    "get-access-btn": "Get access",
-    "send-code-btn": "Send code"
-  },
-  "auth-form": {
-    "title" : "SBT issuance",
-    "input-code-label": "Code",
-    "close-btn": "Close",
-    "get-access-btn": "Get access",
-    "send-code-btn": "Send code"
-  },
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"
   },
+  "timestamp-page": {
+    "page-title": "Previously certificates",
+    "bitcoin-btn-text": "Make timestamp",
+    "input-placeholder": "Find",
+    "certificate-image-alt": "Certificate preview",
+    "loader-text-getting-utxo": "Getting UTXO",
+    "loader-text-prepare-tx": "Prepare transaction",
+    "loader-text-update-certificates": "Update Certificate"
+  },
+  "short-certificate-item":{
+    "mint-btn-text": "Mint",
+    "select-certificate-btn-text": "Select him"
+  },
+  "auth-form": {
+    "title" : "SBT issuance",
+    "input-code-label": "Code",
+    "close-btn-text": "Close",
+    "send-code-btn-text": "Send code",
+    "step-1-title": "Get the code",
+    "step-1-description": "To complete this step, you need to follow the  link  to get  the code",
+    "step-2-title": "Enter the code"
+
+  },
   "mint-form": {
-    "close-btn": "Close",
-    "mint-btn": "Mint",
-    "placeholder-metamask-address": "Student’s MetaMask address"
+    "close-btn-text": "Close",
+    "mint-btn-text": "Mint",
+    "placeholder-metamask-address": "Type student’s Ethereum address"
+  },
+  "home-page": {
+    "upload-title": "Upload new template",
+    "upload-name": "Upload",
+    "upload-description": "Upload and customize new template of PDF file",
+    "create-title": "Issue certificates",
+    "create-name": "Generate",
+    "create-description": "Issue all new certificates from Google sheet",
+    "title" : "Create new",
+    "template-list-title": "My templates",
+    "certificate-list-title": "Previously certificates",
+    "get-all-btn-text": "See more",
+    "nil-templates": "templates was not found",
+    "nil-certificates": "certificates was not found",
+    "loader-text-getting-cert": "Getting certificates"
+  },
+  "success-modal":{
+    "title": "Success",
+    "description ": "Certificate is minted successfully",
+    "close-btn-text": "Close"
+  },
+  "error-modal": {
+    "title": "Error",
+    "close-btn-text": "Close"
+  },
+  "preview-certificate-item": {
+    "img-alt": "Your image"
+  },
+  "app-dropdown": {
+    "img-alt": "Course icon",
+    "select-title": "Select"
+  },
+  "container-error-modal":{
+    "message": "Do you want to  try  again?",
+    "btn-text": "Try again"
   }
 }

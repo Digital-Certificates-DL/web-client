@@ -12,6 +12,7 @@ export const useUserStore = defineStore('users-store', {
     return {
       _certificates: [] as CertificateJSONResponse[],
       _setting: {} as UserSetting,
+      _bufferCertificates: [] as CertificateJSONResponse[],
     }
   },
   persist: {
@@ -24,9 +25,13 @@ export const useUserStore = defineStore('users-store', {
     setCertificates(certificates: CertificateJSONResponse[]) {
       this._certificates = certificates
     },
+    setBufferCertificates(certificates: CertificateJSONResponse[]) {
+      this._bufferCertificates = certificates
+    },
   },
   getters: {
     certificates: state => state._certificates,
     userSetting: state => state._setting,
+    bufferCertificateList: state => state._bufferCertificates,
   },
 })

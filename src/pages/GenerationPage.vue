@@ -1,48 +1,71 @@
 <template>
   <div class="generation-page">
+    <div class="generation-page__title">
+      <h2>{{ $t('generation-page.title') }}</h2>
+    </div>
+    <generation-form
+      v-model:is-loader-shown="isLoaderModalShown"
+      :container-id="validationContainerID"
+      :is-revalidate-container="isRevalidateContainer"
+      @update-loader-text="updateLoaderText"
+      @auth="auth"
+      @validation-rate-limit="handleValidateContainerError"
+    />
+
     <auth-modal
       v-model:is-shown="isAuthModalShown"
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
-    <div class="generation-page__title">
-      <h2>{{ $t('generation-page.title') }}</h2>
-    </div>
-    <generation-form @auth="auth" />
+
+    <loader-modal :is-shown="isLoaderModalShown" :text="loaderText" />
+    <container-error-modal
+      :is-shown="isContainerErrorModalShown"
+      @try-again="revalidateContainer"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { api } from '@/api'
-import { CertificateJSONResponseList } from '@/types'
-import { ErrorHandler } from '@/helpers'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { GenerationForm } from '@/forms'
-import { AuthModal } from '@/common/modals'
+import { AuthModal, LoaderModal, ContainerErrorModal } from '@/common'
+import { updateAuthCode } from '@/api'
+import { ErrorHandler } from '@/helpers'
 
 const authLink = ref('')
+const loaderText = ref('')
 
 const isAuthModalShown = ref(false)
 const userState = useUserStore()
+const isLoaderModalShown = ref(false)
+const isContainerErrorModalShown = ref(false)
+const isRevalidateContainer = ref(false)
+const validationContainerID = ref('')
 
-const updateCode = async (code: string) => {
+const updateLoaderText = (text: string) => {
+  loaderText.value = text
+}
+
+const updateCode = (code: string) => {
   try {
-    isAuthModalShown.value = false
-    await api.post<CertificateJSONResponseList>(
-      '/integrations/ccp/users/settings',
-      {
-        body: {
-          data: {
-            code: code,
-            name: userState.userSetting.accountName,
-          },
-        },
-      },
-    )
+    updateAuthCode(code, userState.userSetting.accountName)
   } catch (error) {
     ErrorHandler.process(error)
   }
+}
+
+const handleValidateContainerError = (containerID: string) => {
+  isRevalidateContainer.value = false
+  validationContainerID.value = containerID
+  isContainerErrorModalShown.value = true
+}
+
+const revalidateContainer = () => {
+  isContainerErrorModalShown.value = false
+  isRevalidateContainer.value = true
+  isLoaderModalShown.value = true
 }
 
 const auth = (link: string) => {

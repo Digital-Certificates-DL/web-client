@@ -121,6 +121,8 @@
 
   /* page size */
   --page-large: #{toRem(1400)};
+  --page-xmedium: #{toRem(1280)};
+  --page-medium: #{toRem(1040)};
 
   /* paddings */
   --field-padding-top: #{toRem(14)};
@@ -134,4 +136,7 @@
     var(--field-padding-left);
 
   --field-error: var(--error-main);
+
+  /* z-index */
+  --defaut-z-index: 1;
 }

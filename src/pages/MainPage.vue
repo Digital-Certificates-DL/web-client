@@ -2,8 +2,8 @@
   <div class="main-page">
     <div class="main-page__info">
       <app-logo class="main-page__logo" />
-      <h1 class="main-page__info-title">
-        {{ $t('main-page.page-info-title') }}
+      <h1 class="main-page__info-name">
+        {{ $t('main-page.page-info-name') }}
       </h1>
       <p class="main-page__info-description">
         {{ $t('main-page.page-info-description') }}
@@ -24,7 +24,7 @@
           <app-button
             class="main-page__metamask-btn main-page__btn-connect"
             color="info"
-            :text="$t('main-page.metamask-connect-btn')"
+            :text="$t('main-page.metamask-connect-btn-text')"
             :disabled="web3Store.provider.isConnected"
             @click="connect"
           />
@@ -38,38 +38,32 @@
             class="main-page__metamask-btn"
             color="info"
             size="large"
-            :text="$t('main-page.metamask-disconnect-btn')"
+            :text="$t('main-page.metamask-disconnect-btn-text')"
             @click="web3Store.provider.disconnect"
           />
         </div>
       </div>
       <div class="main-page__endpoints-side">
-        <nav-button
+        <navigation-item
           class="main-page__navigation-item"
           color="warning"
           size="large"
           :body="$t('main-page.main-nav-settings-body')"
           :title="$t('main-page.main-nav-settings-title')"
           :description="$t('main-page.main-nav-settings-description')"
-          @click="router.push($routes.settings)"
+          :route="{
+            name: $routes.settings,
+          }"
         />
-        <nav-button
-          class="main-page__navigation-item"
-          color="info"
-          size="large"
-          :body="$t('main-page.main-nav-certificates-body')"
-          :title="$t('main-page.main-nav-certificates-title')"
-          :description="$t('main-page.main-nav-certificates-description')"
-          @click="router.push($routes.certificates)"
-        />
-        <nav-button
-          class="main-page__navigation-item"
+
+        <navigation-item
           color="success"
-          size="large"
-          :title="$t('main-page.main-nav-generation-title')"
-          :description="$t('main-page.main-nav-generation-description')"
-          :body="$t('main-page.main-nav-generation-body')"
-          @click="router.push($routes.generate)"
+          :title="$t('main-page.main-nav-home-title')"
+          :description="$t('main-page.main-nav-home-description')"
+          :body="$t('main-page.main-nav-home-body')"
+          :route="{
+            name: $routes.home,
+          }"
         />
       </div>
     </div>
@@ -77,12 +71,9 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton, NavButton, AppLogo } from '@/common'
-
 import { useWeb3ProvidersStore } from '@/store'
-
 import { ErrorHandler } from '@/helpers'
-import { router } from '@/router'
+import { AppLogo, NavigationItem, AppButton } from '@/common'
 
 const web3Store = useWeb3ProvidersStore()
 
@@ -96,6 +87,8 @@ const connect = async () => {
 </script>
 
 <style lang="scss" scoped>
+$opacity: 0.6;
+
 .main-page {
   margin: auto;
 }
@@ -106,9 +99,19 @@ const connect = async () => {
   grid-row: span;
   justify-content: center;
   padding-bottom: toRem(60);
+
+  @include respond-to(medium) {
+    margin-top: toRem(60);
+    padding-bottom: toRem(40);
+  }
+
+  @include respond-to(xmedium) {
+    margin-top: toRem(70);
+    padding-bottom: toRem(50);
+  }
 }
 
-.main-page__info-title {
+.main-page__info-name {
   margin: auto;
   padding: toRem(20);
 }
@@ -121,7 +124,6 @@ const connect = async () => {
 
 .main-page__body {
   display: flex;
-  align-content: center;
   justify-content: space-between;
   background: var(--app-background-gradient);
   opacity: var(--app-background-opacity);
@@ -136,25 +138,26 @@ const connect = async () => {
   width: 100%;
 }
 
-.main-page__metamask-banner {
-  display: grid;
-  place-content: center;
-  border-radius: toRem(8);
-  max-height: toRem(346);
-  height: 100%;
-  padding: toRem(12);
-}
-
 .main-page__endpoints-side {
   display: grid;
+  margin-left: toRem(10);
   grid-template-columns: repeat(2, 1fr);
   gap: toRem(80);
   grid-auto-rows: toRem(150);
 }
 
+.main-page__metamask-banner {
+  display: grid;
+  justify-content: center;
+}
+
 .main-page__metamask-title {
   font-size: toRem(35);
   margin: auto;
+
+  @include respond-to(xmedium) {
+    font-size: toRem(27);
+  }
 }
 
 .main-page__metamask-definition {
@@ -165,30 +168,19 @@ const connect = async () => {
 
 .main-page__navigation-item {
   max-width: toRem(304);
-}
-
-.main-page__card-indicator {
-  position: absolute;
-  top: toRem(12);
-  right: toRem(12);
-  width: toRem(12);
-  height: toRem(12);
-  border-radius: toRem(8);
-  background: var(--error-main);
-
-  &--active {
-    background: var(--success-main);
-  }
+  width: 100%;
 }
 
 .main-page__metamask-btn {
   max-width: toRem(200);
   margin: toRem(20) auto;
+  width: 100%;
 }
 
 .main-page__info-description {
   font-size: toRem(16);
   max-width: toRem(426);
+  width: 100%;
   text-align: center;
   color: var(--text-primary-light);
 }
