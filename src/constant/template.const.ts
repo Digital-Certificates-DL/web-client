@@ -39,7 +39,7 @@ export const DefaultTemplate = [
     font_size: 15,
   } as TemplateType,
   {
-    name: 'exam',
+    name: TemplateFieldEnum.exam,
     text: 'Exam passed',
     x_center: true,
     y: 400,
