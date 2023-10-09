@@ -1,11 +1,11 @@
 <template>
   <form class="upload-template-form">
-    <p class="upload-template-modal__name"></p>
-
     <input-field
       v-model="form.name"
       class="upload-template-form__name-input"
+      :label="$t('upload-template-form.course-name-field')"
       :error-message="getFieldErrorMessage('name')"
+      @blur="touchField('name')"
     />
 
     <file-drop-area
@@ -13,7 +13,7 @@
       :files-type="IMAGE_FORMAT"
       :icon="$icons.template"
       :is-disabled="!isFormValid()"
-      :description="$t('upload-template-modal.description')"
+      :description="$t('upload-template-form.description')"
       @handle-files-upload="onFileUpload"
     />
   </form>
@@ -30,24 +30,26 @@ import { useRouter } from '@/router'
 import { useUserStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
+import { IMAGE_FORMAT } from '@/constant'
 
 const { t } = useI18n()
 const router = useRouter()
 const { disableForm, enableForm } = useForm()
-
-const IMAGE_FORMAT = 'image/*'
 
 const emit = defineEmits<{
   (e: 'close-modal'): boolean
 }>()
 
 const form = reactive({
-  name: '',
+  name: t('upload-template-form.course-name-field'),
 })
 
-const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  name: { required },
-})
+const { isFormValid, getFieldErrorMessage, touchField } = useFormValidation(
+  form,
+  {
+    name: { required },
+  },
+)
 
 const onFileUpload = (files: File[]) => {
   parseImages(files)

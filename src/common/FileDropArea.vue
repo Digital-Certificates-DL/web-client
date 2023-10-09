@@ -23,7 +23,7 @@
         @drag="dragFile"
       />
       <p class="file-drop-area__text-description file-drop-area__text">
-        {{ $t('file-drop-area.description') }}
+        {{ description }}
       </p>
     </div>
   </div>

@@ -217,7 +217,7 @@
   "success-modal":{
     "title": "Success",
     "description": "Certificate is minted successfully",
-    "close-btn-text": "Close"
+    "close-btn-text": "Done"
   },
   "error-modal": {
     "title": "Error",
@@ -235,19 +235,20 @@
     "btn-text": "Try again"
   },
   "template-page":{
-    "title": "Page",
+    "title": "Create new template",
     "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.",
-    "success-msg": "Success!!",
+    "success-msg": "New template: {name}",
+    "success-description": "Template is created successfully",
     "loader-text": "Creating template",
     "save-btn-text": "Save",
     "cancel-btn-text": "Cancel"
   },
-  "file-drop-area": {
-    "description": "Drag or chose file for  template"
-  },
   "upload-template-modal": {
-    "title": "Upload  template image",
-    "description": "Some description",
+    "title": "Upload template image",
     "close-btn-text": "Close"
+  },
+  "upload-template-form": {
+    "course-name-field": "Course name",
+    "description": "Drag or chose file for template"
   }
 }

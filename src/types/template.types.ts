@@ -1,4 +1,4 @@
-export type TemplateTypes = {
+export type TemplateType = {
   name: string
   text: string
   x: number
@@ -10,4 +10,11 @@ export type TemplateTypes = {
   is_qr: boolean
   width: number
   height: number
+}
+
+export type DragDataType = {
+  active: boolean
+  index: number | null
+  startX: number
+  startY: number
 }

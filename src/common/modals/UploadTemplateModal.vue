@@ -6,10 +6,7 @@
   >
     <div class="upload-template-modal__pane">
       <div class="upload-template-modal__title">
-        <p>{{ $t('upload-template-modal.title') }}</p>
-      </div>
-      <div class="upload-template-modal__description">
-        <p>{{ $t('upload-template-modal.description') }}</p>
+        <h3>{{ $t('upload-template-modal.title') }}</h3>
       </div>
       <div class="upload-template-modal__form">
         <upload-template-form />
@@ -53,5 +50,9 @@ const emit = defineEmits<{
 .upload-template-modal__btn-close {
   margin: toRem(20) auto;
   width: 100%;
+}
+
+.upload-template-modal__form {
+  margin-top: toRem(40);
 }
 </style>

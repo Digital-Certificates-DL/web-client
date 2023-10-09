@@ -12,7 +12,7 @@
             {{ $t('success-modal.title') }}
           </h3>
           <p class="success-modal__description">
-            {{ $t('success-modal.description') }}
+            {{ description || $t('success-modal.description') }}
           </p>
         </div>
       </div>
@@ -34,12 +34,19 @@
 import { Icon, AppButton, Modal } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from '@/router'
+
 const router = useRouter()
 
-defineProps<{
-  isShown: boolean
-  transaction: string
-}>()
+withDefaults(
+  defineProps<{
+    isShown: boolean
+    description: string
+    transaction: string
+  }>(),
+  {
+    description: '',
+  },
+)
 
 const emit = defineEmits<{
   (event: 'update:is-shown', v: boolean): void
