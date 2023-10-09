@@ -1,8 +1,9 @@
 import { TemplateType } from '@/types'
+import { TemplateFieldEnum } from '@/enums'
 
 export const DefaultTemplate = [
   {
-    name: 'name',
+    name: TemplateFieldEnum.name,
     text: 'Your full name',
     x_center: true,
     y: 350,
@@ -10,28 +11,28 @@ export const DefaultTemplate = [
     font_size: 15,
   } as TemplateType,
   {
-    name: 'points',
+    name: TemplateFieldEnum.points,
     text: '145/800',
     x: 140,
     y: 158,
     font_size: 15,
   } as TemplateType,
   {
-    name: 'serial_number',
+    name: TemplateFieldEnum.serial_number,
     text: '7db1205abadcb4459af2',
     x: 900,
     y: 112,
     font_size: 15,
   } as TemplateType,
   {
-    name: 'date',
+    name: TemplateFieldEnum.date,
     text: 'Issued on: 99.99.9999',
     x: 900,
     y: 158,
     font_size: 15,
   } as TemplateType,
   {
-    name: 'credits',
+    name: TemplateFieldEnum.credits,
     text: 'ECTS Credit',
     x: 140,
     y: 112,
@@ -46,7 +47,7 @@ export const DefaultTemplate = [
     font_size: 15,
   } as TemplateType,
   {
-    name: 'level',
+    name: TemplateFieldEnum.level,
     text: 'Level: beginner at theoretical aspects',
     x_center: true,
     y: 425,
@@ -54,7 +55,7 @@ export const DefaultTemplate = [
     font_size: 15,
   } as TemplateType,
   {
-    name: 'course',
+    name: TemplateFieldEnum.course,
     text: 'Data bases',
     x_center: true,
     y: 300,
@@ -63,7 +64,7 @@ export const DefaultTemplate = [
   } as TemplateType,
   {
     font_size: 0,
-    name: 'qr',
+    name: TemplateFieldEnum.qr,
     y: 250,
     x: 900,
     is_qr: true,
