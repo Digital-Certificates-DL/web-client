@@ -1,4 +1,4 @@
-import { TemplateTypes } from '@/types'
+import { TemplateType } from '@/types'
 
 export const DefaultTemplate = [
   {
@@ -8,43 +8,43 @@ export const DefaultTemplate = [
     y: 350,
     x: 0,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'points',
     text: '145/800',
     x: 140,
     y: 158,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'serial_number',
     text: '7db1205abadcb4459af2',
     x: 900,
     y: 112,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'date',
     text: 'Issued on: 99.99.9999',
     x: 900,
     y: 158,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'credits',
     text: 'ECTS Credit',
     x: 140,
     y: 112,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'exam',
-    text: 'Successfully completed',
+    text: 'Exam passed',
     x_center: true,
     y: 400,
     x: 0,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'level',
     text: 'Level: beginner at theoretical aspects',
@@ -52,7 +52,7 @@ export const DefaultTemplate = [
     y: 425,
     x: 0,
     font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     name: 'course',
     text: 'Data bases',
@@ -60,15 +60,7 @@ export const DefaultTemplate = [
     y: 300,
     x: 0,
     font_size: 20,
-  } as TemplateTypes,
-  {
-    name: 'note',
-    text: 'Exam passed',
-    y: 450,
-    x: 0,
-    x_center: true,
-    font_size: 15,
-  } as TemplateTypes,
+  } as TemplateType,
   {
     font_size: 0,
     name: 'qr',
@@ -77,5 +69,5 @@ export const DefaultTemplate = [
     is_qr: true,
     width: 200,
     height: 200,
-  } as TemplateTypes,
+  } as TemplateType,
 ]

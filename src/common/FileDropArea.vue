@@ -22,7 +22,7 @@
         @input="uploadFile"
         @drag="dragFile"
       />
-      <p class="file-drop-area__text-description file-drop-area__text">
+      <p class="file-drop-area__text">
         {{ description }}
       </p>
     </div>
@@ -42,7 +42,6 @@ const ID_WRP = '_id'
 const props = withDefaults(
   defineProps<{
     icon: ICON_NAMES
-    title: string
     description: string
     filesType: string
     isDisabled?: boolean

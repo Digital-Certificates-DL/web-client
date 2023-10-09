@@ -28,9 +28,11 @@
 
       <app-button class="template-page__btn" text="+" @click="makeBigger()" />
 
-      <app-button class="template-page__btn" :disabled="currentInputInfo.is_qr">
-        {{ currentInputInfo.font_size || '0' }}
-      </app-button>
+      <app-button
+        class="template-page__btn"
+        :disabled="currentInputInfo.is_qr"
+        :text="currentInputInfo.font_size.toString() || '0'"
+      />
       <app-button
         class="template-page__btn"
         size="large"
@@ -57,17 +59,17 @@
       <div
         v-for="(position, index) in defaultTemplate"
         :key="index"
-        class="template-page__input"
+        class="template-page__input-wrp"
         draggable="true"
         :style="{
-          left: position.x_center ? '42%' : position.x * windowSizeCoef + 'px',
-          display: 'flex',
+          left: position.x_center ? '52%' : position.x * windowSizeCoef + 'px',
           top: position.y * windowSizeCoef + 'px',
+          transform: position.x_center ? 'translate(-50%, 0)' : 'none',
         }"
-        @mousedown.stop="startDrag(index, $event)"
-        @mousemove.stop="drag($event)"
-        @mouseup.stop="endDrag"
-        @mouseleave.stop="endDrag"
+        @mousedown.stop="startDragInput(index, $event)"
+        @mousemove.stop="dragInput($event)"
+        @mouseup.stop="endDragInput"
+        @mouseleave.stop="endDragInput"
         @click.stop
       >
         <div
@@ -84,11 +86,12 @@
         <input
           v-if="!position.is_qr"
           v-model="position.text"
+          class="template-page__input"
           type="text"
           :style="{
             fontSize: position.font_size + 'px',
             color: position.color || 'white',
-            width: 200 + 'px',
+            width: position.font_size * position.text.length * 0.55 + 'px',
             'text-align': position.x_center ? 'center' : 'left',
           }"
           @focus="inputField = $event.target"
@@ -99,8 +102,7 @@
           class="template-page__remove-field-btn"
           :icon-left="$icons.x"
           @click.stop="removeInput(index)"
-        >
-        </app-button>
+        />
       </div>
     </div>
 
@@ -124,7 +126,9 @@ import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { LoaderModal, AppButton, SuccessModal } from '@/common'
 import { useWindowSize } from '@vueuse/core'
+import { TemplateFieldEnum } from '@/enums'
 import { DefaultTemplate } from '@/constant'
+import _ from 'lodash'
 
 const props = defineProps<{
   name: string
@@ -159,14 +163,14 @@ const clearInput = () => {
   textValue.value = ''
 }
 
-const startDrag = (index: number, event: MouseEvent) => {
+const startDragInput = (index: number, event: MouseEvent) => {
   dragData.value.active = true
   dragData.value.index = index
   dragData.value.startX = event.clientX
   dragData.value.startY = event.clientY
 }
 
-const drag = (event: MouseEvent) => {
+const dragInput = (event: MouseEvent) => {
   if (dragData.value.active) {
     const dx = event.clientX - dragData.value.startX
     const dy = event.clientY - dragData.value.startY
@@ -178,7 +182,7 @@ const drag = (event: MouseEvent) => {
   }
 }
 
-const endDrag = () => {
+const endDragInput = () => {
   dragData.value.active = false
   dragData.value.index = null
 }
@@ -204,8 +208,7 @@ const sendTemplate = async () => {
   isLoading.value = false
 }
 
-const getDeltes = async () => {
-  await getImageSize()
+const getDeltas = async () => {
   const { height, width } = getCurrentImageSize()
   if (!height || !width) {
     throw new Error()
@@ -215,9 +218,9 @@ const getDeltes = async () => {
   return { deltaHeight, deltaWidth }
 }
 
-const calculateTemplatePositions = async () => {
-  const { deltaHeight, deltaWidth } = await getDeltes()
-  for (const field of defaultTemplate.value) {
+const calculateTemplatePositions = async (template: TemplateType[]) => {
+  const { deltaHeight, deltaWidth } = await getDeltas()
+  for (const field of template) {
     field.x *= deltaWidth
     field.y *= deltaHeight
     field.font_size *= deltaHeight
@@ -226,26 +229,27 @@ const calculateTemplatePositions = async () => {
     field.y = Math.round(field.y)
     field.font_size = Math.round(field.font_size)
 
-    if (field.name === 'qr') {
+    if (field.name === TemplateFieldEnum.qr) {
       field.height *= deltaHeight
       field.width *= deltaWidth
       field.width = Math.round(field.width)
       field.height = Math.round(field.height)
     }
   }
-  clearFieldsMockData()
+  return clearFieldsMockData(template)
 }
 
-const clearFieldsMockData = () => {
-  for (const field of defaultTemplate.value) {
+const clearFieldsMockData = (template: TemplateType[]) => {
+  for (const field of template) {
     if (
-      field.name != 'credits' &&
-      field.name != 'course' &&
-      field.name != 'level'
+      field.name != TemplateFieldEnum.credits &&
+      field.name != TemplateFieldEnum.course &&
+      field.name != TemplateFieldEnum.level
     ) {
       field.text = ''
     }
   }
+  return template
 }
 
 const getCurrentImageSize = () => {
@@ -261,39 +265,26 @@ const getCurrentImageSize = () => {
   }
 }
 
-const getImageSize = async () => {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = function () {
-      imgInfo.value = img
-      resolve({ width: img.naturalWidth, height: img.naturalHeight })
-    }
-    img.onerror = function () {
-      reject(new Error('Failed to load the image.'))
-    }
-    img.src = useUserStore().bufferImg
-  })
-}
-
 const prepareTemplates = async () => {
-  await calculateTemplatePositions()
+  const template = await calculateTemplatePositions(
+    _.cloneDeep(defaultTemplate.value),
+  )
   return {
     height: imgInfo.value?.naturalHeight,
     width: imgInfo.value?.naturalWidth,
-    name: getInputByName('name'),
-    course: getInputByName('course'),
-    credits: getInputByName('credits'),
-    points: getInputByName('points'),
-    serial_number: getInputByName('serial_number'),
-    date: getInputByName('date'),
-    exam: getInputByName('exam'),
-    level: getInputByName('level'),
-    note: getInputByName('note'),
-    qr: getInputByName('qr'),
+    name: getInputByName(template, TemplateFieldEnum.name),
+    course: getInputByName(template, TemplateFieldEnum.course),
+    credits: getInputByName(template, TemplateFieldEnum.credits),
+    points: getInputByName(template, TemplateFieldEnum.points),
+    serial_number: getInputByName(template, TemplateFieldEnum.serial_number),
+    date: getInputByName(template, TemplateFieldEnum.date),
+    exam: getInputByName(template, TemplateFieldEnum.exam),
+    level: getInputByName(template, TemplateFieldEnum.level),
+    qr: getInputByName(template, TemplateFieldEnum.qr),
   }
 }
-const getInputByName = (name: string) => {
-  return defaultTemplate.value.filter(data => {
+const getInputByName = (template: TemplateType[], name: string) => {
+  return template.filter(data => {
     return data.name === name
   })[0]
 }
@@ -337,7 +328,6 @@ watch(width, (oldVal, newVal) => {
 <style scoped lang="scss">
 .template-page {
   max-width: var(--page-large);
-  min-width: var(--page-medium);
   width: 100%;
   margin: 0 auto;
 }
@@ -352,13 +342,15 @@ watch(width, (oldVal, newVal) => {
   width: 100%;
 }
 
-.template-page__input {
+.template-page__input-wrp {
+  display: flex;
   position: absolute;
+  margin: auto;
 }
 
-.template-page__input input {
-  max-width: toRem(200);
-  width: 100%;
+.template-page__input {
+  min-width: toRem(200);
+  max-width: toRem(800);
   background: rgba(0, 0, 0, 0);
   border: none;
 

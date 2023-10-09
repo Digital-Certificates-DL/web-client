@@ -5,11 +5,8 @@
       class="upload-template-form__name-input"
       :label="$t('upload-template-form.course-name-field')"
       :error-message="getFieldErrorMessage('name')"
-      @blur="touchField('name')"
     />
-
     <file-drop-area
-      title="upload file"
       :files-type="IMAGE_FORMAT"
       :icon="$icons.template"
       :is-disabled="!isFormValid()"
@@ -44,12 +41,9 @@ const form = reactive({
   name: t('upload-template-form.course-name-field'),
 })
 
-const { isFormValid, getFieldErrorMessage, touchField } = useFormValidation(
-  form,
-  {
-    name: { required },
-  },
-)
+const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
+  name: { required },
+})
 
 const onFileUpload = (files: File[]) => {
   parseImages(files)

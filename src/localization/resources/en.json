@@ -47,7 +47,9 @@
     "unauthorized": "Failed to auth",
     "empty-better-utxo": "Empty better UTXOs",
     "empty-private-key": "Empty private key",
-    "rate-limit":  "Rate  limit"
+    "rate-limit":  "Rate  limit",
+    "error-empty-file": "File is undefined",
+    "error-empty-list": "List of  file is empty"
   },
   "warnings": {
     "certificate-was-generated": "Certificate has already been generated",

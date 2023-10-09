@@ -211,19 +211,24 @@ export const saveTemplate = async (
   templateName: string,
   accountName: string,
 ) => {
-  await api.post('/integrations/ccp/certificate/template', {
-    body: {
-      data: {
-        attributes: {
-          background_img: bufferImg,
-          is_completed: true,
-          template: template,
-          template_name: templateName,
-        },
-        relationships: {
-          user: accountName,
+  const body = new JsonApiBodyBuilder()
+    .setData({
+      type: 'template',
+      attributes: {
+        background_img: bufferImg,
+        is_completed: true,
+        template: template,
+        template_name: templateName,
+      },
+      relationships: {
+        user: {
+          data: {
+            type: 'user',
+            id: accountName,
+          },
         },
       },
-    },
-  })
+    })
+    .build()
+  await api.post('/integrations/ccp/certificate/template', { body })
 }

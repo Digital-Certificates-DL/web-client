@@ -61,6 +61,7 @@
     "events-polyfill": "^2.1.2",
     "json": "^11.0.0",
     "jsona": "^1.11.0",
+    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "loglevel": "^1.8.1",
     "mitt": "^3.0.0",
