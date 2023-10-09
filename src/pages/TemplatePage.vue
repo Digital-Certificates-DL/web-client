@@ -10,8 +10,8 @@
         </p>
         <div class="template-page__nav-btns">
           <app-button
+            color="info"
             :text="$t('template-page.save-btn-text')"
-            :color="'info'"
             @click="sendTemplate"
           />
           <app-button
@@ -53,7 +53,7 @@
         class="template-page__back-image"
         id="certificate-background"
         :src="userStore.bufferImg || '/branding/blockchain.png'"
-        alt="Uploaded Image"
+        :alt="$t('template-page.template-img-alt')"
       />
 
       <div

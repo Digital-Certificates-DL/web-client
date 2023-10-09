@@ -243,7 +243,8 @@
     "success-description": "Template is created successfully",
     "loader-text": "Creating template",
     "save-btn-text": "Save",
-    "cancel-btn-text": "Cancel"
+    "cancel-btn-text": "Cancel",
+    "template-img-alt": "Uploaded image"
   },
   "upload-template-modal": {
     "title": "Upload template image",
