@@ -17,7 +17,7 @@
         />
         <app-dropdown
           v-model="filteredState"
-          main-image="/branding/solidity-ico.png"
+          main-image="'/branding/success-ico.png'"
           :title="DROP_DOWN_STATE_LIST[0].text"
           :items="DROP_DOWN_STATE_LIST"
         />
@@ -90,6 +90,7 @@
     <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
     <container-error-modal
       v-model:is-shown="isContainerErrorModalShown"
+      :is-shown="isContainerErrorModalShown"
       :container-id="processingContainerID"
       @try-again="revalidateContainerState"
     />
@@ -100,36 +101,35 @@
 import { useUserStore } from '@/store'
 import { CertificateJSONResponse } from '@/types'
 import { InputField } from '@/fields'
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from '@/router'
 import {
   AppButton,
   AppDropdown,
   Certificate,
   CertificateModal,
-  ContainerErrorModal,
-  ErrorModal,
-  LoaderModal,
   NoDataMessage,
   SuccessModal,
+  LoaderModal,
+  ErrorModal,
+  ContainerErrorModal,
 } from '@/common'
 import {
-  ErrorHandler,
-  filteringByCourse,
-  filteringByState,
   prepareCertificateImage,
+  validateContainerStateWrapper,
+  ErrorHandler,
   searchInTheList,
   signCertificateData,
-  validateContainerStateWrapper,
   validateListCanMakeTimestamp,
   validateListNeedToGenerate,
+  filteringByCourse,
+  filteringByState,
 } from '@/helpers'
 import { ROUTE_NAMES } from '@/enums'
 import { createPdf, downloadCertificateImage, uploadCertificates } from '@/api'
 import { errors } from '@/errors'
 import { useI18n } from 'vue-i18n'
 import { DROP_DOWN_COURSE_LIST, DROP_DOWN_STATE_LIST } from '@/constant'
-
 const { t } = useI18n()
 
 const userState = useUserStore()
@@ -212,12 +212,13 @@ const getCertificateImage = async (certificate: CertificateJSONResponse) => {
   try {
     isLoading.value = true
     loaderText.value = t('all-certificates-page.image_uploading')
-    return downloadCertificateImage(
+    const data = await downloadCertificateImage(
       certificate,
       userState.userSetting.userBitcoinAddress,
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
+    return data
   } catch (error) {
     throw errors.FailedDownloadImage
   } finally {
@@ -292,10 +293,10 @@ const issueCertificates = async () => {
   }
 }
 
-const revalidateContainerState = async (containerID: string) => {
+const revalidateContainerState = async () => {
   try {
     isLoading.value = true
-    await asyncValidateContainerState(containerID)
+    await asyncValidateContainerState(processingContainerID.value)
     userState.setBufferCertificates(userState.certificates)
     loaderText.value = ''
 
@@ -303,12 +304,7 @@ const revalidateContainerState = async (containerID: string) => {
       name: ROUTE_NAMES.timestamp,
     })
   } catch (error) {
-    /* eslint-disable no-console */
-    console.log(error)
     if (error === errors.RateLimit) {
-      processingContainerID.value = containerID
-
-      console.log(errors.RateLimit)
       isContainerErrorModalShown.value = true
       return
     }

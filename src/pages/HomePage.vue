@@ -56,7 +56,10 @@
               )"
               :key="key"
             >
-              <preview-certificate-item :title="item.participant" />
+              <preview-certificate-item
+                :img="item.img"
+                :title="item.participant"
+              />
             </div>
           </div>
         </div>
@@ -87,10 +90,10 @@ import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateAuthCode, updateToken, uploadCertificates } from '@/api'
+import { updateAuthCode, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
-import { ROUTE_NAMES } from '@/enums'
+import { errors } from '@/errors'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -118,15 +121,8 @@ const getCertificates = async () => {
       isUnauthorized.value = true
       return
     }
-    if (error.name === 'UnauthorizedError') {
-      await updateToken(userState.userSetting.accountName)
-      await getCertificates()
-      return
-    }
 
-    ErrorHandler.process(error)
-    isLoading.value = false
-    router.push({ name: ROUTE_NAMES.main })
+    ErrorHandler.process(errors.FailedGetCertificates)
   } finally {
     isLoading.value = false
   }

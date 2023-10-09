@@ -32,8 +32,6 @@ import { CheckboxField } from '@/fields'
 import { ref, watch } from 'vue'
 import { AppButton } from '@/common'
 
-const isSelected = ref(false)
-
 const props = defineProps<{
   isShown: boolean
   name: string
@@ -49,6 +47,8 @@ const emit = defineEmits<{
     certificate: CertificateJSONResponse,
   ): boolean
 }>()
+
+const isSelected = ref(false)
 
 const openLink = (certificate: CertificateJSONResponse) => {
   window.open('https://' + certificate.certificate, 'download')

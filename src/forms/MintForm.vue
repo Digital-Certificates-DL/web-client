@@ -36,19 +36,6 @@ import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { errors } from '@/errors'
 
-const { t } = useI18n()
-const { safeMint } = useErc721()
-
-const { isFormDisabled, disableForm, enableForm } = useForm()
-
-const form = reactive({
-  address: '',
-})
-
-const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
-  address: { required, address },
-})
-
 const props = defineProps<{
   certificate: CertificateJSONResponse
 }>()
@@ -58,6 +45,18 @@ const emit = defineEmits<{
   (event: 'modal-close'): void
   (event: 'error', msg: string): void
 }>()
+
+const { t } = useI18n()
+const { safeMint } = useErc721()
+const { isFormDisabled, disableForm, enableForm } = useForm()
+
+const form = reactive({
+  address: '',
+})
+
+const { isFormValid, getFieldErrorMessage } = useFormValidation(form, {
+  address: { required, address },
+})
 
 const mint = async () => {
   if (!isFormValid()) return

@@ -48,8 +48,6 @@ import { CheckboxField } from '@/fields'
 
 import { ref } from 'vue'
 
-const isSelected = ref(false)
-
 const emit = defineEmits<{
   (event: 'open-modal', user: CertificateJSONResponse): boolean
   (event: 'select', isSelected: boolean, user: CertificateJSONResponse): boolean
@@ -58,6 +56,8 @@ const emit = defineEmits<{
 const props = defineProps<{
   certificate: CertificateJSONResponse
 }>()
+
+const isSelected = ref(false)
 
 const clickItem = () => {
   isSelected.value = !isSelected.value

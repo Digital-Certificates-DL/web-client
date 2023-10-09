@@ -21,7 +21,6 @@
     <loader-modal :is-shown="isLoaderModalShown" :text="loaderText" />
     <container-error-modal
       :is-shown="isContainerErrorModalShown"
-      :container-id="validationContainerID"
       @try-again="revalidateContainer"
     />
   </div>
@@ -63,8 +62,7 @@ const handleValidateContainerError = (containerID: string) => {
   isContainerErrorModalShown.value = true
 }
 
-const revalidateContainer = (containerID: string) => {
-  validationContainerID.value = containerID
+const revalidateContainer = () => {
   isContainerErrorModalShown.value = false
   isRevalidateContainer.value = true
   isLoaderModalShown.value = true
