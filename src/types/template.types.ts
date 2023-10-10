@@ -26,10 +26,10 @@ export type TemplatesJSONResponseList = {
 }
 
 export type TemplateJSONResponse = {
-  attributes: TemplateJsonItem
+  attributes: TemplateJSONItem
 }
 
-export type TemplateJsonItem = {
+export type TemplateJSONItem = {
   background_img: string
   template_name: string
 }

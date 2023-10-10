@@ -254,5 +254,6 @@
   "upload-template-form": {
     "course-name-field": "Course name",
     "description": "Drag or chose file for template"
-  }
+  },
+  "all-templates-page":
 }

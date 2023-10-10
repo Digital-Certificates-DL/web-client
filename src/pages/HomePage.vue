@@ -22,7 +22,13 @@
         <div class="home-page__content-template">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home-page.template-list-title') }}</h3>
-            <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
+            <app-button
+              color="info"
+              :text="$t('home-page.get-all-btn-text')"
+              :route="{
+                name: $routes.templates,
+              }"
+            />
           </div>
           <div class="home-page__items">
             <div v-for="(item, key) in computedTemplates" :key="key">
@@ -92,7 +98,7 @@ import {
   UploadTemplateModal,
 } from '@/common'
 import { router } from '@/router'
-import { CertificateJSONResponse, TemplateJsonItem } from '@/types'
+import { CertificateJSONResponse, TemplateJSONItem } from '@/types'
 import { computed, ref } from 'vue'
 import { useUserStore } from '@/store'
 import { updateAuthCode, uploadCertificates, uploadTemplates } from '@/api'
@@ -107,7 +113,7 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
 const loaderText = ref('')
-const templates = ref([] as TemplateJsonItem[])
+const templates = ref([] as TemplateJSONItem[])
 const isUploadTemplateModalShown = ref(false)
 
 const computedCertificates = computed(() => {

@@ -16,6 +16,7 @@ export { default as AppNavbar } from '@/common/AppNavbar.vue'
 
 export { default as CertificateModal } from '@/common/modals/CertificateModal.vue'
 export { default as NavigationItem } from '@/common/NavigationItem.vue'
+export { default as TemplateItem } from '@/common/TemplateItem.vue'
 
 export { default as PreviewCertificateItem } from '@/common/PreviewCertificateItem.vue'
 export { default as FileDropArea } from '@/common/FileDropArea.vue'

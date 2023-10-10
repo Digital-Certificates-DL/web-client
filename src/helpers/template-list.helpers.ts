@@ -1,9 +1,9 @@
-import { TemplateJsonItem } from '@/types'
+import { TemplateJSONItem } from '@/types'
 import { FILES_BASE } from '@/enums'
 
 export const prepareTemplatesImages = (
-  templates: TemplateJsonItem[],
-): TemplateJsonItem[] => {
+  templates: TemplateJSONItem[],
+): TemplateJSONItem[] => {
   for (const template of templates) {
     if (!template.background_img) {
       template.background_img = ''

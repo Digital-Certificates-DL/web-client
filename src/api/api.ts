@@ -4,7 +4,7 @@ import {
   CertificateJSONResponseList,
   Container,
   IpfsAttributes,
-  TemplateJsonItem,
+  TemplateJSONItem,
 } from '@/types'
 import { prepareCertificateImage } from '@/helpers'
 import { JsonApiBodyBuilder } from '@distributedlab/jac'
@@ -237,8 +237,8 @@ export const saveTemplate = async (
 
 export const uploadTemplates = async (
   name: string,
-): Promise<TemplateJsonItem[]> => {
-  const { data } = await api.get<TemplateJsonItem[]>(
+): Promise<TemplateJSONItem[]> => {
+  const { data } = await api.get<TemplateJSONItem[]>(
     '/integrations/ccp/certificate/template/' + name,
   )
 
