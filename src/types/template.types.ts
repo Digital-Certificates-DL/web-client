@@ -18,3 +18,18 @@ export type DragDataType = {
   startX: number
   startY: number
 }
+
+export type TemplatesJSONResponseList = {
+  data: TemplateJSONResponse[]
+  included: object[]
+  links: object
+}
+
+export type TemplateJSONResponse = {
+  attributes: TemplateJsonItem
+}
+
+export type TemplateJsonItem = {
+  background_img: string
+  template_name: string
+}

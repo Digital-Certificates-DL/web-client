@@ -146,7 +146,8 @@
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
     "url-form-label": "Google Sheet URL",
-    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)",
+    "sheet-template-link-text": "We can check  table  example by  this link"
   },
   "setting-page": {
     "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",

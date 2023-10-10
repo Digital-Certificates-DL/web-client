@@ -5,7 +5,7 @@
         <h2 class="setting-page__title">
           {{ $t('setting-page.page-title') }}
         </h2>
-        <p>
+        <p class="setting-page__description">
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
@@ -38,12 +38,17 @@ const onError = (msg: string) => {
 }
 
 .setting-page__title {
+  text-align: center;
   margin-bottom: toRem(20);
 }
 
 .setting-page__body {
   display: grid;
   justify-items: center;
+}
+
+.setting-page__description {
+  text-align: center;
 }
 
 .setting-page__info {

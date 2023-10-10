@@ -31,7 +31,6 @@
       <app-button
         class="template-page__btn"
         :disabled="currentInputInfo.is_qr"
-        :text="currentInputInfo.font_size.toString() || '0'"
       />
       <app-button
         class="template-page__btn"
@@ -209,6 +208,7 @@ const sendTemplate = async () => {
 }
 
 const getDeltas = async () => {
+  await getImageSize()
   const { height, width } = getCurrentImageSize()
   if (!height || !width) {
     throw new Error()
@@ -317,6 +317,20 @@ const updateFieldsPassions = () => {
     field.width *= windowSizeCoef.value
     field.height *= windowSizeCoef.value
   }
+}
+
+const getImageSize = async () => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = function () {
+      imgInfo.value = img
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.onerror = function () {
+      reject(new Error('Failed to load the image.'))
+    }
+    img.src = useUserStore().bufferImg
+  })
 }
 
 watch(width, (oldVal, newVal) => {

@@ -25,9 +25,18 @@
             <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
           </div>
           <div class="home-page__items">
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
+            <div v-for="(item, key) in computedTemplates" :key="key">
+              <preview-certificate-item
+                v-if="item"
+                :img="item.background_img"
+                :title="item.template_name"
+              />
+              <preview-certificate-item
+                v-else
+                img="/branding/mock.jpg"
+                title=""
+              />
+            </div>
           </div>
         </div>
         <div class="home-page__content-certificates">
@@ -43,22 +52,18 @@
             />
           </div>
 
-          <div v-if="!certificates.length" class="home-page__items">
-            <div class="= home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-          </div>
-          <div v-else class="home-page__items">
-            <div
-              v-for="(item, key) in certificates.slice(
-                0,
-                MAX_CERTIFICATES_ON_PAGE,
-              )"
-              :key="key"
-            >
+          <div class="home-page__items">
+            <div v-for="(item, key) in computedCertificates" :key="key">
               <preview-certificate-item
+                v-if="item"
                 :img="item.img"
                 :title="item.participant"
+              />
+
+              <preview-certificate-item
+                v-else
+                img="/branding/mock.jpg"
+                title=""
               />
             </div>
           </div>
@@ -87,13 +92,12 @@ import {
   UploadTemplateModal,
 } from '@/common'
 import { router } from '@/router'
-import { CertificateJSONResponse } from '@/types'
-import { ref } from 'vue'
+import { CertificateJSONResponse, TemplateJsonItem } from '@/types'
+import { computed, ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateAuthCode, uploadCertificates } from '@/api'
+import { updateAuthCode, uploadCertificates, uploadTemplates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
-import { errors } from '@/errors'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -103,8 +107,29 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
 const loaderText = ref('')
-
+const templates = ref([] as TemplateJsonItem[])
 const isUploadTemplateModalShown = ref(false)
+
+const computedCertificates = computed(() => {
+  const result = new Array(MAX_CERTIFICATES_ON_PAGE)
+
+  Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
+    ([key, value]) => {
+      result[Number(key)] = value
+    },
+  )
+  return result
+})
+
+const computedTemplates = computed(() => {
+  const result = new Array(MAX_CERTIFICATES_ON_PAGE)
+  Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
+    ([key, value]) => {
+      result[Number(key)] = value
+    },
+  )
+  return result
+})
 
 const getCertificates = async () => {
   isLoading.value = true
@@ -115,6 +140,8 @@ const getCertificates = async () => {
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
+    /* eslint-disable no-console */
+    console.log(certificates.value)
   } catch (error) {
     if (error.meta && error.name === 'ForbiddenError') {
       authLink.value = error.meta.auth_link
@@ -122,9 +149,17 @@ const getCertificates = async () => {
       return
     }
 
-    ErrorHandler.process(errors.FailedGetCertificates)
+    ErrorHandler.process(error)
+    // router.push({ name: ROUTE_NAMES.main })
   } finally {
     isLoading.value = false
+  }
+}
+const getTemplates = async () => {
+  try {
+    templates.value = await uploadTemplates(userState.userSetting.accountName)
+  } catch (error) {
+    ErrorHandler.process(error)
   }
 }
 
@@ -134,6 +169,7 @@ const updateCode = async (code: string) => {
 }
 
 getCertificates()
+getTemplates()
 </script>
 
 <style scoped lang="scss">
@@ -144,40 +180,37 @@ getCertificates()
 
 .home-page__body-nav {
   display: grid;
-  gap: toRem(150);
+  gap: toRem(50);
   grid-template-columns: repeat(2, 1fr);
 }
 
 .home-page__body-nav-item {
   margin: toRem(20) 0;
-  max-width: toRem(550);
   width: 100%;
 }
 
 .home-page__items {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: toRem(150);
   max-height: toRem(222);
   min-height: toRem(200);
   height: 100%;
   width: 100%;
-  justify-content: space-between;
+  margin-bottom: toRem(25);
+
+  @include respond-to(xmedium) {
+    gap: toRem(50);
+  }
 }
 
 .home-page__item-mock {
-  width: toRem(300);
-  height: toRem(222);
+  max-width: toRem(314);
+  max-height: toRem(222);
+  width: 100%;
+  height: 100%;
   border-radius: toRem(8);
   background: var(--background-primary-dark);
-
-  @include respond-to(xmedium) {
-    width: toRem(250);
-    height: toRem(170);
-  }
-
-  @include respond-to(medium) {
-    width: toRem(200);
-    height: toRem(150);
-  }
 }
 
 .home-page__content-subtitle {

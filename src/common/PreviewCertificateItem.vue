@@ -3,10 +3,11 @@
     <div class="preview-certificate-item__img-wrp">
       <img
         class="preview-certificate-item__img"
-        :src="img"
+        :src="img || '/branding/template.jpg'"
         :alt="$t('preview-certificate-item.img-alt')"
       />
     </div>
+
     <div class="preview-certificate-item__title">
       <p>{{ title }}</p>
     </div>
@@ -29,9 +30,8 @@ withDefaults(
 <style scoped lang="scss">
 .preview-certificate-item__img {
   max-width: toRem(314);
-  max-height: toRem(222);
+  min-width: toRem(180);
   width: 100%;
-  height: 100%;
   border-radius: toRem(8);
 }
 </style>

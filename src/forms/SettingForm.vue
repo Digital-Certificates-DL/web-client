@@ -18,6 +18,13 @@
       :label="$t('setting-form.bitcoin-phrase-form-label')"
       :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
     />
+    <a
+      class="setting-form__sheet-link"
+      href="https://docs.google.com/spreadsheets/d/1scYviYBGba7dIz0IgrivLHdOn_Ag3IsPwoLB9n2HdZ8"
+    >
+      {{ $t('setting-form.sheet-template-link-text') }}
+    </a>
+
     <input-field
       v-model="form.urlGoogleSheet"
       class="setting-form__form-input"
@@ -115,14 +122,14 @@ const generateAddress = (key: string): string => {
 
 <style scoped lang="scss">
 .setting-form__form-input {
-  margin-bottom: toRem(40);
+  margin: toRem(30) 0;
 
   @include respond-to(xmedium) {
-    margin-bottom: toRem(30);
+    margin: toRem(20) 0;
   }
 
   @include respond-to(large) {
-    margin-bottom: toRem(35);
+    margin: toRem(25) 0;
   }
 }
 
@@ -140,5 +147,9 @@ const generateAddress = (key: string): string => {
 .setting-form__fields-title {
   margin-bottom: toRem(30);
   text-align: center;
+}
+
+.setting-form__sheet-link {
+  color: var(--text-primary-dark);
 }
 </style>
