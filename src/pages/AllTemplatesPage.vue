@@ -57,7 +57,7 @@ const selectItem = (isSelected: boolean, item: TemplateJSONItem) => {
 const getTemplates = async () => {
   try {
     isLoading.value = true
-    loaderText.value = t('all-template-page.loader-text-update-date')
+    loaderText.value = t('all-templates-page.loader-text-update-date')
     templatesList.value = await uploadTemplates(
       userState.userSetting.accountName,
     )

@@ -4,17 +4,17 @@
     <div class="template-item__body">
       <div class="template-item__img-wrp" @click="clickItem">
         <img
-          class="template-item_img"
+          class="template-item__img"
           :src="template.background_img || '/branding/template.jpg'"
           :alt="$t('template-item.img-alt')"
         />
       </div>
-      <p class="template-item__name template-item__text-content">
+      <p>
         {{ template.template_name }}
       </p>
 
       <div class="template-item__btns">
-        <app-button :text="$t('template-item.modify-text-item')" />
+        <app-button :text="$t('template-item.modify-btn-text')" />
         <app-button
           :text="$t('template-item.select-template-btn-text')"
           @click="clickItem"
@@ -57,7 +57,7 @@ const clickItem = () => {
 
 .template-item__body {
   display: grid;
-  grid-template-columns: 1fr 2fr 4fr 1fr 3fr;
+  grid-template-columns: 1fr 6fr 2fr;
   gap: toRem(50);
   width: 100%;
   align-items: center;
@@ -88,9 +88,5 @@ const clickItem = () => {
   max-width: toRem(200);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-}
-
-.template-item__text-content {
-  text-align: center;
 }
 </style>

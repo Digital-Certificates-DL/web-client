@@ -108,7 +108,8 @@
     <success-modal
       :is-shown="isSuccessModalShown"
       :description="$t('template-page.success-description')"
-      :transaction="$t('template-page.success-msg')"
+      :transaction="$t('template-page.success-msg') + props.name"
+      :title="$t('template-page.success-title-text')"
     />
     <loader-modal
       v-model:is-shown="isLoading"

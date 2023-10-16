@@ -146,8 +146,6 @@ const getCertificates = async () => {
       userState.userSetting.accountName,
       userState.userSetting.urlGoogleSheet,
     )
-    /* eslint-disable no-console */
-    console.log(certificates.value)
   } catch (error) {
     if (error.meta && error.name === 'ForbiddenError') {
       authLink.value = error.meta.auth_link
@@ -156,7 +154,6 @@ const getCertificates = async () => {
     }
 
     ErrorHandler.process(error)
-    // router.push({ name: ROUTE_NAMES.main })
   } finally {
     isLoading.value = false
   }

@@ -3,20 +3,26 @@
     <h3 class="auth-form__title">
       {{ $t('auth-form.title') }}
     </h3>
-    <div>
-      <p class="auth-form__step-title">
-        {{ $t('auth-form.step-1-title') }}
-      </p>
+    <p class="auth-form__step-title">
+      {{ $t('auth-form.step-1-title') }}
+    </p>
 
-      <a
-        class="auth-form__link"
-        target="_blank"
-        rel="noopener noreferrer"
-        :href="tokenLink"
-      >
-        {{ $t('auth-form.step-1-description') }}
-      </a>
-    </div>
+    <i18n-t
+      class="auth-form__link-description"
+      keypath="auth-form.step-1-description"
+      tag="p"
+    >
+      <template #link>
+        <a
+          class="auth-form__link"
+          target="_blank"
+          rel="noopener noreferrer"
+          :href="tokenLink"
+        >
+          {{ $t('auth-form.step-1-link-text') }}
+        </a>
+      </template>
+    </i18n-t>
 
     <p class="auth-form__step-title">
       {{ $t('auth-form.step-2-title') }}
@@ -114,7 +120,11 @@ const sendCode = () => {
   width: 100%;
 }
 
-.auth-form__link {
+.auth-form__link-description {
   color: var(--text-primary-light);
+}
+
+.auth-form__link {
+  color: var(--info-light);
 }
 </style>
