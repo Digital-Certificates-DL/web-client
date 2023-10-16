@@ -94,6 +94,7 @@ import { updateAuthCode, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
 import { errors } from '@/errors'
+import { ERROR_NAMES_ENUM } from '@/enums'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -116,7 +117,7 @@ const getCertificates = async () => {
       userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
-    if (error.meta && error.name === 'ForbiddenError') {
+    if (error.meta && error.name === ERROR_NAMES_ENUM.FORBIDDEN_ERROR) {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
       return

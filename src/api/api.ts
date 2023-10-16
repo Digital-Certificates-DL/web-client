@@ -4,6 +4,7 @@ import {
   CertificateJSONResponseList,
   Container,
   IpfsAttributes,
+  SaveTemplate,
 } from '@/types'
 import { prepareCertificateImage } from '@/helpers'
 import { JsonApiBodyBuilder } from '@distributedlab/jac'
@@ -207,7 +208,7 @@ export const updateToken = async (name: string) => {
 
 export const saveTemplate = async (
   bufferImg: string,
-  template: object,
+  template: SaveTemplate,
   templateName: string,
   accountName: string,
 ) => {

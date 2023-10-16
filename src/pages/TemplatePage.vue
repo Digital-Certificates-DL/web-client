@@ -58,9 +58,9 @@
 
       <div
         v-for="(position, index) in defaultTemplate"
-        :key="index"
         class="template-page__input-wrp"
-        draggable="true"
+        draggable
+        :key="index"
         :style="{
           left: position.x_center ? '52%' : position.x * windowSizeCoef + 'px',
           top: position.y * windowSizeCoef + 'px',
@@ -120,19 +120,21 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, watch } from 'vue'
-import { TemplateType, DragDataType } from '@/types'
+import { TemplateType, DragDataType, SaveTemplate } from '@/types'
 import { saveTemplate } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
 import { LoaderModal, AppButton, SuccessModal } from '@/common'
 import { useWindowSize } from '@vueuse/core'
-import { TemplateFieldEnum } from '@/enums'
+import { TEMPLATE_FIELD_ENUM } from '@/enums'
 import { DefaultTemplate } from '@/constant'
 import _ from 'lodash'
 
 const props = defineProps<{
   name: string
 }>()
+
+const DELTA_QR_SIZE = 5
 
 const userStore = useUserStore()
 const { width } = useWindowSize()
@@ -229,7 +231,7 @@ const calculateTemplatePositions = async (template: TemplateType[]) => {
     field.y = Math.round(field.y)
     field.font_size = Math.round(field.font_size)
 
-    if (field.name === TemplateFieldEnum.qr) {
+    if (field.name === TEMPLATE_FIELD_ENUM.qr) {
       field.height *= deltaHeight
       field.width *= deltaWidth
       field.width = Math.round(field.width)
@@ -242,9 +244,9 @@ const calculateTemplatePositions = async (template: TemplateType[]) => {
 const clearFieldsMockData = (template: TemplateType[]) => {
   for (const field of template) {
     if (
-      field.name != TemplateFieldEnum.credits &&
-      field.name != TemplateFieldEnum.course &&
-      field.name != TemplateFieldEnum.level
+      field.name != TEMPLATE_FIELD_ENUM.credits &&
+      field.name != TEMPLATE_FIELD_ENUM.course &&
+      field.name != TEMPLATE_FIELD_ENUM.level
     ) {
       field.text = ''
     }
@@ -253,15 +255,15 @@ const clearFieldsMockData = (template: TemplateType[]) => {
 }
 
 const getCurrentImageSize = () => {
-  const certificateBackground = document.getElementById(
-    'certificate-background',
+  const certificateBackground = ref(
+    document.getElementById('certificate-background'),
   )
-  if (!certificateBackground) {
+  if (!certificateBackground.value) {
     throw new Error()
   }
   return {
-    width: certificateBackground?.getClientRects()[0].width,
-    height: certificateBackground?.getClientRects()[0].height,
+    width: certificateBackground.value?.getClientRects()[0].width,
+    height: certificateBackground.value?.getClientRects()[0].height,
   }
 }
 
@@ -272,16 +274,16 @@ const prepareTemplates = async () => {
   return {
     height: imgInfo.value?.naturalHeight,
     width: imgInfo.value?.naturalWidth,
-    name: getInputByName(template, TemplateFieldEnum.name),
-    course: getInputByName(template, TemplateFieldEnum.course),
-    credits: getInputByName(template, TemplateFieldEnum.credits),
-    points: getInputByName(template, TemplateFieldEnum.points),
-    serial_number: getInputByName(template, TemplateFieldEnum.serial_number),
-    date: getInputByName(template, TemplateFieldEnum.date),
-    exam: getInputByName(template, TemplateFieldEnum.exam),
-    level: getInputByName(template, TemplateFieldEnum.level),
-    qr: getInputByName(template, TemplateFieldEnum.qr),
-  }
+    name: getInputByName(template, TEMPLATE_FIELD_ENUM.name),
+    course: getInputByName(template, TEMPLATE_FIELD_ENUM.course),
+    credits: getInputByName(template, TEMPLATE_FIELD_ENUM.credits),
+    points: getInputByName(template, TEMPLATE_FIELD_ENUM.points),
+    serial_number: getInputByName(template, TEMPLATE_FIELD_ENUM.serial_number),
+    date: getInputByName(template, TEMPLATE_FIELD_ENUM.date),
+    exam: getInputByName(template, TEMPLATE_FIELD_ENUM.exam),
+    level: getInputByName(template, TEMPLATE_FIELD_ENUM.level),
+    qr: getInputByName(template, TEMPLATE_FIELD_ENUM.qr),
+  } as SaveTemplate
 }
 const getInputByName = (template: TemplateType[], name: string) => {
   return template.filter(data => {
@@ -294,16 +296,16 @@ const makeBigger = () => {
     currentInputInfo.value.font_size++
     return
   }
-  currentInputInfo.value.width += 5
-  currentInputInfo.value.height += 5
+  currentInputInfo.value.width += DELTA_QR_SIZE
+  currentInputInfo.value.height += DELTA_QR_SIZE
 }
 const makeSmaller = () => {
   if (!currentInputInfo.value.is_qr) {
     currentInputInfo.value.font_size--
     return
   }
-  currentInputInfo.value.width -= 5
-  currentInputInfo.value.height -= 5
+  currentInputInfo.value.width -= DELTA_QR_SIZE
+  currentInputInfo.value.height -= DELTA_QR_SIZE
 }
 
 const changeXCentrilize = () => {
@@ -351,11 +353,11 @@ watch(width, (oldVal, newVal) => {
 .template-page__input {
   min-width: toRem(200);
   max-width: toRem(800);
-  background: rgba(0, 0, 0, 0);
+  background: var(--white);
   border: none;
 
   &:focus {
-    border: #5cc56e toRem(1) solid;
+    border: var(--tertiary-main) toRem(1) solid;
   }
 }
 
@@ -408,6 +410,6 @@ watch(width, (oldVal, newVal) => {
 }
 
 .template-page__qr-default-style {
-  background: red;
+  background: var(--qr-template-color);
 }
 </style>

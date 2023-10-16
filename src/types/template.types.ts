@@ -18,3 +18,17 @@ export type DragDataType = {
   startX: number
   startY: number
 }
+
+export type SaveTemplate = {
+  height: number
+  width: number
+  name: TemplateType
+  course: TemplateType
+  credits: TemplateType
+  points: TemplateType
+  serial_number: TemplateType
+  date: TemplateType
+  exam: TemplateType
+  level: TemplateType
+  qr: TemplateType
+}

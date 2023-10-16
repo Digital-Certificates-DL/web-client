@@ -4,21 +4,23 @@
     :is-close-by-click-outside="false"
     @update:is-shown="(value: boolean) => emit('update:is-shown', value)"
   >
-    <div class="upload-template-modal__pane">
-      <div class="upload-template-modal__title">
-        <h3>{{ $t('upload-template-modal.title') }}</h3>
+    <template #default="{ modal }">
+      <div class="upload-template-modal__pane">
+        <div class="upload-template-modal__title">
+          <h3>{{ $t('upload-template-modal.title') }}</h3>
+        </div>
+        <div class="upload-template-modal__form">
+          <upload-template-form />
+        </div>
+        <app-button
+          class="upload-template-modal__btn-close"
+          color="info"
+          size="large"
+          :text="$t('upload-template-modal.close-btn-text')"
+          @click="modal.close()"
+        />
       </div>
-      <div class="upload-template-modal__form">
-        <upload-template-form />
-      </div>
-      <app-button
-        class="upload-template-modal__btn-close"
-        color="info"
-        size="large"
-        :text="$t('upload-template-modal.close-btn-text')"
-        @click="emit('update:is-shown', false)"
-      />
-    </div>
+    </template>
   </modal>
 </template>
 
@@ -44,7 +46,6 @@ const emit = defineEmits<{
   background: var(--background-primary-light);
   border-radius: toRem(15);
   padding: toRem(24);
-  top: 0;
 }
 
 .upload-template-modal__btn-close {

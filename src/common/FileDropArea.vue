@@ -10,13 +10,13 @@
     <div class="file-drop-area__content">
       <icon class="file-drop-area__icon" :name="icon" />
 
-      <label class="file-drop-area__label" :for="ID"></label>
+      <label class="file-drop-area__label" for="input-id"></label>
       <input
         class="file-drop-area__text-title"
         type="file"
         multiple
         hidden
-        :id="ID"
+        id="input-id"
         :disabled="isDisabled"
         :accept="filesType"
         @input="uploadFile"
@@ -37,9 +37,7 @@ import { Icon } from '@/common'
 const files = ref<File[]>([])
 const active = ref(false)
 
-const ID_WRP = '_id'
-
-const props = withDefaults(
+withDefaults(
   defineProps<{
     icon: ICON_NAMES
     description: string
@@ -50,8 +48,6 @@ const props = withDefaults(
     isDisabled: false,
   },
 )
-
-const ID = props.filesType + ID_WRP
 
 const emit = defineEmits<{
   (e: 'handle-files-upload', files: File[]): void
