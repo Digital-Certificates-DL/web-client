@@ -40,8 +40,8 @@ const router = useRouter()
 withDefaults(
   defineProps<{
     isShown: boolean
-    description: string
     transaction: string
+    description?: string
   }>(),
   {
     description: '',

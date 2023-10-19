@@ -49,7 +49,8 @@
     "empty-private-key": "Empty private key",
     "rate-limit":  "Rate limit",
     "error-empty-file": "File is undefined",
-    "error-empty-list": "List of  file is empty"
+    "error-empty-list": "List of  file is empty",
+    "failed-get-image-size": "Failed  to  get  image size"
   },
   "warnings": {
     "certificate-was-generated": "Certificate has already been generated",

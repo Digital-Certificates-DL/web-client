@@ -116,6 +116,12 @@ export class ErrorHandler {
         case errors.RateLimit:
           errorMessage = t('errors.rate-limit')
           break
+        case errors.FailedGetImageSize:
+          errorMessage = t('errors.failed-get-image-size')
+          break
+        case errors.FailedToGetAddress:
+          errorMessage = t('errors.failed-get-address')
+          break
         default: {
           errorMessage = t('errors.default')
         }

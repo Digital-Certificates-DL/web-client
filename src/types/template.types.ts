@@ -19,7 +19,7 @@ export type DragDataType = {
   startY: number
 }
 
-export type SaveTemplate = {
+export type SavedTemplate = {
   height: number
   width: number
   name: TemplateType

@@ -51,7 +51,7 @@
     >
       <img
         class="template-page__back-image"
-        id="certificate-background"
+        :id="CERTIFICATE_BACKGROUND_ID"
         :src="userStore.bufferImg || '/branding/blockchain.png'"
         :alt="$t('template-page.template-img-alt')"
       />
@@ -120,7 +120,7 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, watch } from 'vue'
-import { TemplateType, DragDataType, SaveTemplate } from '@/types'
+import { TemplateType, DragDataType, SavedTemplate } from '@/types'
 import { saveTemplate } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { useUserStore } from '@/store'
@@ -129,11 +129,13 @@ import { useWindowSize } from '@vueuse/core'
 import { TEMPLATE_FIELD_ENUM } from '@/enums'
 import { DefaultTemplate } from '@/constant'
 import _ from 'lodash'
+import { errors } from '@/errors'
 
 const props = defineProps<{
   name: string
 }>()
 
+const CERTIFICATE_BACKGROUND_ID = 'certificate-background'
 const DELTA_QR_SIZE = 5
 
 const userStore = useUserStore()
@@ -154,6 +156,7 @@ const dragData = ref({
   startY: 0,
 } as DragDataType)
 
+const certificateBackground = ref<HTMLElement | null>({} as HTMLElement)
 const defaultTemplate = ref<TemplateType[]>(DefaultTemplate)
 
 const removeInput = (index: number) => {
@@ -194,8 +197,9 @@ const selectInput = (info: TemplateType) => {
 }
 
 const sendTemplate = async () => {
+  isLoading.value = true
+
   try {
-    isLoading.value = true
     const template = await prepareTemplates()
     await saveTemplate(
       useUserStore().bufferImg,
@@ -213,8 +217,9 @@ const sendTemplate = async () => {
 const getDeltas = async () => {
   const { height, width } = getCurrentImageSize()
   if (!height || !width) {
-    throw new Error()
+    throw errors.FailedGetImageSize
   }
+
   const deltaHeight = imgInfo.value!.naturalHeight! / height
   const deltaWidth = imgInfo.value!.naturalWidth! / width
   return { deltaHeight, deltaWidth }
@@ -255,11 +260,12 @@ const clearFieldsMockData = (template: TemplateType[]) => {
 }
 
 const getCurrentImageSize = () => {
-  const certificateBackground = ref(
-    document.getElementById('certificate-background'),
+  certificateBackground.value = document.getElementById(
+    CERTIFICATE_BACKGROUND_ID,
   )
+
   if (!certificateBackground.value) {
-    throw new Error()
+    throw errors.FailedGetImageSize
   }
   return {
     width: certificateBackground.value?.getClientRects()[0].width,
@@ -283,7 +289,7 @@ const prepareTemplates = async () => {
     exam: getInputByName(template, TEMPLATE_FIELD_ENUM.exam),
     level: getInputByName(template, TEMPLATE_FIELD_ENUM.level),
     qr: getInputByName(template, TEMPLATE_FIELD_ENUM.qr),
-  } as SaveTemplate
+  } as SavedTemplate
 }
 const getInputByName = (template: TemplateType[], name: string) => {
   return template.filter(data => {
