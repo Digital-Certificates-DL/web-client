@@ -51,7 +51,7 @@
     >
       <img
         class="template-page__back-image"
-        :ref="certificateBackground"
+        ref="certificateBackground"
         :src="userStore.bufferImg || '/branding/blockchain.png'"
         :alt="$t('template-page.template-img-alt')"
       />
