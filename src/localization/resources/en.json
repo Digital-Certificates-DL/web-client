@@ -50,7 +50,8 @@
     "rate-limit":  "Rate limit",
     "error-empty-file": "File is undefined",
     "error-empty-list": "List of  file is empty",
-    "failed-get-image-size": "Failed  to  get  image size"
+    "failed-get-image-size": "Failed  to  get  image size",
+    "failed-get-address": "Failed to  generate bitcoin  address"
   },
   "warnings": {
     "certificate-was-generated": "Certificate has already been generated",
