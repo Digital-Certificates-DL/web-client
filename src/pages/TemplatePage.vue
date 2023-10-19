@@ -51,7 +51,7 @@
     >
       <img
         class="template-page__back-image"
-        :id="CERTIFICATE_BACKGROUND_ID"
+        :ref="certificateBackground"
         :src="userStore.bufferImg || '/branding/blockchain.png'"
         :alt="$t('template-page.template-img-alt')"
       />
@@ -135,7 +135,6 @@ const props = defineProps<{
   name: string
 }>()
 
-const CERTIFICATE_BACKGROUND_ID = 'certificate-background'
 const DELTA_QR_SIZE = 5
 
 const userStore = useUserStore()
@@ -260,13 +259,6 @@ const clearFieldsMockData = (template: TemplateType[]) => {
 }
 
 const getCurrentImageSize = () => {
-  certificateBackground.value = document.getElementById(
-    CERTIFICATE_BACKGROUND_ID,
-  )
-
-  if (!certificateBackground.value) {
-    throw errors.FailedGetImageSize
-  }
   return {
     width: certificateBackground.value?.getClientRects()[0].width,
     height: certificateBackground.value?.getClientRects()[0].height,
