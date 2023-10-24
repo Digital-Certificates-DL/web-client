@@ -31,7 +31,7 @@
       <app-button
         class="template-page__btn"
         :disabled="currentInputInfo.is_qr"
-        :text="currentInputInfo.font_size.toString() || '0'"
+        :text="currentInputInfo.font_size?.toString() || '0'"
       />
       <app-button
         class="template-page__btn"
@@ -47,6 +47,8 @@
     </div>
     <div
       class="template-page__back-image-wrp"
+      tabindex="0"
+      :aria-label="$t('template-page.aria-image-wrp')"
       @click="currentInputInfo = {} as TemplateType"
     >
       <img
@@ -60,6 +62,8 @@
         v-for="(position, index) in defaultTemplate"
         class="template-page__input-wrp"
         draggable
+        tabindex="0"
+        :aria-label="$t('template-page.aria-input-wrp')"
         :key="index"
         :style="{
           left: position.x_center ? '52%' : position.x * windowSizeCoef + 'px',
@@ -75,6 +79,8 @@
         <div
           v-if="position.is_qr"
           class="template-page__qr-default-style"
+          tabindex="0"
+          :aria-label="$t('template-page.aria-qr-input')"
           :style="{
             width: position.width * windowSizeCoef + 'px',
             height: position.height * windowSizeCoef + 'px',
@@ -351,7 +357,7 @@ watch(width, (oldVal, newVal) => {
 .template-page__input {
   min-width: toRem(200);
   max-width: toRem(800);
-  background: var(--white);
+  background: var(--template-input-back);
   border: none;
 
   &:focus {

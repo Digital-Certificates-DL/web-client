@@ -246,7 +246,10 @@
     "loader-text": "Creating template",
     "save-btn-text": "Save",
     "cancel-btn-text": "Cancel",
-    "template-img-alt": "Uploaded image"
+    "template-img-alt": "Uploaded image",
+    "aria-image-wrp": "Place of inputs.Press to unselect current input...",
+    "aria-input-wrp": "Certificate field. Press to select current input and  modify(update font size/color ...)",
+    "aria-qr-input": "Certificate qr. Press to select current input and  modify(update font size/color ...)"
   },
   "upload-template-modal": {
     "title": "Upload template image",
