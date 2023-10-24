@@ -10,13 +10,16 @@
     <div class="file-drop-area__content">
       <icon class="file-drop-area__icon" :name="icon" />
 
-      <label class="file-drop-area__label" :for="ID"></label>
+      <label
+        class="file-drop-area__label"
+        :for="`file-drop-area-${uid}`"
+      ></label>
       <input
         class="file-drop-area__text-title"
         type="file"
         multiple
         hidden
-        :id="ID"
+        :id="`file-drop-area-${uid}`"
         :disabled="isDisabled"
         :accept="filesType"
         @input="uploadFile"
@@ -33,8 +36,9 @@
 import { defineEmits, ref } from 'vue'
 import { ICON_NAMES } from '@/enums'
 import { Icon } from '@/common'
+import { v4 as uuidv4 } from 'uuid'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     icon: ICON_NAMES
     description: string
@@ -46,11 +50,9 @@ const props = withDefaults(
   },
 )
 
+const uid = uuidv4()
 const files = ref<File[]>([])
 const isActive = ref(false)
-const ID_WRP = '_id'
-
-const ID = props.filesType + ID_WRP
 
 const emit = defineEmits<{
   (e: 'files-uploaded', files: File[]): void
