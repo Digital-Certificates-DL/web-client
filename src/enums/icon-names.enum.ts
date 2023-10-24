@@ -104,6 +104,7 @@ export enum ICON_NAMES {
   film = 'film',
   filter = 'filter',
   fingerPrint = 'finger-print',
+  fileItem = 'file-item',
   fire = 'fire',
   flag = 'flag',
   folderAdd = 'folder-add',

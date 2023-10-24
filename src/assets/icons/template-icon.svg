@@ -1,3 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+<svg  viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="8" y="8" width="48" height="16" rx="2.66667" fill="#3F97FF"/>
+<rect x="8" y="28" width="22" height="28" rx="2.66667" fill="#C8DEFF"/>
+<rect x="34" y="28" width="22" height="12" rx="2.66667" fill="#C8DEFF"/>
+<rect x="34" y="44" width="22" height="11" rx="2.66667" fill="#3F97FF"/>
 </svg>

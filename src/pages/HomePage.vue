@@ -8,7 +8,7 @@
           :title="$t('home-page.upload-title')"
           :name="$t('home-page.upload-name')"
           :description="$t('home-page.upload-description')"
-          @active="router.push($routes.template)"
+          @active="isUploadTemplateModalShown = true"
         />
         <navigation-block-item
           class="home-page__body-nav-item"
@@ -72,6 +72,7 @@
       :token-link="authLink"
       @send-auth-code="updateCode"
     />
+    <upload-template-modal v-model:is-shown="isUploadTemplateModalShown" />
   </div>
 </template>
 
@@ -83,6 +84,7 @@ import {
   LoaderModal,
   AuthModal,
   NavigationBlockItem,
+  UploadTemplateModal,
 } from '@/common'
 import { router } from '@/router'
 import { CertificateJSONResponse } from '@/types'
@@ -90,8 +92,9 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store'
 import { updateAuthCode, uploadCertificates } from '@/api'
 import { ErrorHandler } from '@/helpers'
-import { errors } from '@/errors'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
+import { errors } from '@/errors'
+import { ERROR_NAMES_ENUM } from '@/enums'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -101,6 +104,8 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
 const loaderText = ref('')
+
+const isUploadTemplateModalShown = ref(false)
 
 const getCertificates = async () => {
   isLoading.value = true
@@ -112,7 +117,7 @@ const getCertificates = async () => {
       userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
-    if (error.meta) {
+    if (error.meta && error.name === ERROR_NAMES_ENUM.forbiddenError) {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
       return

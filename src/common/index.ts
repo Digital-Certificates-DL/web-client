@@ -18,6 +18,8 @@ export { default as CertificateModal } from '@/common/modals/CertificateModal.vu
 export { default as NavigationItem } from '@/common/NavigationItem.vue'
 
 export { default as PreviewCertificateItem } from '@/common/PreviewCertificateItem.vue'
+export { default as FileDropArea } from '@/common/FileDropArea.vue'
+export { default as UploadTemplateModal } from '@/common/modals/UploadTemplateModal.vue'
 
 export * from './modals'
 export * from './loaders'

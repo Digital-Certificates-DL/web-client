@@ -53,12 +53,19 @@ export class EmptyContainerError extends RuntimeError {}
 export class EmptyImageError extends RuntimeError {}
 
 export class EmptyBetterUTXO extends RuntimeError {}
+
 export class EmptySignKey extends RuntimeError {}
 
 export class FailedDownloadImage extends RuntimeError {}
+
 export class FailedGetCertificates extends RuntimeError {}
+
 export class FailedCallApi extends RuntimeError {}
 
 export class FailedGenerateCertificate extends RuntimeError {}
 
 export class RateLimit extends RuntimeError {}
+
+export class FailedGetImageSize extends RuntimeError {}
+
+export class FailedToGetAddress extends RuntimeError {}

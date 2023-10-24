@@ -4,6 +4,7 @@ import {
   CertificateJSONResponseList,
   Container,
   IpfsAttributes,
+  SavedTemplate,
 } from '@/types'
 import { prepareCertificateImage } from '@/helpers'
 import { JsonApiBodyBuilder } from '@distributedlab/jac'
@@ -203,4 +204,32 @@ export const updateToken = async (name: string) => {
   } catch (error) {
     throw errors.FailedCallApi
   }
+}
+
+export const saveTemplate = async (
+  bufferImg: string,
+  template: SavedTemplate,
+  templateName: string,
+  accountName: string,
+) => {
+  const body = new JsonApiBodyBuilder()
+    .setData({
+      type: 'template',
+      attributes: {
+        background_img: bufferImg,
+        is_completed: true,
+        template: template,
+        template_name: templateName,
+      },
+      relationships: {
+        user: {
+          data: {
+            type: 'user',
+            id: accountName,
+          },
+        },
+      },
+    })
+    .build()
+  await api.post('/integrations/ccp/certificate/template', { body })
 }
