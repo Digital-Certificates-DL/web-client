@@ -104,6 +104,7 @@ import { useUserStore } from '@/store'
 import { updateAuthCode, uploadCertificates, uploadTemplates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
+import { ERROR_NAMES_ENUM } from '@/enums'
 
 const { t } = useI18n()
 const userState = useUserStore()
@@ -147,7 +148,7 @@ const getCertificates = async () => {
       userState.userSetting.urlGoogleSheet,
     )
   } catch (error) {
-    if (error.meta && error.name === 'ForbiddenError') {
+    if (error.meta && error.name === ERROR_NAMES_ENUM.forbiddenError) {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
       return
@@ -158,6 +159,7 @@ const getCertificates = async () => {
     isLoading.value = false
   }
 }
+
 const getTemplates = async () => {
   try {
     templates.value = await uploadTemplates(userState.userSetting.accountName)

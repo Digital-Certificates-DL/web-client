@@ -19,17 +19,21 @@ export type DragDataType = {
   startY: number
 }
 
-export type TemplatesJSONResponseList = {
-  data: TemplateJSONResponse[]
-  included: object[]
-  links: object
-}
-
-export type TemplateJSONResponse = {
-  attributes: TemplateJSONItem
-}
-
 export type TemplateJSONItem = {
   background_img: string
   template_name: string
+}
+
+export type SavedTemplate = {
+  height: number
+  width: number
+  name: TemplateType
+  course: TemplateType
+  credits: TemplateType
+  points: TemplateType
+  serial_number: TemplateType
+  date: TemplateType
+  exam: TemplateType
+  level: TemplateType
+  qr: TemplateType
 }

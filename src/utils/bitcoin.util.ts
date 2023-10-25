@@ -344,7 +344,7 @@ export class Bitcoin {
       network: network,
     })
     if (!key.address) {
-      throw new Error()
+      throw errors.FailedToGetAddress
     }
 
     return key.address

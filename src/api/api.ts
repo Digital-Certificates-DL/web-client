@@ -4,6 +4,7 @@ import {
   CertificateJSONResponseList,
   Container,
   IpfsAttributes,
+  SavedTemplate,
   TemplateJSONItem,
 } from '@/types'
 import { prepareCertificateImage } from '@/helpers'
@@ -209,7 +210,7 @@ export const updateToken = async (name: string) => {
 
 export const saveTemplate = async (
   bufferImg: string,
-  template: object,
+  template: SavedTemplate,
   templateName: string,
   accountName: string,
 ) => {

@@ -24,7 +24,7 @@
         class="success-modal__btn"
         color="success"
         :text="$t('success-modal.close-btn-text')"
-        @click="closeModel"
+        @click="closeModal"
       />
     </div>
   </modal>
@@ -40,9 +40,9 @@ const router = useRouter()
 withDefaults(
   defineProps<{
     isShown: boolean
-    description: string
     transaction: string
-    title: string
+    description?: string
+    title?: string
   }>(),
   {
     title: '',
@@ -54,7 +54,7 @@ const emit = defineEmits<{
   (event: 'update:is-shown', v: boolean): void
 }>()
 
-const closeModel = () => {
+const closeModal = () => {
   emit('update:is-shown', false)
   router.push({ name: ROUTE_NAMES.main })
 }

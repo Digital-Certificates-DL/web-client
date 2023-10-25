@@ -1,26 +1,29 @@
 <template>
   <div
     class="file-drop-area"
-    :data-active="active"
-    @dragenter.prevent="active = true"
-    @dragover.prevent="active = true"
-    @dragleave.prevent="active = false"
-    @drop.prevent="dragFile"
+    :data-active="isActive"
+    @dragenter.prevent="isActive = true"
+    @dragover.prevent="isActive = true"
+    @dragleave.prevent="isActive = false"
+    @drop.prevent="handleFileDrag"
   >
     <div class="file-drop-area__content">
       <icon class="file-drop-area__icon" :name="icon" />
 
-      <label class="file-drop-area__label" :for="ID"></label>
+      <label
+        class="file-drop-area__label"
+        :for="`file-drop-area-${uid}`"
+      ></label>
       <input
         class="file-drop-area__text-title"
         type="file"
         multiple
         hidden
-        :id="ID"
+        :id="`file-drop-area-${uid}`"
         :disabled="isDisabled"
         :accept="filesType"
         @input="uploadFile"
-        @drag="dragFile"
+        @drag="handleFileDrag"
       />
       <p class="file-drop-area__text">
         {{ description }}
@@ -33,13 +36,9 @@
 import { defineEmits, ref } from 'vue'
 import { ICON_NAMES } from '@/enums'
 import { Icon } from '@/common'
+import { v4 as uuidv4 } from 'uuid'
 
-const files = ref<File[]>([])
-const active = ref(false)
-
-const ID_WRP = '_id'
-
-const props = withDefaults(
+withDefaults(
   defineProps<{
     icon: ICON_NAMES
     description: string
@@ -51,24 +50,26 @@ const props = withDefaults(
   },
 )
 
-const ID = props.filesType + ID_WRP
+const uid = uuidv4()
+const files = ref<File[]>([])
+const isActive = ref(false)
 
 const emit = defineEmits<{
-  (e: 'handle-files-upload', files: File[]): void
+  (e: 'files-uploaded', files: File[]): void
 }>()
 
 const uploadFile = (e: Event) => {
   const target = e.target as HTMLInputElement
   const selectedFiles = target.files
   files.value = [...selectedFiles!]
-  emit('handle-files-upload', files.value)
+  emit('files-uploaded', files.value)
 }
 
-const dragFile = (e: DragEvent) => {
-  active.value = false
+const handleFileDrag = (e: DragEvent) => {
+  isActive.value = false
   const fileList = e.dataTransfer!.files
   files.value = [...fileList]
-  emit('handle-files-upload', files.value)
+  emit('files-uploaded', files.value)
 }
 </script>
 

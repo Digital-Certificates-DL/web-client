@@ -1,4 +1,4 @@
-export enum TemplateFieldEnum {
+export enum TEMPLATE_FIELD_ENUM {
   name = 'name',
   credits = 'credits',
   exam = 'exam',

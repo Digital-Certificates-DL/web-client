@@ -11,7 +11,7 @@
       :icon="$icons.template"
       :is-disabled="!isFormValid()"
       :description="$t('upload-template-form.description')"
-      @handle-files-upload="onFileUpload"
+      @files-uploaded="onFileUpload"
     />
   </form>
 </template>
