@@ -2,7 +2,12 @@
   <div class="template-item">
     <checkbox-field v-model="isSelected" @click="clickItem" />
     <div class="template-item__body">
-      <div class="template-item__img-wrp" @click="clickItem">
+      <div
+        class="template-item__img-wrp"
+        tabindex="0"
+        :aria-label="$t('template-item.aria-choose-template-item')"
+        @click="clickItem"
+      >
         <img
           class="template-item__img"
           :src="template.background_img || '/branding/template.jpg'"
@@ -32,7 +37,6 @@ import { CheckboxField } from '@/fields'
 import { ref } from 'vue'
 
 const emit = defineEmits<{
-  (event: 'open-modal', template: TemplateJSONItem): boolean
   (event: 'select', isSelected: boolean, template: TemplateJSONItem): boolean
 }>()
 
@@ -52,7 +56,7 @@ const clickItem = () => {
 .template-item {
   display: flex;
   align-items: center;
-  border-bottom: var(--border-primary-main) toRem(1) solid;
+  border-bottom: toRem(1) solid var(--border-primary-main);
 }
 
 .template-item__body {

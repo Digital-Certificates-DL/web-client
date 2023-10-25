@@ -271,6 +271,7 @@
   "template-item": {
     "modify-btn-text": "Modify",
     "select-template-btn-text": "Select",
-    "img-alt":  "Template image"
+    "img-alt":  "Template image",
+    "aria-choose-template-item": "Template item. Press to select this  item"
   }
 }

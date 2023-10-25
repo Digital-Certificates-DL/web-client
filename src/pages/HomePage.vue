@@ -31,16 +31,10 @@
             />
           </div>
           <div class="home-page__items">
-            <div v-for="(item, key) in computedTemplates" :key="key">
+            <div v-for="(item, key) in computedTemplatesList" :key="key">
               <preview-certificate-item
-                v-if="item"
-                :img="item.background_img"
-                :title="item.template_name"
-              />
-              <preview-certificate-item
-                v-else
-                img="/branding/mock.jpg"
-                title=""
+                :img="item?.background_img"
+                :title="item?.template_name"
               />
             </div>
           </div>
@@ -59,17 +53,10 @@
           </div>
 
           <div class="home-page__items">
-            <div v-for="(item, key) in computedCertificates" :key="key">
+            <div v-for="(item, key) in computedCertificatesList" :key="key">
               <preview-certificate-item
-                v-if="item"
-                :img="item.img"
-                :title="item.participant"
-              />
-
-              <preview-certificate-item
-                v-else
-                img="/branding/mock.jpg"
-                title=""
+                :img="item?.img"
+                :title="item?.participant"
               />
             </div>
           </div>
@@ -114,10 +101,10 @@ const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
 const loaderText = ref('')
-const templates = ref([] as TemplateJSONItem[])
+const templates = ref<TemplateJSONItem[]>([])
 const isUploadTemplateModalShown = ref(false)
 
-const computedCertificates = computed(() => {
+const computedCertificatesList = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
 
   Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
@@ -128,20 +115,19 @@ const computedCertificates = computed(() => {
   return result
 })
 
-const computedTemplates = computed(() => {
+const computedTemplatesList = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
   Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
     ([key, value]) => {
       result[Number(key)] = value
     },
   )
+  /* eslint-disable */
+  console.log('result  ', result)
   return result
 })
 
 const getCertificates = async () => {
-  isLoading.value = true
-  loaderText.value = t('home-page.loader-text-getting-cert')
-
   try {
     certificates.value = await uploadCertificates(
       userState.userSetting.accountName,
@@ -155,8 +141,6 @@ const getCertificates = async () => {
     }
 
     ErrorHandler.process(error)
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -173,8 +157,19 @@ const updateCode = async (code: string) => {
   isUnauthorized.value = false
 }
 
-getCertificates()
-getTemplates()
+
+const  init = async ()=>{
+  isLoading.value = true
+  loaderText.value = t('home-page.loader-text-getting-cert')
+
+  await getTemplates()
+  await getCertificates()
+
+  isLoading.value = false
+}
+
+init()
+
 </script>
 
 <style scoped lang="scss">

@@ -20,7 +20,7 @@ withDefaults(
     title?: string
   }>(),
   {
-    img: '/branding/template.jpg',
+    img: '/branding/mock.jpg',
     title: '',
   },
 )

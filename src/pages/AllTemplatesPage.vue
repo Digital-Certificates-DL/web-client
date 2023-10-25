@@ -9,7 +9,7 @@
         :message="$t('all-templates-page.empty-template-list')"
       />
 
-      <div v-for="item in templatesList" :key="item.template_name">
+      <div v-for="{ item, key } in templatesList" :key="key">
         <template-item
           class="all-templates-page__template-item"
           :template="item"
@@ -36,7 +36,6 @@ const userState = useUserStore()
 
 const selectedItems = ref<TemplateJSONItem[]>([])
 const templatesList = ref<TemplateJSONItem[]>([])
-const selectedCount = ref(0)
 
 const isLoading = ref(false)
 const loaderText = ref('')
@@ -44,13 +43,11 @@ const loaderText = ref('')
 const selectItem = (isSelected: boolean, item: TemplateJSONItem) => {
   if (isSelected) {
     selectedItems.value.push(item)
-    selectedCount.value++
     return
   }
 
   const index = selectedItems.value.indexOf(item, 0)
   if (index > -1) {
-    selectedCount.value--
     selectedItems.value.splice(index, 1)
   }
 }
