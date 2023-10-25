@@ -220,6 +220,7 @@ const sendTemplate = async () => {
 }
 
 const getDeltas = async () => {
+  await getImageSize()
   const { height, width } = getCurrentImageSize()
   if (!height || !width) {
     throw errors.FailedGetImageSize
@@ -228,6 +229,20 @@ const getDeltas = async () => {
   const deltaHeight = imgInfo.value!.naturalHeight! / height
   const deltaWidth = imgInfo.value!.naturalWidth! / width
   return { deltaHeight, deltaWidth }
+}
+
+const getImageSize = async () => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = function () {
+      imgInfo.value = img
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+    img.onerror = function () {
+      reject(new Error('Failed to load the image.'))
+    }
+    img.src = useUserStore().bufferImg
+  })
 }
 
 const calculateTemplatePositions = async (template: TemplateType[]) => {
