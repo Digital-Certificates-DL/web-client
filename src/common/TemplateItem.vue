@@ -37,10 +37,10 @@ import { CheckboxField } from '@/fields'
 import { ref } from 'vue'
 
 const emit = defineEmits<{
-  (event: 'select', isSelected: boolean, template: TemplateJSONItem): boolean
+  (event: 'select', isSelected: boolean): boolean
 }>()
 
-const props = defineProps<{
+defineProps<{
   template: TemplateJSONItem
 }>()
 
@@ -48,7 +48,7 @@ const isSelected = ref(false)
 
 const clickItem = () => {
   isSelected.value = !isSelected.value
-  emit('select', isSelected.value, props.template)
+  emit('select', isSelected.value)
 }
 </script>
 

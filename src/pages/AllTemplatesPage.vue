@@ -9,16 +9,19 @@
         :message="$t('all-templates-page.empty-template-list')"
       />
 
-      <div v-for="{ item, key } in templatesList" :key="key">
+      <div v-for="(item, key) in templatesList" :key="key">
         <template-item
           class="all-templates-page__template-item"
           :template="item"
-          @select="selectItem"
+          @select="selectItem($event, item)"
         />
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
+    <loader-modal
+      v-model:is-shown="isLoading"
+      :text="$t('all-templates-page.loader-text-update-date')"
+    />
   </div>
 </template>
 
@@ -29,8 +32,6 @@ import { ref } from 'vue'
 import { NoDataMessage, LoaderModal, TemplateItem } from '@/common'
 import { ErrorHandler } from '@/helpers'
 import { uploadTemplates } from '@/api'
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 const userState = useUserStore()
 
@@ -38,7 +39,6 @@ const selectedItems = ref<TemplateJSONItem[]>([])
 const templatesList = ref<TemplateJSONItem[]>([])
 
 const isLoading = ref(false)
-const loaderText = ref('')
 
 const selectItem = (isSelected: boolean, item: TemplateJSONItem) => {
   if (isSelected) {
@@ -51,16 +51,18 @@ const selectItem = (isSelected: boolean, item: TemplateJSONItem) => {
     selectedItems.value.splice(index, 1)
   }
 }
+
 const getTemplates = async () => {
+  isLoading.value = true
+
   try {
-    isLoading.value = true
-    loaderText.value = t('all-templates-page.loader-text-update-date')
     templatesList.value = await uploadTemplates(
       userState.userSetting.accountName,
     )
   } catch (error) {
     ErrorHandler.process(error)
   }
+
   isLoading.value = false
 }
 
