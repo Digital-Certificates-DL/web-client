@@ -31,7 +31,7 @@
             />
           </div>
           <div class="home-page__items">
-            <div v-for="(item, key) in computedTemplatesList" :key="key">
+            <div v-for="(item, key) in computedTemplatesListToShow" :key="key">
               <preview-certificate-item
                 :img="item?.background_img"
                 :title="item?.template_name"
@@ -53,7 +53,10 @@
           </div>
 
           <div class="home-page__items">
-            <div v-for="(item, key) in computedCertificatesList" :key="key">
+            <div
+              v-for="(item, key) in computedCertificatesListToShow"
+              :key="key"
+            >
               <preview-certificate-item
                 :img="item?.img"
                 :title="item?.participant"
@@ -64,7 +67,10 @@
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
+    <loader-modal
+      v-model:is-shown="isLoading"
+      :text="$t('home-page.loader-text-getting-cert')"
+    />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -75,7 +81,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import {
   PreviewCertificateItem,
   AppButton,
@@ -93,18 +98,16 @@ import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
 import { ERROR_NAMES_ENUM } from '@/enums'
 
-const { t } = useI18n()
 const userState = useUserStore()
 
 const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
-const loaderText = ref('')
 const templates = ref<TemplateJSONItem[]>([])
 const isUploadTemplateModalShown = ref(false)
 
-const computedCertificatesList = computed(() => {
+const computedCertificatesListToShow = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
 
   Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
@@ -115,7 +118,7 @@ const computedCertificatesList = computed(() => {
   return result
 })
 
-const computedTemplatesList = computed(() => {
+const computedTemplatesListToShow = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
   Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
     ([key, value]) => {
@@ -160,10 +163,8 @@ const updateCode = async (code: string) => {
 
 const  init = async ()=>{
   isLoading.value = true
-  loaderText.value = t('home-page.loader-text-getting-cert')
 
-  await getTemplates()
-  await getCertificates()
+  await Promise.all([getTemplates(), getCertificates()])
 
   isLoading.value = false
 }
