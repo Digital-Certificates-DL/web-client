@@ -31,7 +31,7 @@
             />
           </div>
           <div class="home-page__items">
-            <div v-for="(item, key) in computedTemplatesListToShow" :key="key">
+            <div v-for="(item, key) in slicedTemplatesListToShow" :key="key">
               <preview-certificate-item
                 :img="item?.background_img"
                 :title="item?.template_name"
@@ -53,10 +53,7 @@
           </div>
 
           <div class="home-page__items">
-            <div
-              v-for="(item, key) in computedCertificatesListToShow"
-              :key="key"
-            >
+            <div v-for="(item, key) in slicedCertificatesListToShow" :key="key">
               <preview-certificate-item
                 :img="item?.img"
                 :title="item?.participant"
@@ -107,7 +104,7 @@ const isLoading = ref(false)
 const templates = ref<TemplateJSONItem[]>([])
 const isUploadTemplateModalShown = ref(false)
 
-const computedCertificatesListToShow = computed(() => {
+const slicedCertificatesListToShow = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
 
   Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
@@ -118,15 +115,13 @@ const computedCertificatesListToShow = computed(() => {
   return result
 })
 
-const computedTemplatesListToShow = computed(() => {
+const slicedTemplatesListToShow = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
   Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
     ([key, value]) => {
       result[Number(key)] = value
     },
   )
-  /* eslint-disable */
-  console.log('result  ', result)
   return result
 })
 
@@ -160,8 +155,7 @@ const updateCode = async (code: string) => {
   isUnauthorized.value = false
 }
 
-
-const  init = async ()=>{
+const init = async () => {
   isLoading.value = true
 
   await Promise.all([getTemplates(), getCertificates()])
@@ -170,7 +164,6 @@ const  init = async ()=>{
 }
 
 init()
-
 </script>
 
 <style scoped lang="scss">
