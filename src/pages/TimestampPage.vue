@@ -34,17 +34,17 @@
           <div v-if="!certificatesListBuffer.length">
             <no-data-message :message="t('timestamp-page.empty-cert-list')" />
           </div>
-          <div v-for="item in certificateFilter" :key="item.id">
-            <short-certificate-item
-              class="timestamp-page__certificate"
-              :name="item.participant"
-              :date="item.date"
-              :certificate="item"
-              :is-shown="isShowTimestampCheckbox"
-              @select="selectItem"
-              @open-modal="openModal"
-            />
-          </div>
+          <short-certificate-item
+            class="timestamp-page__certificate"
+            v-for="item in certificateFilter"
+            :key="item.id"
+            :name="item.participant"
+            :date="item.date"
+            :certificate="item"
+            :is-shown="isShowTimestampCheckbox"
+            @select="selectItem"
+            @open-modal="openModal"
+          />
         </div>
       </div>
     </div>

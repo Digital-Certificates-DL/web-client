@@ -66,14 +66,14 @@
         :message="$t('all-certificates-page.empty-certificates-list')"
       />
 
-      <div v-for="item in filteredCertificates" :key="item.id">
-        <certificate
-          class="all-certificates-page__certificate-item"
-          :certificate="item"
-          @open-modal="openCertificateModal"
-          @select="selectItem"
-        />
-      </div>
+      <certificate
+        class="all-certificates-page__certificate-item"
+        v-for="item in filteredCertificates"
+        :key="item.id"
+        :certificate="item"
+        @open-modal="openCertificateModal"
+        @select="selectItem"
+      />
     </div>
 
     <certificate-modal

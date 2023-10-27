@@ -242,9 +242,6 @@ export const uploadTemplates = async (
   const { data } = await api.get<TemplateJSONItem[]>(
     '/integrations/ccp/certificate/template/' + name,
   )
-  if (!data) {
-    return []
-  }
 
   return prepareTemplatesImages(data)
 }

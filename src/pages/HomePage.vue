@@ -31,12 +31,12 @@
             />
           </div>
           <div class="home-page__items">
-            <div v-for="(item, key) in slicedTemplatesListToShow" :key="key">
-              <preview-certificate-item
-                :img="item?.background_img"
-                :title="item?.template_name"
-              />
-            </div>
+            <preview-certificate-item
+              v-for="(item, key) in slicedTemplatesList"
+              :key="key"
+              :img="item?.background_img"
+              :title="item?.template_name"
+            />
           </div>
         </div>
         <div class="home-page__content-certificates">
@@ -53,12 +53,12 @@
           </div>
 
           <div class="home-page__items">
-            <div v-for="(item, key) in slicedCertificatesListToShow" :key="key">
-              <preview-certificate-item
-                :img="item?.img"
-                :title="item?.participant"
-              />
-            </div>
+            <preview-certificate-item
+              v-for="(item, key) in slicedCertificatesList"
+              :key="key"
+              :img="item?.img"
+              :title="item?.participant"
+            />
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ const isLoading = ref(false)
 const templates = ref<TemplateJSONItem[]>([])
 const isUploadTemplateModalShown = ref(false)
 
-const slicedCertificatesListToShow = computed(() => {
+const slicedCertificatesList = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
 
   Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
@@ -115,7 +115,7 @@ const slicedCertificatesListToShow = computed(() => {
   return result
 })
 
-const slicedTemplatesListToShow = computed(() => {
+const slicedTemplatesList = computed(() => {
   const result = new Array(MAX_CERTIFICATES_ON_PAGE)
   Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
     ([key, value]) => {
@@ -138,16 +138,12 @@ const getCertificates = async () => {
       return
     }
 
-    ErrorHandler.process(error)
+    throw error
   }
 }
 
 const getTemplates = async () => {
-  try {
-    templates.value = await uploadTemplates(userState.userSetting.accountName)
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
+  templates.value = await uploadTemplates(userState.userSetting.accountName)
 }
 
 const updateCode = async (code: string) => {
@@ -157,8 +153,11 @@ const updateCode = async (code: string) => {
 
 const init = async () => {
   isLoading.value = true
-
-  await Promise.all([getTemplates(), getCertificates()])
+  try {
+    await Promise.all([getTemplates(), getCertificates()])
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 
   isLoading.value = false
 }

@@ -8,14 +8,13 @@
         class="all-templates-page__no-data-message"
         :message="$t('all-templates-page.empty-template-list')"
       />
-
-      <div v-for="(item, key) in templatesList" :key="key">
-        <template-item
-          class="all-templates-page__template-item"
-          :template="item"
-          @select="selectItem($event, item)"
-        />
-      </div>
+      <template-item
+        class="all-templates-page__template-item"
+        v-for="(item, key) in templatesList"
+        :key="key"
+        :template="item"
+        @select="selectItem($event, item)"
+      />
     </div>
 
     <loader-modal
