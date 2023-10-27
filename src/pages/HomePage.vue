@@ -135,8 +135,6 @@ const getCertificates = async () => {
     if (error.meta && error.name === ERROR_NAMES_ENUM.forbiddenError) {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
-
-      throw error
     }
 
     throw error
