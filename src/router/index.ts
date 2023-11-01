@@ -28,6 +28,11 @@ const routes = [
     component: () => import('@/pages/AllCertificatesPage.vue'),
   },
   {
+    path: '/templates',
+    name: ROUTE_NAMES.templates,
+    component: () => import('@/pages/AllTemplatesPage.vue'),
+  },
+  {
     path: '/settings',
     name: ROUTE_NAMES.settings,
     component: () => import('@/pages/SettingPage.vue'),

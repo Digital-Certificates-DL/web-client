@@ -152,6 +152,7 @@ $opacity: 0.6;
 }
 
 .main-page__metamask-title {
+  text-align: center;
   font-size: toRem(35);
   margin: auto;
 

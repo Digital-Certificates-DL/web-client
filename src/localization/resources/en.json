@@ -72,7 +72,7 @@
   "main-page": {
     "metamask-connect": "Connect to MetaMask",
     "page-info-title": "Digital Certificate",
-    "metamask-description": "Connect Metamask wallet if you going to issue SBT",
+    "metamask-description": "Connect your Metamask wallet if you intend to issue SBT",
     "metamask-connect-btn-text": "Connect to MetaMask",
     "metamask-disconnect-btn-text": "Disconnect",
     "page-info-name": "Digital Certificate",
@@ -124,12 +124,12 @@
     "start-btn-text": "Start",
     "cancel-btn-text": "Cancel",
     "upload-new-template-symbol": "+",
-    "upload-new-template": "Upload new template",
+    "upload-new-template": "Create new template",
     "choose-template": "Choose from my templates",
     "loader-text-update-data": "Update data",
     "loader-text-validate-data": "Validate data",
     "loader-text-sign-data": "Sign data",
-    "loader-text-create-pdf": "Create PDF",
+    "loader-text-create-pdf": "Create PDFs",
     "loader-text-upload-img": "Upload certificate image"
   },
   "certificate": {
@@ -148,7 +148,9 @@
     "account-name-form-label": "Account name",
     "organization-name-form-label": "Name of organization",
     "url-form-label": "Google Sheet URL",
-    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)"
+    "wif-form-label": "Bitcoin Corporate Signing Key (WIF)",
+    "sheet-template-link-description-text": "We can check  table  example by {link}",
+    "sheet-template-link-text": "this link"
   },
   "setting-page": {
     "page-description": "Ac integer sapien nisl turpis arcu integer. Pellentesque phasellus egestas pharetra quam cursus",
@@ -169,14 +171,14 @@
     "label-date": "Issued on",
     "label-course": "Course name",
     "certificate-alt": "Certificate",
-    "label-metamask-address": "Student’s MetaMask address"
+    "label-metamask-address": "Type student’s Ethereum address"
   },
   "app-navbar": {
     "metamask-ico-alt": "metamask ico",
     "metamask-connect" : "Connect"
   },
   "timestamp-page": {
-    "page-title": "Previously certificates",
+    "page-title": "Available certificates",
     "bitcoin-btn-text": "Make timestamp",
     "input-placeholder": "Find",
     "certificate-image-alt": "Certificate preview",
@@ -194,17 +196,18 @@
     "close-btn-text": "Close",
     "send-code-btn-text": "Send code",
     "step-1-title": "Get the code",
-    "step-1-description": "To complete this step, you need to follow the  link  to get  the code",
+    "step-1-description": "To complete this step, you need to {link}  to get  the code",
+    "step-1-link-text": "follow the link",
     "step-2-title": "Enter the code"
 
   },
   "mint-form": {
     "close-btn-text": "Close",
     "mint-btn-text": "Mint",
-    "placeholder-metamask-address": "Type student’s Ethereum address"
+    "placeholder-metamask-address": "Ethereum address"
   },
   "home-page": {
-    "upload-title": "Upload new template",
+    "upload-title": "Create new template",
     "upload-name": "Upload",
     "upload-description": "Upload and customize new template of PDF file",
     "create-title": "Issue certificates",
@@ -212,7 +215,7 @@
     "create-description": "Issue all new certificates from Google sheet",
     "title" : "Create new",
     "template-list-title": "My templates",
-    "certificate-list-title": "Previously certificates",
+    "certificate-list-title": "Available certificates",
     "get-all-btn-text": "See more",
     "nil-templates": "templates was not found",
     "nil-certificates": "certificates was not found",
@@ -241,12 +244,13 @@
   "template-page":{
     "title": "Create new template",
     "description": "Elementum ullamcorper vestibulum vulputate adipiscing congue quam posuere commodo. Sed erat diam sed fermentum massa suscipit auctor.",
-    "success-msg": "New template: {name}",
+    "success-msg": "New template: ",
     "success-description": "Template is created successfully",
     "loader-text": "Creating template",
     "save-btn-text": "Save",
     "cancel-btn-text": "Cancel",
     "template-img-alt": "Uploaded image",
+    "success-title-text": "Saved",
     "aria-image-wrp": "Place of inputs.Press to unselect current input...",
     "aria-input-wrp": "Certificate field. Press to select current input and  modify(update font size/color ...)",
     "aria-qr-input": "Certificate qr. Press to select current input and  modify(update font size/color ...)"
@@ -258,5 +262,16 @@
   "upload-template-form": {
     "course-name-field": "Course name",
     "description": "Drag or chose file for template"
+  },
+  "all-templates-page" : {
+    "templates-title": "Available templates",
+    "empty-template-list": "Empty templates list",
+    "loader-text-update-date": "Upload templates"
+  },
+  "template-item": {
+    "modify-btn-text": "Modify",
+    "select-template-btn-text": "Select",
+    "img-alt":  "Template image",
+    "aria-choose-template-item": "Template item. Press to select this  item"
   }
 }

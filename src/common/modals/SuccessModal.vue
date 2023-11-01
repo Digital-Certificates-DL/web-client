@@ -9,7 +9,7 @@
         <icon class="success-modal__icon" :name="$icons.certificate" />
         <div>
           <h3>
-            {{ $t('success-modal.title') }}
+            {{ title || $t('success-modal.title') }}
           </h3>
           <p class="success-modal__description">
             {{ description || $t('success-modal.description') }}
@@ -42,8 +42,10 @@ withDefaults(
     isShown: boolean
     transaction: string
     description?: string
+    title?: string
   }>(),
   {
+    title: '',
     description: '',
   },
 )

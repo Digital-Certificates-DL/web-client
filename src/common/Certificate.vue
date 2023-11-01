@@ -73,7 +73,7 @@ const openCertificateDownloadLink = (certificate: CertificateJSONResponse) => {
 .certificate {
   display: flex;
   align-items: center;
-  border-bottom: var(--border-primary-main) toRem(1) solid;
+  border-bottom: toRem(1) solid var(--border-primary-main);
 }
 
 .certificate__body {

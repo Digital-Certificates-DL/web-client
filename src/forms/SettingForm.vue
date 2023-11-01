@@ -18,6 +18,24 @@
       :label="$t('setting-form.bitcoin-phrase-form-label')"
       :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
     />
+
+    <i18n-t
+      class="setting-form__sheet-link-description"
+      keypath="setting-form.sheet-template-link-description-text"
+      tag="p"
+    >
+      <template #link>
+        <a
+          class="setting-form__sheet-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          :href="LINK_TO_EXAMPLE"
+        >
+          {{ $t('setting-form.sheet-template-link-text') }}
+        </a>
+      </template>
+    </i18n-t>
+
     <input-field
       v-model="form.urlGoogleSheet"
       class="setting-form__form-input"
@@ -72,6 +90,9 @@ const emit = defineEmits<{
   (event: 'error', msg: string): void
 }>()
 
+const LINK_TO_EXAMPLE =
+  'https://docs.google.com/spreadsheets/d/1scYviYBGba7dIz0IgrivLHdOn_Ag3IsPwoLB9n2HdZ8'
+
 const { t } = useI18n()
 const userState = useUserStore()
 const router = useRouter()
@@ -110,14 +131,14 @@ const save = async () => {
 
 <style scoped lang="scss">
 .setting-form__form-input {
-  margin-bottom: toRem(40);
+  margin: toRem(30) 0;
 
   @include respond-to(xmedium) {
-    margin-bottom: toRem(30);
+    margin: toRem(20) 0;
   }
 
   @include respond-to(large) {
-    margin-bottom: toRem(35);
+    margin: toRem(25) 0;
   }
 }
 
@@ -135,5 +156,13 @@ const save = async () => {
 .setting-form__fields-title {
   margin-bottom: toRem(30);
   text-align: center;
+}
+
+.setting-form__sheet-link-description {
+  color: var(--text-primary-dark);
+}
+
+.setting-form__sheet-link {
+  color: var(--info-light);
 }
 </style>

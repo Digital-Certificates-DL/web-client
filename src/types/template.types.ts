@@ -19,6 +19,11 @@ export type DragDataType = {
   startY: number
 }
 
+export type TemplateJSONItem = {
+  background_img: string
+  template_name: string
+}
+
 export type SavedTemplate = {
   height: number
   width: number

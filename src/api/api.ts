@@ -5,10 +5,12 @@ import {
   Container,
   IpfsAttributes,
   SavedTemplate,
+  TemplateJSONItem,
 } from '@/types'
 import { prepareCertificateImage } from '@/helpers'
 import { JsonApiBodyBuilder } from '@distributedlab/jac'
 import { errors } from '@/errors'
+import { prepareTemplatesImages } from '@/helpers/template-list.helpers'
 
 export const updateCertificates = async (
   certificates: CertificateJSONResponse[],
@@ -232,4 +234,14 @@ export const saveTemplate = async (
     })
     .build()
   await api.post('/integrations/ccp/certificate/template', { body })
+}
+
+export const uploadTemplates = async (
+  name: string,
+): Promise<TemplateJSONItem[]> => {
+  const { data } = await api.get<TemplateJSONItem[]>(
+    '/integrations/ccp/certificate/template/' + name,
+  )
+
+  return prepareTemplatesImages(data)
 }

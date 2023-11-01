@@ -22,12 +22,21 @@
         <div class="home-page__content-template">
           <div class="home-page__content-subtitle">
             <h3>{{ $t('home-page.template-list-title') }}</h3>
-            <app-button color="info" :text="$t('home-page.get-all-btn-text')" />
+            <app-button
+              color="info"
+              :text="$t('home-page.get-all-btn-text')"
+              :route="{
+                name: $routes.templates,
+              }"
+            />
           </div>
           <div class="home-page__items">
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
+            <preview-certificate-item
+              v-for="(item, key) in slicedTemplatesList"
+              :key="key"
+              :img="item?.background_img"
+              :title="item?.template_name"
+            />
           </div>
         </div>
         <div class="home-page__content-certificates">
@@ -43,30 +52,22 @@
             />
           </div>
 
-          <div v-if="!certificates.length" class="home-page__items">
-            <div class="= home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-            <div class="home-page__item-mock"></div>
-          </div>
-          <div v-else class="home-page__items">
-            <div
-              v-for="(item, key) in certificates.slice(
-                0,
-                MAX_CERTIFICATES_ON_PAGE,
-              )"
+          <div class="home-page__items">
+            <preview-certificate-item
+              v-for="(item, key) in slicedCertificatesList"
               :key="key"
-            >
-              <preview-certificate-item
-                :img="item.img"
-                :title="item.participant"
-              />
-            </div>
+              :img="item?.img"
+              :title="item?.participant"
+            />
           </div>
         </div>
       </div>
     </div>
 
-    <loader-modal v-model:is-shown="isLoading" v-model:text="loaderText" />
+    <loader-modal
+      v-model:is-shown="isLoading"
+      :text="$t('home-page.loader-text-getting-cert')"
+    />
     <auth-modal
       v-model:is-shown="isUnauthorized"
       :token-link="authLink"
@@ -77,7 +78,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import {
   PreviewCertificateItem,
   AppButton,
@@ -87,30 +87,45 @@ import {
   UploadTemplateModal,
 } from '@/common'
 import { router } from '@/router'
-import { CertificateJSONResponse } from '@/types'
-import { ref } from 'vue'
+import { CertificateJSONResponse, TemplateJSONItem } from '@/types'
+import { computed, ref } from 'vue'
 import { useUserStore } from '@/store'
-import { updateAuthCode, uploadCertificates } from '@/api'
+import { updateAuthCode, uploadCertificates, uploadTemplates } from '@/api'
 import { ErrorHandler } from '@/helpers'
 import { MAX_CERTIFICATES_ON_PAGE } from '@/constant'
-import { errors } from '@/errors'
 import { ERROR_NAMES_ENUM } from '@/enums'
 
-const { t } = useI18n()
 const userState = useUserStore()
 
 const certificates = ref([] as CertificateJSONResponse[])
 const isUnauthorized = ref(false)
 const authLink = ref('')
 const isLoading = ref(false)
-const loaderText = ref('')
-
+const templates = ref<TemplateJSONItem[]>([])
 const isUploadTemplateModalShown = ref(false)
 
-const getCertificates = async () => {
-  isLoading.value = true
-  loaderText.value = t('home-page.loader-text-getting-cert')
+const slicedCertificatesList = computed(() => {
+  const result = new Array(MAX_CERTIFICATES_ON_PAGE)
 
+  Object.entries(certificates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
+    ([key, value]) => {
+      result[Number(key)] = value
+    },
+  )
+  return result
+})
+
+const slicedTemplatesList = computed(() => {
+  const result = new Array(MAX_CERTIFICATES_ON_PAGE)
+  Object.entries(templates.value.slice(0, MAX_CERTIFICATES_ON_PAGE)).forEach(
+    ([key, value]) => {
+      result[Number(key)] = value
+    },
+  )
+  return result
+})
+
+const getCertificates = async () => {
   try {
     certificates.value = await uploadCertificates(
       userState.userSetting.accountName,
@@ -120,13 +135,14 @@ const getCertificates = async () => {
     if (error.meta && error.name === ERROR_NAMES_ENUM.forbiddenError) {
       authLink.value = error.meta.auth_link
       isUnauthorized.value = true
-      return
     }
 
-    ErrorHandler.process(errors.FailedGetCertificates)
-  } finally {
-    isLoading.value = false
+    throw error
   }
+}
+
+const getTemplates = async () => {
+  templates.value = await uploadTemplates(userState.userSetting.accountName)
 }
 
 const updateCode = async (code: string) => {
@@ -134,7 +150,18 @@ const updateCode = async (code: string) => {
   isUnauthorized.value = false
 }
 
-getCertificates()
+const init = async () => {
+  isLoading.value = true
+  try {
+    await Promise.all([getTemplates(), getCertificates()])
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isLoading.value = false
+}
+
+init()
 </script>
 
 <style scoped lang="scss">
@@ -145,40 +172,37 @@ getCertificates()
 
 .home-page__body-nav {
   display: grid;
-  gap: toRem(150);
+  gap: toRem(50);
   grid-template-columns: repeat(2, 1fr);
 }
 
 .home-page__body-nav-item {
   margin: toRem(20) 0;
-  max-width: toRem(550);
   width: 100%;
 }
 
 .home-page__items {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: toRem(150);
   max-height: toRem(222);
   min-height: toRem(200);
   height: 100%;
   width: 100%;
-  justify-content: space-between;
+  margin-bottom: toRem(25);
+
+  @include respond-to(xmedium) {
+    gap: toRem(50);
+  }
 }
 
 .home-page__item-mock {
-  width: toRem(300);
-  height: toRem(222);
+  max-width: toRem(314);
+  max-height: toRem(222);
+  width: 100%;
+  height: 100%;
   border-radius: toRem(8);
   background: var(--background-primary-dark);
-
-  @include respond-to(xmedium) {
-    width: toRem(250);
-    height: toRem(170);
-  }
-
-  @include respond-to(medium) {
-    width: toRem(200);
-    height: toRem(150);
-  }
 }
 
 .home-page__content-subtitle {

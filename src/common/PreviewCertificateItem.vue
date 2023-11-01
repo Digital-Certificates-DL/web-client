@@ -20,7 +20,7 @@ withDefaults(
     title?: string
   }>(),
   {
-    img: '/branding/template.jpg',
+    img: '/branding/mock.jpg',
     title: '',
   },
 )
@@ -29,9 +29,8 @@ withDefaults(
 <style scoped lang="scss">
 .preview-certificate-item__img {
   max-width: toRem(314);
-  max-height: toRem(222);
+  min-width: toRem(180);
   width: 100%;
-  height: 100%;
   border-radius: toRem(8);
 }
 </style>
