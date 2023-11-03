@@ -18,11 +18,10 @@
         class="app-navbar__btn"
         color="info"
         :icon-left="$icons.settings"
-        :route="{
-          name: $routes.settings,
-        }"
+        @click="openSettingsModal"
       />
     </div>
+    <settings-modal v-model:is-shown="isSettingModelShown" />
   </div>
 </template>
 
@@ -30,11 +29,18 @@
 import { AppButton, AppLogo } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { abbrCenter } from '@/helpers'
+import { ref } from 'vue'
+import SettingsModal from '@/common/modals/SettingsModal.vue'
 
+const isSettingModelShown = ref(false)
 const web3Store = useWeb3ProvidersStore()
 
 const connect = async () => {
   await web3Store.provider.connect()
+}
+
+const openSettingsModal = () => {
+  isSettingModelShown.value = true
 }
 </script>
 

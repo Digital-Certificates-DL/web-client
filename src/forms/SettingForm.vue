@@ -9,15 +9,6 @@
       :label="$t('setting-form.account-name-form-label')"
       :error-message="getFieldErrorMessage('accountName')"
     />
-    <h3 class="setting-form__fields-title">
-      {{ $t('setting-form.sign-key-title') }}
-    </h3>
-    <input-field
-      v-model="form.bip39MnemonicPhrase"
-      class="setting-form__form-input"
-      :label="$t('setting-form.bitcoin-phrase-form-label')"
-      :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
-    />
 
     <i18n-t
       class="setting-form__sheet-link-description"
@@ -42,6 +33,16 @@
       :label="$t('setting-form.url-form-label')"
       :error-message="getFieldErrorMessage('urlGoogleSheet')"
     />
+    <h3 class="setting-form__fields-title">
+      {{ $t('setting-form.sign-key-title') }}
+    </h3>
+    <input-field
+      v-model="form.bip39MnemonicPhrase"
+      class="setting-form__form-input"
+      :label="$t('setting-form.bitcoin-phrase-form-label')"
+      :error-message="getFieldErrorMessage('bip39MnemonicPhrase')"
+    />
+
     <input-field
       v-model="form.signKey"
       class="setting-form__form-input"
@@ -76,10 +77,8 @@ import { reactive } from 'vue'
 import { UserSetting } from '@/types'
 import { useFormValidation } from '@/composables'
 import { link, maxLength, mnemonic, required } from '@/validators'
-import { ROUTE_NAMES } from '@/enums'
 import { useUserStore } from '@/store'
 import { AppButton } from '@/common'
-import { useRouter } from 'vue-router'
 import { Bitcoin } from '@/utils'
 import { saveUserSetting } from '@/api'
 import { useI18n } from 'vue-i18n'
@@ -88,6 +87,7 @@ import { ErrorHandler } from '@/helpers'
 
 const emit = defineEmits<{
   (event: 'error', msg: string): void
+  (event: 'close'): void
 }>()
 
 const LINK_TO_EXAMPLE =
@@ -95,7 +95,6 @@ const LINK_TO_EXAMPLE =
 
 const { t } = useI18n()
 const userState = useUserStore()
-const router = useRouter()
 
 const form = reactive({
   accountName: userState.userSetting.accountName || '',
@@ -121,7 +120,7 @@ const save = async () => {
     )
 
     await saveUserSetting(userState.userSetting.accountName)
-    await router.push({ name: ROUTE_NAMES.main })
+    emit('close')
   } catch (error) {
     ErrorHandler.process(error)
     emit('error', t('errors.failed-save-setting'))
@@ -132,13 +131,14 @@ const save = async () => {
 <style scoped lang="scss">
 .setting-form__form-input {
   margin: toRem(30) 0;
+  position: relative;
 
   @include respond-to(xmedium) {
-    margin: toRem(20) 0;
+    margin: toRem(25) 0;
   }
 
   @include respond-to(large) {
-    margin: toRem(25) 0;
+    margin: toRem(20) 0;
   }
 }
 
