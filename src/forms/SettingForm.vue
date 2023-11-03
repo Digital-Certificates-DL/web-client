@@ -63,9 +63,7 @@
         color="info"
         size="large"
         :text="$t('setting-form.cancel-btn-text')"
-        :route="{
-          name: $routes.main,
-        }"
+        @click="emit('close')"
       />
     </div>
   </form>
