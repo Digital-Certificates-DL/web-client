@@ -26,11 +26,10 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton, AppLogo } from '@/common'
+import { AppButton, AppLogo, SettingsModal } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { abbrCenter } from '@/helpers'
 import { ref } from 'vue'
-import SettingsModal from '@/common/modals/SettingsModal.vue'
 
 const isSettingModelShown = ref(false)
 const web3Store = useWeb3ProvidersStore()
