@@ -24,7 +24,11 @@
       </div>
     </div>
     <div class="template-page__tool-btns">
-      <input v-model="currentInputInfo.color" type="color" />
+      <input
+        v-model="currentInputInfo.color"
+        class="template-page__color-picker"
+        type="color"
+      />
 
       <app-button class="template-page__btn" text="+" @click="makeBigger()" />
 
@@ -41,8 +45,24 @@
       />
       <app-button
         class="template-page__btn"
-        :icon-left="$icons.viewList"
-        @click="changeXCentrilize"
+        :icon-left="$icons.alignLeft"
+        @click="decentrilizeX"
+      />
+      <app-button
+        class="template-page__btn"
+        :icon-left="$icons.alignCenter"
+        @click="centrilizeX"
+      />
+      <app-button
+        class="template-page__btn"
+        :icon-left="$icons.boldText"
+        @click="changeBoldState"
+      />
+
+      <app-button
+        class="template-page__btn"
+        :icon-left="$icons.italicText"
+        @click="changeItalicState"
       />
     </div>
     <div
@@ -99,6 +119,8 @@
             color: position.color || 'white',
             width: position.font_size * position.text.length * 0.55 + 'px',
             'text-align': position.x_center ? 'center' : 'left',
+            'font-weight': position.is_bold_text ? 'bold' : 'normal',
+            'font-style': position.is_italic_text ? 'italic' : 'normal',
           }"
           @focus="inputField = $event.target"
           @click.stop="selectInput(position)"
@@ -328,8 +350,20 @@ const makeSmaller = () => {
   currentInputInfo.value.height -= DELTA_QR_SIZE
 }
 
-const changeXCentrilize = () => {
-  currentInputInfo.value.x_center = !currentInputInfo.value.x_center
+const centrilizeX = () => {
+  currentInputInfo.value.x_center = true
+}
+
+const decentrilizeX = () => {
+  currentInputInfo.value.x_center = false
+}
+
+const changeItalicState = () => {
+  currentInputInfo.value.is_italic_text = !currentInputInfo.value.is_italic_text
+}
+
+const changeBoldState = () => {
+  currentInputInfo.value.is_bold_text = !currentInputInfo.value.is_bold_text
 }
 
 const updateFieldsPassions = () => {
@@ -431,5 +465,26 @@ watch(width, (oldVal, newVal) => {
 
 .template-page__qr-default-style {
   background: var(--qr-template-color);
+}
+
+.template-page__color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: toRem(40);
+  height: toRem(40);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.template-page__color-picker::-webkit-color-swatch {
+  border-radius: toRem(5);
+  border: none;
+}
+
+.template-page__color-picker::-moz-color-swatch {
+  border-radius: toRem(5);
+  border: none;
 }
 </style>
