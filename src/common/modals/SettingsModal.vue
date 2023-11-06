@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { SettingForm } from '@/forms'
 import { Modal } from '@/common'
 import { ErrorHandler } from '@/helpers'
@@ -28,12 +27,9 @@ const emit = defineEmits<{
   (event: 'update:is-shown', v: boolean): void
 }>()
 
-const errorMsg = ref('')
-
 const onError = (msg: string) => {
-  errorMsg.value = msg
-  emit('update:is-shown', false)
   ErrorHandler.process(msg)
+  emit('update:is-shown', false)
 }
 
 const onClose = () => {

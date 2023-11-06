@@ -81,7 +81,6 @@ import { Bitcoin } from '@/utils'
 import { saveUserSetting } from '@/api'
 import { useI18n } from 'vue-i18n'
 import { MAX_NAME_LENGTH } from '@/constant'
-import { ErrorHandler } from '@/helpers'
 
 const emit = defineEmits<{
   (event: 'error', msg: string): void
@@ -120,7 +119,6 @@ const save = async () => {
     await saveUserSetting(userState.userSetting.accountName)
     emit('close')
   } catch (error) {
-    ErrorHandler.process(error)
     emit('error', t('errors.failed-save-setting'))
   }
 }
