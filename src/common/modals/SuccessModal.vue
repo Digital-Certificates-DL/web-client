@@ -6,7 +6,7 @@
   >
     <div class="success-modal__pane">
       <div class="success-modal__payload">
-        <icon class="settings-modal__icon" :name="$icons.certificate" />
+        <icon class="success-modal__icon" :name="$icons.certificate" />
         <div>
           <h3>
             {{ title || $t('success-modal.title') }}
@@ -84,7 +84,7 @@ const closeModal = () => {
   color: var(--text-secondary-light);
 }
 
-.settings-modal__icon {
+.success-modal__icon {
   width: toRem(55);
   height: toRem(55);
   margin-right: toRem(20);
