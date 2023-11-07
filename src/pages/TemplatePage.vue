@@ -46,12 +46,12 @@
       <app-button
         class="template-page__btn"
         :icon-left="$icons.alignLeft"
-        @click="decentrilizeX"
+        @click="decentralizeX"
       />
       <app-button
         class="template-page__btn"
         :icon-left="$icons.alignCenter"
-        @click="centrilizeX"
+        @click="centralizeX"
       />
       <app-button
         class="template-page__btn"
@@ -350,11 +350,11 @@ const makeSmaller = () => {
   currentInputInfo.value.height -= DELTA_QR_SIZE
 }
 
-const centrilizeX = () => {
+const centralizeX = () => {
   currentInputInfo.value.x_center = true
 }
 
-const decentrilizeX = () => {
+const decentralizeX = () => {
   currentInputInfo.value.x_center = false
 }
 

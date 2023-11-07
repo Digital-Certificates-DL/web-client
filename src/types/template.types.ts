@@ -1,3 +1,5 @@
+//TODO: update snake  case  to camel case
+
 export type TemplateType = {
   name: string
   text: string
