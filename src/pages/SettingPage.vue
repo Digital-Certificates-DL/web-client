@@ -9,7 +9,11 @@
           {{ $t('setting-page.page-description') }}
         </p>
       </div>
-      <setting-form class="setting-page__form" @error="onError" />
+      <setting-form
+        class="setting-page__form"
+        @error="onError"
+        @close="onClose"
+      />
     </div>
 
     <error-modal v-model:is-shown="isErrorModalShown" :message="errorMsg" />
@@ -21,6 +25,8 @@ import { SettingForm } from '@/forms'
 import { ErrorModal } from '@/common'
 
 import { ref } from 'vue'
+import { router } from '@/router'
+import { ROUTE_NAMES } from '@/enums'
 
 const isErrorModalShown = ref(false)
 const errorMsg = ref('')
@@ -28,6 +34,10 @@ const errorMsg = ref('')
 const onError = (msg: string) => {
   errorMsg.value = msg
   isErrorModalShown.value = true
+}
+
+const onClose = () => {
+  router.push({ name: ROUTE_NAMES.main })
 }
 </script>
 

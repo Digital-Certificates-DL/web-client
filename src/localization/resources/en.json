@@ -261,7 +261,7 @@
   },
   "upload-template-form": {
     "course-name-field": "Course name",
-    "description": "Drag or chose file for template"
+    "description": "Drag or chose file for template(Only PNG)"
   },
   "all-templates-page" : {
     "templates-title": "Available templates",

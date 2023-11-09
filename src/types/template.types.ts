@@ -1,3 +1,5 @@
+//TODO: update snake  case  to camel case
+
 export type TemplateType = {
   name: string
   text: string
@@ -10,6 +12,8 @@ export type TemplateType = {
   is_qr: boolean
   width: number
   height: number
+  is_bold_text: boolean
+  is_italic_text: boolean
 }
 
 export type DragDataType = {
