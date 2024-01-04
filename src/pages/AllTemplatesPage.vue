@@ -14,6 +14,7 @@
         :key="key"
         :template="item"
         @select="selectItem($event, item)"
+        @remove="removeTemplate"
       />
     </div>
 
@@ -30,7 +31,7 @@ import { TemplateJSONItem } from '@/types'
 import { ref } from 'vue'
 import { NoDataMessage, LoaderModal, TemplateItem } from '@/common'
 import { ErrorHandler } from '@/helpers'
-import { uploadTemplates } from '@/api'
+import { removeTemplateByID, uploadTemplates } from '@/api'
 
 const userState = useUserStore()
 
@@ -63,6 +64,15 @@ const getTemplates = async () => {
   }
 
   isLoading.value = false
+}
+
+const removeTemplate = async (templateID: string) => {
+  try {
+    await removeTemplateByID(templateID)
+    await getTemplates()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 
 getTemplates()
