@@ -65,7 +65,8 @@
         @click="changeItalicState"
       />
       <app-button
-        class="template-page__btn"
+        class="template-page__default-btn"
+        color="info"
         :text="$t('template-page.use-default-template-btn-txt')"
         @click="changeTemplateToDefault"
       />
@@ -471,6 +472,15 @@ watch(width, (oldVal, newVal) => {
 .template-page__btn {
   height: toRem(50);
   width: toRem(50);
+  font-size: toRem(18);
+  text-align: center;
+  margin: 0 toRem(20);
+}
+
+.template-page__default-btn {
+  height: toRem(50);
+  max-width: toRem(200);
+  width: 100%;
   font-size: toRem(18);
   text-align: center;
   margin: 0 toRem(20);
