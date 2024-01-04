@@ -213,6 +213,7 @@ export const saveTemplate = async (
   template: SavedTemplate,
   templateName: string,
   accountName: string,
+  isDefault: boolean,
 ) => {
   const body = new JsonApiBodyBuilder()
     .setData({
@@ -222,6 +223,7 @@ export const saveTemplate = async (
         is_completed: true,
         template: template,
         template_name: templateName,
+        is_default_template: isDefault,
       },
       relationships: {
         user: {
@@ -237,11 +239,15 @@ export const saveTemplate = async (
 }
 
 export const uploadTemplates = async (
-  name: string,
+  clientName: string,
 ): Promise<TemplateJSONItem[]> => {
   const { data } = await api.get<TemplateJSONItem[]>(
-    '/integrations/ccp/certificate/template/' + name,
+    '/integrations/ccp/certificate/template/' + clientName,
   )
 
   return prepareTemplatesImages(data)
+}
+
+export const removeTemplateByID = async (templateID: string) => {
+  await api.delete('/integrations/ccp/certificate/template/' + templateID)
 }

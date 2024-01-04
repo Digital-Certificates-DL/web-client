@@ -64,6 +64,11 @@
         :icon-left="$icons.italicText"
         @click="changeItalicState"
       />
+      <app-button
+        class="template-page__btn"
+        :text="$t('template-page.use-default-template-btn-txt')"
+        @click="changeTemplateToDefault"
+      />
     </div>
     <div
       class="template-page__back-image-wrp"
@@ -100,6 +105,7 @@
           v-if="position.is_qr"
           class="template-page__qr-default-style"
           tabindex="0"
+          :disabled="isDefaultTemplateUsed"
           :aria-label="$t('template-page.aria-qr-input')"
           :style="{
             width: position.width * windowSizeCoef + 'px',
@@ -114,6 +120,7 @@
           v-model="position.text"
           class="template-page__input"
           type="text"
+          :disabled="isDefaultTemplateUsed"
           :style="{
             fontSize: position.font_size + 'px',
             color: position.color || 'white',
@@ -184,6 +191,7 @@ const dragData = ref({
   startY: 0,
 } as DragDataType)
 
+const isDefaultTemplateUsed = ref(false)
 const certificateBackground = ref<HTMLElement | null>({} as HTMLElement)
 const defaultTemplate = ref<TemplateType[]>(DefaultTemplate)
 
@@ -194,6 +202,10 @@ const removeInput = (index: number) => {
 
 const clearInput = () => {
   textValue.value = ''
+}
+
+const changeTemplateToDefault = () => {
+  isDefaultTemplateUsed.value = !isDefaultTemplateUsed.value
 }
 
 const startDragInput = (index: number, event: MouseEvent) => {
@@ -234,6 +246,7 @@ const sendTemplate = async () => {
       template,
       props.name,
       useUserStore().userSetting.accountName,
+      isDefaultTemplateUsed.value,
     )
     isSuccessModalShown.value = true
   } catch (err) {

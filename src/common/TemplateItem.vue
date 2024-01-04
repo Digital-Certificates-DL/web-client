@@ -19,7 +19,10 @@
       </p>
 
       <div class="template-item__btns">
-        <app-button :text="$t('template-item.modify-btn-text')" />
+        <app-button
+          :text="$t('template-item.remove-btn-text')"
+          @click="removeTemplate"
+        />
         <app-button
           :text="$t('template-item.select-template-btn-text')"
           @click="clickItem"
@@ -38,9 +41,10 @@ import { ref } from 'vue'
 
 const emit = defineEmits<{
   (event: 'select', isSelected: boolean): boolean
+  (event: 'remove', id: string): boolean
 }>()
 
-defineProps<{
+const props = defineProps<{
   template: TemplateJSONItem
 }>()
 
@@ -49,6 +53,10 @@ const isSelected = ref(false)
 const clickItem = () => {
   isSelected.value = !isSelected.value
   emit('select', isSelected.value)
+}
+
+const removeTemplate = () => {
+  emit('remove', props.template.template_id)
 }
 </script>
 

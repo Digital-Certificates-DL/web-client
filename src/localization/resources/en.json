@@ -253,7 +253,8 @@
     "success-title-text": "Saved",
     "aria-image-wrp": "Place of inputs.Press to unselect current input...",
     "aria-input-wrp": "Certificate field. Press to select current input and  modify(update font size/color ...)",
-    "aria-qr-input": "Certificate qr. Press to select current input and  modify(update font size/color ...)"
+    "aria-qr-input": "Certificate qr. Press to select current input and  modify(update font size/color ...)",
+    "use-default-template-btn-txt": "Default"
   },
   "upload-template-modal": {
     "title": "Upload template image",
@@ -269,7 +270,7 @@
     "loader-text-update-date": "Upload templates"
   },
   "template-item": {
-    "modify-btn-text": "Modify",
+    "remove-btn-text": "Remove",
     "select-template-btn-text": "Select",
     "img-alt":  "Template image",
     "aria-choose-template-item": "Template item. Press to select this  item"

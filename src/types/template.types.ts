@@ -24,6 +24,7 @@ export type DragDataType = {
 }
 
 export type TemplateJSONItem = {
+  template_id: string
   background_img: string
   template_name: string
 }
