@@ -68,9 +68,6 @@ const getTemplates = async () => {
 
 const removeTemplate = async (templateID: string) => {
   try {
-    /* eslint-disable no-console */
-
-    console.log('template id: ', templateID)
     await removeTemplateByID(templateID)
     await getTemplates()
   } catch (error) {
