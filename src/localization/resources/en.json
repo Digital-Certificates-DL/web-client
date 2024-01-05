@@ -254,7 +254,8 @@
     "aria-image-wrp": "Place of inputs.Press to unselect current input...",
     "aria-input-wrp": "Certificate field. Press to select current input and  modify(update font size/color ...)",
     "aria-qr-input": "Certificate qr. Press to select current input and  modify(update font size/color ...)",
-    "use-default-template-btn-txt": "Default"
+    "use-default-template-btn-txt": "Default",
+    "use-custom-template-btn-txt": "Custom"
   },
   "upload-template-modal": {
     "title": "Upload template image",

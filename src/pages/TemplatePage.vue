@@ -67,7 +67,11 @@
       <app-button
         class="template-page__default-btn"
         color="info"
-        :text="$t('template-page.use-default-template-btn-txt')"
+        :text="
+          isDefaultTemplateUsed
+            ? $t('template-page.use-custom-template-btn-txt')
+            : $t('template-page.use-default-template-btn-txt')
+        "
         @click="changeTemplateToDefault"
       />
     </div>
